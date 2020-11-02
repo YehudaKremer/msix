@@ -65,7 +65,7 @@ class Msix {
 
     print('');
     print(green('The msix installer was created in the following location:'));
-    print('${Directory.current.path}/${_configuration.buildFilesFolder}'.replaceAll('/', r'\'));
+    print('${_configuration.buildFilesFolder}'.replaceAll('/', r'\'));
 
     if (_configuration.isUseingTestCertificate) {
       print('');
