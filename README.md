@@ -5,7 +5,7 @@
 A command-line tool that create Msix installer for your flutter windows-build files.
 
 ## Configuration (Optional)
-Add `msix:` configuration to your `pubspec.yaml` file:
+Add `msix_config:` configuration at the end of your `pubspec.yaml` file:
 ```yaml
 #msix_config:
   #display_name: MyApp
