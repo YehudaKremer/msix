@@ -19,3 +19,17 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+#msix_config:
+  #display_name: MyApp
+  #publisher_name: MyName
+  #identity_name: MyCompany.MySuite.MyApp
+  #msix_version: 1.0.0.0
+  #certificate_path: C:/<PathToCertificate>/<MyCertificate.pfx>
+  #certificate_password: 1234 (require if using .pfx certificate)
+  #certificate_subject: CN=MyName
+  #logo_path: C:\<PathToIcon>\<Logo.png>
+  #start_menu_icon_path: C:\<PathToIcon>\<Icon.png>
+  #tile_icon_path: C:\<PathToIcon>\<Icon.png>
+  #icons_background_color: ffffff
+  #architecture: x64
