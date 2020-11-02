@@ -11,7 +11,7 @@ class Configuration {
   String msixVersion;
   String appDescription;
   String certificateSubject;
-  String buildFilesFolder = 'build/windows/runner/Release';
+  String buildFilesFolder = '${Directory.current.path}/build/windows/runner/Release';
   String certificatePath;
   String certificatePassword;
   String displayName;
@@ -76,7 +76,7 @@ class Configuration {
     if (isNullOrStringNull(certificatePath)) {
       print('');
       print(white('No certificate was specified, useing test certificate'));
-      certificatePath = defaultCertificatePath;
+      certificatePath = defaultCertificatePath();
       certificatePassword = defaultCertificatePassword;
       certificateSubject = defaultCertificateSubject;
       isUseingTestCertificate = true;

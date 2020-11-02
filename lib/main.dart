@@ -15,6 +15,12 @@ class Msix {
   }
 
   Future<void> createMsix(List<String> args) async {
+    var packages = (await File('${Directory.current.path}/.packages').readAsString()).split('\n');
+    msixPackagePath = packages
+        .firstWhere((package) => package.contains('msix:'))
+        .replaceAll('msix:', '')
+        .replaceAll('file:///', '');
+
     await _configuration.getConfigValues();
     await _configuration.validateConfigValues();
     await _msixFiles.createIconsFolder();
@@ -73,7 +79,7 @@ class Msix {
   Future<ProcessResult> _pack() async {
     var msixPath = '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
     var makeappxPath =
-        '$msixToolkitPath/Redist.${_configuration.architecture == 'x86' ? 'x86' : 'x64'}/makeappx.exe';
+        '${msixToolkitPath()}/Redist.${_configuration.architecture == 'x86' ? 'x86' : 'x64'}/makeappx.exe';
 
     if (await File(msixPath).exists()) await File(msixPath).delete();
 
@@ -90,7 +96,7 @@ class Msix {
 
   Future<ProcessResult> _sign() async {
     var signtoolPath =
-        '$msixToolkitPath/Redist.${_configuration.architecture == 'x86' ? 'x86' : 'x64'}/signtool.exe';
+        '${msixToolkitPath()}/Redist.${_configuration.architecture == 'x86' ? 'x86' : 'x64'}/signtool.exe';
 
     if (extension(_configuration.certificatePath) == '.pfx') {
       return await Process.run(signtoolPath, [

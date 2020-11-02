@@ -1,11 +1,13 @@
 import 'package:ansicolor/ansicolor.dart';
 
+String msixPackagePath = '';
 const String iconsFolderName = 'icons';
-const String vcLibsFolderPath = 'assets/VCLibs';
-const String msixToolkitPath = 'assets/MSIX-Toolkit';
+String defaultsIconsFolderPath() => '${msixPackagePath}assets/icons';
+String vcLibsFolderPath() => '${msixPackagePath}assets/VCLibs';
+String msixToolkitPath() => '${msixPackagePath}assets/MSIX-Toolkit';
 const String defaultIconsBackgroundColor = '#ffffff';
 const String defaultMsixVersion = '1.0.0.0';
-const String defaultCertificatePath = 'assets/test_certificate.pfx';
+String defaultCertificatePath() => '${msixPackagePath}assets/test_certificate.pfx';
 const String defaultCertificatePassword = '1234';
 const String defaultCertificateSubject = 'CN=Msix Testing, O=Msix Testing Corporation, C=US';
 const String defaultArchitecture = 'x64';
