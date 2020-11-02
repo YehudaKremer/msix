@@ -28,20 +28,20 @@ class Configuration {
 
     appName = pubspec['name'].toString();
     appDescription = pubspec['description'].toString();
-    if (!isNullOrStringNull(pubspec['msix'].toString())) {
-      //throw (red('configuration not found, check "msix: ..." at pubspec.yaml'));
-      displayName = pubspec['msix']['display_name'].toString();
-      publisherName = pubspec['msix']['publisher_name'].toString();
-      identityName = pubspec['msix']['identity_name'].toString();
-      msixVersion = pubspec['msix']['msix_version'].toString();
-      certificateSubject = pubspec['msix']['certificate_subject'].toString();
-      certificatePath = pubspec['msix']['certificate_path'].toString();
-      certificatePassword = pubspec['msix']['certificate_password'].toString();
-      logoPath = pubspec['msix']['logo_path'].toString();
-      startMenuIconPath = pubspec['msix']['start_menu_icon_path'].toString();
-      tileIconPath = pubspec['msix']['tile_icon_path'].toString();
-      iconsBackgroundColor = pubspec['msix']['icons_background_color'].toString();
-      architecture = pubspec['msix']['architecture'].toString();
+    if (!isNullOrStringNull(pubspec['msix_config'].toString())) {
+      //throw (red('configuration not found, check "msix_config: ..." at pubspec.yaml'));
+      displayName = pubspec['msix_config']['display_name'].toString();
+      publisherName = pubspec['msix_config']['publisher_name'].toString();
+      identityName = pubspec['msix_config']['identity_name'].toString();
+      msixVersion = pubspec['msix_config']['msix_version'].toString();
+      certificateSubject = pubspec['msix_config']['certificate_subject'].toString();
+      certificatePath = pubspec['msix_config']['certificate_path'].toString();
+      certificatePassword = pubspec['msix_config']['certificate_password'].toString();
+      logoPath = pubspec['msix_config']['logo_path'].toString();
+      startMenuIconPath = pubspec['msix_config']['start_menu_icon_path'].toString();
+      tileIconPath = pubspec['msix_config']['tile_icon_path'].toString();
+      iconsBackgroundColor = pubspec['msix_config']['icons_background_color'].toString();
+      architecture = pubspec['msix_config']['architecture'].toString();
     }
     print(green('done!'));
   }
@@ -82,9 +82,10 @@ class Configuration {
       isUseingTestCertificate = true;
     } else if (!await File(certificatePath).exists())
       throw (red(
-          'The file certificate not found in: $certificatePath, check "msix: certificate_path" at pubspec.yaml'));
+          'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml'));
     else if (isNullOrStringNull(certificateSubject)) {
-      print(red('Certificate subject is empty, check "msix: certificate_subject" at pubspec.yaml'));
+      print(red(
+          'Certificate subject is empty, check "msix_config: certificate_subject" at pubspec.yaml'));
       print(yellow('see what certificate-subject value is:'));
       print(yellow(
           'https://drive.google.com/file/d/1oAsnrp2Kf-jZ_kaRjyF5llQ0YZy1IwNe/view?usp=sharing'));
@@ -92,12 +93,13 @@ class Configuration {
       exit(0);
     } else if (extension(certificatePath) == '.pfx' && isNullOrStringNull(certificatePassword))
       throw (red(
-          'Certificate password is empty, check "msix: certificate_password" at pubspec.yaml'));
+          'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml'));
 
     if (isNullOrStringNull(architecture))
       architecture = defaultArchitecture;
     else if (architecture != 'x86' && architecture != 'x64')
-      throw (red('Architecture can be "x86" or "x64", check "msix: architecture" at pubspec.yaml'));
+      throw (red(
+          'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml'));
 
     if (isNullOrStringNull(iconsBackgroundColor))
       iconsBackgroundColor = defaultIconsBackgroundColor;

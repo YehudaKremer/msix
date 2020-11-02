@@ -28,7 +28,7 @@ class MsixFiles {
     try {
       _configuration.logoPath = await _copyIcon(!isNullOrStringNull(_configuration.logoPath)
           ? _configuration.logoPath
-          : File('../assets/icons/icon.png').path);
+          : File('assets/icons/icon.png').path);
     } catch (e) {
       throw (red('fail to create icon ${_configuration.logoPath}: $e'));
     }
@@ -37,7 +37,7 @@ class MsixFiles {
       _configuration.startMenuIconPath = await _copyIcon(
           !isNullOrStringNull(_configuration.startMenuIconPath)
               ? _configuration.startMenuIconPath
-              : File('../assets/icons/44_44.png').path);
+              : File('assets/icons/44_44.png').path);
     } catch (e) {
       throw (red('fail to create icon ${_configuration.startMenuIconPath}: $e'));
     }
@@ -45,7 +45,7 @@ class MsixFiles {
     try {
       _configuration.tileIconPath = await _copyIcon(!isNullOrStringNull(_configuration.tileIconPath)
           ? _configuration.tileIconPath
-          : File('../assets/icons/150_150.png').path);
+          : File('assets/icons/150_150.png').path);
     } catch (e) {
       throw (red('fail to create icon ${_configuration.tileIconPath}: $e'));
     }
