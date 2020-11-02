@@ -1,9 +1,11 @@
 ![Flutter Community: flutter_launcher_icons](https://news.thewindowsclub.com/wp-content/uploads/2018/07/MSIX.jpg)
 
 # Msix
-
 A command-line tool that create Msix installer for your flutter windows-build files.
-
+## Install
+Add `msix: ` under `dependencies:`
+## Create Msix 
+Run `flutter build windows` then run: `flutter pub run msix:create`
 ## Configuration (Optional)
 Add `msix_config:` configuration at the end of your `pubspec.yaml` file:
 ```yaml
@@ -21,5 +23,3 @@ Add `msix_config:` configuration at the end of your `pubspec.yaml` file:
   #icons_background_color: ffffff
   #architecture: x64
 ```
-## Create Msix 
-Run windows build `flutter build windows` then run: `flutter pub run msix:create`
