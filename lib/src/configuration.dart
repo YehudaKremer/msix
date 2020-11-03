@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:msix/utils.dart';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
+import 'utils.dart';
 import 'constants.dart';
 
 class Configuration {
@@ -57,7 +57,7 @@ class Configuration {
     stdout.write(white('validate config values..    '));
 
     if (isNullOrStringNull(appName))
-      throw (red('App name is empty, check "appName" at pubspec.yaml'));
+      throw (red('App name is empty, check \'appName\' at pubspec.yaml'));
 
     if (isNullOrStringNull(appDescription)) appDescription = appName;
     if (isNullOrStringNull(displayName)) displayName = appName;

@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:msix/utils.dart';
+import 'src/utils.dart';
 import 'package:path/path.dart';
-import 'configuration.dart';
-import 'constants.dart';
-import 'msixFiles.dart';
+import 'src/configuration.dart';
+import 'src/constants.dart';
+import 'src/msixFiles.dart';
 
 class Msix {
   Configuration _configuration;
@@ -14,6 +14,7 @@ class Msix {
     _msixFiles = MsixFiles(_configuration);
   }
 
+  /// Create and sign msix installer file
   Future<void> createMsix(List<String> args) async {
     var packages = (await File('${Directory.current.path}/.packages').readAsString()).split('\n');
     msixPackagePath = packages

@@ -1,21 +1,15 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'constants.dart';
 
 bool isNullOrStringNull(String value) => value == null || value == 'null';
 
-/**
- * Retrieve all files within a directory
- */
 Future<List<File>> allDirectoryFiles(String directory) async {
   List<File> frameworkFilePaths = [];
 
-  // Grab all paths in directory
   await Directory(directory)
       .list(recursive: true, followLinks: false)
       .listen((FileSystemEntity entity) {
-    // For each path, if the path leads to a file, then add to array list
     var file = File(entity.path);
     file.exists().then((exists) {
       if (exists) frameworkFilePaths.add(file);

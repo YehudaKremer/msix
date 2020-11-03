@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:msix/utils.dart';
 import 'package:path/path.dart';
+import 'utils.dart';
 import 'configuration.dart';
 import 'constants.dart';
 

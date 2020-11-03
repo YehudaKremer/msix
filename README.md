@@ -4,9 +4,9 @@
 A command-line tool that create Msix installer for your flutter windows-build files.
 ## Install
 Add `msix: ` under `dependencies:`
-## Create Msix 
-Run `flutter build windows` then run: `flutter pub run msix:create`
-## Configuration (Optional)
+## :package: Create Msix
+Run `flutter build windows` then run: **`flutter pub run msix:create`**
+## :gear:Configuration (Optional)
 Add `msix_config:` configuration at the end of your `pubspec.yaml` file:
 ```yaml
 #msix_config:
@@ -23,3 +23,4 @@ Add `msix_config:` configuration at the end of your `pubspec.yaml` file:
   #icons_background_color: ffffff
   #architecture: x64
 ```
+tags: `msi` `windows` `win10` `windows10` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
