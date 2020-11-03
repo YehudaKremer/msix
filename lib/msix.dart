@@ -16,7 +16,9 @@ class Msix {
 
   /// Create and sign msix installer file
   Future<void> createMsix(List<String> args) async {
-    var packages = (await File('${Directory.current.path}/.packages').readAsString()).split('\n');
+    var packages =
+        (await File('${Directory.current.path}/.packages').readAsString())
+            .split('\n');
     msixPackagePath = packages
         .firstWhere((package) => package.contains('msix:'))
         .replaceAll('msix:', '')
@@ -45,12 +47,16 @@ class Msix {
     print(white('singing....    '));
     var signResults = await _sign();
 
-    if (!signResults.stdout.toString().contains('Number of files successfully Signed: 1') &&
+    if (!signResults.stdout
+            .toString()
+            .contains('Number of files successfully Signed: 1') &&
         signResults.stderr.toString().length > 0) {
       print(red(signResults.stdout));
       print(red(signResults.stderr));
 
-      if (signResults.stdout.toString().contains('Error: SignerSign() failed.') &&
+      if (signResults.stdout
+              .toString()
+              .contains('Error: SignerSign() failed.') &&
           !isNullOrStringNull(_configuration.certificateSubject)) {
         printCertificateSubjectHelp();
       }
@@ -72,13 +78,15 @@ class Msix {
       print('');
       print(yellow(
           'This maix installer is signed with TEST certificate,\nif you have not yet installed this test certificate please read the following guide:'));
-      print('https://www.advancedinstaller.com/install-test-certificate-from-msix.html');
+      print(
+          'https://www.advancedinstaller.com/install-test-certificate-from-msix.html');
       print('');
     }
   }
 
   Future<ProcessResult> _pack() async {
-    var msixPath = '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
+    var msixPath =
+        '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
     var makeappxPath =
         '${msixToolkitPath()}/Redist.${_configuration.architecture == 'x86' ? 'x86' : 'x64'}/makeappx.exe';
 

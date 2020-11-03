@@ -7,12 +7,13 @@ import 'constants.dart';
 class MsixFiles {
   Configuration _configuration;
   List<File> _vCLibsFiles;
-  MsixFiles(this._configuration) {}
+  MsixFiles(this._configuration);
 
   Future<void> createIconsFolder() async {
     stdout.write(white('create icons folder..    '));
 
-    var iconsFolderPath = '${_configuration.buildFilesFolder}\\$iconsFolderName';
+    var iconsFolderPath =
+        '${_configuration.buildFilesFolder}\\$iconsFolderName';
     try {
       await Directory(iconsFolderPath).create();
     } catch (e) {
@@ -26,9 +27,10 @@ class MsixFiles {
     stdout.write(white('copy icons..    '));
 
     try {
-      _configuration.logoPath = await _copyIcon(!isNullOrStringNull(_configuration.logoPath)
-          ? _configuration.logoPath
-          : File('${defaultsIconsFolderPath()}/icon.png').path);
+      _configuration.logoPath = await _copyIcon(
+          !isNullOrStringNull(_configuration.logoPath)
+              ? _configuration.logoPath
+              : File('${defaultsIconsFolderPath()}/icon.png').path);
     } catch (e) {
       throw (red('fail to create icon ${_configuration.logoPath}: $e'));
     }
@@ -39,13 +41,15 @@ class MsixFiles {
               ? _configuration.startMenuIconPath
               : File('${defaultsIconsFolderPath()}/44_44.png').path);
     } catch (e) {
-      throw (red('fail to create icon ${_configuration.startMenuIconPath}: $e'));
+      throw (red(
+          'fail to create icon ${_configuration.startMenuIconPath}: $e'));
     }
 
     try {
-      _configuration.tileIconPath = await _copyIcon(!isNullOrStringNull(_configuration.tileIconPath)
-          ? _configuration.tileIconPath
-          : File('${defaultsIconsFolderPath()}/150_150.png').path);
+      _configuration.tileIconPath = await _copyIcon(
+          !isNullOrStringNull(_configuration.tileIconPath)
+              ? _configuration.tileIconPath
+              : File('${defaultsIconsFolderPath()}/150_150.png').path);
     } catch (e) {
       throw (red('fail to create icon ${_configuration.tileIconPath}: $e'));
     }
@@ -89,7 +93,8 @@ class MsixFiles {
 </Package>''';
 
       var manifestFile =
-          await File('${_configuration.buildFilesFolder}\\AppxManifest.xml').create();
+          await File('${_configuration.buildFilesFolder}\\AppxManifest.xml')
+              .create();
       await manifestFile.writeAsString(manifestContent);
     } catch (e) {
       throw (red('fail to create manifest file: $e'));
@@ -105,7 +110,8 @@ class MsixFiles {
         '${vcLibsFolderPath()}/${_configuration.architecture == 'x86' ? 'x86' : 'x64'}');
 
     _vCLibsFiles.forEach((file) async {
-      await File(file.path).copy('${_configuration.buildFilesFolder}/${basename(file.path)}');
+      await File(file.path)
+          .copy('${_configuration.buildFilesFolder}/${basename(file.path)}');
     });
 
     print(green('done!'));
@@ -115,15 +121,18 @@ class MsixFiles {
     stdout.write(white('cleaning temporary files..    '));
 
     try {
-      await File('${_configuration.buildFilesFolder}/AppxManifest.xml').delete();
+      await File('${_configuration.buildFilesFolder}/AppxManifest.xml')
+          .delete();
       await Directory('${_configuration.buildFilesFolder}/$iconsFolderName')
           .delete(recursive: true);
 
       _vCLibsFiles.forEach((file) async {
-        await File('${_configuration.buildFilesFolder}/${basename(file.path)}').delete();
+        await File('${_configuration.buildFilesFolder}/${basename(file.path)}')
+            .delete();
       });
     } catch (e) {
-      print(red('fail to clean temporary files from ${_configuration.buildFilesFolder}: $e'));
+      print(red(
+          'fail to clean temporary files from ${_configuration.buildFilesFolder}: $e'));
     }
 
     print(green('done!'));
