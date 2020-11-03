@@ -84,7 +84,7 @@ class MsixFiles {
     <rescap:Capability Name="runFullTrust"/>
   </Capabilities>
   <Applications>
-    <Application Id="${_configuration.appName}" Executable="${_configuration.appName}.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="${_configuration.appName.replaceAll('_', '')}" Executable="${_configuration.appName}.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements BackgroundColor="${_configuration.iconsBackgroundColor}" 
         DisplayName="${_configuration.displayName}" Square150x150Logo="${_configuration.tileIconPath}"
         Square44x44Logo="${_configuration.startMenuIconPath}" Description="${_configuration.appDescription}" />
