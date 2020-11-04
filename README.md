@@ -1,4 +1,4 @@
-![Flutter Community: flutter_launcher_icons](https://news.thewindowsclub.com/wp-content/uploads/2018/07/MSIX.jpg)
+![MSIX](https://news.thewindowsclub.com/wp-content/uploads/2018/07/MSIX.jpg)
 
 # Msix
 A command-line tool that create Msix installer for your flutter windows-build files.
