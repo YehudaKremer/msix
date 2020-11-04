@@ -10,8 +10,6 @@ class Msix {
   MsixFiles _msixFiles;
 
   Msix() {
-    print(
-        'MsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsix');
     _configuration = Configuration();
     _msixFiles = MsixFiles(_configuration);
   }
