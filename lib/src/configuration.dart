@@ -12,7 +12,8 @@ class Configuration {
   String msixVersion = '1.0.0.0';
   String appDescription;
   String certificateSubject;
-  String buildFilesFolder = '${Directory.current.path}/build/windows/runner/Release';
+  String buildFilesFolder =
+      '${Directory.current.path}/build/windows/runner/Release';
   String certificatePath;
   String certificatePassword;
   String displayName;
@@ -40,13 +41,17 @@ class Configuration {
       publisherName = pubspec['msix_config']['publisher_name'].toString();
       identityName = pubspec['msix_config']['identity_name'].toString();
       msixVersion = pubspec['msix_config']['msix_version'].toString();
-      certificateSubject = pubspec['msix_config']['certificate_subject'].toString();
+      certificateSubject =
+          pubspec['msix_config']['certificate_subject'].toString();
       certificatePath = pubspec['msix_config']['certificate_path'].toString();
-      certificatePassword = pubspec['msix_config']['certificate_password'].toString();
+      certificatePassword =
+          pubspec['msix_config']['certificate_password'].toString();
       logoPath = pubspec['msix_config']['logo_path'].toString();
-      startMenuIconPath = pubspec['msix_config']['start_menu_icon_path'].toString();
+      startMenuIconPath =
+          pubspec['msix_config']['start_menu_icon_path'].toString();
       tileIconPath = pubspec['msix_config']['tile_icon_path'].toString();
-      iconsBackgroundColor = pubspec['msix_config']['icons_background_color'].toString();
+      iconsBackgroundColor =
+          pubspec['msix_config']['icons_background_color'].toString();
       architecture = pubspec['msix_config']['architecture'].toString();
     }
     print(green('done!'));
@@ -55,7 +60,8 @@ class Configuration {
   /// Get the assets folder path from the .packages file
   Future<void> _getAssetsFolderPath() async {
     List<String> packages =
-        (await File('${Directory.current.path}/.packages').readAsString()).split('\n');
+        (await File('${Directory.current.path}/.packages').readAsString())
+            .split('\n');
 
     msixAssetsPath = packages
             .firstWhere((package) => package.contains('msix:'))
@@ -109,7 +115,8 @@ class Configuration {
       print(yellow(
           'https://drive.google.com/file/d/1oAsnrp2Kf-jZ_kaRjyF5llQ0YZy1IwNe/view?usp=sharing'));
       exit(0);
-    } else if (extension(certificatePath) == '.pfx' && isNullOrStringNull(certificatePassword))
+    } else if (extension(certificatePath) == '.pfx' &&
+        isNullOrStringNull(certificatePassword))
       throw (red(
           'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml'));
 
@@ -117,9 +124,11 @@ class Configuration {
       throw (red(
           'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml'));
 
-    if (!iconsBackgroundColor.contains('#')) iconsBackgroundColor = '#$iconsBackgroundColor';
+    if (!iconsBackgroundColor.contains('#'))
+      iconsBackgroundColor = '#$iconsBackgroundColor';
     if (!RegExp(r'^#(?:[0-9a-fA-F]{3}){1,2}$').hasMatch(iconsBackgroundColor))
-      throw (red('Icons background color can be only in this format: "#ffffff"'));
+      throw (red(
+          'Icons background color can be only in this format: "#ffffff"'));
 
     print(green('done!'));
   }
