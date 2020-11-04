@@ -12,8 +12,7 @@ class MsixFiles {
   Future<void> createIconsFolder() async {
     stdout.write(white('create icons folder..    '));
 
-    var iconsFolderPath =
-        '${_configuration.buildFilesFolder}\\$iconsFolderName';
+    var iconsFolderPath = '${_configuration.buildFilesFolder}\\icons';
     try {
       await Directory(iconsFolderPath).create();
     } catch (e) {
@@ -23,36 +22,17 @@ class MsixFiles {
     print(green('done!'));
   }
 
-  Future<void> createIcons() async {
+  Future<void> copyIcons() async {
     stdout.write(white('copy icons..    '));
 
-    try {
-      _configuration.logoPath = await _copyIcon(
-          !isNullOrStringNull(_configuration.logoPath)
-              ? _configuration.logoPath
-              : File('${defaultsIconsFolderPath()}/icon.png').path);
-    } catch (e) {
-      throw (red('fail to create icon ${_configuration.logoPath}: $e'));
-    }
+    _configuration.logoPath = await _copyIcon(
+        _configuration.logoPath, File('${_configuration.defaultsIconsFolderPath()}/icon.png').path);
 
-    try {
-      _configuration.startMenuIconPath = await _copyIcon(
-          !isNullOrStringNull(_configuration.startMenuIconPath)
-              ? _configuration.startMenuIconPath
-              : File('${defaultsIconsFolderPath()}/44_44.png').path);
-    } catch (e) {
-      throw (red(
-          'fail to create icon ${_configuration.startMenuIconPath}: $e'));
-    }
+    _configuration.startMenuIconPath = await _copyIcon(_configuration.startMenuIconPath,
+        File('${_configuration.defaultsIconsFolderPath()}/44_44.png').path);
 
-    try {
-      _configuration.tileIconPath = await _copyIcon(
-          !isNullOrStringNull(_configuration.tileIconPath)
-              ? _configuration.tileIconPath
-              : File('${defaultsIconsFolderPath()}/150_150.png').path);
-    } catch (e) {
-      throw (red('fail to create icon ${_configuration.tileIconPath}: $e'));
-    }
+    _configuration.tileIconPath = await _copyIcon(_configuration.tileIconPath,
+        File('${_configuration.defaultsIconsFolderPath()}/150_150.png').path);
 
     print(green('done!'));
   }
@@ -60,8 +40,7 @@ class MsixFiles {
   Future<void> generateAppxManifest() async {
     stdout.write(white('create manifest file..    '));
 
-    try {
-      var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
+    var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
@@ -92,10 +71,9 @@ class MsixFiles {
   </Applications>
 </Package>''';
 
-      var manifestFile =
-          await File('${_configuration.buildFilesFolder}\\AppxManifest.xml')
-              .create();
-      await manifestFile.writeAsString(manifestContent);
+    try {
+      await File('${_configuration.buildFilesFolder}\\AppxManifest.xml').create()
+        ..writeAsString(manifestContent);
     } catch (e) {
       throw (red('fail to create manifest file: $e'));
     }
@@ -107,12 +85,10 @@ class MsixFiles {
     stdout.write(white('copy VCLibs files..    '));
 
     _vCLibsFiles = await allDirectoryFiles(
-        '${vcLibsFolderPath()}/${_configuration.architecture == 'x86' ? 'x86' : 'x64'}');
+        '${_configuration.vcLibsFolderPath()}/${_configuration.architecture}');
 
-    _vCLibsFiles.forEach((file) async {
-      await File(file.path)
-          .copy('${_configuration.buildFilesFolder}/${basename(file.path)}');
-    });
+    _vCLibsFiles.forEach((file) async =>
+        await File(file.path).copy('${_configuration.buildFilesFolder}/${basename(file.path)}'));
 
     print(green('done!'));
   }
@@ -121,26 +97,27 @@ class MsixFiles {
     stdout.write(white('cleaning temporary files..    '));
 
     try {
-      await File('${_configuration.buildFilesFolder}/AppxManifest.xml')
-          .delete();
-      await Directory('${_configuration.buildFilesFolder}/$iconsFolderName')
-          .delete(recursive: true);
-
-      _vCLibsFiles.forEach((file) async {
-        await File('${_configuration.buildFilesFolder}/${basename(file.path)}')
-            .delete();
-      });
+      await File('${_configuration.buildFilesFolder}/AppxManifest.xml').delete();
+      await Directory('${_configuration.buildFilesFolder}/icons').delete(recursive: true);
+      _vCLibsFiles.forEach((file) async =>
+          await File('${_configuration.buildFilesFolder}/${basename(file.path)}').delete());
     } catch (e) {
-      print(red(
-          'fail to clean temporary files from ${_configuration.buildFilesFolder}: $e'));
+      print(red('fail to clean temporary files from ${_configuration.buildFilesFolder}: $e'));
     }
 
     print(green('done!'));
   }
 
-  Future<String> _copyIcon(String iconPath) async {
-    var newPath = '$iconsFolderName/${basename(iconPath)}';
-    await File(iconPath).copy('${_configuration.buildFilesFolder}/$newPath');
+  Future<String> _copyIcon(String iconPath, String alternativeIconPath) async {
+    iconPath = isNullOrStringNull(iconPath) ? alternativeIconPath : iconPath;
+    var newPath = 'icons/${basename(iconPath)}';
+
+    try {
+      await File(iconPath).copy('${_configuration.buildFilesFolder}/$newPath');
+    } catch (e) {
+      throw (red('fail to create icon $iconPath: $e'));
+    }
+
     return newPath;
   }
 }

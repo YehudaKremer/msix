@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'src/utils.dart';
 import 'package:path/path.dart';
+import 'src/utils.dart';
 import 'src/configuration.dart';
 import 'src/constants.dart';
 import 'src/msixFiles.dart';
@@ -10,24 +10,18 @@ class Msix {
   MsixFiles _msixFiles;
 
   Msix() {
+    print(
+        'MsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsixMsix');
     _configuration = Configuration();
     _msixFiles = MsixFiles(_configuration);
   }
 
   /// Create and sign msix installer file
   Future<void> createMsix(List<String> args) async {
-    var packages =
-        (await File('${Directory.current.path}/.packages').readAsString())
-            .split('\n');
-    msixPackagePath = packages
-        .firstWhere((package) => package.contains('msix:'))
-        .replaceAll('msix:', '')
-        .replaceAll('file:///', '');
-
     await _configuration.getConfigValues();
     await _configuration.validateConfigValues();
     await _msixFiles.createIconsFolder();
-    await _msixFiles.createIcons();
+    await _msixFiles.copyIcons();
     await _msixFiles.generateAppxManifest();
     await _msixFiles.copyVCLibsFiles();
 
@@ -47,16 +41,12 @@ class Msix {
     print(white('singing....    '));
     var signResults = await _sign();
 
-    if (!signResults.stdout
-            .toString()
-            .contains('Number of files successfully Signed: 1') &&
+    if (!signResults.stdout.toString().contains('Number of files successfully Signed: 1') &&
         signResults.stderr.toString().length > 0) {
       print(red(signResults.stdout));
       print(red(signResults.stderr));
 
-      if (signResults.stdout
-              .toString()
-              .contains('Error: SignerSign() failed.') &&
+      if (signResults.stdout.toString().contains('Error: SignerSign() failed.') &&
           !isNullOrStringNull(_configuration.certificateSubject)) {
         printCertificateSubjectHelp();
       }
@@ -71,24 +61,16 @@ class Msix {
     await _msixFiles.cleanTemporaryFiles();
 
     print('');
-    print(green('The msix installer was created in the following location:'));
+    print(green('Msix installer created in:'));
     print('${_configuration.buildFilesFolder}'.replaceAll('/', r'\'));
 
-    if (_configuration.isUseingTestCertificate) {
-      print('');
-      print(yellow(
-          'This msix installer is signed with TEST certificate,\nif you have not yet installed this test certificate please read the following guide:'));
-      print(
-          'https://www.advancedinstaller.com/install-test-certificate-from-msix.html');
-      print('');
-    }
+    if (_configuration.isUseingTestCertificate) printTestCertificateHelp();
   }
 
   Future<ProcessResult> _pack() async {
-    var msixPath =
-        '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
+    var msixPath = '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
     var makeappxPath =
-        '${msixToolkitPath()}/Redist.${_configuration.architecture == 'x86' ? 'x86' : 'x64'}/makeappx.exe';
+        '${_configuration.msixToolkitPath()}/Redist.${_configuration.architecture}/makeappx.exe';
 
     if (await File(msixPath).exists()) await File(msixPath).delete();
 
@@ -105,7 +87,7 @@ class Msix {
 
   Future<ProcessResult> _sign() async {
     var signtoolPath =
-        '${msixToolkitPath()}/Redist.${_configuration.architecture == 'x86' ? 'x86' : 'x64'}/signtool.exe';
+        '${_configuration.msixToolkitPath()}/Redist.${_configuration.architecture}/signtool.exe';
 
     if (extension(_configuration.certificatePath) == '.pfx') {
       return await Process.run(signtoolPath, [
