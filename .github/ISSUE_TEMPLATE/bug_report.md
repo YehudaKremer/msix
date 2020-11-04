@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 ### :information_source: Info
-<!--- Please enter what version of Flutter Launcher Icons you were using so we can identify if this is a problem with a certain version of the package --->
+<!--- Please enter what version of MSIX you were using so we can identify if this is a problem with a certain version of the package --->
 Version: `e.g. v0.7.5`
 
 ### :speech_balloon: Description
