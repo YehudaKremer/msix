@@ -66,7 +66,7 @@ class Msix {
     print(green('Msix installer created in:'));
     print('${_configuration.buildFilesFolder}'.replaceAll('/', r'\'));
 
-    if (_configuration.isUseingTestCertificate) printTestCertificateHelp();
+    if (_configuration.isUsingTestCertificate) printTestCertificateHelp();
   }
 
   Future<ProcessResult> _pack() async {
