@@ -39,16 +39,12 @@ class Msix {
     print(white('singing....    '));
     var signResults = await _sign();
 
-    if (!signResults.stdout
-            .toString()
-            .contains('Number of files successfully Signed: 1') &&
+    if (!signResults.stdout.toString().contains('Number of files successfully Signed: 1') &&
         signResults.stderr.toString().length > 0) {
       print(red(signResults.stdout));
       print(red(signResults.stderr));
 
-      if (signResults.stdout
-              .toString()
-              .contains('Error: SignerSign() failed.') &&
+      if (signResults.stdout.toString().contains('Error: SignerSign() failed.') &&
           !isNullOrStringNull(_configuration.certificateSubject)) {
         printCertificateSubjectHelp();
       }
@@ -70,8 +66,7 @@ class Msix {
   }
 
   Future<ProcessResult> _pack() async {
-    var msixPath =
-        '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
+    var msixPath = '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
     var makeappxPath =
         '${_configuration.msixToolkitPath()}/Redist.${_configuration.architecture}/makeappx.exe';
 

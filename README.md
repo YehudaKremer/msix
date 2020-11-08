@@ -20,7 +20,8 @@ Add `msix_config:` configuration at the end of your `pubspec.yaml` file:
   #logo_path: C:\<PathToIcon>\<Logo.png>
   #start_menu_icon_path: C:\<PathToIcon>\<Icon.png>
   #tile_icon_path: C:\<PathToIcon>\<Icon.png>
-  #icons_background_color: ffffff
+  #icons_background_color: transparent
   #architecture: x64
+  #capabilities: 'documentsLibrary,internetClient,location,microphone,webcam'
 ```
 tags: `msi` `windows` `win10` `windows10` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
