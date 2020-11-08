@@ -23,7 +23,7 @@ class Configuration {
   String startMenuIconPath;
   String tileIconPath;
   String iconsBackgroundColor;
-  bool isUseingTestCertificate = false;
+  bool isUsingTestCertificate = false;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
   String msixToolkitPath() => '$msixAssetsPath/MSIX-Toolkit';
