@@ -109,11 +109,11 @@ class Configuration {
     /// If no certificate was chosen then use test certificate
     if (isNullOrStringNull(certificatePath)) {
       print('');
-      print(white('No certificate was specified, useing test certificate'));
+      print(white('No certificate was specified, using test certificate'));
       certificatePath = '$msixAssetsPath/test_certificate.pfx';
       certificatePassword = '1234';
       certificateSubject = defaultCertificateSubject;
-      isUseingTestCertificate = true;
+      isUsingTestCertificate = true;
     } else if (!await File(certificatePath).exists())
       throw (red(
           'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml'));
