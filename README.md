@@ -40,7 +40,7 @@ msix_config:
   logo_path: C:\<PathToIcon>\<Logo.png>
   start_menu_icon_path: C:\<PathToIcon>\<Icon.png>
   tile_icon_path: C:\<PathToIcon>\<Icon.png>
-  icons_background_color: transparent
+  icons_background_color: transparent (or some color like: '#ffffff')
   architecture: x64
   capabilities: 'documentsLibrary,internetClient,location,microphone,webcam'
 ```
