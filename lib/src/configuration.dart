@@ -9,7 +9,7 @@ class Configuration {
   String appName;
   String publisherName;
   String identityName;
-  String msixVersion = '1.0.0.0';
+  String msixVersion;
   String appDescription;
   String certificateSubject;
   String buildFilesFolder =
@@ -17,12 +17,13 @@ class Configuration {
   String certificatePath;
   String certificatePassword;
   String displayName;
-  String architecture = 'x64';
+  String architecture;
+  String capabilities;
   String logoPath;
   String startMenuIconPath;
   String tileIconPath;
-  String iconsBackgroundColor = '#ffffff';
-  bool isUsingTestCertificate = false;
+  String iconsBackgroundColor;
+  bool isUseingTestCertificate = false;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
   String msixToolkitPath() => '$msixAssetsPath/MSIX-Toolkit';
@@ -53,6 +54,7 @@ class Configuration {
       iconsBackgroundColor =
           pubspec['msix_config']['icons_background_color'].toString();
       architecture = pubspec['msix_config']['architecture'].toString();
+      capabilities = pubspec['msix_config']['capabilities'].toString();
     }
     print(green('done!'));
   }
@@ -89,6 +91,13 @@ class Configuration {
     if (isNullOrStringNull(displayName)) displayName = appName;
     if (isNullOrStringNull(identityName)) identityName = 'com.flutter.$appName';
     if (isNullOrStringNull(publisherName)) publisherName = identityName;
+    if (isNullOrStringNull(msixVersion)) msixVersion = '1.0.0.0';
+    if (isNullOrStringNull(architecture)) architecture = 'x64';
+    if (isNullOrStringNull(capabilities))
+      capabilities =
+          'documentsLibrary,internetClient,location,microphone,webcam';
+    if (isNullOrStringNull(iconsBackgroundColor))
+      iconsBackgroundColor = 'transparent';
 
     if (!await Directory(buildFilesFolder).exists())
       throw (red(
@@ -124,9 +133,11 @@ class Configuration {
       throw (red(
           'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml'));
 
-    if (!iconsBackgroundColor.contains('#'))
+    if (iconsBackgroundColor != 'transparent' &&
+        !iconsBackgroundColor.contains('#'))
       iconsBackgroundColor = '#$iconsBackgroundColor';
-    if (!RegExp(r'^#(?:[0-9a-fA-F]{3}){1,2}$').hasMatch(iconsBackgroundColor))
+    if (iconsBackgroundColor != 'transparent' &&
+        !RegExp(r'^#(?:[0-9a-fA-F]{3}){1,2}$').hasMatch(iconsBackgroundColor))
       throw (red(
           'Icons background color can be only in this format: "#ffffff"'));
 
