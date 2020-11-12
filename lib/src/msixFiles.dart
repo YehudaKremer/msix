@@ -76,7 +76,7 @@ class MsixFiles {
          xmlns:com2="http://schemas.microsoft.com/appx/manifest/com/windows10/2" 
          xmlns:com3="http://schemas.microsoft.com/appx/manifest/com/windows10/3">
   <Identity Name="${_configuration.identityName}" Version="${_configuration.msixVersion}"
-            Publisher="${_configuration.certificateSubject.replaceAll(' = ', '=')}" ProcessorArchitecture="x86" />
+            Publisher="${_configuration.publisher.replaceAll(' = ', '=')}" ProcessorArchitecture="x86" />
   <Properties>
     <DisplayName>${_configuration.displayName}</DisplayName>
     <PublisherDisplayName>${_configuration.publisherName}</PublisherDisplayName>

@@ -20,8 +20,8 @@ Future<List<File>> allDirectoryFiles(String directory) async {
 
 printCertificateSubjectHelp() {
   print(yellow(
-      'Please note: The value of certificate_subject should be in one line and with commas, example:'));
-  print(white(defaultCertificateSubject));
+      'Please note: The value of Publisher should be in one line and with commas, example:'));
+  print(white(defaultPublisher));
   print('');
   print(yellow('For more information see:'));
   print(blue(

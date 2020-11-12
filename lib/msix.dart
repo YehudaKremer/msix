@@ -36,34 +36,39 @@ class Msix {
     }
     print(green('[√]'));
 
-    stdout.write(white('singing..  '));
-    var signResults = await _sign();
+    if (isNullOrStringNull(_configuration.certificatePath)) {
+      print(yellow(
+          'skip signing step reason: Publisher provided but not Certificate Path'));
+    } else {
+      stdout.write(white('singing..  '));
+      var signResults = await _sign();
 
-    if (!signResults.stdout
-            .toString()
-            .contains('Number of files successfully Signed: 1') &&
-        signResults.stderr.toString().length > 0) {
-      print(red(signResults.stdout));
-      print(red(signResults.stderr));
-
-      if (signResults.stdout
+      if (!signResults.stdout
               .toString()
-              .contains('Error: SignerSign() failed.') &&
-          !isNullOrStringNull(_configuration.certificateSubject)) {
-        printCertificateSubjectHelp();
+              .contains('Number of files successfully Signed: 1') &&
+          signResults.stderr.toString().length > 0) {
+        print(red(signResults.stdout));
+        print(red(signResults.stderr));
+
+        if (signResults.stdout
+                .toString()
+                .contains('Error: SignerSign() failed.') &&
+            !isNullOrStringNull(_configuration.publisher)) {
+          printCertificateSubjectHelp();
+        }
+
+        exit(0);
+      } else if (packResults.exitCode != 0) {
+        print(red(signResults.stdout));
+        exit(0);
       }
 
-      exit(0);
-    } else if (packResults.exitCode != 0) {
-      print(red(signResults.stdout));
-      exit(0);
+      if (_configuration.isUsingTestCertificate) {
+        stdout.write(green('[√]'));
+        print(yellow(' *no certificate was specified, using TEST certificate'));
+      } else
+        print(green('[√]'));
     }
-
-    if (_configuration.isUsingTestCertificate) {
-      stdout.write(green('[√]'));
-      print(yellow(' *no certificate was specified, using TEST certificate'));
-    } else
-      print(green('[√]'));
 
     await _msixFiles.cleanTemporaryFiles();
 

@@ -11,7 +11,7 @@ class Configuration {
   String identityName;
   String msixVersion;
   String appDescription;
-  String certificateSubject;
+  String publisher;
   String buildFilesFolder =
       '${Directory.current.path}/build/windows/runner/Release';
   String certificatePath;
@@ -40,11 +40,11 @@ class Configuration {
     appDescription = pubspec['description'].toString();
     if (!isNullOrStringNull(pubspec['msix_config'].toString())) {
       displayName = pubspec['msix_config']['display_name'].toString();
-      publisherName = pubspec['msix_config']['publisher_name'].toString();
+      publisherName =
+          pubspec['msix_config']['publisher_display_name'].toString();
       identityName = pubspec['msix_config']['identity_name'].toString();
       msixVersion = pubspec['msix_config']['msix_version'].toString();
-      certificateSubject =
-          pubspec['msix_config']['certificate_subject'].toString();
+      publisher = pubspec['msix_config']['publisher'].toString();
       certificatePath = pubspec['msix_config']['certificate_path'].toString();
       certificatePassword =
           pubspec['msix_config']['certificate_password'].toString();
@@ -95,8 +95,7 @@ class Configuration {
     if (isNullOrStringNull(msixVersion)) msixVersion = '1.0.0.0';
     if (isNullOrStringNull(architecture)) architecture = 'x64';
     if (isNullOrStringNull(capabilities))
-      capabilities =
-          'documentsLibrary,internetClient,location,microphone,webcam';
+      capabilities = 'internetClient,location,microphone,webcam';
     if (isNullOrStringNull(iconsBackgroundColor))
       iconsBackgroundColor = 'transparent';
 
@@ -115,16 +114,18 @@ class Configuration {
 
     /// If no certificate was chosen then use test certificate
     if (isNullOrStringNull(certificatePath)) {
-      certificatePath = '$msixAssetsPath/test_certificate.pfx';
-      certificatePassword = '1234';
-      certificateSubject = defaultCertificateSubject;
-      isUsingTestCertificate = true;
+      if (isNullOrStringNull(publisher)) {
+        certificatePath = '$msixAssetsPath/test_certificate.pfx';
+        certificatePassword = '1234';
+        publisher = defaultPublisher;
+        isUsingTestCertificate = true;
+      }
     } else if (!await File(certificatePath).exists())
       throw (red(
           'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml'));
-    else if (isNullOrStringNull(certificateSubject)) {
+    else if (isNullOrStringNull(publisher)) {
       print(red(
-          'Certificate subject is empty, check "msix_config: certificate_subject" at pubspec.yaml'));
+          'Certificate subject is empty, check "msix_config: publisher" at pubspec.yaml'));
       print(yellow('see what certificate-subject value is:'));
       print(blue(
           'https://drive.google.com/file/d/1oAsnrp2Kf-jZ_kaRjyF5llQ0YZy1IwNe/view?usp=sharing'));

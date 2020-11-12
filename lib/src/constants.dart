@@ -1,6 +1,6 @@
 import 'package:ansicolor/ansicolor.dart';
 
-const String defaultCertificateSubject =
+const String defaultPublisher =
     'CN=Msix Testing, O=Msix Testing Corporation, C=US';
 final AnsiPen white = AnsiPen()..white(bold: true);
 final AnsiPen red = AnsiPen()..red(bold: true);

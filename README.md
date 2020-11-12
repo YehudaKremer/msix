@@ -3,6 +3,11 @@
 # Msix
 A command-line tool that create Msix installer for your flutter windows-build files.
 
+##### Breaking configuration changes in version >=0.1.2:
+1. `publisher_name` is now: `publisher_display_name`
+
+2. `certificate_subject` is now: `publisher`
+
 ## Install
 
 In your `pubspec.yaml`, add `msix` as a new dependency.
@@ -11,7 +16,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^0.1.1  # Or the latest version
+  msix: ^0.1.2  # Or the latest version
 ```
 
 
@@ -31,12 +36,12 @@ Add `msix_config:` configuration at the end of your `pubspec.yaml` file:
 ```yaml
 msix_config:
   display_name: MyApp
-  publisher_name: MyName
+  publisher_display_name: MyName
   identity_name: MyCompany.MySuite.MyApp
   msix_version: 1.0.0.0
   certificate_path: C:/<PathToCertificate>/<MyCertificate.pfx>
   certificate_password: 1234 (require if using .pfx certificate)
-  certificate_subject: CN=MyName
+  publisher: CN=MyName
   logo_path: C:\<PathToIcon>\<Logo.png>
   start_menu_icon_path: C:\<PathToIcon>\<Icon.png>
   tile_icon_path: C:\<PathToIcon>\<Icon.png>
@@ -44,4 +49,4 @@ msix_config:
   architecture: x64
   capabilities: 'documentsLibrary,internetClient,location,microphone,webcam'
 ```
-tags: `msi` `windows` `win10` `windows10` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
+tags: `msi` `windows` `win10` `windows10` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
