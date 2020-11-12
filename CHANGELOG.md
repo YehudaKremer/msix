@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- bug fix: automatically find the name of the exe file
+
 ## 0.1.0
 
 - add capabilities
