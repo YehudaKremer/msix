@@ -6,7 +6,7 @@
 - breaking config change: "publisher_name" is now: "publisher_display_name"
 - breaking config change:  "certificate_subject" is now: "publisher"
 
-## 0.1.2
+## 0.1.1
 
 - bug fix: automatically find the name of the exe file
 
