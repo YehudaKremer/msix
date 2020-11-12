@@ -87,7 +87,7 @@ class MsixFiles {
     <Resource Language="en-us" />
   </Resources>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14316.0" MaxVersionTested="10.0.15063.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.264" />
   </Dependencies>
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
