@@ -33,6 +33,7 @@ printTestCertificateHelp() {
   print('');
   print(yellow(
       'NOTE: This msix installer is signed with TEST certificate,\nif you have not yet installed this test certificate on your PC please read the following guide:'));
-  print(blue('https://www.advancedinstaller.com/install-test-certificate-from-msix.html'));
+  print(blue(
+      'https://www.advancedinstaller.com/install-test-certificate-from-msix.html'));
   print('');
 }

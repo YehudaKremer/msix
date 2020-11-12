@@ -34,10 +34,11 @@ class MsixFiles {
         _configuration.tileIconPath = _configuration.logoPath;
     }
 
-    _configuration.logoPath = await _copyIcon(
-        _configuration.logoPath, File('${_configuration.defaultsIconsFolderPath()}/icon.png').path);
+    _configuration.logoPath = await _copyIcon(_configuration.logoPath,
+        File('${_configuration.defaultsIconsFolderPath()}/icon.png').path);
 
-    _configuration.startMenuIconPath = await _copyIcon(_configuration.startMenuIconPath,
+    _configuration.startMenuIconPath = await _copyIcon(
+        _configuration.startMenuIconPath,
         File('${_configuration.defaultsIconsFolderPath()}/44_44.png').path);
 
     _configuration.tileIconPath = await _copyIcon(_configuration.tileIconPath,
@@ -151,7 +152,8 @@ class MsixFiles {
 </Package>''';
 
     try {
-      await File('${_configuration.buildFilesFolder}\\AppxManifest.xml').create()
+      await File('${_configuration.buildFilesFolder}\\AppxManifest.xml')
+          .create()
         ..writeAsString(manifestContent);
     } catch (e) {
       throw (red('fail to create manifest file: $e'));
@@ -166,8 +168,8 @@ class MsixFiles {
     _vCLibsFiles = await allDirectoryFiles(
         '${_configuration.vcLibsFolderPath()}/${_configuration.architecture}');
 
-    _vCLibsFiles.forEach((file) async =>
-        await File(file.path).copy('${_configuration.buildFilesFolder}/${basename(file.path)}'));
+    _vCLibsFiles.forEach((file) async => await File(file.path)
+        .copy('${_configuration.buildFilesFolder}/${basename(file.path)}'));
 
     print(green('[√]'));
   }
@@ -176,18 +178,21 @@ class MsixFiles {
     stdout.write(white('cleaning temporary files..  '));
 
     try {
-      var appxManifest = File('${_configuration.buildFilesFolder}/AppxManifest.xml');
+      var appxManifest =
+          File('${_configuration.buildFilesFolder}/AppxManifest.xml');
       if (await appxManifest.exists()) await appxManifest.delete();
 
       var iconsFolder = Directory('${_configuration.buildFilesFolder}/icons');
       if (await iconsFolder.exists()) await iconsFolder.delete(recursive: true);
 
       _vCLibsFiles.forEach((file) async {
-        var fileToDelete = File('${_configuration.buildFilesFolder}/${basename(file.path)}');
+        var fileToDelete =
+            File('${_configuration.buildFilesFolder}/${basename(file.path)}');
         if (await fileToDelete.exists()) await fileToDelete.delete();
       });
     } catch (e) {
-      print(red('fail to clean temporary files from ${_configuration.buildFilesFolder}: $e'));
+      print(red(
+          'fail to clean temporary files from ${_configuration.buildFilesFolder}: $e'));
     }
 
     print(green('[√]'));
