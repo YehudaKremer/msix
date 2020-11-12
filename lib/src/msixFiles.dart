@@ -10,7 +10,7 @@ class MsixFiles {
   MsixFiles(this._configuration);
 
   Future<void> createIconsFolder() async {
-    stdout.write(white('create icons folder..    '));
+    stdout.write(white('create icons folder..  '));
 
     var iconsFolderPath = '${_configuration.buildFilesFolder}\\icons';
     try {
@@ -19,11 +19,11 @@ class MsixFiles {
       throw (red('fail to create icons folder in $iconsFolderPath: $e'));
     }
 
-    print(green('done!'));
+    print(green('[√]'));
   }
 
   Future<void> copyIcons() async {
-    stdout.write(white('copy icons..    '));
+    stdout.write(white('copy icons..  '));
 
     /// Use the logo for all icons if they null
     if (!isNullOrStringNull(_configuration.logoPath)) {
@@ -34,17 +34,16 @@ class MsixFiles {
         _configuration.tileIconPath = _configuration.logoPath;
     }
 
-    _configuration.logoPath = await _copyIcon(_configuration.logoPath,
-        File('${_configuration.defaultsIconsFolderPath()}/icon.png').path);
+    _configuration.logoPath = await _copyIcon(
+        _configuration.logoPath, File('${_configuration.defaultsIconsFolderPath()}/icon.png').path);
 
-    _configuration.startMenuIconPath = await _copyIcon(
-        _configuration.startMenuIconPath,
+    _configuration.startMenuIconPath = await _copyIcon(_configuration.startMenuIconPath,
         File('${_configuration.defaultsIconsFolderPath()}/44_44.png').path);
 
     _configuration.tileIconPath = await _copyIcon(_configuration.tileIconPath,
         File('${_configuration.defaultsIconsFolderPath()}/150_150.png').path);
 
-    print(green('done!'));
+    print(green('[√]'));
   }
 
   bool hasCapability(String capability) => _configuration.capabilities
@@ -53,7 +52,7 @@ class MsixFiles {
       .contains(capability.trim().toLowerCase());
 
   Future<void> generateAppxManifest() async {
-    stdout.write(white('create manifest file..    '));
+    stdout.write(white('create manifest file..  '));
 
     var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
@@ -132,7 +131,7 @@ class MsixFiles {
     ${hasCapability('radios') ? '<DeviceCapability Name="radios" />' : ''}
   </Capabilities>
   <Applications>
-    <Application Id="${_configuration.appName.replaceAll('_', '')}" Executable="${_configuration.appName}.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="${_configuration.appName.replaceAll('_', '')}" Executable="${_configuration.executableFileName}" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements BackgroundColor="${_configuration.iconsBackgroundColor}"
         DisplayName="${_configuration.displayName}" Square150x150Logo="${_configuration.tileIconPath}"
         Square44x44Logo="${_configuration.startMenuIconPath}" Description="${_configuration.appDescription}" >
@@ -152,45 +151,46 @@ class MsixFiles {
 </Package>''';
 
     try {
-      await File('${_configuration.buildFilesFolder}\\AppxManifest.xml')
-          .create()
+      await File('${_configuration.buildFilesFolder}\\AppxManifest.xml').create()
         ..writeAsString(manifestContent);
     } catch (e) {
       throw (red('fail to create manifest file: $e'));
     }
 
-    print(green('done!'));
+    print(green('[√]'));
   }
 
   Future<void> copyVCLibsFiles() async {
-    stdout.write(white('copy VCLibs files..    '));
+    stdout.write(white('copy VCLibs files..  '));
 
     _vCLibsFiles = await allDirectoryFiles(
         '${_configuration.vcLibsFolderPath()}/${_configuration.architecture}');
 
-    _vCLibsFiles.forEach((file) async => await File(file.path)
-        .copy('${_configuration.buildFilesFolder}/${basename(file.path)}'));
+    _vCLibsFiles.forEach((file) async =>
+        await File(file.path).copy('${_configuration.buildFilesFolder}/${basename(file.path)}'));
 
-    print(green('done!'));
+    print(green('[√]'));
   }
 
   Future<void> cleanTemporaryFiles() async {
-    stdout.write(white('cleaning temporary files..    '));
+    stdout.write(white('cleaning temporary files..  '));
 
     try {
-      await File('${_configuration.buildFilesFolder}/AppxManifest.xml')
-          .delete();
-      await Directory('${_configuration.buildFilesFolder}/icons')
-          .delete(recursive: true);
-      _vCLibsFiles.forEach((file) async => await File(
-              '${_configuration.buildFilesFolder}/${basename(file.path)}')
-          .delete());
+      var appxManifest = File('${_configuration.buildFilesFolder}/AppxManifest.xml');
+      if (await appxManifest.exists()) await appxManifest.delete();
+
+      var iconsFolder = Directory('${_configuration.buildFilesFolder}/icons');
+      if (await iconsFolder.exists()) await iconsFolder.delete(recursive: true);
+
+      _vCLibsFiles.forEach((file) async {
+        var fileToDelete = File('${_configuration.buildFilesFolder}/${basename(file.path)}');
+        if (await fileToDelete.exists()) await fileToDelete.delete();
+      });
     } catch (e) {
-      print(red(
-          'fail to clean temporary files from ${_configuration.buildFilesFolder}: $e'));
+      print(red('fail to clean temporary files from ${_configuration.buildFilesFolder}: $e'));
     }
 
-    print(green('done!'));
+    print(green('[√]'));
   }
 
   Future<String> _copyIcon(String iconPath, String alternativeIconPath) async {

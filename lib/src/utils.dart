@@ -24,16 +24,15 @@ printCertificateSubjectHelp() {
   print(white(defaultCertificateSubject));
   print('');
   print(yellow('For more information see:'));
-  print(
-      'https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing#determine-the-subject-of-your-packaged-app');
+  print(blue(
+      'https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing#determine-the-subject-of-your-packaged-app'));
   print('');
 }
 
 printTestCertificateHelp() {
   print('');
   print(yellow(
-      'This msix installer is signed with TEST certificate,\nif you have not yet installed this test certificate please read the following guide:'));
-  print(
-      'https://www.advancedinstaller.com/install-test-certificate-from-msix.html');
+      'NOTE: This msix installer is signed with TEST certificate,\nif you have not yet installed this test certificate on your PC please read the following guide:'));
+  print(blue('https://www.advancedinstaller.com/install-test-certificate-from-msix.html'));
   print('');
 }

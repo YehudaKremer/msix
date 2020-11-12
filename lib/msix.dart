@@ -23,7 +23,7 @@ class Msix {
     await _msixFiles.generateAppxManifest();
     await _msixFiles.copyVCLibsFiles();
 
-    print(white('packing....    '));
+    stdout.write(white('packing..  '));
     var packResults = await _pack();
 
     if (packResults.stderr.toString().length > 0) {
@@ -34,21 +34,17 @@ class Msix {
       print(red(packResults.stdout));
       exit(0);
     }
-    print(green('done!'));
+    print(green('[√]'));
 
-    print(white('singing....    '));
+    stdout.write(white('singing..  '));
     var signResults = await _sign();
 
-    if (!signResults.stdout
-            .toString()
-            .contains('Number of files successfully Signed: 1') &&
+    if (!signResults.stdout.toString().contains('Number of files successfully Signed: 1') &&
         signResults.stderr.toString().length > 0) {
       print(red(signResults.stdout));
       print(red(signResults.stderr));
 
-      if (signResults.stdout
-              .toString()
-              .contains('Error: SignerSign() failed.') &&
+      if (signResults.stdout.toString().contains('Error: SignerSign() failed.') &&
           !isNullOrStringNull(_configuration.certificateSubject)) {
         printCertificateSubjectHelp();
       }
@@ -58,20 +54,24 @@ class Msix {
       print(red(signResults.stdout));
       exit(0);
     }
-    print(green('done!'));
+
+    if (_configuration.isUsingTestCertificate) {
+      stdout.write(green('[√]'));
+      print(yellow(' *no certificate was specified, using TEST certificate'));
+    } else
+      print(green('[√]'));
 
     await _msixFiles.cleanTemporaryFiles();
 
     print('');
     print(green('Msix installer created in:'));
-    print('${_configuration.buildFilesFolder}'.replaceAll('/', r'\'));
+    print(blue('${_configuration.buildFilesFolder}'.replaceAll('/', r'\')));
 
     if (_configuration.isUsingTestCertificate) printTestCertificateHelp();
   }
 
   Future<ProcessResult> _pack() async {
-    var msixPath =
-        '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
+    var msixPath = '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
     var makeappxPath =
         '${_configuration.msixToolkitPath()}/Redist.${_configuration.architecture}/makeappx.exe';
 
