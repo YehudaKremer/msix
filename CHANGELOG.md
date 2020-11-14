@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+- backward compatibility fro configuration properties
+
 ## 0.1.2
 
 - can create an unsigned installation file for upload to the store

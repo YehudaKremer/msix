@@ -56,6 +56,22 @@ class Configuration {
           pubspec['msix_config']['icons_background_color'].toString();
       architecture = pubspec['msix_config']['architecture'].toString();
       capabilities = pubspec['msix_config']['capabilities'].toString();
+
+      //Old configuration properties for backward compatibility
+      //delete it in future version
+      var oldPublisherName =
+          pubspec['msix_config']['publisher_name'].toString();
+      if (isNullOrStringNull(publisherName) &&
+          !isNullOrStringNull(oldPublisherName)) {
+        publisherName = oldPublisherName;
+      }
+
+      var oldCertificateSubject =
+          pubspec['msix_config']['certificate_subject'].toString();
+      if (isNullOrStringNull(publisher) &&
+          !isNullOrStringNull(oldCertificateSubject)) {
+        publisher = oldCertificateSubject;
+      }
     }
     print(green('[√]'));
   }

@@ -3,11 +3,6 @@
 # Msix
 A command-line tool that create Msix installer for your flutter windows-build files.
 
-##### Breaking configuration changes in version >=0.1.2:
-1. `publisher_name` is now: `publisher_display_name`
-
-2. `certificate_subject` is now: `publisher`
-
 ## Install
 
 In your `pubspec.yaml`, add `msix` as a new dependency.
@@ -16,9 +11,8 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^0.1.2  # Or the latest version
+  msix: ^0.1.3  # Or the latest version
 ```
-
 
 ## Create Msix
 Run:
@@ -39,7 +33,7 @@ msix_config:
   publisher_display_name: MyName
   identity_name: MyCompany.MySuite.MyApp
   msix_version: 1.0.0.0
-  certificate_path: C:/<PathToCertificate>/<MyCertificate.pfx>
+  certificate_path: C:\<PathToCertificate>\<MyCertificate.pfx>
   certificate_password: 1234 (require if using .pfx certificate)
   publisher: CN=MyName
   logo_path: C:\<PathToIcon>\<Logo.png>
@@ -47,6 +41,27 @@ msix_config:
   tile_icon_path: C:\<PathToIcon>\<Icon.png>
   icons_background_color: transparent (or some color like: '#ffffff')
   architecture: x64
-  capabilities: 'documentsLibrary,internetClient,location,microphone,webcam'
+  capabilities: 'internetClient,location,microphone,webcam'
 ```
-tags: `msi` `windows` `win10` `windows10` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
+| Configuration Name | Description (from [microsoft docs](https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root "microsoft docs")) | Default Value (value type) | Required |
+| ------------ | ------------ | ------------ |
+|  display_name | A friendly name that can be displayed to users. | MyApp (string) | No |
+|  publisher_display_name | A friendly name for the publisher that can be displayed to users. | MyName (string) | require if uploading to windows store |
+|  identity_name | Describes the contents of the package. | MyCompany.MySuite.MyApp (string) | require if uploading to windows store |
+|  msix_version | The version number of the package. | 1.0.0.0 (must be four numbers with dots) | require if uploading to windows store |
+|  certificate_path | `C:/<PathToCertificate>/<MyCertificate.pfx>` |  | No |
+|  certificate_password | A friendly name that can be displayed to users. | 1234 (string) | require if using .pfx certificate |
+|  publisher | Describes the publisher information. The Publisher attribute must match the publisher subject information of the certificate used to sign a package. | CN=MyName (string) | require if uploading to windows store |
+|  logo_path | An image used as the app logo, sample: `C:/<PathToIcon>/<Logo.png>` |  | No |
+|  start_menu_icon_path |  An image used as the app logo in the start-menu, sample: `C:/<PathToIcon>/<Icon.png>` |  | No |
+|  tile_icon_path | An image used as the app tile logo in the start-menu, sample: `C:/<PathToIcon>/<Icon.png>` |  | No |
+|  icons_background_color | Specifies the background color of the app icons, can be `transparent` or some color like: `#ffffff` | transparent (string) | No |
+|  architecture | Describes the architecture of the code contained in the package, one of: x86, x64, arm,, neutral | x64 (string) | No |
+|  capabilities | Declares the access to protected user resources that the package requires. availables capabilities: `internetClient` `internetClientServer` `privateNetworkClientServer` `allJoyn` `codeGeneration` `objects3D` `chat` `voipCall` `voipCall` `phoneCall` `removableStorage` `userAccountInformation` `sharedUserCertificates` `blockedChatMessages` `appointments` `contacts` `musicLibrary` `videosLibrary` `picturesLibrary` `enterpriseAuthentication` `phoneCallHistoryPublic` `spatialPerception` `userNotificationListener` `remoteSystem` `backgroundMediaPlayback` `offlineMapsManagement` `userDataTasks` `graphicsCapture` `globalMediaControl` `gazeInput` `systemManagement` `lowLevelDevices` `documentsLibrary` `accessoryManager` `allowElevation` `location` `microphone` `webcam` `radios` | `internetClient,location,microphone,webcam` (string) | No |
+
+## Windows Stroe
+
+To upload the Msix file to Windows Stroe the configuration values: `publisher_display_name`, `identity_name`, `msix_version`, `publisher` must be valid,
+see this full tutorial  from advancedinstaller: [How to publish your MSIX package to the Microsoft Store?](https://www.advancedinstaller.com/msix-publish-microsoft-store.html "How to publish your MSIX package to the Microsoft Store?")
+
+package tags: `msi` `windows` `win10` `windows10` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
