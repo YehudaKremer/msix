@@ -11,7 +11,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^0.1.3  # Or the latest version
+  msix: ^0.1.4  # Or the latest version
 ```
 
 ## Create Msix
@@ -43,8 +43,8 @@ msix_config:
   architecture: x64
   capabilities: 'internetClient,location,microphone,webcam'
 ```
-| Configuration Name | Description (from [microsoft docs](https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root "microsoft docs")) | Default Value (value type) | Required |
-| ------------ | ------------ | ------------ |
+Configuration Name | Description (from [microsoft docs](https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root "microsoft docs")) | Default Value (value type) | Required
+--- | --- | --- | --- 
 |  display_name | A friendly name that can be displayed to users. | MyApp (string) | No |
 |  publisher_display_name | A friendly name for the publisher that can be displayed to users. | MyName (string) | require if uploading to windows store |
 |  identity_name | Describes the contents of the package. | com.flutter.MyApp (string) | require if uploading to windows store |
