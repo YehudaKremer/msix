@@ -2,7 +2,7 @@
 
 ## 0.1.4
 
-- backward compatibility fro configuration properties
+- backward compatibility for configuration properties
 
 ## 0.1.2
 
