@@ -47,7 +47,7 @@ msix_config:
 | ------------ | ------------ | ------------ |
 |  display_name | A friendly name that can be displayed to users. | MyApp (string) | No |
 |  publisher_display_name | A friendly name for the publisher that can be displayed to users. | MyName (string) | require if uploading to windows store |
-|  identity_name | Describes the contents of the package. | MyCompany.MySuite.MyApp (string) | require if uploading to windows store |
+|  identity_name | Describes the contents of the package. | com.flutter.MyApp (string) | require if uploading to windows store |
 |  msix_version | The version number of the package. | 1.0.0.0 (must be four numbers with dots) | require if uploading to windows store |
 |  certificate_path | `C:/<PathToCertificate>/<MyCertificate.pfx>` |  | No |
 |  certificate_password | A friendly name that can be displayed to users. | 1234 (string) | require if using .pfx certificate |
