@@ -59,9 +59,10 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 |  architecture | Describes the architecture of the code contained in the package, one of: x86, x64, arm,, neutral | x64 (string) | No |
 |  capabilities | Declares the access to protected user resources that the package requires. availables capabilities: `internetClient` `internetClientServer` `privateNetworkClientServer` `allJoyn` `codeGeneration` `objects3D` `chat` `voipCall` `voipCall` `phoneCall` `removableStorage` `userAccountInformation` `sharedUserCertificates` `blockedChatMessages` `appointments` `contacts` `musicLibrary` `videosLibrary` `picturesLibrary` `enterpriseAuthentication` `phoneCallHistoryPublic` `spatialPerception` `userNotificationListener` `remoteSystem` `backgroundMediaPlayback` `offlineMapsManagement` `userDataTasks` `graphicsCapture` `globalMediaControl` `gazeInput` `systemManagement` `lowLevelDevices` `documentsLibrary` `accessoryManager` `allowElevation` `location` `microphone` `webcam` `radios` | `internetClient,location,microphone,webcam` (string) | No |
 
-## Windows Stroe
+## Windows Store
 
-To upload the Msix file to Windows Stroe the configuration values: `publisher_display_name`, `identity_name`, `msix_version`, `publisher` must be valid,
-see this full tutorial  from advancedinstaller: [How to publish your MSIX package to the Microsoft Store?](https://www.advancedinstaller.com/msix-publish-microsoft-store.html "How to publish your MSIX package to the Microsoft Store?")
+To upload the MSIX file to Windows Store the configuration values `publisher_display_name`, `identity_name`, `msix_version`, `publisher` must be valid.
+
+For more information, please see this tutorial: [How to publish your MSIX package to the Microsoft Store?](https://www.advancedinstaller.com/msix-publish-microsoft-store.html)
 
 package tags: `msi` `windows` `win10` `windows10` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
