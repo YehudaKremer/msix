@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5
+
+- backward compatibility for configuration properties
+
 ## 0.1.4
 
 - backward compatibility for configuration properties
