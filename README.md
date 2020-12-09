@@ -67,7 +67,7 @@ For more information, please see this tutorial: [How to publish your MSIX packag
 
 ## Command-Line Arguments
 
-If you useing pfx certificate to sign your installer you can set the password via the command-line arguments like that:
+If you using pfx certificate to sign your installer you can set the certificate password via the command-line arguments like that:
 
 ```bash
 flutter pub run msix:create --password <your certificate password>
