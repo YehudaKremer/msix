@@ -99,7 +99,6 @@ class MsixFiles {
     ${hasCapability('objects3D') ? '<uap:Capability Name="objects3D" />' : ''}
     ${hasCapability('chat') ? '<uap:Capability Name="chat" />' : ''}
     ${hasCapability('voipCall') ? '<uap:Capability Name="voipCall" />' : ''}
-    ${hasCapability('voipCall') ? '<uap:Capability Name="voipCall" />' : ''}
     ${hasCapability('phoneCall') ? '<uap:Capability Name="phoneCall" />' : ''}
     ${hasCapability('removableStorage') ? '<uap:Capability Name="removableStorage" />' : ''}
     ${hasCapability('userAccountInformation') ? '<uap:Capability Name="userAccountInformation" />' : ''}
