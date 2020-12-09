@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
+import 'package:args/args.dart';
 import 'utils.dart';
 import 'constants.dart';
 
 class Configuration {
+  ArgResults argResults;
   String msixAssetsPath = '';
   String appName;
   String publisherName;
@@ -29,8 +31,10 @@ class Configuration {
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
   String msixToolkitPath() => '$msixAssetsPath/MSIX-Toolkit';
 
-  Future<void> getConfigValues() async {
+  Future<void> getConfigValues(List<String> args) async {
     stdout.write(white('getting config values..  '));
+
+    _parseCliArguments(args);
 
     await _getAssetsFolderPath();
 
@@ -46,8 +50,14 @@ class Configuration {
       msixVersion = pubspec['msix_config']['msix_version'].toString();
       publisher = pubspec['msix_config']['publisher'].toString();
       certificatePath = pubspec['msix_config']['certificate_path'].toString();
-      certificatePassword =
-          pubspec['msix_config']['certificate_password'].toString();
+
+      if (argResults != null && argResults['password'].toString().length > 0) {
+        certificatePassword = argResults['password'];
+      } else {
+        certificatePassword =
+            pubspec['msix_config']['certificate_password'].toString();
+      }
+
       logoPath = pubspec['msix_config']['logo_path'].toString();
       startMenuIconPath =
           pubspec['msix_config']['start_menu_icon_path'].toString();
@@ -74,6 +84,18 @@ class Configuration {
       }
     }
     print(green('[√]'));
+  }
+
+  /// parse the cli options
+  Future<void> _parseCliArguments(List<String> args) async {
+    var parser = ArgParser();
+    parser.addOption('password', abbr: 'p');
+
+    try {
+      argResults = parser.parse(args);
+    } catch (e) {
+      stdout.write(yellow('invalid cli arguments: $e'));
+    }
   }
 
   /// Get the assets folder path from the .packages file

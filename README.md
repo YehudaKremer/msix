@@ -11,7 +11,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^0.1.5  # Or the latest version
+  msix: ^0.1.6  # Or the latest version
 ```
 
 ## Create Msix
@@ -64,5 +64,13 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 To upload the MSIX file to Windows Store the configuration values `publisher_display_name`, `identity_name`, `msix_version`, `publisher` must be valid.
 
 For more information, please see this tutorial: [How to publish your MSIX package to the Microsoft Store?](https://www.advancedinstaller.com/msix-publish-microsoft-store.html)
+
+## Command-Line Arguments
+
+If you useing pfx certificate to sign your installer you can set the password via the command-line arguments like that:
+
+```bash
+flutter pub run msix:create --password <your certificate password>
+```
 
 package tags: `msi` `windows` `win10` `windows10` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`

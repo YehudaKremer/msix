@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6
+
+- Allow setting certificate password via the command-line arguments
+
 ## 0.1.5
 
 - backward compatibility for configuration properties

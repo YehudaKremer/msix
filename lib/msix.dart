@@ -16,7 +16,7 @@ class Msix {
 
   /// Create and sign msix installer file
   Future<void> createMsix(List<String> args) async {
-    await _configuration.getConfigValues();
+    await _configuration.getConfigValues(args);
     await _configuration.validateConfigValues();
     await _msixFiles.createIconsFolder();
     await _msixFiles.copyIcons();
