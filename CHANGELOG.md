@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.6
+## 0.1.7
 
 - Allow setting certificate password via the command-line arguments
 
