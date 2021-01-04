@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.1.7
+## 0.1.8
+
+- fix bug: can't get pfx password from config - https://github.com/YehudaKremer/msix/issues/16
+
+## 0.1.8
 
 - Allow setting certificate password via the command-line arguments
 

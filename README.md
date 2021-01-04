@@ -11,7 +11,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^0.1.7  # Or the latest version
+  msix: ^0.1.8  # Or the latest version
 ```
 
 ## Create Msix
