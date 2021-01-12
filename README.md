@@ -1,6 +1,8 @@
 ![MSIX](https://news.thewindowsclub.com/wp-content/uploads/2018/07/MSIX.jpg)
+[![pub package](https://img.shields.io/pub/v/msix.svg?color=blue&style=for-the-badge)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit&style=for-the-badge)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green&style=for-the-badge)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix?style=for-the-badge)](https://github.com/YehudaKremer/msix/issues)
 
 # Msix
+
 A command-line tool that create Msix installer for your flutter windows-build files.
 
 ## Install
@@ -11,7 +13,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^0.1.8  # Or the latest version
+  msix: ^0.1.9  # Or the latest version
 ```
 
 ## Create Msix
@@ -35,7 +37,7 @@ msix_config:
   msix_version: 1.0.0.0
   certificate_path: C:\<PathToCertificate>\<MyCertificate.pfx>
   certificate_password: 1234 (require if using .pfx certificate)
-  publisher: CN=MyName
+  publisher: CN=My Company, O=My Company, L=Berlin, S=Berlin, C=DE
   logo_path: C:\<PathToIcon>\<Logo.png>
   start_menu_icon_path: C:\<PathToIcon>\<Icon.png>
   tile_icon_path: C:\<PathToIcon>\<Icon.png>
@@ -43,7 +45,7 @@ msix_config:
   architecture: x64
   capabilities: 'internetClient,location,microphone,webcam'
 ```
-Configuration Name | Description (from [microsoft docs](https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root "microsoft docs")) | Default Value (value type) | Required
+Configuration Name | Description (from [microsoft docs](https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root "microsoft docs")) | Example Value And Type | Required
 --- | --- | --- | --- 
 |  display_name | A friendly name that can be displayed to users. | MyApp (string) | No |
 |  publisher_display_name | A friendly name for the publisher that can be displayed to users. | MyName (string) | require if uploading to windows store |
@@ -51,7 +53,7 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 |  msix_version | The version number of the package. | 1.0.0.0 (must be four numbers with dots) | require if uploading to windows store |
 |  certificate_path | `C:/<PathToCertificate>/<MyCertificate.pfx>` |  | No |
 |  certificate_password | A friendly name that can be displayed to users. | 1234 (string) | require if using .pfx certificate |
-|  publisher | Describes the publisher information. The Publisher attribute must match the publisher subject information of the certificate used to sign a package. | CN=MyName (string) | require if uploading to windows store |
+|  publisher | Describes the publisher information. The Publisher attribute must match the publisher subject information of the certificate used to sign a package. | CN=My Company, O=My Company, L=Berlin, S=Berlin, C=DE (string) | require if uploading to windows store |
 |  logo_path | An image used as the app logo, sample: `C:/<PathToIcon>/<Logo.png>` |  | No |
 |  start_menu_icon_path |  An image used as the app logo in the start-menu, sample: `C:/<PathToIcon>/<Icon.png>` |  | No |
 |  tile_icon_path | An image used as the app tile logo in the start-menu, sample: `C:/<PathToIcon>/<Icon.png>` |  | No |
@@ -73,4 +75,9 @@ If you using pfx certificate to sign your installer you can set the certificate 
 flutter pub run msix:create --password <your certificate password>
 ```
 
+## Signing Error 
+If you getting certificate sign error `"Error: Store::ImportCertObject() failed."` or `"Error: SignerSign() failed."`
+1. Check the configuration values of `certificate_path`, `certificate_password` and `publisher`
+2. Try use Marcel`s solution: [#17](https://github.com/YehudaKremer/msix/issues/17 "#17")
+------------
 package tags: `msi` `windows` `win10` `windows10` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
