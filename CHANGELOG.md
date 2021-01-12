@@ -4,7 +4,7 @@
 
 - fix bug: can't get pfx password from config - https://github.com/YehudaKremer/msix/issues/16
 
-## 0.1.9
+## 0.1.10
 
 - delete old code and documentation editing 
 
