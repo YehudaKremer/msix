@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ansicolor/ansicolor.dart';
 import 'package:path/path.dart';
 import 'src/utils.dart';
 import 'src/configuration.dart';
@@ -10,6 +11,7 @@ class Msix {
   late MsixFiles _msixFiles;
 
   Msix() {
+    ansiColorDisabled = false;
     _configuration = Configuration();
     _msixFiles = MsixFiles(_configuration);
   }
@@ -37,22 +39,17 @@ class Msix {
     print(green('[√]'));
 
     if (isNullOrStringNull(_configuration.certificatePath)) {
-      print(yellow(
-          'skip signing step reason: Publisher provided but not Certificate Path'));
+      print(yellow('skip signing step reason: Publisher provided but not Certificate Path'));
     } else {
       stdout.write(white('singing..  '));
       var signResults = await _sign();
 
-      if (!signResults.stdout
-              .toString()
-              .contains('Number of files successfully Signed: 1') &&
+      if (!signResults.stdout.toString().contains('Number of files successfully Signed: 1') &&
           signResults.stderr.toString().length > 0) {
         print(red(signResults.stdout));
         print(red(signResults.stderr));
 
-        if (signResults.stdout
-                .toString()
-                .contains('Error: SignerSign() failed.') &&
+        if (signResults.stdout.toString().contains('Error: SignerSign() failed.') &&
             !isNullOrStringNull(_configuration.publisher)) {
           printCertificateSubjectHelp();
         }
@@ -80,8 +77,7 @@ class Msix {
   }
 
   Future<ProcessResult> _pack() async {
-    var msixPath =
-        '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
+    var msixPath = '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
     var makeappxPath =
         '${_configuration.msixToolkitPath()}/Redist.${_configuration.architecture}/makeappx.exe';
 
