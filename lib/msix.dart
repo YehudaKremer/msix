@@ -6,8 +6,8 @@ import 'src/constants.dart';
 import 'src/msixFiles.dart';
 
 class Msix {
-  Configuration _configuration;
-  MsixFiles _msixFiles;
+  late Configuration _configuration;
+  late MsixFiles _msixFiles;
 
   Msix() {
     _configuration = Configuration();
@@ -102,16 +102,16 @@ class Msix {
     var signtoolPath =
         '${_configuration.msixToolkitPath()}/Redist.${_configuration.architecture}/signtool.exe';
 
-    if (extension(_configuration.certificatePath) == '.pfx') {
+    if (extension(_configuration.certificatePath!) == '.pfx') {
       return await Process.run(signtoolPath, [
         'sign',
         '/fd',
         'SHA256',
         '/a',
         '/f',
-        _configuration.certificatePath,
+        _configuration.certificatePath!,
         '/p',
-        _configuration.certificatePassword,
+        _configuration.certificatePassword!,
         '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix',
       ]);
     } else {
@@ -120,7 +120,7 @@ class Msix {
         '/fd',
         'SHA256',
         '/a',
-        _configuration.certificatePath,
+        _configuration.certificatePath!,
         '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix',
       ]);
     }

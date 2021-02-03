@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0-nullsafety.0
+
+ - Null safe preview
+
 ## 0.1.8
 
 - fix bug: can't get pfx password from config - https://github.com/YehudaKremer/msix/issues/16
