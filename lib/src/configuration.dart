@@ -24,6 +24,7 @@ class Configuration {
   String? logoPath;
   String? startMenuIconPath;
   String? tileIconPath;
+  String? vsGeneratedImagesFolderPath;
   String? executableFileName;
   String? iconsBackgroundColor;
   bool isUsingTestCertificate = false;
@@ -51,8 +52,7 @@ class Configuration {
       publisher = pubspec['msix_config']['publisher'].toString();
       certificatePath = pubspec['msix_config']['certificate_path'].toString();
 
-      if (argResults != null &&
-          argResults['password'] != null &&
+      if (argResults['password'] != null &&
           argResults['password'].toString().length > 0) {
         certificatePassword = argResults['password'];
       } else {
@@ -64,6 +64,8 @@ class Configuration {
       startMenuIconPath =
           pubspec['msix_config']['start_menu_icon_path'].toString();
       tileIconPath = pubspec['msix_config']['tile_icon_path'].toString();
+      vsGeneratedImagesFolderPath =
+          pubspec['msix_config']['vs_generated_images_folder_path'].toString();
       iconsBackgroundColor =
           pubspec['msix_config']['icons_background_color'].toString();
       architecture = pubspec['msix_config']['architecture'].toString();

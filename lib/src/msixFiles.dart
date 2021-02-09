@@ -6,7 +6,7 @@ import 'constants.dart';
 
 class MsixFiles {
   Configuration _configuration;
-  late List<File> _vCLibsFiles;
+  List<File> _vCLibsFiles = [];
   MsixFiles(this._configuration);
 
   Future<void> createIconsFolder() async {
@@ -25,26 +25,79 @@ class MsixFiles {
   Future<void> copyIcons() async {
     stdout.write(white('copy icons..  '));
 
-    /// Use the logo for all icons if they null
-    if (!isNullOrStringNull(_configuration.logoPath)) {
-      if (isNullOrStringNull(_configuration.startMenuIconPath))
-        _configuration.startMenuIconPath = _configuration.logoPath;
+    if (isNullOrStringNull(_configuration.vsGeneratedImagesFolderPath)) {
+      /// Use the logo for all icons if they null
+      if (!isNullOrStringNull(_configuration.logoPath)) {
+        if (isNullOrStringNull(_configuration.startMenuIconPath))
+          _configuration.startMenuIconPath = _configuration.logoPath;
 
-      if (isNullOrStringNull(_configuration.tileIconPath))
-        _configuration.tileIconPath = _configuration.logoPath;
+        if (isNullOrStringNull(_configuration.tileIconPath))
+          _configuration.tileIconPath = _configuration.logoPath;
+      }
+
+      _configuration.logoPath = await _copyIcon(_configuration.logoPath,
+          File('${_configuration.defaultsIconsFolderPath()}/icon.png').path);
+
+      _configuration.startMenuIconPath = await _copyIcon(
+          _configuration.startMenuIconPath,
+          File('${_configuration.defaultsIconsFolderPath()}/44_44.png').path);
+
+      _configuration.tileIconPath = await _copyIcon(_configuration.tileIconPath,
+          File('${_configuration.defaultsIconsFolderPath()}/150_150.png').path);
+    } else {
+      final vsImages =
+          await allDirectoryFiles(_configuration.vsGeneratedImagesFolderPath!);
+
+      await Directory('${_configuration.buildFilesFolder}/Images')
+          .create(recursive: true);
+
+      vsImages.forEach((file) async => await File(file.path).copy(
+          '${_configuration.buildFilesFolder}/Images/${basename(file.path)}'));
     }
 
-    _configuration.logoPath = await _copyIcon(_configuration.logoPath,
-        File('${_configuration.defaultsIconsFolderPath()}/icon.png').path);
-
-    _configuration.startMenuIconPath = await _copyIcon(
-        _configuration.startMenuIconPath,
-        File('${_configuration.defaultsIconsFolderPath()}/44_44.png').path);
-
-    _configuration.tileIconPath = await _copyIcon(_configuration.tileIconPath,
-        File('${_configuration.defaultsIconsFolderPath()}/150_150.png').path);
-
     print(green('[√]'));
+  }
+
+  String getVisualElements() {
+    if (isNullOrStringNull(_configuration.vsGeneratedImagesFolderPath)) {
+      return '''<uap:VisualElements BackgroundColor="${_configuration.iconsBackgroundColor}"
+        DisplayName="${_configuration.displayName}" Square150x150Logo="${_configuration.tileIconPath}"
+        Square44x44Logo="${_configuration.startMenuIconPath}" Description="${_configuration.appDescription}" >
+        <uap:DefaultTile ShortName="${_configuration.displayName}" Square310x310Logo="${_configuration.tileIconPath}"
+        Square71x71Logo="${_configuration.startMenuIconPath}" Wide310x150Logo="${_configuration.tileIconPath}">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="${_configuration.tileIconPath}"/>
+        <uap:LockScreen BadgeLogo="${_configuration.tileIconPath}" Notification="badge"/>
+      </uap:VisualElements>''';
+    } else {
+      return '''<uap:VisualElements BackgroundColor="${_configuration.iconsBackgroundColor}"
+        DisplayName="${_configuration.displayName}" Square150x150Logo="Images\\Square150x150Logo.png"
+        Square44x44Logo="Images\\Square44x44Logo.png" Description="${_configuration.appDescription}" >
+        <uap:DefaultTile ShortName="${_configuration.displayName}" Square310x310Logo="Images\\LargeTile.png"
+        Square71x71Logo="Images\\SmallTile.png" Wide310x150Logo="Images\\Wide310x150Logo.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="Images\\SplashScreen.png"/>
+        <uap:LockScreen BadgeLogo="Images\\BadgeLogo.png" Notification="badge"/>
+      </uap:VisualElements>''';
+    }
+  }
+
+  String getLogo() {
+    if (isNullOrStringNull(_configuration.vsGeneratedImagesFolderPath)) {
+      return '''<Logo>${_configuration.logoPath}</Logo>''';
+    } else {
+      return '<Logo>Images\\StoreLogo.png</Logo>';
+    }
   }
 
   bool hasCapability(String capability) => _configuration.capabilities!
@@ -80,7 +133,7 @@ class MsixFiles {
   <Properties>
     <DisplayName>${_configuration.displayName}</DisplayName>
     <PublisherDisplayName>${_configuration.publisherName}</PublisherDisplayName>
-    <Logo>${_configuration.logoPath}</Logo>
+    ${getLogo()}
     <Description>${_configuration.appDescription}</Description>
   </Properties>
   <Resources>
@@ -132,20 +185,7 @@ class MsixFiles {
   </Capabilities>
   <Applications>
     <Application Id="${_configuration.appName!.replaceAll('_', '')}" Executable="${_configuration.executableFileName}" EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements BackgroundColor="${_configuration.iconsBackgroundColor}"
-        DisplayName="${_configuration.displayName}" Square150x150Logo="${_configuration.tileIconPath}"
-        Square44x44Logo="${_configuration.startMenuIconPath}" Description="${_configuration.appDescription}" >
-        <uap:DefaultTile ShortName="${_configuration.displayName}" Square310x310Logo="${_configuration.tileIconPath}"
-        Square71x71Logo="${_configuration.startMenuIconPath}" Wide310x150Logo="${_configuration.tileIconPath}">
-          <uap:ShowNameOnTiles>
-            <uap:ShowOn Tile="square150x150Logo"/>
-            <uap:ShowOn Tile="square310x310Logo"/>
-            <uap:ShowOn Tile="wide310x150Logo"/>
-          </uap:ShowNameOnTiles>
-        </uap:DefaultTile>
-        <uap:SplashScreen Image="${_configuration.tileIconPath}"/>
-        <uap:LockScreen BadgeLogo="${_configuration.tileIconPath}" Notification="badge"/>
-      </uap:VisualElements>
+      ${getVisualElements()}
     </Application>
   </Applications>
 </Package>''';
@@ -183,6 +223,30 @@ class MsixFiles {
 
       var iconsFolder = Directory('${_configuration.buildFilesFolder}/icons');
       if (await iconsFolder.exists()) await iconsFolder.delete(recursive: true);
+
+      var vsImagesFolder =
+          Directory('${_configuration.buildFilesFolder}/Images');
+      if (await vsImagesFolder.exists())
+        await vsImagesFolder.delete(recursive: true);
+
+      var priFile = File('${_configuration.buildFilesFolder}/resources.pri');
+      if (await priFile.exists()) await priFile.delete();
+
+      var priFile125 =
+          File('${_configuration.buildFilesFolder}/resources.scale-125.pri');
+      if (await priFile125.exists()) await priFile125.delete();
+
+      var priFile150 =
+          File('${_configuration.buildFilesFolder}/resources.scale-150.pri');
+      if (await priFile150.exists()) await priFile150.delete();
+
+      var priFile200 =
+          File('${_configuration.buildFilesFolder}/resources.scale-200.pri');
+      if (await priFile200.exists()) await priFile200.delete();
+
+      var priFile400 =
+          File('${_configuration.buildFilesFolder}/resources.scale-400.pri');
+      if (await priFile400.exists()) await priFile400.delete();
 
       _vCLibsFiles.forEach((file) async {
         var fileToDelete =
