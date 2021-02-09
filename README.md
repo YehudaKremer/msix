@@ -14,7 +14,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^0.2.1  # Or the latest version
+  msix: ^0.1.11  # Or the latest version
 ```
 
 ## Create Msix
@@ -59,7 +59,7 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 |  logo_path | An image used as the app logo, sample: `C:/<PathToIcon>/<Logo.png>` |  | No |
 |  start_menu_icon_path |  An image used as the app logo in the start-menu, sample: `C:/<PathToIcon>/<Icon.png>` |  | No |
 |  tile_icon_path | An image used as the app tile logo in the start-menu, sample: `C:/<PathToIcon>/<Icon.png>` |  | No |
-|  vs_generated_images_folder_path | Visual Studio can generate for you optimized icons (logo/tile and more) [see Thomas's explanation](https://github.com/YehudaKremer/msix/issues/19). This is an alternative for `logo_path`, `start_menu_icon_path`, `tile_icon_path`. sample: `C:\<PathToFolder>\Images` |  | No |
+|  vs_generated_images_folder_path (only from version `0.2.1-nullsafety.0`) | Visual Studio can generate for you optimized icons (logo/tile and more) [see Thomas's explanation](https://github.com/YehudaKremer/msix/issues/19). This is an alternative for `logo_path`, `start_menu_icon_path`, `tile_icon_path`. sample: `C:\<PathToFolder>\Images` |  | No |
 |  icons_background_color | Specifies the background color of the app icons, can be `transparent` or some color like: `#ffffff` | transparent (string) | No |
 |  architecture | Describes the architecture of the code contained in the package, one of: x86, x64, arm,, neutral | x64 (string) | No |
 |  capabilities | Declares the access to protected user resources that the package requires. availables capabilities: `internetClient` `internetClientServer` `privateNetworkClientServer` `allJoyn` `codeGeneration` `objects3D` `chat` `voipCall` `voipCall` `phoneCall` `removableStorage` `userAccountInformation` `sharedUserCertificates` `blockedChatMessages` `appointments` `contacts` `musicLibrary` `videosLibrary` `picturesLibrary` `enterpriseAuthentication` `phoneCallHistoryPublic` `spatialPerception` `userNotificationListener` `remoteSystem` `backgroundMediaPlayback` `offlineMapsManagement` `userDataTasks` `graphicsCapture` `globalMediaControl` `gazeInput` `systemManagement` `lowLevelDevices` `documentsLibrary` `accessoryManager` `allowElevation` `location` `microphone` `webcam` `radios` | `internetClient,location,microphone,webcam` (string) | No |
