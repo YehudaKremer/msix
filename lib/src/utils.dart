@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'constants.dart';
 
-bool isNullOrStringNull(String? value) => value == null || value == 'null';
+bool isNullOrStringNull(String value) => value == null || value == 'null';
 
 Future<List<File>> allDirectoryFiles(String directory) async {
   List<File> frameworkFilePaths = [];

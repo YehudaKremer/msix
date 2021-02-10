@@ -46,7 +46,7 @@ class MsixFiles {
           File('${_configuration.defaultsIconsFolderPath()}/150_150.png').path);
     } else {
       final vsImages =
-          await allDirectoryFiles(_configuration.vsGeneratedImagesFolderPath!);
+          await allDirectoryFiles(_configuration.vsGeneratedImagesFolderPath);
 
       await Directory('${_configuration.buildFilesFolder}/Images')
           .create(recursive: true);
@@ -100,7 +100,7 @@ class MsixFiles {
     }
   }
 
-  bool hasCapability(String capability) => _configuration.capabilities!
+  bool hasCapability(String capability) => _configuration.capabilities
       .split(',')
       .map((e) => e.trim().toLowerCase())
       .contains(capability.trim().toLowerCase());
@@ -129,7 +129,7 @@ class MsixFiles {
          xmlns:com2="http://schemas.microsoft.com/appx/manifest/com/windows10/2" 
          xmlns:com3="http://schemas.microsoft.com/appx/manifest/com/windows10/3">
   <Identity Name="${_configuration.identityName}" Version="${_configuration.msixVersion}"
-            Publisher="${_configuration.publisher!.replaceAll(' = ', '=')}" ProcessorArchitecture="${_configuration.architecture}" />
+            Publisher="${_configuration.publisher.replaceAll(' = ', '=')}" ProcessorArchitecture="${_configuration.architecture}" />
   <Properties>
     <DisplayName>${_configuration.displayName}</DisplayName>
     <PublisherDisplayName>${_configuration.publisherName}</PublisherDisplayName>
@@ -184,7 +184,7 @@ class MsixFiles {
     ${hasCapability('radios') ? '<DeviceCapability Name="radios" />' : ''}
   </Capabilities>
   <Applications>
-    <Application Id="${_configuration.appName!.replaceAll('_', '')}" Executable="${_configuration.executableFileName}" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="${_configuration.appName.replaceAll('_', '')}" Executable="${_configuration.executableFileName}" EntryPoint="Windows.FullTrustApplication">
       ${getVisualElements()}
     </Application>
   </Applications>
@@ -261,9 +261,9 @@ class MsixFiles {
     print(green('[√]'));
   }
 
-  Future<String> _copyIcon(String? iconPath, String alternativeIconPath) async {
+  Future<String> _copyIcon(String iconPath, String alternativeIconPath) async {
     iconPath = isNullOrStringNull(iconPath) ? alternativeIconPath : iconPath;
-    var newPath = 'icons/${basename(iconPath!)}';
+    var newPath = 'icons/${basename(iconPath)}';
 
     try {
       await File(iconPath).copy('${_configuration.buildFilesFolder}/$newPath');

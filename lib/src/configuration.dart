@@ -6,27 +6,27 @@ import 'utils.dart';
 import 'constants.dart';
 
 class Configuration {
-  late ArgResults argResults;
+  ArgResults argResults;
   String msixAssetsPath = '';
-  String? appName;
-  String? publisherName;
-  String? identityName;
-  String? msixVersion;
-  String? appDescription;
-  String? publisher;
+  String appName;
+  String publisherName;
+  String identityName;
+  String msixVersion;
+  String appDescription;
+  String publisher;
   String buildFilesFolder =
       '${Directory.current.path}/build/windows/runner/Release';
-  String? certificatePath;
-  String? certificatePassword;
-  String? displayName;
-  String? architecture;
-  String? capabilities;
-  String? logoPath;
-  String? startMenuIconPath;
-  String? tileIconPath;
-  String? vsGeneratedImagesFolderPath;
-  String? executableFileName;
-  String? iconsBackgroundColor;
+  String certificatePath;
+  String certificatePassword;
+  String displayName;
+  String architecture;
+  String capabilities;
+  String logoPath;
+  String startMenuIconPath;
+  String tileIconPath;
+  String vsGeneratedImagesFolderPath;
+  String executableFileName;
+  String iconsBackgroundColor;
   bool isUsingTestCertificate = false;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
@@ -135,7 +135,7 @@ class Configuration {
         .firstWhere((fileName) => fileName.contains('.exe'),
             orElse: () => '$appName.exe');
 
-    if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!))
+    if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion))
       throw (red('Msix version can be only in this format: "1.0.0.0"'));
 
     /// If no certificate was chosen then use test certificate
@@ -146,7 +146,7 @@ class Configuration {
         publisher = defaultPublisher;
         isUsingTestCertificate = true;
       }
-    } else if (!await File(certificatePath!).exists())
+    } else if (!await File(certificatePath).exists())
       throw (red(
           'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml'));
     else if (isNullOrStringNull(publisher)) {
@@ -156,7 +156,7 @@ class Configuration {
       print(blue(
           'https://drive.google.com/file/d/1oAsnrp2Kf-jZ_kaRjyF5llQ0YZy1IwNe/view?usp=sharing'));
       exit(0);
-    } else if (extension(certificatePath!) == '.pfx' &&
+    } else if (extension(certificatePath) == '.pfx' &&
         isNullOrStringNull(certificatePassword))
       throw (red(
           'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml'));
@@ -166,10 +166,10 @@ class Configuration {
           'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml'));
 
     if (iconsBackgroundColor != 'transparent' &&
-        !iconsBackgroundColor!.contains('#'))
+        !iconsBackgroundColor.contains('#'))
       iconsBackgroundColor = '#$iconsBackgroundColor';
     if (iconsBackgroundColor != 'transparent' &&
-        !RegExp(r'^#(?:[0-9a-fA-F]{3}){1,2}$').hasMatch(iconsBackgroundColor!))
+        !RegExp(r'^#(?:[0-9a-fA-F]{3}){1,2}$').hasMatch(iconsBackgroundColor))
       throw (red(
           'Icons background color can be only in this format: "#ffffff"'));
 
