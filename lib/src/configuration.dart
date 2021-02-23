@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 import 'package:args/args.dart';
+import 'package:package_config/package_config.dart';
 import 'utils.dart';
 import 'constants.dart';
 
@@ -88,15 +89,16 @@ class Configuration {
 
   /// Get the assets folder path from the .packages file
   Future<void> _getAssetsFolderPath() async {
-    List<String> packages =
-        (await File('${Directory.current.path}/.packages').readAsString())
-            .split('\n');
+    var packagesConfig = await loadPackageConfig(
+        File('${Directory.current.path}\\.dart_tool\\package_config.json'));
 
-    msixAssetsPath = packages
-            .firstWhere((package) => package.contains('msix:'))
-            .replaceAll('msix:', '')
-            .replaceAll('file:///', '') +
-        'assets';
+    var msixPackage =
+        packagesConfig.packages.firstWhere((package) => package.name == "msix");
+    var path =
+        msixPackage.packageUriRoot.toString().replaceAll('file:///', '') +
+            'assets';
+
+    msixAssetsPath = Uri.decodeFull(path);
   }
 
   /// Get pubspec.yaml content

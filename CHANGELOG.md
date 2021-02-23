@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.14
+
+ - Using Dart Package Configuration File v2.0
+ - Add decode for packages path - https://github.com/YehudaKremer/msix/issues/21
+
 ## 0.1.13
 
  - Sign with time stamp
