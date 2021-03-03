@@ -117,8 +117,10 @@ class Configuration {
       throw (red('App name is empty, check \'appName\' at pubspec.yaml'));
 
     if (isNullOrStringNull(appDescription)) appDescription = appName;
-    if (isNullOrStringNull(displayName)) displayName = appName;
-    if (isNullOrStringNull(identityName)) identityName = 'com.flutter.$appName';
+    if (isNullOrStringNull(displayName))
+      displayName = appName.replaceAll('_', '');
+    if (isNullOrStringNull(identityName))
+      identityName = 'com.flutter.${appName.replaceAll('_', '')}';
     if (isNullOrStringNull(publisherName)) publisherName = identityName;
     if (isNullOrStringNull(msixVersion)) msixVersion = '1.0.0.0';
     if (isNullOrStringNull(architecture)) architecture = 'x64';
