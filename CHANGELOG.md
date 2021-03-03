@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.15
+
+ - fix invalid character in the app name - https://github.com/YehudaKremer/msix/issues/25
+
 ## 0.1.14
 
  - Using Dart Package Configuration File v2.0
