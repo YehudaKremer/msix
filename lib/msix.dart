@@ -175,6 +175,8 @@ class Msix {
         _configuration.certificatePath!,
         '/p',
         _configuration.certificatePassword!,
+        '/tr',
+        'http://timestamp.digicert.com',
         '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix',
       ]);
     } else {
