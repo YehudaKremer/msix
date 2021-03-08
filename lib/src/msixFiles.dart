@@ -190,6 +190,9 @@ class MsixFiles {
   </Applications>
 </Package>''';
 
+    //clear empty rows
+    manifestContent = manifestContent.replaceAll('    \n', '');
+
     try {
       await File('${_configuration.buildFilesFolder}\\AppxManifest.xml')
           .create()
