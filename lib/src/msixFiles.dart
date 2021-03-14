@@ -52,7 +52,7 @@ class MsixFiles {
           .create(recursive: true);
 
       for (var file in vsImages) {
-        await File(file.path).copy(
+        File(file.path).copySync(
             '${_configuration.buildFilesFolder}/Images/${basename(file.path)}');
       }
     }
@@ -213,8 +213,8 @@ class MsixFiles {
         '${_configuration.vcLibsFolderPath()}/${_configuration.architecture}');
 
     for (var file in _vCLibsFiles) {
-      await File(file.path)
-          .copy('${_configuration.buildFilesFolder}/${basename(file.path)}');
+      File(file.path).copySync(
+          '${_configuration.buildFilesFolder}/${basename(file.path)}');
     }
 
     print(green('[√]'));
@@ -258,7 +258,7 @@ class MsixFiles {
       for (var file in _vCLibsFiles) {
         var fileToDelete =
             File('${_configuration.buildFilesFolder}/${basename(file.path)}');
-        if (await fileToDelete.exists()) await fileToDelete.delete();
+        if (fileToDelete.existsSync()) fileToDelete.deleteSync();
       }
     } catch (e) {
       print(red(
