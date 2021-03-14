@@ -1,19 +1,18 @@
-import 'dart:async';
 import 'dart:io';
 import 'constants.dart';
 
 bool isNullOrStringNull(String? value) => value == null || value == 'null';
 
-Future<List<File>> allDirectoryFiles(String directory) async {
+List<File> allDirectoryFiles(String directory) {
   List<File> frameworkFilePaths = [];
 
-  await Directory(directory)
-      .list(recursive: true, followLinks: false)
-      .listen((FileSystemEntity entity) async {
-    var file = File(entity.path);
+  var files =
+      Directory(directory).listSync(recursive: true, followLinks: false);
 
-    if (await file.exists()) frameworkFilePaths.add(file);
-  }).asFuture();
+  for (var file in files) {
+    var currnetFile = File(file.path);
+    if (currnetFile.existsSync()) frameworkFilePaths.add(currnetFile);
+  }
 
   return frameworkFilePaths;
 }
