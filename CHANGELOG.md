@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.17
+## 0.1.18
 
  - fix: Sometimes VC libraries are not copied - https://github.com/YehudaKremer/msix/issues/30
 

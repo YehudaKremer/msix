@@ -24,7 +24,7 @@ class Msix {
     await _msixFiles.createIconsFolder();
     await _msixFiles.copyIcons();
     await _msixFiles.generateAppxManifest();
-    await _msixFiles.copyVCLibsFiles();
+    _msixFiles.copyVCLibsFiles();
 
     if (!isNullOrStringNull(_configuration.vsGeneratedImagesFolderPath)) {
       stdout.write(white('generate PRI file..  '));

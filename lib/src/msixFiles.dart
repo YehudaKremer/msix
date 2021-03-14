@@ -46,7 +46,7 @@ class MsixFiles {
           File('${_configuration.defaultsIconsFolderPath()}/150_150.png').path);
     } else {
       final vsImages =
-          await allDirectoryFiles(_configuration.vsGeneratedImagesFolderPath);
+          allDirectoryFiles(_configuration.vsGeneratedImagesFolderPath);
 
       await Directory('${_configuration.buildFilesFolder}/Images')
           .create(recursive: true);
@@ -206,10 +206,10 @@ class MsixFiles {
     print(green('[√]'));
   }
 
-  Future<void> copyVCLibsFiles() async {
+  void copyVCLibsFiles() {
     stdout.write(white('copy VCLibs files..  '));
 
-    _vCLibsFiles = await allDirectoryFiles(
+    _vCLibsFiles = allDirectoryFiles(
         '${_configuration.vcLibsFolderPath()}/${_configuration.architecture}');
 
     for (var file in _vCLibsFiles) {
