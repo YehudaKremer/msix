@@ -51,8 +51,10 @@ class MsixFiles {
       await Directory('${_configuration.buildFilesFolder}/Images')
           .create(recursive: true);
 
-      vsImages.forEach((file) async => await File(file.path).copy(
-          '${_configuration.buildFilesFolder}/Images/${basename(file.path)}'));
+      for (var file in vsImages) {
+        File(file.path).copySync(
+            '${_configuration.buildFilesFolder}/Images/${basename(file.path)}');
+      }
     }
 
     print(green('[√]'));
@@ -210,8 +212,10 @@ class MsixFiles {
     _vCLibsFiles = await allDirectoryFiles(
         '${_configuration.vcLibsFolderPath()}/${_configuration.architecture}');
 
-    _vCLibsFiles.forEach((file) async => await File(file.path)
-        .copy('${_configuration.buildFilesFolder}/${basename(file.path)}'));
+    for (var file in _vCLibsFiles) {
+      File(file.path).copySync(
+          '${_configuration.buildFilesFolder}/${basename(file.path)}');
+    }
 
     print(green('[√]'));
   }
@@ -251,11 +255,11 @@ class MsixFiles {
           File('${_configuration.buildFilesFolder}/resources.scale-400.pri');
       if (await priFile400.exists()) await priFile400.delete();
 
-      _vCLibsFiles.forEach((file) async {
+      for (var file in _vCLibsFiles) {
         var fileToDelete =
             File('${_configuration.buildFilesFolder}/${basename(file.path)}');
-        if (await fileToDelete.exists()) await fileToDelete.delete();
-      });
+        if (fileToDelete.existsSync()) fileToDelete.deleteSync();
+      }
     } catch (e) {
       print(red(
           'fail to clean temporary files from ${_configuration.buildFilesFolder}: $e'));
