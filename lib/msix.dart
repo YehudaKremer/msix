@@ -58,7 +58,7 @@ class Msix {
       print(yellow(
           'skip signing step reason: Publisher provided but not Certificate Path'));
     } else {
-      stdout.write(white('singing..  '));
+      stdout.write(white('signing..  '));
       var signResults = await _sign();
 
       if (!signResults.stdout
