@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.4-nullsafety.0
+## 0.2.5-nullsafety.0
 
  - fix: Sometimes VC libraries are not copied - https://github.com/YehudaKremer/msix/issues/30
 
