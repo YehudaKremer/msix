@@ -1,6 +1,6 @@
 name: msix
 description: Create and sign Msix installer for flutter windows-build files.
-version: 0.1.19
+version: 1.0.0
 maintainer: Yehuda Kremer (yehudakremer@gmail.com)
 homepage: https://github.com/YehudaKremer/msix
 
@@ -12,14 +12,14 @@ flutter:
         pluginClass: none
 
 environment:
-  sdk: '>=2.4.0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
   flutter: '>=1.20.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  path: ^1.7.0
-  yaml: ^2.2.1
-  ansicolor: ^1.1.1
-  args: ^1.6.0
-  package_config: ^1.9.3
+  path: ^1.8.0
+  yaml: ^3.1.0
+  ansicolor: ^2.0.1
+  args: ^2.0.0
+  package_config: ^2.0.0

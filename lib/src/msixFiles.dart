@@ -6,15 +6,15 @@ import 'constants.dart';
 
 class MsixFiles {
   Configuration _configuration;
-  List<File> _vCLibsFiles = [];
+  Iterable<File> _vCLibsFiles = [];
   MsixFiles(this._configuration);
 
-  Future<void> createIconsFolder() async {
+  void createIconsFolder() {
     stdout.write(white('create icons folder..  '));
 
     var iconsFolderPath = '${_configuration.buildFilesFolder}\\icons';
     try {
-      await Directory(iconsFolderPath).create();
+      Directory(iconsFolderPath).createSync();
     } catch (e) {
       throw (red('fail to create icons folder in $iconsFolderPath: $e'));
     }
@@ -22,34 +22,34 @@ class MsixFiles {
     print(green('[√]'));
   }
 
-  Future<void> copyIcons() async {
+  void copyIcons() {
     stdout.write(white('copy icons..  '));
 
-    if (isNullOrStringNull(_configuration.vsGeneratedImagesFolderPath)) {
+    if (_configuration.vsGeneratedImagesFolderPath.isNull) {
       /// Use the logo for all icons if they null
-      if (!isNullOrStringNull(_configuration.logoPath)) {
-        if (isNullOrStringNull(_configuration.startMenuIconPath))
+      if (!_configuration.logoPath.isNull) {
+        if (_configuration.startMenuIconPath.isNull)
           _configuration.startMenuIconPath = _configuration.logoPath;
 
-        if (isNullOrStringNull(_configuration.tileIconPath))
+        if (_configuration.tileIconPath.isNull)
           _configuration.tileIconPath = _configuration.logoPath;
       }
 
-      _configuration.logoPath = await _copyIcon(_configuration.logoPath,
+      _configuration.logoPath = _copyIcon(_configuration.logoPath,
           File('${_configuration.defaultsIconsFolderPath()}/icon.png').path);
 
-      _configuration.startMenuIconPath = await _copyIcon(
+      _configuration.startMenuIconPath = _copyIcon(
           _configuration.startMenuIconPath,
           File('${_configuration.defaultsIconsFolderPath()}/44_44.png').path);
 
-      _configuration.tileIconPath = await _copyIcon(_configuration.tileIconPath,
+      _configuration.tileIconPath = _copyIcon(_configuration.tileIconPath,
           File('${_configuration.defaultsIconsFolderPath()}/150_150.png').path);
     } else {
       final vsImages =
-          allDirectoryFiles(_configuration.vsGeneratedImagesFolderPath);
+          allDirectoryFiles(_configuration.vsGeneratedImagesFolderPath!);
 
-      await Directory('${_configuration.buildFilesFolder}/Images')
-          .create(recursive: true);
+      Directory('${_configuration.buildFilesFolder}/Images')
+          .createSync(recursive: true);
 
       for (var file in vsImages) {
         File(file.path).copySync(
@@ -61,7 +61,7 @@ class MsixFiles {
   }
 
   String getVisualElements() {
-    if (isNullOrStringNull(_configuration.vsGeneratedImagesFolderPath)) {
+    if (_configuration.vsGeneratedImagesFolderPath.isNull) {
       return '''<uap:VisualElements BackgroundColor="${_configuration.iconsBackgroundColor}"
         DisplayName="${_configuration.displayName}" Square150x150Logo="${_configuration.tileIconPath}"
         Square44x44Logo="${_configuration.startMenuIconPath}" Description="${_configuration.appDescription}" >
@@ -95,19 +95,19 @@ class MsixFiles {
   }
 
   String getLogo() {
-    if (isNullOrStringNull(_configuration.vsGeneratedImagesFolderPath)) {
+    if (_configuration.vsGeneratedImagesFolderPath.isNull) {
       return '''<Logo>${_configuration.logoPath}</Logo>''';
     } else {
       return '<Logo>Images\\StoreLogo.png</Logo>';
     }
   }
 
-  bool hasCapability(String capability) => _configuration.capabilities
+  bool hasCapability(String capability) => _configuration.capabilities!
       .split(',')
       .map((e) => e.trim().toLowerCase())
       .contains(capability.trim().toLowerCase());
 
-  Future<void> generateAppxManifest() async {
+  void generateAppxManifest() {
     stdout.write(white('create manifest file..  '));
 
     var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
@@ -131,7 +131,7 @@ class MsixFiles {
          xmlns:com2="http://schemas.microsoft.com/appx/manifest/com/windows10/2" 
          xmlns:com3="http://schemas.microsoft.com/appx/manifest/com/windows10/3">
   <Identity Name="${_configuration.identityName}" Version="${_configuration.msixVersion}"
-            Publisher="${_configuration.publisher.replaceAll(' = ', '=')}" ProcessorArchitecture="${_configuration.architecture}" />
+            Publisher="${_configuration.publisher!.replaceAll(' = ', '=')}" ProcessorArchitecture="${_configuration.architecture}" />
   <Properties>
     <DisplayName>${_configuration.displayName}</DisplayName>
     <PublisherDisplayName>${_configuration.publisherName}</PublisherDisplayName>
@@ -186,7 +186,7 @@ class MsixFiles {
     ${hasCapability('radios') ? '<DeviceCapability Name="radios" />' : ''}
   </Capabilities>
   <Applications>
-    <Application Id="${_configuration.appName.replaceAll('_', '')}" Executable="${_configuration.executableFileName}" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="${_configuration.appName!.replaceAll('_', '')}" Executable="${_configuration.executableFileName}" EntryPoint="Windows.FullTrustApplication">
       ${getVisualElements()}
     </Application>
   </Applications>
@@ -195,10 +195,11 @@ class MsixFiles {
     //clear empty rows
     manifestContent = manifestContent.replaceAll('    \n', '');
 
+    var appxManifestPath =
+        '${_configuration.buildFilesFolder}\\AppxManifest.xml';
     try {
-      await File('${_configuration.buildFilesFolder}\\AppxManifest.xml')
-          .create()
-        ..writeAsString(manifestContent);
+      File(appxManifestPath).createSync();
+      File(appxManifestPath).writeAsStringSync(manifestContent);
     } catch (e) {
       throw (red('fail to create manifest file: $e'));
     }
@@ -220,40 +221,40 @@ class MsixFiles {
     print(green('[√]'));
   }
 
-  Future<void> cleanTemporaryFiles() async {
+  void cleanTemporaryFiles() {
     stdout.write(white('cleaning temporary files..  '));
 
     try {
       var appxManifest =
           File('${_configuration.buildFilesFolder}/AppxManifest.xml');
-      if (await appxManifest.exists()) await appxManifest.delete();
+      if (appxManifest.existsSync()) appxManifest.deleteSync();
 
       var iconsFolder = Directory('${_configuration.buildFilesFolder}/icons');
-      if (await iconsFolder.exists()) await iconsFolder.delete(recursive: true);
+      if (iconsFolder.existsSync()) iconsFolder.deleteSync(recursive: true);
 
       var vsImagesFolder =
           Directory('${_configuration.buildFilesFolder}/Images');
-      if (await vsImagesFolder.exists())
-        await vsImagesFolder.delete(recursive: true);
+      if (vsImagesFolder.existsSync())
+        vsImagesFolder.deleteSync(recursive: true);
 
       var priFile = File('${_configuration.buildFilesFolder}/resources.pri');
-      if (await priFile.exists()) await priFile.delete();
+      if (priFile.existsSync()) priFile.deleteSync();
 
       var priFile125 =
           File('${_configuration.buildFilesFolder}/resources.scale-125.pri');
-      if (await priFile125.exists()) await priFile125.delete();
+      if (priFile125.existsSync()) priFile125.deleteSync();
 
       var priFile150 =
           File('${_configuration.buildFilesFolder}/resources.scale-150.pri');
-      if (await priFile150.exists()) await priFile150.delete();
+      if (priFile150.existsSync()) priFile150.deleteSync();
 
       var priFile200 =
           File('${_configuration.buildFilesFolder}/resources.scale-200.pri');
-      if (await priFile200.exists()) await priFile200.delete();
+      if (priFile200.existsSync()) priFile200.deleteSync();
 
       var priFile400 =
           File('${_configuration.buildFilesFolder}/resources.scale-400.pri');
-      if (await priFile400.exists()) await priFile400.delete();
+      if (priFile400.existsSync()) priFile400.deleteSync();
 
       for (var file in _vCLibsFiles) {
         var fileToDelete =
@@ -268,12 +269,12 @@ class MsixFiles {
     print(green('[√]'));
   }
 
-  Future<String> _copyIcon(String iconPath, String alternativeIconPath) async {
-    iconPath = isNullOrStringNull(iconPath) ? alternativeIconPath : iconPath;
-    var newPath = 'icons/${basename(iconPath)}';
+  String _copyIcon(String? iconPath, String alternativeIconPath) {
+    iconPath = iconPath.isNull ? alternativeIconPath : iconPath;
+    var newPath = 'icons/${basename(iconPath!)}';
 
     try {
-      await File(iconPath).copy('${_configuration.buildFilesFolder}/$newPath');
+      File(iconPath).copySync('${_configuration.buildFilesFolder}/$newPath');
     } catch (e) {
       throw (red('fail to create icon $iconPath: $e'));
     }

@@ -1,21 +1,13 @@
 import 'dart:io';
 import 'constants.dart';
 
-bool isNullOrStringNull(String value) => value == null || value == 'null';
-
-List<File> allDirectoryFiles(String directory) {
-  List<File> frameworkFilePaths = [];
-
-  var files =
-      Directory(directory).listSync(recursive: true, followLinks: false);
-
-  for (var file in files) {
-    var currnetFile = File(file.path);
-    if (currnetFile.existsSync()) frameworkFilePaths.add(currnetFile);
-  }
-
-  return frameworkFilePaths;
+extension StringValidations on String? {
+  bool get isNull => this == null || this == 'null';
 }
+
+Iterable<File> allDirectoryFiles(String directory) => Directory(directory)
+    .listSync(recursive: true, followLinks: false)
+    .map((e) => File(e.path));
 
 printCertificateSubjectHelp() {
   print(yellow(

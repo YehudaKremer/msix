@@ -7,8 +7,8 @@ import 'src/constants.dart';
 import 'src/msixFiles.dart';
 
 class Msix {
-  Configuration _configuration;
-  MsixFiles _msixFiles;
+  late Configuration _configuration;
+  late MsixFiles _msixFiles;
 
   Msix() {
     ansiColorDisabled = false;
@@ -19,16 +19,16 @@ class Msix {
   /// Create and sign msix installer file
   Future<void> createMsix(List<String> args) async {
     await _configuration.getConfigValues(args);
-    await _configuration.validateConfigValues();
-    await _msixFiles.cleanTemporaryFiles();
-    await _msixFiles.createIconsFolder();
-    await _msixFiles.copyIcons();
-    await _msixFiles.generateAppxManifest();
+    _configuration.validateConfigValues();
+    _msixFiles.cleanTemporaryFiles();
+    _msixFiles.createIconsFolder();
+    _msixFiles.copyIcons();
+    _msixFiles.generateAppxManifest();
     _msixFiles.copyVCLibsFiles();
 
-    if (!isNullOrStringNull(_configuration.vsGeneratedImagesFolderPath)) {
+    if (!_configuration.vsGeneratedImagesFolderPath.isNull) {
       stdout.write(white('generate PRI file..  '));
-      var priResults = await _generatePRI();
+      var priResults = _generatePRI();
 
       if (priResults.stderr.toString().length > 0) {
         print(red(priResults.stdout));
@@ -42,7 +42,7 @@ class Msix {
     }
 
     stdout.write(white('packing..  '));
-    var packResults = await _pack();
+    var packResults = _pack();
 
     if (packResults.stderr.toString().length > 0) {
       print(red(packResults.stdout));
@@ -54,12 +54,12 @@ class Msix {
     }
     print(green('[√]'));
 
-    if (isNullOrStringNull(_configuration.certificatePath)) {
+    if (_configuration.certificatePath.isNull) {
       print(yellow(
           'skip signing step reason: Publisher provided but not Certificate Path'));
     } else {
       stdout.write(white('signing..  '));
-      var signResults = await _sign();
+      var signResults = _sign();
 
       if (!signResults.stdout
               .toString()
@@ -71,7 +71,7 @@ class Msix {
         if (signResults.stdout
                 .toString()
                 .contains('Error: SignerSign() failed.') &&
-            !isNullOrStringNull(_configuration.publisher)) {
+            !_configuration.publisher.isNull) {
           printCertificateSubjectHelp();
         }
 
@@ -88,7 +88,7 @@ class Msix {
         print(green('[√]'));
     }
 
-    await _msixFiles.cleanTemporaryFiles();
+    _msixFiles.cleanTemporaryFiles();
 
     print('');
     print(green('Msix installer created in:'));
@@ -97,15 +97,15 @@ class Msix {
     if (_configuration.isUsingTestCertificate) printTestCertificateHelp();
   }
 
-  Future<ProcessResult> _generatePRI() async {
+  ProcessResult _generatePRI() {
     var msixPath =
         '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
     var makepriPath =
         '${_configuration.msixToolkitPath()}/Redist.${_configuration.architecture}/makepri.exe';
 
-    if (await File(msixPath).exists()) await File(msixPath).delete();
+    if (File(msixPath).existsSync()) File(msixPath).deleteSync();
 
-    var result = await Process.run(makepriPath, [
+    var result = Process.runSync(makepriPath, [
       'createconfig',
       '/cf',
       '${_configuration.buildFilesFolder}\\priconfig.xml',
@@ -123,7 +123,7 @@ class Msix {
       exit(0);
     }
 
-    result = await Process.run(makepriPath, [
+    result = Process.runSync(makepriPath, [
       'new',
       '/cf',
       '${_configuration.buildFilesFolder}\\priconfig.xml',
@@ -137,20 +137,20 @@ class Msix {
     ]);
 
     var priconfig = File('${_configuration.buildFilesFolder}/priconfig.xml');
-    if (await priconfig.exists()) await priconfig.delete();
+    if (priconfig.existsSync()) priconfig.deleteSync();
 
     return result;
   }
 
-  Future<ProcessResult> _pack() async {
+  ProcessResult _pack() {
     var msixPath =
         '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix';
     var makeappxPath =
         '${_configuration.msixToolkitPath()}/Redist.${_configuration.architecture}/makeappx.exe';
 
-    if (await File(msixPath).exists()) await File(msixPath).delete();
+    if (File(msixPath).existsSync()) File(msixPath).deleteSync();
 
-    return await Process.run(makeappxPath, [
+    return Process.runSync(makeappxPath, [
       'pack',
       '/v',
       '/o',
@@ -161,31 +161,31 @@ class Msix {
     ]);
   }
 
-  Future<ProcessResult> _sign() async {
+  ProcessResult _sign() {
     var signtoolPath =
         '${_configuration.msixToolkitPath()}/Redist.${_configuration.architecture}/signtool.exe';
 
-    if (extension(_configuration.certificatePath) == '.pfx') {
-      return await Process.run(signtoolPath, [
+    if (extension(_configuration.certificatePath!) == '.pfx') {
+      return Process.runSync(signtoolPath, [
         'sign',
         '/fd',
         'SHA256',
         '/a',
         '/f',
-        _configuration.certificatePath,
+        _configuration.certificatePath!,
         '/p',
-        _configuration.certificatePassword,
+        _configuration.certificatePassword!,
         '/tr',
         'http://timestamp.digicert.com',
         '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix',
       ]);
     } else {
-      return await Process.run(signtoolPath, [
+      return Process.runSync(signtoolPath, [
         'sign',
         '/fd',
         'SHA256',
         '/a',
-        _configuration.certificatePath,
+        _configuration.certificatePath!,
         '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix',
       ]);
     }

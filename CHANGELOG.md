@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0
+
+ - null safety
+ - code refactoring
+ - move to sync code to increase stability
+ - fix: Wrong executable selection - https://github.com/YehudaKremer/msix/pull/32
+
 ## 0.1.19
 
  - fix: Sometimes VC libraries are not copied - https://github.com/YehudaKremer/msix/issues/30
