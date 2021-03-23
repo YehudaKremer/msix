@@ -133,11 +133,14 @@ class Configuration {
       throw (red(
           'Build files not found as $buildFilesFolder, first run "flutter build windows" then try again'));
 
-    executableFileName = await Directory(buildFilesFolder)
-        .list()
-        .map((file) => basename(file.path))
-        .firstWhere((fileName) => fileName.contains('.exe'),
-            orElse: () => '$appName.exe');
+    final executables = await Directory(buildFilesFolder)
+      .list()
+      .map((file) => basename(file.path))
+      .where((fileName) => fileName.contains('.exe'))
+      .toList();
+    executableFileName = executables.firstWhere(
+        (exeName) => exeName == '$appName.exe',
+        orElse: () => executables.first);
 
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!))
       throw (red('Msix version can be only in this format: "1.0.0.0"'));
