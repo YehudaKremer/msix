@@ -172,10 +172,3 @@ class Configuration {
     print(green('[√]'));
   }
 }
-
-extension ArgResultsReader on ArgResults {
-  String? read(String key, {String? fallback}) =>
-      this[key] != null && this[key].toString().length > 0
-          ? this[key]
-          : fallback;
-}
