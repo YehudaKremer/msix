@@ -43,10 +43,11 @@ class Configuration {
 
     if (!pubspec['msix_config'].toString().isNull) {
       displayName = pubspec['msix_config']['display_name'].toString();
-      publisherName = pubspec['msix_config']['publisher_display_name'].toString();
+      publisherName =
+          pubspec['msix_config']['publisher_display_name'].toString();
       identityName = pubspec['msix_config']['identity_name'].toString();
-      msixVersion =  argResults.read('version',
-          fallback: pubspec['msix_config']['msix_version'].toString()); 
+      msixVersion = argResults.read('version',
+          fallback: pubspec['msix_config']['msix_version'].toString());
       publisher = pubspec['msix_config']['publisher'].toString();
       certificatePath = argResults.read('certificate',
           fallback: pubspec['msix_config']['certificate_path'].toString());

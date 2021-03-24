@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1
+
+ - Command-Line Arguments extensions - https://github.com/YehudaKremer/msix/pull/33
+ - fix: Incorrect description for certificate_password - https://github.com/YehudaKremer/msix/issues/34
+
 ## 1.0.0
 
  - null safety
