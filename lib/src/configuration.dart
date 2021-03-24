@@ -48,7 +48,8 @@ class Configuration {
       msixVersion =  argResults.read('version',
           fallback: pubspec['msix_config']['msix_version'].toString()); 
       publisher = pubspec['msix_config']['publisher'].toString();
-      certificatePath = pubspec['msix_config']['certificate_path'].toString();
+      certificatePath = argResults.read('certificate',
+          fallback: pubspec['msix_config']['certificate_path'].toString());
       certificatePassword = argResults.read('password',
           fallback: pubspec['msix_config']['certificate_password'].toString());
       logoPath = pubspec['msix_config']['logo_path'].toString();
@@ -69,6 +70,7 @@ class Configuration {
   void _parseCliArguments(List<String> args) {
     var parser = ArgParser()
       ..addOption('password', abbr: 'p')
+      ..addOption('certificate', abbr: 'c')
       ..addOption('version', abbr: 'v');
 
     try {
