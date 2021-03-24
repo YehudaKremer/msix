@@ -43,21 +43,14 @@ class Configuration {
 
     if (!pubspec['msix_config'].toString().isNull) {
       displayName = pubspec['msix_config']['display_name'].toString();
-      publisherName =
-          pubspec['msix_config']['publisher_display_name'].toString();
+      publisherName = pubspec['msix_config']['publisher_display_name'].toString();
       identityName = pubspec['msix_config']['identity_name'].toString();
-      msixVersion = pubspec['msix_config']['msix_version'].toString();
+      msixVersion =  argResults.read('version',
+          fallback: pubspec['msix_config']['msix_version'].toString()); 
       publisher = pubspec['msix_config']['publisher'].toString();
       certificatePath = pubspec['msix_config']['certificate_path'].toString();
-
-      if (argResults['password'] != null &&
-          argResults['password'].toString().length > 0) {
-        certificatePassword = argResults['password'];
-      } else {
-        certificatePassword =
-            pubspec['msix_config']['certificate_password'].toString();
-      }
-
+      certificatePassword = argResults.read('password',
+          fallback: pubspec['msix_config']['certificate_password'].toString());
       logoPath = pubspec['msix_config']['logo_path'].toString();
       startMenuIconPath =
           pubspec['msix_config']['start_menu_icon_path'].toString();
@@ -74,7 +67,9 @@ class Configuration {
 
   /// parse the cli options
   void _parseCliArguments(List<String> args) {
-    var parser = ArgParser()..addOption('password', abbr: 'p');
+    var parser = ArgParser()
+      ..addOption('password', abbr: 'p')
+      ..addOption('version', abbr: 'v');
 
     try {
       argResults = parser.parse(args);
@@ -174,4 +169,11 @@ class Configuration {
 
     print(green('[√]'));
   }
+}
+
+extension ArgResultsReader on ArgResults {
+  String? read(String key, {String? fallback}) =>
+      this[key] != null && this[key].toString().length > 0
+          ? this[key]
+          : fallback;
 }
