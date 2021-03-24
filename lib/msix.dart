@@ -56,7 +56,7 @@ class Msix {
 
     if (_configuration.certificatePath.isNull) {
       print(yellow(
-          'skip signing step reason: Publisher provided but not Certificate Path'));
+          'signing with TEST certificate, reason: Publisher provided but not Certificate Path'));
     } else {
       stdout.write(white('signing..  '));
       var signResults = _sign();

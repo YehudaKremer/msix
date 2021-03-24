@@ -4,7 +4,7 @@ import 'package:args/args.dart';
 import 'constants.dart';
 
 extension StringValidations on String? {
-  bool get isNull => this == null || this == 'null';
+  bool get isNull => this == null;
 }
 
 extension ArgResultsReader on ArgResults {

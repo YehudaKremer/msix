@@ -1,6 +1,10 @@
 # Changelog
 
-## 1.0.1
+## 1.0.2
+
+ - fix: command-line arguments not taken into account in case there is no configuration at all
+
+## 1.0.2
 
  - Command-Line Arguments extensions - https://github.com/YehudaKremer/msix/pull/33
  - fix: Incorrect description for certificate_password - https://github.com/YehudaKremer/msix/issues/34

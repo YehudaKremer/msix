@@ -38,32 +38,30 @@ class Configuration {
     _parseCliArguments(args);
     await _getAssetsFolderPath();
     var pubspec = _getPubspec();
-    appName = pubspec['name'].toString();
-    appDescription = pubspec['description'].toString();
+    appName = pubspec['name']?.toString();
+    appDescription = pubspec['description']?.toString();
+    var config = pubspec['msix_config'];
 
-    if (!pubspec['msix_config'].toString().isNull) {
-      displayName = pubspec['msix_config']['display_name'].toString();
-      publisherName =
-          pubspec['msix_config']['publisher_display_name'].toString();
-      identityName = pubspec['msix_config']['identity_name'].toString();
-      msixVersion = argResults.read('version',
-          fallback: pubspec['msix_config']['msix_version'].toString());
-      publisher = pubspec['msix_config']['publisher'].toString();
-      certificatePath = argResults.read('certificate',
-          fallback: pubspec['msix_config']['certificate_path'].toString());
-      certificatePassword = argResults.read('password',
-          fallback: pubspec['msix_config']['certificate_password'].toString());
-      logoPath = pubspec['msix_config']['logo_path'].toString();
-      startMenuIconPath =
-          pubspec['msix_config']['start_menu_icon_path'].toString();
-      tileIconPath = pubspec['msix_config']['tile_icon_path'].toString();
-      vsGeneratedImagesFolderPath =
-          pubspec['msix_config']['vs_generated_images_folder_path'].toString();
-      iconsBackgroundColor =
-          pubspec['msix_config']['icons_background_color'].toString();
-      architecture = pubspec['msix_config']['architecture'].toString();
-      capabilities = pubspec['msix_config']['capabilities'].toString();
-    }
+    msixVersion = argResults.read('version',
+        fallback: config?['msix_version']?.toString());
+    certificatePath = argResults.read('certificate',
+        fallback: config?['certificate_path']?.toString());
+    certificatePassword = argResults.read('password',
+        fallback: config?['certificate_password']?.toString());
+
+    displayName = config?['display_name']?.toString();
+    publisherName = config?['publisher_display_name']?.toString();
+    identityName = config?['identity_name']?.toString();
+    publisher = config?['publisher']?.toString();
+    logoPath = config?['logo_path']?.toString();
+    startMenuIconPath = config?['start_menu_icon_path']?.toString();
+    tileIconPath = config?['tile_icon_path']?.toString();
+    vsGeneratedImagesFolderPath =
+        config?['vs_generated_images_folder_path']?.toString();
+    iconsBackgroundColor = config?['icons_background_color']?.toString();
+    architecture = config?['architecture']?.toString();
+    capabilities = config?['capabilities']?.toString();
+
     print(green('[√]'));
   }
 
