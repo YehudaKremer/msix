@@ -28,3 +28,10 @@ printTestCertificateHelp() {
       'https://www.advancedinstaller.com/install-test-certificate-from-msix.html'));
   print('');
 }
+
+extension ArgResultsReader on ArgResults {
+  String? read(String key, {String? fallback}) =>
+      this[key] != null && this[key].toString().length > 0
+          ? this[key]
+          : fallback;
+}
