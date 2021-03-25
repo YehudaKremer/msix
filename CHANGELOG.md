@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.2
+## 1.0.3
 
  - fix: command-line arguments not taken into account in case there is no configuration at all
 
