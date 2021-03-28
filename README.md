@@ -14,7 +14,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^1.0.4
+  msix: ^1.0.3
 ```
 
 ## :package: Create Msix
@@ -61,7 +61,7 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 |  tile_icon_path | An image used as the app tile logo in the start-menu, sample: `C:/<PathToIcon>/<Icon.png>` |  | No |
 |  vs_generated_images_folder_path | Visual Studio can generate for you optimized icons (logo/tile and more) [see Thomas's explanation](https://github.com/YehudaKremer/msix/issues/19). This is an alternative for `logo_path`, `start_menu_icon_path`, `tile_icon_path`. sample: `C:\<PathToFolder>\Images` |  | No |
 |  icons_background_color | Specifies the background color of the app icons, can be `transparent` or some color like: `#ffffff` | transparent (string) | No |
-|  languages | Declares a language for resources contained in the package. | en-us (string) | No |
+|  languages | Declares a language for resources contained in the package. sample: `en-us, ja-jp` | en-us (string) | No |
 |  architecture | Describes the architecture of the code contained in the package, one of: x86, x64, arm,, neutral | x64 (string) | No |
 |  capabilities | Declares the access to protected user resources that the package requires. availables capabilities: `internetClient` `internetClientServer` `privateNetworkClientServer` `allJoyn` `codeGeneration` `objects3D` `chat` `voipCall` `voipCall` `phoneCall` `removableStorage` `userAccountInformation` `sharedUserCertificates` `blockedChatMessages` `appointments` `contacts` `musicLibrary` `videosLibrary` `picturesLibrary` `enterpriseAuthentication` `phoneCallHistoryPublic` `spatialPerception` `userNotificationListener` `remoteSystem` `backgroundMediaPlayback` `offlineMapsManagement` `userDataTasks` `graphicsCapture` `globalMediaControl` `gazeInput` `systemManagement` `lowLevelDevices` `documentsLibrary` `accessoryManager` `allowElevation` `location` `microphone` `webcam` `radios` | `internetClient,location,microphone,webcam` (string) | No |
 
