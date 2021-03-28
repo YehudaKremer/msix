@@ -29,6 +29,7 @@ class Configuration {
   String? executableFileName;
   String? iconsBackgroundColor;
   bool isUsingTestCertificate = false;
+  Iterable<String>? languages;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
   String msixToolkitPath() => '$msixAssetsPath/MSIX-Toolkit';
@@ -61,6 +62,7 @@ class Configuration {
     iconsBackgroundColor = config?['icons_background_color']?.toString();
     architecture = config?['architecture']?.toString();
     capabilities = config?['capabilities']?.toString();
+    languages = getLanguages(config);
 
     print(green('[√]'));
   }
@@ -77,6 +79,20 @@ class Configuration {
     } catch (e) {
       stdout.write(yellow('invalid cli arguments: $e'));
     }
+  }
+
+  Iterable<String>? getLanguages(dynamic config) {
+    var languagesConfig = config?['languages']?.toString();
+    if (languagesConfig != null) {
+      var languages = languagesConfig
+          .split(',')
+          .map((e) => e.trim())
+          .where((element) => element.length > 0);
+
+      if (languages.length > 0) return languages;
+    }
+
+    return null;
   }
 
   /// Get the assets folder path from the .packages file
@@ -116,6 +132,7 @@ class Configuration {
     if (capabilities.isNull)
       capabilities = 'internetClient,location,microphone,webcam';
     if (iconsBackgroundColor.isNull) iconsBackgroundColor = 'transparent';
+    if (languages == null) languages = ['en-us'];
 
     if (!Directory(buildFilesFolder).existsSync())
       throw (red(

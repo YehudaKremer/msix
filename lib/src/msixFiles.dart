@@ -139,7 +139,7 @@ class MsixFiles {
     <Description>${_configuration.appDescription}</Description>
   </Properties>
   <Resources>
-    <Resource Language="en-us" />
+    ${_configuration.languages!.map((language) => '<Resource Language="$language" />').join('')}
   </Resources>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19042.630" />

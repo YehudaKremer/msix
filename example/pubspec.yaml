@@ -33,5 +33,6 @@ flutter:
   #tile_icon_path: C:\<PathToIcon>\<Icon.png>
   #vs_generated_images_folder_path: C:\<PathToFolder>\Images
   #icons_background_color: transparent
+  #languages: en-us
   #architecture: x64
   #capabilities: 'internetClient,location,microphone,webcam'
