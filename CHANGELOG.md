@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+ - add terminal explanation about the test certificate installation
+
 ## 1.0.4
 
  - support multiple languages - https://github.com/YehudaKremer/msix/issues/35

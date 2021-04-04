@@ -91,10 +91,13 @@ class Msix {
     _msixFiles.cleanTemporaryFiles();
 
     print('');
-    print(green('Msix installer created in:'));
-    print(blue('${_configuration.buildFilesFolder}'.replaceAll('/', r'\')));
+    print(green('Msix installer created here:'));
+    print(blue(
+        '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix'
+            .replaceAll('/', r'\')));
 
-    if (_configuration.isUsingTestCertificate) printTestCertificateHelp();
+    if (_configuration.isUsingTestCertificate)
+      printTestCertificateHelp(_configuration.certificatePath!);
   }
 
   ProcessResult _generatePRI() {

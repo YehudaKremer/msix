@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:args/args.dart';
-
 import 'constants.dart';
 
 extension StringValidations on String? {
@@ -29,10 +28,17 @@ printCertificateSubjectHelp() {
   print('');
 }
 
-printTestCertificateHelp() {
+printTestCertificateHelp(String pfxTestPath) {
   print('');
+  print(yellow('Certificate Note:'));
   print(yellow(
-      'NOTE: This msix installer is signed with TEST certificate,\nif you have not yet installed this test certificate on your PC please read the following guide:'));
+      'every msix installer must be signed with certificate before it can be installed.'));
+  print(yellow(
+      'for testing purposes we signed your msix installer with a TEST certificate,'));
+  print(yellow(
+      'to use this certificate you need to install it, open the certificate file:'));
+  print(blue(pfxTestPath));
+  print(yellow('and follow the instructions at the following link:'));
   print(blue(
       'https://www.advancedinstaller.com/install-test-certificate-from-msix.html'));
   print('');
