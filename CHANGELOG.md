@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6
+
+ - add `--debug` flag to debug signing issues, fixed missing argument `/f' for not '.pfx' certificates
+
 ## 1.0.5
 
  - add terminal explanation about the test certificate installation
