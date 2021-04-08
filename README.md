@@ -79,7 +79,7 @@ available arguments:
 - package version: `--version` (must be in the format: **0.0.0.0**)
 - certificate path: `--certificate` or `-c`
 - certificate password: `--password` or `-p`
-- debug signing problems: `--debug`
+- debug signing problems: `--debug` or `-d`
 
 example:
 ```bash
