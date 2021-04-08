@@ -77,7 +77,7 @@ class Configuration {
       ..addOption('password', abbr: 'p')
       ..addOption('certificate', abbr: 'c')
       ..addOption('version', abbr: 'v')
-      ..addOption('debug');
+      ..addFlag('debug');
 
     try {
       argResults = parser.parse(args);
