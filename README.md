@@ -14,7 +14,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^1.0.5
+  msix: ^1.0.6
 ```
 
 ## :package: Create Msix
@@ -79,6 +79,7 @@ available arguments:
 - package version: `--version` (must be in the format: **0.0.0.0**)
 - certificate path: `--certificate` or `-c`
 - certificate password: `--password` or `-p`
+- debug signing problems: `--debug`
 
 example:
 ```bash

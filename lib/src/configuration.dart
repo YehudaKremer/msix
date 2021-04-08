@@ -1,10 +1,12 @@
 import 'dart:io';
-import 'package:path/path.dart';
-import 'package:yaml/yaml.dart';
+
 import 'package:args/args.dart';
 import 'package:package_config/package_config.dart';
-import 'utils.dart';
+import 'package:path/path.dart';
+import 'package:yaml/yaml.dart';
+
 import 'constants.dart';
+import 'utils.dart';
 
 class Configuration {
   late ArgResults argResults;
@@ -28,6 +30,7 @@ class Configuration {
   String? vsGeneratedImagesFolderPath;
   String? executableFileName;
   String? iconsBackgroundColor;
+  bool debugSigning = false;
   bool isUsingTestCertificate = false;
   Iterable<String>? languages;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
@@ -49,6 +52,7 @@ class Configuration {
         fallback: config?['certificate_path']?.toString());
     certificatePassword = argResults.read('password',
         fallback: config?['certificate_password']?.toString());
+    debugSigning = argResults.wasParsed('debug');
 
     displayName = config?['display_name']?.toString();
     publisherName = config?['publisher_display_name']?.toString();
@@ -72,7 +76,8 @@ class Configuration {
     var parser = ArgParser()
       ..addOption('password', abbr: 'p')
       ..addOption('certificate', abbr: 'c')
-      ..addOption('version', abbr: 'v');
+      ..addOption('version', abbr: 'v')
+      ..addFlag('debug', abbr: 'd');
 
     try {
       argResults = parser.parse(args);
