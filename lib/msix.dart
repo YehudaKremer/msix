@@ -1,10 +1,12 @@
 import 'dart:io';
+
 import 'package:ansicolor/ansicolor.dart';
 import 'package:path/path.dart';
-import 'src/utils.dart';
+
 import 'src/configuration.dart';
 import 'src/constants.dart';
 import 'src/msixFiles.dart';
+import 'src/utils.dart';
 
 class Msix {
   late Configuration _configuration;
@@ -180,6 +182,7 @@ class Msix {
         _configuration.certificatePassword!,
         '/tr',
         'http://timestamp.digicert.com',
+        if (_configuration.debugSigning) '/debug',
         '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix',
       ]);
     } else {
@@ -188,7 +191,9 @@ class Msix {
         '/fd',
         'SHA256',
         '/a',
+        '/f',
         _configuration.certificatePath!,
+        if (_configuration.debugSigning) '/debug',
         '${_configuration.buildFilesFolder}\\${_configuration.appName}.msix',
       ]);
     }
