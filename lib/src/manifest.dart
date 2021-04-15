@@ -9,7 +9,7 @@ class Manifest {
   Manifest() : _config = injector.get<Configuration>();
 
   void generateAppxManifest() {
-    Log.startTask('generate appx manifest');
+    Log.taskStarted('generate appx manifest');
 
     var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
   <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
@@ -102,10 +102,9 @@ class Manifest {
       File(appxManifestPath).writeAsStringSync(manifestContent);
     } catch (e) {
       Log.error('fail to create manifest file: $e');
-      exit(0);
     }
 
-    Log.completeTask();
+    Log.taskCompleted();
   }
 
   String _getVisualElements() {

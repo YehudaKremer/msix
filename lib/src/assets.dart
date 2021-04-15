@@ -13,21 +13,20 @@ class Assets {
   }
 
   void createIconsFolder() {
-    Log.startTask('creating app icons folder');
+    Log.taskStarted('creating app icons folder');
 
     var iconsFolderPath = '${_config.buildFilesFolder}\\Images';
     try {
       Directory(iconsFolderPath).createSync();
     } catch (e) {
       Log.error('fail to create app icons folder in: $iconsFolderPath\n$e');
-      exit(0);
     }
 
-    Log.completeTask();
+    Log.taskCompleted();
   }
 
   void copyIcons() {
-    Log.startTask('copying app icons');
+    Log.taskStarted('copying app icons');
 
     if (_config.haveAnyIconFromUser()) {
       _config.tileIconPath = _copyIconToBuildFolder(_config.tileIconPath ??
@@ -45,21 +44,21 @@ class Assets {
           _config.vsGeneratedIconsFolderPath ?? _config.defaultsIconsFolderPath());
     }
 
-    Log.completeTask();
+    Log.taskCompleted();
   }
 
   void copyVCLibsFiles() {
-    Log.startTask('copying VC libraries');
+    Log.taskStarted('copying VC libraries');
 
     for (var file in _vCLibsFiles) {
       File(file.path).copySync('${_config.buildFilesFolder}/${basename(file.path)}');
     }
 
-    Log.completeTask();
+    Log.taskCompleted();
   }
 
-  void cleanTemporaryFiles() {
-    Log.startTask('cleaning temporary files');
+  void cleanTemporaryFiles({clearMsixFiles = false}) {
+    Log.taskStarted('cleaning temporary files');
 
     try {
       var appxManifest = File('${_config.buildFilesFolder}/AppxManifest.xml');
@@ -87,11 +86,21 @@ class Assets {
         var fileToDelete = File('${_config.buildFilesFolder}/${basename(file.path)}');
         if (fileToDelete.existsSync()) fileToDelete.deleteSync();
       }
+
+      if (clearMsixFiles) {
+        Directory(_config.buildFilesFolder)
+            .listSync(recursive: true, followLinks: false)
+            .map((e) => File(e.path))
+            .where((f) => basename(f.path).contains('.msix'))
+            .forEach((file) {
+          file.deleteSync();
+        });
+      }
     } catch (e) {
       Log.error('fail to clean temporary files from ${_config.buildFilesFolder}: $e');
     }
 
-    Log.completeTask();
+    Log.taskCompleted();
   }
 
   void _copyVsGeneratedIcons(String iconsFolderPath) {
@@ -113,7 +122,6 @@ class Assets {
       File(iconPath).copySync('${_config.buildFilesFolder}/$newPath');
     } catch (e) {
       Log.error('fail to copy icon: $iconPath\n$e');
-      exit(0);
     }
 
     return newPath;

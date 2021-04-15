@@ -37,8 +37,6 @@ class Configuration {
   String msixToolkitPath() => '$msixAssetsPath/MSIX-Toolkit';
 
   Future<void> getConfigValues(List<String> arguments) async {
-    Log.startTask('getting config values');
-
     _parseCliArguments(arguments);
     await _getAssetsFolderPath();
     var pubspec = _getPubspec();
@@ -65,17 +63,14 @@ class Configuration {
     architecture = config?['architecture']?.toString();
     capabilities = config?['capabilities']?.toString();
     languages = _getLanguages(config);
-
-    Log.completeTask();
   }
 
   /// Validate the configuration values and set default values
   void validateConfigValues() {
-    Log.startTask('validating config values');
+    Log.taskStarted('validating config values');
 
     if (appName.isNull) {
       Log.error('App name is empty, check \'appName\' at pubspec.yaml');
-      exit(0);
     }
     if (appDescription.isNull) appDescription = appName;
     if (displayName.isNull) displayName = appName!.replaceAll('_', '');
@@ -90,7 +85,6 @@ class Configuration {
     if (!Directory(buildFilesFolder).existsSync()) {
       Log.error(
           'Build files not found as $buildFilesFolder, first run "flutter build windows" then try again');
-      exit(0);
     }
 
     final executables = Directory(buildFilesFolder)
@@ -103,23 +97,20 @@ class Configuration {
 
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {
       Log.error('Msix version can be only in this format: "1.0.0.0"');
-      exit(0);
     }
 
     /// If no certificate was chosen then use test certificate
     if (certificatePath.isNull) {
-      if (publisher.isNull) {
-        certificatePath = '$msixAssetsPath/test_certificate.pfx';
-        certificatePassword = '1234';
-        publisher = defaultPublisher;
-        isUsingTestCertificate = true;
-      }
+      certificatePath = '$msixAssetsPath/test_certificate.pfx';
+      certificatePassword = '1234';
+      publisher = defaultPublisher;
+      isUsingTestCertificate = true;
     } else if (!File(certificatePath!).existsSync()) {
       Log.error(
           'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml');
-      exit(0);
     } else if (publisher.isNull) {
-      Log.error('Certificate subject is empty, check "msix_config: publisher" at pubspec.yaml');
+      Log.error('Certificate subject is empty, check "msix_config: publisher" at pubspec.yaml',
+          andExit: false);
       Log.warn('see what certificate-subject value is:');
       Log.link(
           'https://drive.google.com/file/d/1oAsnrp2Kf-jZ_kaRjyF5llQ0YZy1IwNe/view?usp=sharing');
@@ -127,13 +118,11 @@ class Configuration {
     } else if (extension(certificatePath!) == '.pfx' && certificatePassword.isNull) {
       Log.error(
           'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml');
-      exit(0);
     }
 
     if (!['x86', 'x64'].contains(architecture)) {
       Log.error(
           'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml');
-      exit(0);
     }
 
     if (iconsBackgroundColor != 'transparent' && !iconsBackgroundColor!.contains('#'))
@@ -142,10 +131,9 @@ class Configuration {
     if (iconsBackgroundColor != 'transparent' &&
         !RegExp(r'^#(?:[0-9a-fA-F]{3}){1,2}$').hasMatch(iconsBackgroundColor!)) {
       Log.error('Icons background color can be only in this format: "#ffffff"');
-      exit(0);
     }
 
-    Log.completeTask();
+    Log.taskCompleted();
   }
 
   bool haveAnyIconFromUser() =>
@@ -153,7 +141,7 @@ class Configuration {
 
   /// parse the cli arguments
   void _parseCliArguments(List<String> args) {
-    Log.startTask('parsing cli arguments');
+    Log.taskStarted('parsing cli arguments');
 
     var parser = ArgParser()
       ..addOption('password', abbr: 'p')
@@ -164,10 +152,10 @@ class Configuration {
     try {
       argResults = parser.parse(args);
     } catch (e) {
-      Log.warn('invalid cli arguments: $e');
+      Log.error('invalid cli arguments: $e');
     }
 
-    Log.completeTask();
+    Log.taskCompleted();
   }
 
   /// Get the assets folder path from the .packages file

@@ -20,17 +20,12 @@ class Msix {
     await config.getConfigValues(cliArguments);
     config.validateConfigValues();
     final assets = Assets();
-    assets.cleanTemporaryFiles();
+    assets.cleanTemporaryFiles(clearMsixFiles: true);
     assets.createIconsFolder();
     assets.copyIcons();
     assets.copyVCLibsFiles();
-
     Manifest()..generateAppxManifest();
-
-    if (!config.haveAnyIconFromUser()) {
-      Makepri.generatePRI();
-    }
-
+    Makepri.generatePRI();
     Makeappx.pack();
     Signtool.sign();
     assets.cleanTemporaryFiles();

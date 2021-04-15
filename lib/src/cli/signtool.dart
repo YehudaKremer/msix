@@ -7,13 +7,10 @@ import '../configuration.dart';
 
 class Signtool {
   static void sign() {
-    Log.startTask('signing');
+    Log.taskStarted('signing');
     final config = injector.get<Configuration>();
 
-    if (config.certificatePath.isNull) {
-      Log.warn(
-          'signing with TEST certificate, reason: Publisher provided but not Certificate Path');
-    } else {
+    if (!config.certificatePath.isNull) {
       var signtoolPath = '${config.msixToolkitPath()}/Redist.${config.architecture}/signtool.exe';
 
       ProcessResult signResults;
@@ -48,8 +45,8 @@ class Signtool {
 
       if (!signResults.stdout.toString().contains('Number of files successfully Signed: 1') &&
           signResults.stderr.toString().length > 0) {
-        Log.error(signResults.stdout);
-        Log.error(signResults.stderr);
+        Log.error(signResults.stdout, andExit: false);
+        Log.error(signResults.stderr, andExit: false);
 
         if (signResults.stdout.toString().contains('Error: SignerSign() failed.') &&
             !config.publisher.isNull) {
@@ -59,11 +56,7 @@ class Signtool {
         exit(0);
       }
 
-      if (config.isUsingTestCertificate) {
-        Log.warn(' *no certificate was specified, using TEST certificate');
-      }
-
-      Log.completeTask();
+      Log.taskCompleted();
     }
   }
 }
