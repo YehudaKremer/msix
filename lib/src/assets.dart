@@ -2,23 +2,24 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'utils/injector.dart';
 import 'utils/log.dart';
-import 'utils/extensions.dart';
 import 'configuration.dart';
 
 class Assets {
   Configuration _config;
   Iterable<File> _vCLibsFiles = [];
 
-  Assets() : _config = injector.get<Configuration>();
+  Assets() : _config = injector.get<Configuration>() {
+    _vCLibsFiles = _allDirectoryFiles('${_config.vcLibsFolderPath()}/${_config.architecture}');
+  }
 
   void createIconsFolder() {
-    Log.startTask('creating icons folder');
+    Log.startTask('creating app icons folder');
 
-    var iconsFolderPath = '${_config.buildFilesFolder}\\icons';
+    var iconsFolderPath = '${_config.buildFilesFolder}\\Images';
     try {
       Directory(iconsFolderPath).createSync();
     } catch (e) {
-      Log.error('fail to create icons folder in $iconsFolderPath: $e');
+      Log.error('fail to create app icons folder in: $iconsFolderPath\n$e');
       exit(0);
     }
 
@@ -26,32 +27,22 @@ class Assets {
   }
 
   void copyIcons() {
-    Log.startTask('copying icons');
+    Log.startTask('copying app icons');
 
-    if (_config.vsGeneratedImagesFolderPath.isNull) {
-      /// Use the logo for all icons if they null
-      if (!_config.logoPath.isNull) {
-        if (_config.startMenuIconPath.isNull) _config.startMenuIconPath = _config.logoPath;
+    if (_config.haveAnyIconFromUser()) {
+      _config.tileIconPath = _copyIconToBuildFolder(_config.tileIconPath ??
+          _config.logoPath ??
+          '${_config.defaultsIconsFolderPath()}/Square150x150Logo.scale-400.png');
 
-        if (_config.tileIconPath.isNull) _config.tileIconPath = _config.logoPath;
-      }
+      _config.startMenuIconPath = _copyIconToBuildFolder(_config.startMenuIconPath ??
+          _config.logoPath ??
+          '${_config.defaultsIconsFolderPath()}/Square44x44Logo.altform-lightunplated_targetsize-256.png');
 
-      _config.logoPath =
-          _copyIcon(_config.logoPath, File('${_config.defaultsIconsFolderPath()}/icon.png').path);
-
-      _config.startMenuIconPath = _copyIcon(
-          _config.startMenuIconPath, File('${_config.defaultsIconsFolderPath()}/44_44.png').path);
-
-      _config.tileIconPath = _copyIcon(
-          _config.tileIconPath, File('${_config.defaultsIconsFolderPath()}/150_150.png').path);
+      _config.logoPath = _copyIconToBuildFolder(
+          _config.logoPath ?? '${_config.defaultsIconsFolderPath()}/StoreLogo.scale-400.png');
     } else {
-      final vsImages = _allDirectoryFiles(_config.vsGeneratedImagesFolderPath!);
-
-      Directory('${_config.buildFilesFolder}/Images').createSync(recursive: true);
-
-      for (var file in vsImages) {
-        File(file.path).copySync('${_config.buildFilesFolder}/Images/${basename(file.path)}');
-      }
+      _copyVsGeneratedIcons(
+          _config.vsGeneratedIconsFolderPath ?? _config.defaultsIconsFolderPath());
     }
 
     Log.completeTask();
@@ -59,8 +50,6 @@ class Assets {
 
   void copyVCLibsFiles() {
     Log.startTask('copying VC libraries');
-
-    _vCLibsFiles = _allDirectoryFiles('${_config.vcLibsFolderPath()}/${_config.architecture}');
 
     for (var file in _vCLibsFiles) {
       File(file.path).copySync('${_config.buildFilesFolder}/${basename(file.path)}');
@@ -76,11 +65,8 @@ class Assets {
       var appxManifest = File('${_config.buildFilesFolder}/AppxManifest.xml');
       if (appxManifest.existsSync()) appxManifest.deleteSync();
 
-      var iconsFolder = Directory('${_config.buildFilesFolder}/icons');
+      var iconsFolder = Directory('${_config.buildFilesFolder}/Images');
       if (iconsFolder.existsSync()) iconsFolder.deleteSync(recursive: true);
-
-      var vsImagesFolder = Directory('${_config.buildFilesFolder}/Images');
-      if (vsImagesFolder.existsSync()) vsImagesFolder.deleteSync(recursive: true);
 
       var priFile = File('${_config.buildFilesFolder}/resources.pri');
       if (priFile.existsSync()) priFile.deleteSync();
@@ -108,17 +94,26 @@ class Assets {
     Log.completeTask();
   }
 
-  Iterable<File> _allDirectoryFiles(String directory) =>
-      Directory(directory).listSync(recursive: true, followLinks: false).map((e) => File(e.path));
+  void _copyVsGeneratedIcons(String iconsFolderPath) {
+    for (var file in _allDirectoryFiles(iconsFolderPath)) {
+      _copyIconToBuildFolder(file.path);
+    }
+  }
 
-  String _copyIcon(String? iconPath, String alternativeIconPath) {
-    iconPath = iconPath.isNull ? alternativeIconPath : iconPath;
-    var newPath = 'icons/${basename(iconPath!)}';
+  Iterable<File> _allDirectoryFiles(String directory) {
+    return Directory(directory)
+        .listSync(recursive: true, followLinks: false)
+        .map((e) => File(e.path));
+  }
+
+  String _copyIconToBuildFolder(String iconPath) {
+    final newPath = 'Images/${basename(iconPath)}';
 
     try {
       File(iconPath).copySync('${_config.buildFilesFolder}/$newPath');
     } catch (e) {
-      Log.error('fail to create icon $iconPath: $e');
+      Log.error('fail to copy icon: $iconPath\n$e');
+      exit(0);
     }
 
     return newPath;

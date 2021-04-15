@@ -3,7 +3,6 @@ import 'src/utils/injector.dart';
 import 'src/utils/log.dart';
 import 'src/configuration.dart';
 import 'src/assets.dart';
-import 'src/utils/extensions.dart';
 import 'src/cli/makepri.dart';
 import 'src/manifest.dart';
 import 'src/cli/makeappx.dart';
@@ -28,7 +27,7 @@ class Msix {
 
     Manifest()..generateAppxManifest();
 
-    if (!config.vsGeneratedImagesFolderPath.isNull) {
+    if (!config.haveAnyIconFromUser()) {
       Makepri.generatePRI();
     }
 

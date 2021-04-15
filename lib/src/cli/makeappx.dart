@@ -7,10 +7,8 @@ class Makeappx {
   static void pack() {
     Log.startTask('packing');
     final config = injector.get<Configuration>();
-    var msixPath = '${config.buildFilesFolder}\\${config.appName}.msix';
+    var msixPath = '${config.buildFilesFolder}/${config.appName}.msix';
     var makeappxPath = '${config.msixToolkitPath()}/Redist.${config.architecture}/makeappx.exe';
-
-    if (File(msixPath).existsSync()) File(msixPath).deleteSync();
 
     var result = Process.runSync(makeappxPath, [
       'pack',

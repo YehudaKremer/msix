@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'utils/injector.dart';
 import 'utils/log.dart';
-import 'utils/extensions.dart';
 import 'configuration.dart';
 
 class Manifest {
@@ -110,10 +109,10 @@ class Manifest {
   }
 
   String _getVisualElements() {
-    if (_config.vsGeneratedImagesFolderPath.isNull) {
+    if (_config.haveAnyIconFromUser()) {
       return '''<uap:VisualElements BackgroundColor="${_config.iconsBackgroundColor}"
         DisplayName="${_config.displayName}" Square150x150Logo="${_config.tileIconPath}"
-        Square44x44Logo="${_config.startMenuIconPath}" Description="${_config.appDescription}" >
+        Square44x44Logo="${_config.startMenuIconPath}" Description="${_config.appDescription}">
         <uap:DefaultTile ShortName="${_config.displayName}" Square310x310Logo="${_config.tileIconPath}"
         Square71x71Logo="${_config.startMenuIconPath}" Wide310x150Logo="${_config.tileIconPath}">
           <uap:ShowNameOnTiles>
@@ -128,7 +127,7 @@ class Manifest {
     } else {
       return '''<uap:VisualElements BackgroundColor="${_config.iconsBackgroundColor}"
         DisplayName="${_config.displayName}" Square150x150Logo="Images\\Square150x150Logo.png"
-        Square44x44Logo="Images\\Square44x44Logo.png" Description="${_config.appDescription}" >
+        Square44x44Logo="Images\\Square44x44Logo.png" Description="${_config.appDescription}">
         <uap:DefaultTile ShortName="${_config.displayName}" Square310x310Logo="Images\\LargeTile.png"
         Square71x71Logo="Images\\SmallTile.png" Wide310x150Logo="Images\\Wide310x150Logo.png">
           <uap:ShowNameOnTiles>
@@ -144,7 +143,7 @@ class Manifest {
   }
 
   String _getLogo() {
-    if (_config.vsGeneratedImagesFolderPath.isNull) {
+    if (_config.haveAnyIconFromUser()) {
       return '''<Logo>${_config.logoPath}</Logo>''';
     } else {
       return '<Logo>Images\\StoreLogo.png</Logo>';

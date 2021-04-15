@@ -26,7 +26,7 @@ class Configuration {
   String? logoPath;
   String? startMenuIconPath;
   String? tileIconPath;
-  String? vsGeneratedImagesFolderPath;
+  String? vsGeneratedIconsFolderPath;
   String? executableFileName;
   String? iconsBackgroundColor;
   bool debugSigning = false;
@@ -60,7 +60,7 @@ class Configuration {
     logoPath = config?['logo_path']?.toString();
     startMenuIconPath = config?['start_menu_icon_path']?.toString();
     tileIconPath = config?['tile_icon_path']?.toString();
-    vsGeneratedImagesFolderPath = config?['vs_generated_images_folder_path']?.toString();
+    vsGeneratedIconsFolderPath = config?['vs_generated_images_folder_path']?.toString();
     iconsBackgroundColor = config?['icons_background_color']?.toString();
     architecture = config?['architecture']?.toString();
     capabilities = config?['capabilities']?.toString();
@@ -138,6 +138,7 @@ class Configuration {
 
     if (iconsBackgroundColor != 'transparent' && !iconsBackgroundColor!.contains('#'))
       iconsBackgroundColor = '#$iconsBackgroundColor';
+
     if (iconsBackgroundColor != 'transparent' &&
         !RegExp(r'^#(?:[0-9a-fA-F]{3}){1,2}$').hasMatch(iconsBackgroundColor!)) {
       Log.error('Icons background color can be only in this format: "#ffffff"');
@@ -146,6 +147,9 @@ class Configuration {
 
     Log.completeTask();
   }
+
+  bool haveAnyIconFromUser() =>
+      !logoPath.isNull || !startMenuIconPath.isNull || !tileIconPath.isNull;
 
   /// parse the cli arguments
   void _parseCliArguments(List<String> args) {

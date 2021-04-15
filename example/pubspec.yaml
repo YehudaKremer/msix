@@ -31,7 +31,7 @@ flutter:
   #logo_path: C:\<PathToIcon>\<Logo.png>
   #start_menu_icon_path: C:\<PathToIcon>\<Icon.png>
   #tile_icon_path: C:\<PathToIcon>\<Icon.png>
-  #vs_generated_images_folder_path: C:\<PathToFolder>\Images
+  #vs_generated_images_folder_path: C:\<PathToFolder>\icons
   #icons_background_color: transparent
   #languages: en-us
   #architecture: x64

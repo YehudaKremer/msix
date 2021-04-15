@@ -7,10 +7,7 @@ class Makepri {
   static void generatePRI() {
     Log.startTask('generate PRI file');
     final config = injector.get<Configuration>();
-    var msixPath = '${config.buildFilesFolder}\\${config.appName}.msix';
     var makepriPath = '${config.msixToolkitPath()}/Redist.${config.architecture}/makepri.exe';
-
-    if (File(msixPath).existsSync()) File(msixPath).deleteSync();
 
     var result = Process.runSync(makepriPath,
         ['createconfig', '/cf', '${config.buildFilesFolder}\\priconfig.xml', '/dq', 'en-US', '/o']);
