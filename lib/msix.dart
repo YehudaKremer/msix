@@ -1,13 +1,13 @@
 import 'package:ansicolor/ansicolor.dart';
-import 'src/injector.dart';
-import 'src/log.dart';
+import 'src/utils/injector.dart';
+import 'src/utils/log.dart';
 import 'src/configuration.dart';
 import 'src/assets.dart';
-import 'src/extensions.dart';
-import 'src/makepri.dart';
+import 'src/utils/extensions.dart';
+import 'src/cli/makepri.dart';
 import 'src/manifest.dart';
-import 'src/makeappx.dart';
-import 'src/signtool.dart';
+import 'src/cli/makeappx.dart';
+import 'src/cli/signtool.dart';
 
 class Msix {
   Msix() {

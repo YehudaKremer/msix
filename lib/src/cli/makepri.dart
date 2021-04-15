@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'injector.dart';
-import 'log.dart';
-import 'configuration.dart';
+import '../utils/injector.dart';
+import '../utils/log.dart';
+import '../configuration.dart';
 
 class Makepri {
   static void generatePRI() {

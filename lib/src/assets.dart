@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:path/path.dart';
-import 'injector.dart';
-import 'log.dart';
-import 'extensions.dart';
+import 'utils/injector.dart';
+import 'utils/log.dart';
+import 'utils/extensions.dart';
 import 'configuration.dart';
 
 class Assets {

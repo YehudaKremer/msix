@@ -1,6 +1,6 @@
 import 'package:injector/injector.dart';
 
-import 'configuration.dart';
+import '../configuration.dart';
 
 final injector = Injector.appInstance;
 

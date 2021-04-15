@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:path/path.dart';
-import 'extensions.dart';
-import 'injector.dart';
-import 'log.dart';
-import 'configuration.dart';
+import '../utils/extensions.dart';
+import '../utils/injector.dart';
+import '../utils/log.dart';
+import '../configuration.dart';
 
 class Signtool {
   static void sign() {

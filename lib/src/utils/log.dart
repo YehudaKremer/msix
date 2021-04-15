@@ -1,6 +1,6 @@
 import 'package:ansicolor/ansicolor.dart';
 
-import 'configuration.dart';
+import '../configuration.dart';
 
 class Log {
   static int _numberOfTasksWeHaveLeft = 12;

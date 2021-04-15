@@ -3,8 +3,8 @@ import 'package:args/args.dart';
 import 'package:package_config/package_config.dart';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
-import 'log.dart';
-import 'extensions.dart';
+import 'utils/log.dart';
+import 'utils/extensions.dart';
 
 const String defaultPublisher = 'CN=Msix Testing, O=Msix Testing Corporation, C=US';
 
