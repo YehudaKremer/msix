@@ -1,28 +1,19 @@
 import 'dart:io';
+import 'injector.dart';
 import 'log.dart';
 import 'configuration.dart';
 
 class Makepri {
-  Configuration _config;
-
-  Makepri(this._config);
-
-  void generatePRI() {
+  static void generatePRI() {
     Log.startTask('generate PRI file');
-
-    var msixPath = '${_config.buildFilesFolder}\\${_config.appName}.msix';
-    var makepriPath = '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makepri.exe';
+    final config = injector.get<Configuration>();
+    var msixPath = '${config.buildFilesFolder}\\${config.appName}.msix';
+    var makepriPath = '${config.msixToolkitPath()}/Redist.${config.architecture}/makepri.exe';
 
     if (File(msixPath).existsSync()) File(msixPath).deleteSync();
 
-    var result = Process.runSync(makepriPath, [
-      'createconfig',
-      '/cf',
-      '${_config.buildFilesFolder}\\priconfig.xml',
-      '/dq',
-      'en-US',
-      '/o'
-    ]);
+    var result = Process.runSync(makepriPath,
+        ['createconfig', '/cf', '${config.buildFilesFolder}\\priconfig.xml', '/dq', 'en-US', '/o']);
 
     if (result.stderr.toString().length > 0) {
       Log.error(result.stdout);
@@ -36,17 +27,17 @@ class Makepri {
     result = Process.runSync(makepriPath, [
       'new',
       '/cf',
-      '${_config.buildFilesFolder}\\priconfig.xml',
+      '${config.buildFilesFolder}\\priconfig.xml',
       '/pr',
-      _config.buildFilesFolder,
+      config.buildFilesFolder,
       '/mn',
-      '${_config.buildFilesFolder}\\AppxManifest.xml',
+      '${config.buildFilesFolder}\\AppxManifest.xml',
       '/of',
-      '${_config.buildFilesFolder}\\resources.pri',
+      '${config.buildFilesFolder}\\resources.pri',
       '/o',
     ]);
 
-    var priconfig = File('${_config.buildFilesFolder}/priconfig.xml');
+    var priconfig = File('${config.buildFilesFolder}/priconfig.xml');
     if (priconfig.existsSync()) priconfig.deleteSync();
 
     if (result.stderr.toString().length > 0) {

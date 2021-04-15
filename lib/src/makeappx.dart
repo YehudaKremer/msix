@@ -1,17 +1,14 @@
 import 'dart:io';
+import 'injector.dart';
 import 'log.dart';
 import 'configuration.dart';
 
 class Makeappx {
-  Configuration _config;
-
-  Makeappx(this._config);
-
-  void pack() {
+  static void pack() {
     Log.startTask('packing');
-
-    var msixPath = '${_config.buildFilesFolder}\\${_config.appName}.msix';
-    var makeappxPath = '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makeappx.exe';
+    final config = injector.get<Configuration>();
+    var msixPath = '${config.buildFilesFolder}\\${config.appName}.msix';
+    var makeappxPath = '${config.msixToolkitPath()}/Redist.${config.architecture}/makeappx.exe';
 
     if (File(msixPath).existsSync()) File(msixPath).deleteSync();
 
@@ -20,7 +17,7 @@ class Makeappx {
       '/v',
       '/o',
       '/d',
-      _config.buildFilesFolder,
+      config.buildFilesFolder,
       '/p',
       msixPath,
     ]);

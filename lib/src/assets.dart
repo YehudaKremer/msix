@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart';
+import 'injector.dart';
 import 'log.dart';
 import 'extensions.dart';
 import 'configuration.dart';
@@ -8,7 +9,7 @@ class Assets {
   Configuration _config;
   Iterable<File> _vCLibsFiles = [];
 
-  Assets(this._config);
+  Assets() : _config = injector.get<Configuration>();
 
   void createIconsFolder() {
     Log.startTask('creating icons folder');

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'injector.dart';
 import 'log.dart';
 import 'extensions.dart';
 import 'configuration.dart';
@@ -6,7 +7,7 @@ import 'configuration.dart';
 class Manifest {
   Configuration _config;
 
-  Manifest(this._config);
+  Manifest() : _config = injector.get<Configuration>();
 
   void generateAppxManifest() {
     Log.startTask('generate appx manifest');

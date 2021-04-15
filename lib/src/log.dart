@@ -8,34 +8,35 @@ class Log {
   /// Log with colors.
   Log();
 
-  /// Information log with white color
+  /// Information log with `white` color
   static void info(String message) => _write(message, withColor: AnsiPen()..white(bold: true));
 
-  /// Error log with red color
+  /// Error log with `red` color
   static void error(String message) => _write(message, withColor: AnsiPen()..red(bold: true));
 
-  /// Warning log with yellow color
+  /// Warning log with `yellow` color
   static void warn(String message) => _write(message, withColor: AnsiPen()..yellow(bold: true));
 
-  /// Success log with green color
+  /// Success log with `green` color
   static void success(String message) => _write(message, withColor: AnsiPen()..green(bold: true));
 
-  /// Link log with blue color
+  /// Link log with `blue` color
   static void link(String message) => _write(message, withColor: AnsiPen()..blue(bold: true));
 
   static void _write(String message, {required AnsiPen withColor}) => print(withColor(message));
 
-  // TODO: asd
+  /// Info log on new task
   static void startTask(String name) {
     info('$name.. ');
   }
 
-  // TODO: asd
+  /// Success log on completed task
   static void completeTask() {
     _numberOfTasksWeHaveLeft--;
     success('[√]');
   }
 
+  /// Log `Certificate Subject` help information
   static void printCertificateSubjectHelp() {
     Log.warn('Please note: The value of Publisher should be in one line and with commas, example:');
     Log.info(defaultPublisher);
@@ -46,6 +47,7 @@ class Log {
     Log.info('');
   }
 
+  /// Log `Test Certificate` help information
   static void printTestCertificateHelp(String pfxTestPath) {
     Log.info('');
     Log.warn('Certificate Note:');

@@ -1,4 +1,5 @@
 import 'package:ansicolor/ansicolor.dart';
+import 'src/injector.dart';
 import 'src/log.dart';
 import 'src/configuration.dart';
 import 'src/assets.dart';
@@ -9,37 +10,35 @@ import 'src/makeappx.dart';
 import 'src/signtool.dart';
 
 class Msix {
-  late Log log;
-  late Configuration _config;
-  late Assets _assets;
-
   Msix() {
+    initInjector();
     ansiColorDisabled = false;
-    _config = Configuration();
-    _assets = Assets(_config);
   }
 
   /// Create and sign msix installer file
   Future<void> createMsix(List<String> cliArguments) async {
-    await _config.getConfigValues(cliArguments);
-    _config.validateConfigValues();
-    _assets.cleanTemporaryFiles();
-    _assets.createIconsFolder();
-    _assets.copyIcons();
-    _assets.copyVCLibsFiles();
-    Manifest(_config)..generateAppxManifest();
+    final config = injector.get<Configuration>();
+    await config.getConfigValues(cliArguments);
+    config.validateConfigValues();
+    final assets = Assets();
+    assets.cleanTemporaryFiles();
+    assets.createIconsFolder();
+    assets.copyIcons();
+    assets.copyVCLibsFiles();
 
-    if (!_config.vsGeneratedImagesFolderPath.isNull) {
-      Makepri(_config)..generatePRI();
+    Manifest()..generateAppxManifest();
+
+    if (!config.vsGeneratedImagesFolderPath.isNull) {
+      Makepri.generatePRI();
     }
 
-    Makeappx(_config)..pack();
-    Signtool(_config)..sign();
-    _assets.cleanTemporaryFiles();
+    Makeappx.pack();
+    Signtool.sign();
+    assets.cleanTemporaryFiles();
 
     Log.success('Msix installer created here:');
-    Log.link('${_config.buildFilesFolder}\\${_config.appName}.msix'.replaceAll('/', r'\'));
+    Log.link('${config.buildFilesFolder}\\${config.appName}.msix'.replaceAll('/', r'\'));
 
-    if (_config.isUsingTestCertificate) Log.printTestCertificateHelp(_config.certificatePath!);
+    if (config.isUsingTestCertificate) Log.printTestCertificateHelp(config.certificatePath!);
   }
 }

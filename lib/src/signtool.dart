@@ -1,38 +1,37 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'extensions.dart';
+import 'injector.dart';
 import 'log.dart';
 import 'configuration.dart';
 
 class Signtool {
-  Configuration _config;
-
-  Signtool(this._config);
-
-  void sign() {
+  static void sign() {
     Log.startTask('signing');
-    if (_config.certificatePath.isNull) {
+    final config = injector.get<Configuration>();
+
+    if (config.certificatePath.isNull) {
       Log.warn(
           'signing with TEST certificate, reason: Publisher provided but not Certificate Path');
     } else {
-      var signtoolPath = '${_config.msixToolkitPath()}/Redist.${_config.architecture}/signtool.exe';
+      var signtoolPath = '${config.msixToolkitPath()}/Redist.${config.architecture}/signtool.exe';
 
       ProcessResult signResults;
 
-      if (extension(_config.certificatePath!) == '.pfx') {
+      if (extension(config.certificatePath!) == '.pfx') {
         signResults = Process.runSync(signtoolPath, [
           'sign',
           '/fd',
           'SHA256',
           '/a',
           '/f',
-          _config.certificatePath!,
+          config.certificatePath!,
           '/p',
-          _config.certificatePassword!,
+          config.certificatePassword!,
           '/tr',
           'http://timestamp.digicert.com',
-          if (_config.debugSigning) '/debug',
-          '${_config.buildFilesFolder}\\${_config.appName}.msix',
+          if (config.debugSigning) '/debug',
+          '${config.buildFilesFolder}\\${config.appName}.msix',
         ]);
       } else {
         signResults = Process.runSync(signtoolPath, [
@@ -41,9 +40,9 @@ class Signtool {
           'SHA256',
           '/a',
           '/f',
-          _config.certificatePath!,
-          if (_config.debugSigning) '/debug',
-          '${_config.buildFilesFolder}\\${_config.appName}.msix',
+          config.certificatePath!,
+          if (config.debugSigning) '/debug',
+          '${config.buildFilesFolder}\\${config.appName}.msix',
         ]);
       }
 
@@ -53,14 +52,14 @@ class Signtool {
         Log.error(signResults.stderr);
 
         if (signResults.stdout.toString().contains('Error: SignerSign() failed.') &&
-            !_config.publisher.isNull) {
+            !config.publisher.isNull) {
           Log.printCertificateSubjectHelp();
         }
 
         exit(0);
       }
 
-      if (_config.isUsingTestCertificate) {
+      if (config.isUsingTestCertificate) {
         Log.warn(' *no certificate was specified, using TEST certificate');
       }
 
