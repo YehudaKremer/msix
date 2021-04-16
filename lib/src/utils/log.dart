@@ -63,7 +63,7 @@ class Log {
   }
 
   /// Info log on a new task
-  static void taskStarted(String name) {
+  static void startingTask(String name) {
     final emptyStr = _getlastMessageemptyStringLength();
     lastMessageLength = name.length;
     _renderProgressBar();

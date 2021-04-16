@@ -27,10 +27,10 @@ class Msix {
     Manifest()..generateAppxManifest();
     Makepri.generatePRI();
     Makeappx.pack();
-    Signtool.sign();
     assets.cleanTemporaryFiles();
+    Signtool.sign();
 
-    Log.success('Msix installer created here:');
+    Log.success('Msix Installer Created:');
     Log.link('${config.buildFilesFolder}\\${config.appName}.msix'.replaceAll('/', r'\'));
 
     if (config.isUsingTestCertificate) Log.printTestCertificateHelp(config.certificatePath!);

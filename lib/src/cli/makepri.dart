@@ -5,7 +5,7 @@ import '../configuration.dart';
 
 class Makepri {
   static void generatePRI() {
-    Log.taskStarted('generate PRI file');
+    Log.startingTask('generate PRI file');
     final config = injector.get<Configuration>();
 
     if (!config.haveAnyIconFromUser()) {

@@ -29,6 +29,7 @@ class Configuration {
   String? vsGeneratedIconsFolderPath;
   String? executableFileName;
   String? iconsBackgroundColor;
+  List<String>? signtoolOptions;
   bool debugSigning = false;
   bool isUsingTestCertificate = false;
   Iterable<String>? languages;
@@ -60,6 +61,11 @@ class Configuration {
     tileIconPath = config?['tile_icon_path']?.toString();
     vsGeneratedIconsFolderPath = config?['vs_generated_images_folder_path']?.toString();
     iconsBackgroundColor = config?['icons_background_color']?.toString();
+    signtoolOptions = config?['signtool_options']
+        ?.toString()
+        .split(' ')
+        .where((o) => o.trim().length > 0)
+        .toList();
     architecture = config?['architecture']?.toString();
     capabilities = config?['capabilities']?.toString();
     languages = _getLanguages(config);
@@ -67,7 +73,7 @@ class Configuration {
 
   /// Validate the configuration values and set default values
   void validateConfigValues() {
-    Log.taskStarted('validating config values');
+    Log.startingTask('validating config values');
 
     if (appName.isNull) {
       Log.error('App name is empty, check \'appName\' at pubspec.yaml');
@@ -141,7 +147,7 @@ class Configuration {
 
   /// parse the cli arguments
   void _parseCliArguments(List<String> args) {
-    Log.taskStarted('parsing cli arguments');
+    Log.startingTask('parsing cli arguments');
 
     var parser = ArgParser()
       ..addOption('password', abbr: 'p')

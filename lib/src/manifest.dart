@@ -9,7 +9,7 @@ class Manifest {
   Manifest() : _config = injector.get<Configuration>();
 
   void generateAppxManifest() {
-    Log.taskStarted('generate appx manifest');
+    Log.startingTask('generate appx manifest');
 
     var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
   <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 

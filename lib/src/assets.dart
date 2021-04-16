@@ -13,7 +13,7 @@ class Assets {
   }
 
   void createIconsFolder() {
-    Log.taskStarted('creating app icons folder');
+    Log.startingTask('creating app icons folder');
 
     var iconsFolderPath = '${_config.buildFilesFolder}\\Images';
     try {
@@ -26,7 +26,7 @@ class Assets {
   }
 
   void copyIcons() {
-    Log.taskStarted('copying app icons');
+    Log.startingTask('copying app icons');
 
     if (_config.haveAnyIconFromUser()) {
       _config.tileIconPath = _copyIconToBuildFolder(_config.tileIconPath ??
@@ -48,7 +48,7 @@ class Assets {
   }
 
   void copyVCLibsFiles() {
-    Log.taskStarted('copying VC libraries');
+    Log.startingTask('copying VC libraries');
 
     for (var file in _vCLibsFiles) {
       File(file.path).copySync('${_config.buildFilesFolder}/${basename(file.path)}');
@@ -58,7 +58,7 @@ class Assets {
   }
 
   void cleanTemporaryFiles({clearMsixFiles = false}) {
-    Log.taskStarted('cleaning temporary files');
+    Log.startingTask('cleaning temporary files');
 
     try {
       var appxManifest = File('${_config.buildFilesFolder}/AppxManifest.xml');
