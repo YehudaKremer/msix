@@ -2,6 +2,7 @@ import 'dart:io';
 import 'utils/injector.dart';
 import 'utils/log.dart';
 import 'configuration.dart';
+import 'utils/extensions.dart';
 
 class Manifest {
   Configuration _config;
@@ -89,6 +90,7 @@ class Manifest {
     <Applications>
       <Application Id="${_config.appName!.replaceAll('_', '')}" Executable="${_config.executableFileName}" EntryPoint="Windows.FullTrustApplication">
         ${_getVisualElements()}
+        ${_getExtensions()}
       </Application>
     </Applications>
   </Package>''';
@@ -147,6 +149,35 @@ class Manifest {
     } else {
       return '<Logo>Images\\StoreLogo.png</Logo>';
     }
+  }
+
+  String _getExtensions() {
+    if (!_config.protocolActivation.isNull || !_config.fileExtension.isNull) {
+      return '''<Extensions>
+      ${!_config.protocolActivation.isNull ? _getProtocolActivation() : ''}
+      ${!_config.fileExtension.isNull ? _getFileExtension() : ''}
+        </Extensions>''';
+    } else {
+      return '';
+    }
+  }
+
+  String _getProtocolActivation() {
+    return '''<uap:Extension Category="windows.protocol">
+            <uap:Protocol Name="${_config.protocolActivation}">
+                <uap:DisplayName>${_config.protocolActivation} URI Scheme</uap:DisplayName>
+            </uap:Protocol>
+        </uap:Extension>''';
+  }
+
+  String _getFileExtension() {
+    return '''<uap:Extension Category="windows.fileTypeAssociation">
+            <uap:FileTypeAssociation Name="${_config.fileExtension}">
+                <uap:SupportedFileTypes>
+                    <uap:FileType>${_config.fileExtension}</uap:FileType>
+                </uap:SupportedFileTypes>
+            </uap:FileTypeAssociation>
+        </uap:Extension>''';
   }
 
   bool _hasCapability(String capability) => _config.capabilities!

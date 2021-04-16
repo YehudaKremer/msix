@@ -30,6 +30,8 @@ class Configuration {
   String? executableFileName;
   String? iconsBackgroundColor;
   List<String>? signtoolOptions;
+  String? protocolActivation;
+  String? fileExtension;
   bool debugSigning = false;
   bool isUsingTestCertificate = false;
   Iterable<String>? languages;
@@ -66,6 +68,11 @@ class Configuration {
         .split(' ')
         .where((o) => o.trim().length > 0)
         .toList();
+    protocolActivation = config?['protocol_activation']?.toString().replaceAll(':', '');
+    fileExtension = config?['file_extension']?.toString();
+    if (fileExtension != null && !fileExtension!.startsWith('.')) {
+      fileExtension = '.$fileExtension';
+    }
     architecture = config?['architecture']?.toString();
     capabilities = config?['capabilities']?.toString();
     languages = _getLanguages(config);
