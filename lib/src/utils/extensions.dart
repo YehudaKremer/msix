@@ -5,6 +5,5 @@ extension StringValidations on String? {
 }
 
 extension ArgResultsReader on ArgResults {
-  String? read(String key, {String? fallback}) =>
-      this[key] != null && this[key].toString().length > 0 ? this[key] : fallback;
+  String? read(String key) => this.wasParsed(key) ? this[key] : null;
 }

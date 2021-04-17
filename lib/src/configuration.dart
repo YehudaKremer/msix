@@ -46,35 +46,38 @@ class Configuration {
     appName = pubspec['name']?.toString();
     appDescription = pubspec['description']?.toString();
     var config = pubspec['msix_config'];
-
-    msixVersion = argResults.read('version', fallback: config?['msix_version']?.toString());
-    certificatePath =
-        argResults.read('certificate', fallback: config?['certificate_path']?.toString());
-    certificatePassword =
-        argResults.read('password', fallback: config?['certificate_password']?.toString());
-    debugSigning = argResults.wasParsed('debug');
-
-    displayName = config?['display_name']?.toString();
-    publisherName = config?['publisher_display_name']?.toString();
-    identityName = config?['identity_name']?.toString();
-    publisher = config?['publisher']?.toString();
-    logoPath = config?['logo_path']?.toString();
-    startMenuIconPath = config?['start_menu_icon_path']?.toString();
-    tileIconPath = config?['tile_icon_path']?.toString();
-    vsGeneratedIconsFolderPath = config?['vs_generated_images_folder_path']?.toString();
-    iconsBackgroundColor = config?['icons_background_color']?.toString();
-    signtoolOptions = config?['signtool_options']
+    msixVersion =
+        argResults.read('v') ?? argResults.read('version') ?? config?['msix_version']?.toString();
+    certificatePath = argResults.read('c') ??
+        argResults.read('certificate') ??
+        config?['certificate_path']?.toString();
+    certificatePassword = argResults.read('p') ??
+        argResults.read('password') ??
+        config?['certificate_password']?.toString();
+    debugSigning = argResults.wasParsed('debug') || argResults.wasParsed('d');
+    displayName = argResults.read('dn') ?? config?['display_name']?.toString();
+    publisherName = argResults.read('pdn') ?? config?['publisher_display_name']?.toString();
+    identityName = argResults.read('in') ?? config?['identity_name']?.toString();
+    publisher = argResults.read('pu') ?? config?['publisher']?.toString();
+    logoPath = argResults.read('lp') ?? config?['logo_path']?.toString();
+    startMenuIconPath = argResults.read('smip') ?? config?['start_menu_icon_path']?.toString();
+    tileIconPath = argResults.read('tip') ?? config?['tile_icon_path']?.toString();
+    vsGeneratedIconsFolderPath =
+        argResults.read('vsi') ?? config?['vs_generated_images_folder_path']?.toString();
+    iconsBackgroundColor = argResults.read('ibc') ?? config?['icons_background_color']?.toString();
+    signtoolOptions = (argResults.read('so') ?? config?['signtool_options'])
         ?.toString()
         .split(' ')
         .where((o) => o.trim().length > 0)
         .toList();
-    protocolActivation = config?['protocol_activation']?.toString().replaceAll(':', '');
-    fileExtension = config?['file_extension']?.toString();
+    protocolActivation =
+        (argResults.read('pa') ?? config?['protocol_activation'])?.toString().replaceAll(':', '');
+    fileExtension = argResults.read('fe') ?? config?['file_extension']?.toString();
     if (fileExtension != null && !fileExtension!.startsWith('.')) {
       fileExtension = '.$fileExtension';
     }
-    architecture = config?['architecture']?.toString();
-    capabilities = config?['capabilities']?.toString();
+    architecture = argResults.read('a') ?? config?['architecture']?.toString();
+    capabilities = argResults.read('cap') ?? config?['capabilities']?.toString();
     languages = _getLanguages(config);
   }
 
@@ -157,10 +160,29 @@ class Configuration {
     Log.startingTask('parsing cli arguments');
 
     var parser = ArgParser()
-      ..addOption('password', abbr: 'p')
-      ..addOption('certificate', abbr: 'c')
-      ..addOption('version', abbr: 'v')
-      ..addFlag('debug', abbr: 'd');
+      ..addOption('password')
+      ..addOption('p') // display_name
+      ..addOption('certificate')
+      ..addOption('c') // display_name
+      ..addOption('version')
+      ..addOption('v') // display_name
+      ..addOption('dn') // display_name
+      ..addOption('pdn') // publisher_display_name
+      ..addOption('in') // identity_name
+      ..addOption('pu') // publisher
+      ..addOption('lp') // logo_path
+      ..addOption('smip') // start_menu_icon_path
+      ..addOption('tip') // tile_icon_path
+      ..addOption('vsi') // vs_generated_images_folder_path
+      ..addOption('ibc') // icons_background_color
+      ..addOption('so') // signtool_options
+      ..addOption('pa') // protocol_activation
+      ..addOption('fe') // file_extension
+      ..addOption('a') // architecture
+      ..addOption('cap') // capabilities
+      ..addOption('l') // languages
+      ..addFlag('debug') // debug
+      ..addOption('d');
 
     try {
       argResults = parser.parse(args);
@@ -190,7 +212,7 @@ class Configuration {
   }
 
   Iterable<String>? _getLanguages(dynamic config) {
-    var languagesConfig = config?['languages']?.toString();
+    var languagesConfig = argResults.read('l') ?? config?['languages']?.toString();
     if (languagesConfig != null) {
       var languages =
           languagesConfig.split(',').map((e) => e.trim()).where((element) => element.length > 0);
