@@ -26,12 +26,12 @@ The `flutter build windows` is required to build the executable that
 ## :mag: Configuration (Optional)
 This plugin comes with default configuration (test values),
 you can configure it to suit your needs,
-see full list of configuration fields and example on this [page](https://github.com/YehudaKremer/msix/blob/v2.0/documentation/configuration.md)
+see full list of configuration fields and example on this [page](https://github.com/YehudaKremer/msix/blob/main/documentation/configuration.md)
 
 ### Signing Options
 before using the msix file, we sign it with **certificate**,
 this plugin use `signtool` to sign the file with default **test** certificate.
-you can use your own certificate, see the documentation on the [configuration](https://github.com/YehudaKremer/msix/blob/v2.0/documentation/configuration.md) fields:
+you can use your own certificate, see the documentation on the [configuration](https://github.com/YehudaKremer/msix/blob/main/documentation/configuration.md) fields:
 - certificate_path
 - certificate_password
 - publisher
@@ -44,10 +44,10 @@ For more information, please see this tutorial: [How to publish your MSIX packag
 
 ## :gear: Command-Line Arguments
 You can configuration values with command-line arguments instead of `pubspec.yaml` or combine them,
-see full list of arguments and example on this [page](https://github.com/YehudaKremer/msix/blob/v2.0/documentation/command-line-arguments.md)
+see full list of arguments and example on this [page](https://github.com/YehudaKremer/msix/blob/main/documentation/command-line-arguments.md)
 
 ## :question: Signing Error
-For signing problems (signtool) try to get help on this [page](https://github.com/YehudaKremer/msix/blob/v2.0/documentation/troubleshoot-signing-errors.md)
+For signing problems (signtool) try to get help on this [page](https://github.com/YehudaKremer/msix/blob/main/documentation/troubleshoot-signing-errors.md)
 
 ---
 package tags: `msi` `windows` `win10` `windows10` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
