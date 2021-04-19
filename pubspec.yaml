@@ -1,6 +1,6 @@
 name: msix
 description: Create and sign Msix installer for flutter windows-build files.
-version: 1.0.6
+version: 2.0.0
 maintainer: Yehuda Kremer (yehudakremer@gmail.com)
 homepage: https://github.com/YehudaKremer/msix
 
@@ -23,3 +23,4 @@ dependencies:
   yaml: ^3.1.0
   path: ^1.8.0
   package_config: ^2.0.0
+  injector: ^2.0.0

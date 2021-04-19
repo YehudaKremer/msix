@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+
+ - see - https://github.com/YehudaKremer/msix/issues/37
+
 ## 1.0.6
 
  - add `--debug` flag to debug signing issues, fixed missing argument `/f' for not '.pfx' certificates
