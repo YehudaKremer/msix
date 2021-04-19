@@ -86,9 +86,6 @@ example:
 flutter pub run msix:create --version 1.0.0.1 --certificate <your certificate path> --password <your certificate password>
 ```
 
-## :question: [Signing Error]()
-If you getting certificate sign error `"Error: Store::ImportCertObject() failed."` or `"Error: SignerSign() failed."`
-1. Check the configuration values of `certificate_path`, `certificate_password` and `publisher`
-2. Try use Marcel`s solution: [#17](https://github.com/YehudaKremer/msix/issues/17 "#17")
+## :question: [Signing Error](https://github.com/YehudaKremer/msix/blob/v2.0/documentation/troubleshoot-signing-errors.md)
 ------------
 package tags: `msi` `windows` `win10` `windows10` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
