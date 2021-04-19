@@ -9,7 +9,8 @@ class Makepri {
     final config = injector.get<Configuration>();
 
     if (!config.haveAnyIconFromUser()) {
-      var makepriPath = '${config.msixToolkitPath()}/Redist.${config.architecture}/makepri.exe';
+      var makepriPath =
+          '${config.msixToolkitPath()}/Redist.${config.architecture}/makepri.exe';
 
       var result = Process.runSync(makepriPath, [
         'createconfig',
@@ -21,10 +22,10 @@ class Makepri {
       ]);
 
       if (result.stderr.toString().length > 0) {
-        Log.error(result.stdout, andExit: false);
-        Log.error(result.stderr);
-      } else if (result.exitCode != 0) {
         Log.error(result.stdout);
+        Log.errorAndExit(result.stderr);
+      } else if (result.exitCode != 0) {
+        Log.errorAndExit(result.stdout);
       }
 
       result = Process.runSync(makepriPath, [
@@ -44,10 +45,10 @@ class Makepri {
       if (priconfig.existsSync()) priconfig.deleteSync();
 
       if (result.stderr.toString().length > 0) {
-        Log.error(result.stdout, andExit: false);
-        Log.error(result.stderr);
-      } else if (result.exitCode != 0) {
         Log.error(result.stdout);
+        Log.errorAndExit(result.stderr);
+      } else if (result.exitCode != 0) {
+        Log.errorAndExit(result.stdout);
       }
     }
     Log.taskCompleted();

@@ -9,7 +9,8 @@ class Assets {
   Iterable<File> _vCLibsFiles = [];
 
   Assets() : _config = injector.get<Configuration>() {
-    _vCLibsFiles = _allDirectoryFiles('${_config.vcLibsFolderPath()}/${_config.architecture}');
+    _vCLibsFiles = _allDirectoryFiles(
+        '${_config.vcLibsFolderPath()}/${_config.architecture}');
   }
 
   void createIconsFolder() {
@@ -19,7 +20,8 @@ class Assets {
     try {
       Directory(iconsFolderPath).createSync();
     } catch (e) {
-      Log.error('fail to create app icons folder in: $iconsFolderPath\n$e');
+      Log.errorAndExit(
+          'fail to create app icons folder in: $iconsFolderPath\n$e');
     }
 
     Log.taskCompleted();
@@ -33,15 +35,16 @@ class Assets {
           _config.logoPath ??
           '${_config.defaultsIconsFolderPath()}/Square150x150Logo.scale-400.png');
 
-      _config.startMenuIconPath = _copyIconToBuildFolder(_config.startMenuIconPath ??
+      _config.startMenuIconPath = _copyIconToBuildFolder(_config
+              .startMenuIconPath ??
           _config.logoPath ??
           '${_config.defaultsIconsFolderPath()}/Square44x44Logo.altform-lightunplated_targetsize-256.png');
 
-      _config.logoPath = _copyIconToBuildFolder(
-          _config.logoPath ?? '${_config.defaultsIconsFolderPath()}/StoreLogo.scale-400.png');
+      _config.logoPath = _copyIconToBuildFolder(_config.logoPath ??
+          '${_config.defaultsIconsFolderPath()}/StoreLogo.scale-400.png');
     } else {
-      _copyVsGeneratedIcons(
-          _config.vsGeneratedIconsFolderPath ?? _config.defaultsIconsFolderPath());
+      _copyVsGeneratedIcons(_config.vsGeneratedIconsFolderPath ??
+          _config.defaultsIconsFolderPath());
     }
 
     Log.taskCompleted();
@@ -51,7 +54,8 @@ class Assets {
     Log.startingTask('copying VC libraries');
 
     for (var file in _vCLibsFiles) {
-      File(file.path).copySync('${_config.buildFilesFolder}/${basename(file.path)}');
+      File(file.path)
+          .copySync('${_config.buildFilesFolder}/${basename(file.path)}');
     }
 
     Log.taskCompleted();
@@ -70,20 +74,25 @@ class Assets {
       var priFile = File('${_config.buildFilesFolder}/resources.pri');
       if (priFile.existsSync()) priFile.deleteSync();
 
-      var priFile125 = File('${_config.buildFilesFolder}/resources.scale-125.pri');
+      var priFile125 =
+          File('${_config.buildFilesFolder}/resources.scale-125.pri');
       if (priFile125.existsSync()) priFile125.deleteSync();
 
-      var priFile150 = File('${_config.buildFilesFolder}/resources.scale-150.pri');
+      var priFile150 =
+          File('${_config.buildFilesFolder}/resources.scale-150.pri');
       if (priFile150.existsSync()) priFile150.deleteSync();
 
-      var priFile200 = File('${_config.buildFilesFolder}/resources.scale-200.pri');
+      var priFile200 =
+          File('${_config.buildFilesFolder}/resources.scale-200.pri');
       if (priFile200.existsSync()) priFile200.deleteSync();
 
-      var priFile400 = File('${_config.buildFilesFolder}/resources.scale-400.pri');
+      var priFile400 =
+          File('${_config.buildFilesFolder}/resources.scale-400.pri');
       if (priFile400.existsSync()) priFile400.deleteSync();
 
       for (var file in _vCLibsFiles) {
-        var fileToDelete = File('${_config.buildFilesFolder}/${basename(file.path)}');
+        var fileToDelete =
+            File('${_config.buildFilesFolder}/${basename(file.path)}');
         if (fileToDelete.existsSync()) fileToDelete.deleteSync();
       }
 
@@ -97,7 +106,8 @@ class Assets {
         });
       }
     } catch (e) {
-      Log.error('fail to clean temporary files from ${_config.buildFilesFolder}: $e');
+      Log.errorAndExit(
+          'fail to clean temporary files from ${_config.buildFilesFolder}: $e');
     }
 
     Log.taskCompleted();
@@ -121,7 +131,7 @@ class Assets {
     try {
       File(iconPath).copySync('${_config.buildFilesFolder}/$newPath');
     } catch (e) {
-      Log.error('fail to copy icon: $iconPath\n$e');
+      Log.errorAndExit('fail to copy icon: $iconPath\n$e');
     }
 
     return newPath;

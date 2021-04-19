@@ -31,8 +31,10 @@ class Msix {
     Signtool.sign();
 
     Log.success('Msix Installer Created:');
-    Log.link('${config.buildFilesFolder}\\${config.appName}.msix'.replaceAll('/', r'\'));
+    Log.link('${config.buildFilesFolder}\\${config.appName}.msix'
+        .replaceAll('/', r'\'));
 
-    if (config.isUsingTestCertificate) Log.printTestCertificateHelp(config.certificatePath!);
+    if (config.isUsingTestCertificate)
+      Log.printTestCertificateHelp(config.certificatePath!);
   }
 }

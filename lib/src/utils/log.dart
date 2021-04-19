@@ -22,12 +22,15 @@ class Log {
   static void info(String message) => _write(message, withColor: gray09);
 
   /// Error log with `red` color
-  static void error(String message, {andExit = true}) {
+  static void error(String message) {
     stdout.writeln();
     _write(message, withColor: red);
-    if (andExit) {
-      exit(0);
-    }
+  }
+
+  /// Write `error` log and exit the program
+  static void errorAndExit(String message) {
+    error(message);
+    exit(0);
   }
 
   /// Warning log with `yellow` color
@@ -49,17 +52,18 @@ class Log {
     stdout.write(gray09('['));
     var blueBars = '';
     for (var z = _numberOfTasksCompleted; z > 0; z--) {
-      blueBars += '❚';
+      blueBars += '❚❚';
     }
     stdout.write(blue(blueBars));
     var grayBars = '';
     for (var z = _numberOfAllTasks - _numberOfTasksCompleted; z > 0; z--) {
-      grayBars += '❚';
+      grayBars += '❚❚';
     }
     stdout.write(gray05(grayBars));
 
     stdout.write(gray09(']'));
-    stdout.write(gray09(' ${(_numberOfTasksCompleted * 100 / _numberOfAllTasks).floor()}%'));
+    stdout.write(gray09(
+        ' ${(_numberOfTasksCompleted * 100 / _numberOfAllTasks).floor()}%'));
   }
 
   /// Info log on a new task
@@ -82,7 +86,8 @@ class Log {
 
   /// Log `Certificate Subject` help information
   static void printCertificateSubjectHelp() {
-    Log.warn('Please note: The value of Publisher should be in one line and with commas, example:');
+    Log.warn(
+        'Please note: The value of Publisher should be in one line and with commas, example:');
     Log.info(defaultPublisher);
     Log.info('');
     Log.warn('For more information see:');
@@ -95,12 +100,16 @@ class Log {
   static void printTestCertificateHelp(String pfxTestPath) {
     Log.info('');
     Log.warn('Certificate Note:');
-    Log.warn('every msix installer must be signed with certificate before it can be installed.');
-    Log.warn('for testing purposes we signed your msix installer with a TEST certificate,');
-    Log.warn('to use this certificate you need to install it, open the certificate file:');
+    Log.warn(
+        'every msix installer must be signed with certificate before it can be installed.');
+    Log.warn(
+        'for testing purposes we signed your msix installer with a TEST certificate,');
+    Log.warn(
+        'to use this certificate you need to install it, open the certificate file:');
     Log.link(pfxTestPath);
     Log.warn('and follow the instructions at the following link:');
-    Log.link('https://www.advancedinstaller.com/install-test-certificate-from-msix.html');
+    Log.link(
+        'https://www.advancedinstaller.com/install-test-certificate-from-msix.html');
     Log.info('');
   }
 

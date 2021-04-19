@@ -103,7 +103,7 @@ class Manifest {
       File(appxManifestPath).createSync();
       File(appxManifestPath).writeAsStringSync(manifestContent);
     } catch (e) {
-      Log.error('fail to create manifest file: $e');
+      Log.errorAndExit('fail to create manifest file: $e');
     }
 
     Log.taskCompleted();
