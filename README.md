@@ -1,4 +1,4 @@
-![MSIX](https://news.thewindowsclub.com/wp-content/uploads/2018/07/MSIX.jpg)
+![MSIX](https://raw.githubusercontent.com/YehudaKremer/msix/v2.0/documentation/logo/pub-logo.png)
 
 [![pub package](https://img.shields.io/pub/v/msix.svg?color=blue&style=for-the-badge)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit&style=for-the-badge)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green&style=for-the-badge)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix?style=for-the-badge)](https://github.com/YehudaKremer/msix/issues)
 
@@ -14,7 +14,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^1.0.6
+  msix: ^2.0.0
 ```
 
 ## :package: Create Msix
@@ -86,7 +86,7 @@ example:
 flutter pub run msix:create --version 1.0.0.1 --certificate <your certificate path> --password <your certificate password>
 ```
 
-## :question: Signing Error 
+## :question: [Signing Error]()
 If you getting certificate sign error `"Error: Store::ImportCertObject() failed."` or `"Error: SignerSign() failed."`
 1. Check the configuration values of `certificate_path`, `certificate_password` and `publisher`
 2. Try use Marcel`s solution: [#17](https://github.com/YehudaKremer/msix/issues/17 "#17")
