@@ -37,6 +37,8 @@ you can use your own certificate, see the documentation on the [configuration](h
 - publisher
 - signtool_options
 
+Also see how to create you own certificate (pfx) in SahajRana's Medium [post](https://sahajrana.medium.com/how-to-generate-a-pfx-certificate-for-flutter-windows-msix-lib-a860cdcebb8 "post")
+
 ## :label: Windows Store
 To upload the MSIX file to Windows Store the configuration values `publisher_display_name`, `identity_name`, `msix_version`, `publisher` must be valid.
 
