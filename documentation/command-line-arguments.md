@@ -10,7 +10,7 @@ flutter pub run msix:create --v 1.0.3.3 --c C:/Users/me/Desktop/test_certificate
 ###### Available Arguments Options:
 - package version: `--v` (must be in the format: **0.0.0.0**)
 - certificate path: `--c`
-- certificate password: `-p`
+- certificate password: `--p`
 - debug signing problems: `--d`
 - display name: `--dn`
 - publisher display name: `--pdn`
