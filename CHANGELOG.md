@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.1.0
+## 2.1.1
 
  - Add `--store` flag see - https://github.com/YehudaKremer/msix/issues/42
  - Add BadgeLogo icons
