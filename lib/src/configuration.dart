@@ -36,6 +36,7 @@ class Configuration {
   String? fileExtension;
   bool debugSigning = false;
   bool isUsingTestCertificate = false;
+  bool store = false;
   Iterable<String>? languages;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
@@ -58,6 +59,11 @@ class Configuration {
         argResults.read('password') ??
         config?['certificate_password']?.toString();
     debugSigning = argResults.wasParsed('debug') || argResults.wasParsed('d');
+    store = argResults.wasParsed('store') ||
+        config?['store']?.toString().toLowerCase() == 'true';
+    if (store) {
+      numberOfAllTasks--;
+    }
     displayName = argResults.read('dn') ?? config?['display_name']?.toString();
     publisherName =
         argResults.read('pdn') ?? config?['publisher_display_name']?.toString();
@@ -102,9 +108,28 @@ class Configuration {
     }
     if (appDescription.isNull) appDescription = appName;
     if (displayName.isNull) displayName = appName!.replaceAll('_', '');
-    if (identityName.isNull)
-      identityName = 'com.flutter.${appName!.replaceAll('_', '')}';
-    if (publisherName.isNull) publisherName = identityName;
+    if (identityName.isNull) {
+      if (store) {
+        Log.error(
+            'identity name is empty, check "msix_config: identity_name" at pubspec.yaml');
+        Log.warn(
+            'you can find your store "identity_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Name');
+        exit(0);
+      } else {
+        identityName = 'com.flutter.${appName!.replaceAll('_', '')}';
+      }
+    }
+    if (publisherName.isNull) {
+      if (store) {
+        Log.error(
+            'publisher display name is empty, check "msix_config: publisher_display_name" at pubspec.yaml');
+        Log.warn(
+            'you can find your store "publisher_display_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/PublisherDisplayName');
+        exit(0);
+      } else {
+        publisherName = identityName;
+      }
+    }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
     if (capabilities.isNull)
@@ -130,7 +155,7 @@ class Configuration {
       Log.errorAndExit('Msix version can be only in this format: "1.0.0.0"');
     }
 
-    if (!certificatePath.isNull || signtoolOptions != null) {
+    if (!certificatePath.isNull || signtoolOptions != null || store) {
       if (!certificatePath.isNull) {
         if (!File(certificatePath!).existsSync()) {
           Log.errorAndExit(
@@ -147,9 +172,14 @@ class Configuration {
       if (publisher.isNull) {
         Log.error(
             'Certificate subject is empty, check "msix_config: publisher" at pubspec.yaml');
-        Log.warn('see what certificate-subject value is:');
-        Log.link(
-            'https://drive.google.com/file/d/1oAsnrp2Kf-jZ_kaRjyF5llQ0YZy1IwNe/view?usp=sharing');
+        if (store) {
+          Log.warn(
+              'you can find your store "publisher" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Publisher');
+        } else {
+          Log.warn('see what certificate-subject value is:');
+          Log.link(
+              'https://drive.google.com/file/d/1oAsnrp2Kf-jZ_kaRjyF5llQ0YZy1IwNe/view?usp=sharing');
+        }
         exit(0);
       }
     } else {
@@ -208,6 +238,7 @@ class Configuration {
       ..addOption('a') // architecture
       ..addOption('cap') // capabilities
       ..addOption('l') // languages
+      ..addFlag('store') // store
       ..addFlag('debug') // debug
       ..addFlag('d');
 

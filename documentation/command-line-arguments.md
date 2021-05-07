@@ -29,4 +29,5 @@ flutter pub run msix:create --v 1.0.3.3 --c C:/Users/me/Desktop/test_certificate
 - languages: `--l`
 
 ###### Available Arguments Flags:
-- debug: `--d`
+- store: `--store`
+- debug: `--debug`

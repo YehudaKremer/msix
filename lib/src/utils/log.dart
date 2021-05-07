@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:ansicolor/ansicolor.dart';
-
 import '../configuration.dart';
+
+int numberOfAllTasks = 11;
 
 class Log {
   static AnsiPen red = AnsiPen()..red(bold: true);
@@ -11,7 +11,6 @@ class Log {
   static AnsiPen blue = AnsiPen()..blue(bold: true);
   static AnsiPen gray05 = AnsiPen()..gray(level: 0.5);
   static AnsiPen gray09 = AnsiPen()..gray(level: 0.9);
-  static int _numberOfAllTasks = 11;
   static int _numberOfTasksCompleted = 0;
   static int lastMessageLength = 0;
 
@@ -56,14 +55,14 @@ class Log {
     }
     stdout.write(blue(blueBars));
     var grayBars = '';
-    for (var z = _numberOfAllTasks - _numberOfTasksCompleted; z > 0; z--) {
+    for (var z = numberOfAllTasks - _numberOfTasksCompleted; z > 0; z--) {
       grayBars += '❚❚';
     }
     stdout.write(gray05(grayBars));
 
     stdout.write(gray09(']'));
     stdout.write(gray09(
-        ' ${(_numberOfTasksCompleted * 100 / _numberOfAllTasks).floor()}%'));
+        ' ${(_numberOfTasksCompleted * 100 / numberOfAllTasks).floor()}%'));
   }
 
   /// Info log on a new task
@@ -77,7 +76,7 @@ class Log {
   /// Info log on a completed task
   static void taskCompleted() {
     _numberOfTasksCompleted++;
-    if (_numberOfTasksCompleted >= _numberOfAllTasks) {
+    if (_numberOfTasksCompleted >= numberOfAllTasks) {
       final emptyStr = _getlastMessageemptyStringLength();
       _renderProgressBar();
       stdout.writeln(emptyStr);
@@ -101,7 +100,7 @@ class Log {
     Log.info('');
     Log.warn('Certificate Note:');
     Log.warn(
-        'every msix installer must be signed with certificate before it can be installed.');
+        'local msix installer (not from Windows Store) must be signed with certificate before it can be install.');
     Log.warn(
         'for testing purposes we signed your msix installer with a TEST certificate,');
     Log.warn(

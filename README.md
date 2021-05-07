@@ -1,4 +1,4 @@
-![MSIX](https://raw.githubusercontent.com/YehudaKremer/msix/main/documentation/logo/pub-logo.png)
+a![MSIX](https://raw.githubusercontent.com/YehudaKremer/msix/main/documentation/logo/pub-logo.png)
 
 [![pub package](https://img.shields.io/pub/v/msix.svg?color=blue&style=for-the-badge)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit&style=for-the-badge)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green&style=for-the-badge)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix?style=for-the-badge)](https://github.com/YehudaKremer/msix/issues)
 
@@ -11,7 +11,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^2.0.0
+  msix: ^2.1.0
 ```
 
 ## :package: Create Msix
@@ -40,7 +40,12 @@ you can use your own certificate, see the documentation on the [configuration](h
 Also see how to create you own certificate (pfx) in SahajRana's Medium [post](https://sahajrana.medium.com/how-to-generate-a-pfx-certificate-for-flutter-windows-msix-lib-a860cdcebb8 "post")
 
 ## :label: Windows Store
-To upload the MSIX file to Windows Store the configuration values `publisher_display_name`, `identity_name`, `msix_version`, `publisher` must be valid.
+If you publish your msix to Windows Store you dont need to sign it, Windows Store does it for you.
+To generate msix file for Windows Store use the `--store` flag or add `store: true` in msix configuration sction in your `pubspec.yaml`.
+
+###### Note:
+the configuration values `publisher_display_name`, `identity_name`, `msix_version`, `publisher` must be valid,
+you can find those values in your `Windows Store Dashboard` > `Product` > `Product identity`.
 
 For more information, please see this tutorial: [How to publish your MSIX package to the Microsoft Store](https://www.advancedinstaller.com/msix-publish-microsoft-store.html)
 

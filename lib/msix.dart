@@ -28,7 +28,9 @@ class Msix {
     Makepri.generatePRI();
     Makeappx.pack();
     assets.cleanTemporaryFiles();
-    Signtool.sign();
+    if (!config.store) {
+      Signtool.sign();
+    }
 
     Log.success('Msix Installer Created:');
     Log.link('${config.buildFilesFolder}\\${config.appName}.msix'
