@@ -101,7 +101,8 @@ class Configuration {
 
   /// Validate the configuration values and set default values
   void validateConfigValues() {
-    Log.startingTask('validating config values');
+    const taskName = 'validating config values';
+    Log.startingTask(taskName);
 
     if (appName.isNull) {
       Log.errorAndExit('App name is empty, check \'appName\' at pubspec.yaml');
@@ -206,7 +207,7 @@ class Configuration {
           'Icons background color can be only in this format: "#ffffff"');
     }
 
-    Log.taskCompleted();
+    Log.taskCompleted(taskName);
   }
 
   bool haveAnyIconFromUser() =>
@@ -214,7 +215,8 @@ class Configuration {
 
   /// parse the cli arguments
   void _parseCliArguments(List<String> args) {
-    Log.startingTask('parsing cli arguments');
+    const taskName = 'parsing cli arguments';
+    Log.startingTask(taskName);
 
     var parser = ArgParser()
       ..addOption('password')
@@ -248,7 +250,7 @@ class Configuration {
       Log.errorAndExit('invalid cli arguments: $e');
     }
 
-    Log.taskCompleted();
+    Log.taskCompleted(taskName);
   }
 
   /// Get the assets folder path from the .packages file

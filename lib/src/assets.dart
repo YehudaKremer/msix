@@ -14,7 +14,8 @@ class Assets {
   }
 
   void createIconsFolder() {
-    Log.startingTask('creating app icons folder');
+    const taskName = 'creating app icons folder';
+    Log.startingTask(taskName);
 
     var iconsFolderPath = '${_config.buildFilesFolder}\\Images';
     try {
@@ -24,11 +25,12 @@ class Assets {
           'fail to create app icons folder in: $iconsFolderPath\n$e');
     }
 
-    Log.taskCompleted();
+    Log.taskCompleted(taskName);
   }
 
   void copyIcons() {
-    Log.startingTask('copying app icons');
+    const taskName = 'copying app icons';
+    Log.startingTask(taskName);
 
     if (_config.haveAnyIconFromUser()) {
       _config.tileIconPath = _copyIconToBuildFolder(_config.tileIconPath ??
@@ -47,22 +49,24 @@ class Assets {
           _config.defaultsIconsFolderPath());
     }
 
-    Log.taskCompleted();
+    Log.taskCompleted(taskName);
   }
 
   void copyVCLibsFiles() {
-    Log.startingTask('copying VC libraries');
+    const taskName = 'copying VC libraries';
+    Log.startingTask(taskName);
 
     for (var file in _vCLibsFiles) {
       File(file.path)
           .copySync('${_config.buildFilesFolder}/${basename(file.path)}');
     }
 
-    Log.taskCompleted();
+    Log.taskCompleted(taskName);
   }
 
   void cleanTemporaryFiles({clearMsixFiles = false}) {
-    Log.startingTask('cleaning temporary files');
+    const taskName = 'cleaning temporary files';
+    Log.startingTask(taskName);
 
     try {
       var appxManifest = File('${_config.buildFilesFolder}/AppxManifest.xml');
@@ -110,7 +114,7 @@ class Assets {
           'fail to clean temporary files from ${_config.buildFilesFolder}: $e');
     }
 
-    Log.taskCompleted();
+    Log.taskCompleted(taskName);
   }
 
   void _copyVsGeneratedIcons(String iconsFolderPath) {

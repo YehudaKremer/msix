@@ -10,7 +10,8 @@ class Manifest {
   Manifest() : _config = injector.get<Configuration>();
 
   void generateAppxManifest() {
-    Log.startingTask('generate appx manifest');
+    const taskName = 'generate appx manifest';
+    Log.startingTask(taskName);
 
     var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
   <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
@@ -106,7 +107,7 @@ class Manifest {
       Log.errorAndExit('fail to create manifest file: $e');
     }
 
-    Log.taskCompleted();
+    Log.taskCompleted(taskName);
   }
 
   String _getVisualElements() {

@@ -5,7 +5,8 @@ import '../configuration.dart';
 
 class Makeappx {
   static void pack() {
-    Log.startingTask('packing');
+    const taskName = 'packing';
+    Log.startingTask(taskName);
     final config = injector.get<Configuration>();
     var msixPath = '${config.buildFilesFolder}/${config.appName}.msix';
     var makeappxPath =
@@ -20,6 +21,6 @@ class Makeappx {
     } else if (result.exitCode != 0) {
       Log.errorAndExit(result.stdout);
     }
-    Log.taskCompleted();
+    Log.taskCompleted(taskName);
   }
 }

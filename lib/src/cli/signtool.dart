@@ -7,7 +7,8 @@ import '../configuration.dart';
 
 class Signtool {
   static void sign() {
-    Log.startingTask('signing');
+    const taskName = 'signing';
+    Log.startingTask(taskName);
     final config = injector.get<Configuration>();
 
     if (!config.certificatePath.isNull || config.signtoolOptions != null) {
@@ -68,6 +69,6 @@ class Signtool {
       }
     }
 
-    Log.taskCompleted();
+    Log.taskCompleted(taskName);
   }
 }

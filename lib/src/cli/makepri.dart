@@ -5,7 +5,8 @@ import '../configuration.dart';
 
 class Makepri {
   static void generatePRI() {
-    Log.startingTask('generate PRI file');
+    const taskName = 'generate PRI file';
+    Log.startingTask(taskName);
     final config = injector.get<Configuration>();
 
     if (!config.haveAnyIconFromUser()) {
@@ -51,6 +52,6 @@ class Makepri {
         Log.errorAndExit(result.stdout);
       }
     }
-    Log.taskCompleted();
+    Log.taskCompleted(taskName);
   }
 }

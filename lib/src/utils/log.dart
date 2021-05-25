@@ -70,12 +70,16 @@ class Log {
     final emptyStr = _getlastMessageemptyStringLength();
     lastMessageLength = name.length;
     _renderProgressBar();
-    stdout.write(gray09(' $name...$emptyStr'));
+    stdout.write(gray09(' $name..$emptyStr'));
   }
 
   /// Info log on a completed task
-  static void taskCompleted() {
+  static void taskCompleted(String name) {
     _numberOfTasksCompleted++;
+    stdout.writeCharCode(13);
+    stdout.write(green('☑ '));
+    stdout.writeln(
+        '$name                                                             ');
     if (_numberOfTasksCompleted >= numberOfAllTasks) {
       final emptyStr = _getlastMessageemptyStringLength();
       _renderProgressBar();
@@ -98,15 +102,16 @@ class Log {
   /// Log `Test Certificate` help information
   static void printTestCertificateHelp(String pfxTestPath) {
     Log.info('');
-    Log.warn('Certificate Note:');
-    Log.warn(
-        'local msix installer (not from Windows Store) must be signed with certificate before it can be install.');
-    Log.warn(
-        'for testing purposes we signed your msix installer with a TEST certificate,');
-    Log.warn(
-        'to use this certificate you need to install it, open the certificate file:');
-    Log.link(pfxTestPath);
-    Log.warn('and follow the instructions at the following link:');
+    Log.warn('☞  Certificate Note:');
+    Log.info(
+        'If you publish your msix to Windows Store you dont need to sign it,');
+    Log.info(
+        'but for testing purposes and local install, we signed your msix installer with a TEST certificate.');
+    Log.info(
+        'to use this certificate (named: "test_certificate.pfx") you need to install it with the password "1234"');
+    Log.info('you can find the certificate file here:');
+    Log.link(pfxTestPath.replaceFirst('/test_certificate.pfx', ''));
+    Log.info('and follow the instructions at the following link:');
     Log.link(
         'https://www.advancedinstaller.com/install-test-certificate-from-msix.html');
     Log.info('');
