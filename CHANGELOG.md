@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.3
+
+ - Added support for association to multiple file extensions - https://github.com/YehudaKremer/msix/pull/46
+
 ## 2.1.2
 
  - Update terminal logs 
