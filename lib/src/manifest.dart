@@ -175,9 +175,9 @@ class Manifest {
     return '''  <uap:Extension Category="windows.fileTypeAssociation">
             <uap:FileTypeAssociation Name="fileassociations">
               <uap:SupportedFileTypes>
-                ${_config.fileExtension!.split(',').map((ext) {
-                  return '<uap:FileType>${ext.startsWith('.') ? ext: '.$ext'}</uap:FileType>';
-                }).toList().join('\n                ')}
+                ${_config.fileExtension!.split(',').map((ext) => ext.trim()).map((ext) {
+              return '<uap:FileType>${ext.startsWith('.') ? ext : '.$ext'}</uap:FileType>';
+            }).toList().join('\n                ')}
               </uap:SupportedFileTypes>
             </uap:FileTypeAssociation>
           </uap:Extension>''';
