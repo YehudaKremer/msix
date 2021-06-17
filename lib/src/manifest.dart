@@ -172,17 +172,15 @@ class Manifest {
   }
 
   String _getFileExtension() {
-    String extensions = '';
-    _config.fileExtension!.split(',').forEach((ext) {
-      extensions += '''<uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="$ext">
+    return '''  <uap:Extension Category="windows.fileTypeAssociation">
+            <uap:FileTypeAssociation Name="fileassociations">
               <uap:SupportedFileTypes>
-                  <uap:FileType>$ext</uap:FileType>
+                ${_config.fileExtension!.split(',').map((ext) {
+                  return '<uap:FileType>${ext.startsWith('.') ? ext: '.$ext'}</uap:FileType>';
+                }).toList().join('\n                ')}
               </uap:SupportedFileTypes>
-          </uap:FileTypeAssociation>
-      </uap:Extension>''';
-    });
-    return extensions;
+            </uap:FileTypeAssociation>
+          </uap:Extension>''';
   }
 
   bool _hasCapability(String capability) => _config.capabilities!
