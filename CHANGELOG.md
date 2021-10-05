@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.3
+
+ - Added support for all the capabilities types (documentation update)
+ - Update dependencies versions 
+
 ## 2.1.3
 
  - Added support for association to multiple file extensions - https://github.com/YehudaKremer/msix/pull/46

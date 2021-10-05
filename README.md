@@ -11,7 +11,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^2.1.3
+  msix: ^2.2.3
 ```
 
 ## :package: Create Msix
@@ -65,7 +65,7 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 |  signtool_options | Signtool using this syntax: [command] [options] [file_name], you can provide here the `[options]` part, see full documentation here: https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe **this option is overwriting the fields: `certificate_path`, `certificate_password`** | /v /fd SHA256 /f C:/Users/me/Desktop/my.cer (string) | No |
 |  file_extension | File extensions that the app will used to open | .txt, .myFile, .test1  (string) | No |
 |  protocol_activation | Protocol activation that will open and use the app | http  (string) | No |
-|  capabilities | Declares the access to protected user resources that the package requires. availables capabilities: `internetClient` `internetClientServer` `privateNetworkClientServer` `allJoyn` `codeGeneration` `objects3D` `chat` `voipCall` `voipCall` `phoneCall` `removableStorage` `userAccountInformation` `sharedUserCertificates` `blockedChatMessages` `appointments` `contacts` `musicLibrary` `videosLibrary` `picturesLibrary` `enterpriseAuthentication` `phoneCallHistoryPublic` `spatialPerception` `userNotificationListener` `remoteSystem` `backgroundMediaPlayback` `offlineMapsManagement` `userDataTasks` `graphicsCapture` `globalMediaControl` `gazeInput` `systemManagement` `lowLevelDevices` `documentsLibrary` `accessoryManager` `allowElevation` `location` `microphone` `webcam` `radios` | `internetClient,location,microphone,webcam` (string) | No |
+|  capabilities | List of the capabilities that the application requires. availables capabilities can be found here: [App capability declarations](https://docs.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations) | `internetClient,location,microphone,bluetooth,webcam` (string) | No |
 |  store | If the msix file is intended for publish in Windows Store | false (boolean) | require if uploading to windows store |
 
 ### Signing Options

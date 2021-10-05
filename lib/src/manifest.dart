@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'capabilities.dart';
 import 'utils/injector.dart';
 import 'utils/log.dart';
 import 'configuration.dart';
@@ -48,46 +49,8 @@ class Manifest {
       <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19042.630" />
     </Dependencies>
     <Capabilities>
-      <rescap:Capability Name="runFullTrust" />
-      ${_hasCapability('internetClient') ? '<Capability Name="internetClient" />' : ''}
-      ${_hasCapability('internetClientServer') ? '<Capability Name="internetClientServer" />' : ''}
-      ${_hasCapability('privateNetworkClientServer') ? '<Capability Name="privateNetworkClientServer" />' : ''}
-      ${_hasCapability('allJoyn') ? '<Capability Name="allJoyn" />' : ''}
-      ${_hasCapability('codeGeneration') ? '<Capability Name="codeGeneration" />' : ''}
-      ${_hasCapability('objects3D') ? '<uap:Capability Name="objects3D" />' : ''}
-      ${_hasCapability('chat') ? '<uap:Capability Name="chat" />' : ''}
-      ${_hasCapability('voipCall') ? '<uap:Capability Name="voipCall" />' : ''}
-      ${_hasCapability('phoneCall') ? '<uap:Capability Name="phoneCall" />' : ''}
-      ${_hasCapability('removableStorage') ? '<uap:Capability Name="removableStorage" />' : ''}
-      ${_hasCapability('userAccountInformation') ? '<uap:Capability Name="userAccountInformation" />' : ''}
-      ${_hasCapability('sharedUserCertificates') ? '<uap:Capability Name="sharedUserCertificates" />' : ''}
-      ${_hasCapability('blockedChatMessages') ? '<uap:Capability Name="blockedChatMessages" />' : ''}
-      ${_hasCapability('appointments') ? '<uap:Capability Name="appointments" />' : ''}
-      ${_hasCapability('contacts') ? '<uap:Capability Name="contacts" />' : ''}
-      ${_hasCapability('musicLibrary') ? '<uap:Capability Name="musicLibrary" />' : ''}
-      ${_hasCapability('videosLibrary') ? '<uap:Capability Name="videosLibrary" />' : ''}
-      ${_hasCapability('picturesLibrary') ? '<uap:Capability Name="picturesLibrary" />' : ''}
-      ${_hasCapability('enterpriseAuthentication') ? '<uap:Capability Name="enterpriseAuthentication" />' : ''}
-      ${_hasCapability('phoneCallHistoryPublic') ? '<uap2:Capability Name="phoneCallHistoryPublic" />' : ''}
-      ${_hasCapability('spatialPerception') ? '<uap2:Capability Name="spatialPerception" />' : ''}
-      ${_hasCapability('userNotificationListener') ? '<uap3:Capability Name="userNotificationListener" />' : ''}
-      ${_hasCapability('remoteSystem') ? '<uap3:Capability Name="remoteSystem" />' : ''}
-      ${_hasCapability('backgroundMediaPlayback') ? '<uap3:Capability Name="backgroundMediaPlayback" />' : ''}
-      ${_hasCapability('offlineMapsManagement') ? '<uap4:Capability Name="offlineMapsManagement" />' : ''}
-      ${_hasCapability('userDataTasks') ? '<uap4:Capability Name="userDataTasks" />' : ''}
-      ${_hasCapability('graphicsCapture') ? '<uap6:Capability Name="graphicsCapture" />' : ''}
-      ${_hasCapability('globalMediaControl') ? '<uap7:Capability Name="globalMediaControl" />' : ''}
-      ${_hasCapability('gazeInput') ? '<uap7:Capability Name="gazeInput" />' : ''}
-      ${_hasCapability('systemManagement') ? '<iot:Capability Name="systemManagement" />' : ''}
-      ${_hasCapability('lowLevelDevices') ? '<iot:Capability Name="lowLevelDevices" />' : ''}
-      ${_hasCapability('documentsLibrary') ? '<rescap:Capability Name="documentsLibrary" />' : ''}
-      ${_hasCapability('accessoryManager') ? '<rescap:Capability Name="accessoryManager" />' : ''}
-      ${_hasCapability('allowElevation') ? '<rescap:Capability Name="allowElevation" />' : ''}
-      ${_hasCapability('location') ? '<DeviceCapability Name="location" />' : ''}
-      ${_hasCapability('microphone') ? '<DeviceCapability Name="microphone" />' : ''}
-      ${_hasCapability('webcam') ? '<DeviceCapability Name="webcam" />' : ''}
-      ${_hasCapability('radios') ? '<DeviceCapability Name="radios" />' : ''}
-    </Capabilities>
+      ${_getCapabilities()}
+  </Capabilities>
     <Applications>
       <Application Id="${_config.appName!.replaceAll('_', '')}" Executable="${_config.executableFileName}" EntryPoint="Windows.FullTrustApplication">
         ${_getVisualElements()}
@@ -183,8 +146,53 @@ class Manifest {
           </uap:Extension>''';
   }
 
-  bool _hasCapability(String capability) => _config.capabilities!
-      .split(',')
-      .map((e) => e.trim().toLowerCase())
-      .contains(capability.trim().toLowerCase());
+  String _normalizeCapability(String capability) {
+    capability = capability.trim();
+    var firstLetter = capability.substring(0, 1).toLowerCase();
+    return firstLetter + capability.substring(1);
+  }
+
+  String _getCapabilities() {
+    var capabilities = _config.capabilities!.split(',');
+    capabilities.add('runFullTrust');
+    capabilities = capabilities.toSet().toList();
+    String capabilitiesString = '';
+    const newline = '\n      ';
+
+    capabilities.forEach((capability) {
+      capability = _normalizeCapability(capability);
+
+      if (generalUseCapabilities.contains(capability)) {
+        capabilitiesString += '<Capability Name="$capability" />$newline';
+      } else if (generalUseCapabilitiesUap.contains(capability)) {
+        capabilitiesString += '<uap:Capability Name="$capability" />$newline';
+      } else if (generalUseCapabilitiesIot.contains(capability)) {
+        capabilitiesString += '<iot:Capability Name="$capability" />$newline';
+      } else if (generalUseCapabilitiesMobile.contains(capability)) {
+        capabilitiesString +=
+            '<mobile:Capability Name="$capability" />$newline';
+      }
+    });
+
+    capabilities.forEach((capability) {
+      capability = _normalizeCapability(capability);
+
+      if (restrictedCapabilitiesUap.contains(capability)) {
+        capabilitiesString += '<uap:Capability Name="$capability" />$newline';
+      } else if (restrictedCapabilitiesRescap.contains(capability)) {
+        capabilitiesString +=
+            '<rescap:Capability Name="$capability" />$newline';
+      }
+    });
+
+    capabilities.forEach((capability) {
+      capability = _normalizeCapability(capability);
+
+      if (deviceCapabilities.contains(capability)) {
+        capabilitiesString += '<DeviceCapability Name="$capability" />$newline';
+      }
+    });
+
+    return capabilitiesString;
+  }
 }
