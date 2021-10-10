@@ -19,6 +19,7 @@ flutter pub run msix:create --v 1.0.3.3 --c C:/Users/me/Desktop/test_certificate
 - logo path: `--lp`
 - start_menu icon path: `--smip`
 - tile icon path: `--tip`
+- assets directory path: `--adp`
 - vs generated images folder path: `--vsi`
 - icons background color: `--ibc`
 - signtool options: `--so`

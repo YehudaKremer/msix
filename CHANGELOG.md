@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.0
+
+ - Added support for assets files for FFI library (documentation update)
+
 ## 2.2.3
 
  - Added support for all the capabilities types (documentation update)

@@ -11,7 +11,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency.
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^2.2.3
+  msix: ^2.3.0
 ```
 
 ## :package: Create Msix
@@ -58,7 +58,8 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 |  logo_path | An icon used as the app logo, sample: `C:/<PathToIcon>/<Logo.png>` |  | No |
 |  start_menu_icon_path |  An icon used as the app logo in the start-menu, sample: `C:/<PathToIcon>/<Icon.png>` |  | No |
 |  tile_icon_path | An icon used as the app tile logo in the start-menu, sample: `C:/<PathToIcon>/<Icon.png>` |  | No |
-|  vs_generated_images_folder_path | Visual Studio can generate for you optimized icons (logo/tile and more) [see Thomas's explanation](https://github.com/YehudaKremer/msix/issues/19). This is an alternative for `logo_path`, `start_menu_icon_path`, `tile_icon_path`. sample: `C:\<PathToFolder>\icons` |  | No |
+|  assets_directory_path | Assets folder (like .dll files) to include in the Msix installer |  `C:\<PathToFolder>\myAssets` (string) | No |
+|  vs_generated_images_folder_path | Visual Studio can generate for you optimized icons (logo/tile and more) [see Thomas's explanation](https://github.com/YehudaKremer/msix/issues/19). This is an alternative for `logo_path`, `start_menu_icon_path`, `tile_icon_path` |  `C:\<PathToFolder>\icons` (string) | No |
 |  icons_background_color | Specifies the background color of the app icons, can be `transparent` or some color like: `'#ffffff'` | transparent (string) | No |
 |  languages | Declares a language for resources contained in the package. sample: `en-us, ja-jp` | en-us (string) | No |
 |  architecture | Describes the architecture of the code contained in the package, one of: x86, x64, arm,, neutral | x64 (string) | No |
@@ -80,6 +81,28 @@ you can use your own certificate by configure the fields:
 See also how to create your own certificate (pfx):
 - [MSIX packaging - Create a self-signed .pfx certificate for local testing](https://flutter.dev/desktop#msix-packaging "Create a self-signed .pfx certificate for local testing")
 - SahajRana's Medium [post](https://sahajrana.medium.com/how-to-generate-a-pfx-certificate-for-flutter-windows-msix-lib-a860cdcebb8 "How to generate a .pfx certificate for Flutter windows MSIX lib?")
+
+## :file_folder: Assets And .dll Files (FFI Library)
+To include your .dll and all other assets in your msix installer, you can use the cobfiguration field: `assets_directory_path`, for exmaple:
+```yaml
+assets_directory_path:  'C:\Users\me\flutter_project_name\myAssets'
+```
+
+1. create new folder in your root folder (where `pubspec.yaml` is located)
+2. put there all your assets (.dll etc.) files
+3. in your application code, use the [FFI](https://pub.dev/packages/ffi "FFI package") package like so:
+```dart
+var hellolib = ffi.DynamicLibrary.open('myAssets/hello.dll');
+```
+or:
+```dart
+var hellolib2 = ffi.DynamicLibrary.open('myAssets/subFolder/hello2.dll');
+```
+**Important**: Dont use Absolute path like:
+```dart
+var absolutePath = path.join(Directory.current.path, 'myAssets/hello.dll');
+var hellolib = ffi.DynamicLibrary.open(absolutePath);
+```
 
 ## :label: Windows Store
 If you publish your msix to Windows Store you dont need to sign it, Windows Store does it for you.

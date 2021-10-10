@@ -13,6 +13,21 @@ class Assets {
         '${_config.vcLibsFolderPath()}/${_config.architecture}');
   }
 
+  void copyAssetsFolder() {
+    const taskName = 'copying assets folder';
+    Log.startingTask(taskName);
+
+    if (_config.haveAssetsFolder()) {
+      var assetsFolderName = basename(_config.assetsFolderPath!);
+      Directory('${_config.buildFilesFolder}/$assetsFolderName').createSync();
+
+      _copyDirectory(Directory(_config.assetsFolderPath!),
+          Directory('${_config.buildFilesFolder}/$assetsFolderName'));
+    }
+
+    Log.taskCompleted(taskName);
+  }
+
   void createIconsFolder() {
     const taskName = 'creating app icons folder';
     Log.startingTask(taskName);
@@ -100,6 +115,13 @@ class Assets {
         if (fileToDelete.existsSync()) fileToDelete.deleteSync();
       }
 
+      if (_config.haveAssetsFolder()) {
+        var assetsFolderPath = Directory(
+            '${_config.buildFilesFolder}/${basename(_config.assetsFolderPath!)}');
+        if (assetsFolderPath.existsSync())
+          assetsFolderPath.deleteSync(recursive: true);
+      }
+
       if (clearMsixFiles) {
         Directory(_config.buildFilesFolder)
             .listSync(recursive: true, followLinks: false)
@@ -140,4 +162,17 @@ class Assets {
 
     return newPath;
   }
+
+  void _copyDirectory(Directory source, Directory destination) =>
+      source.listSync(recursive: false).forEach((var entity) {
+        if (entity is Directory) {
+          var newDirectory =
+              Directory(join(destination.absolute.path, basename(entity.path)));
+          newDirectory.createSync();
+
+          _copyDirectory(entity.absolute, newDirectory);
+        } else if (entity is File) {
+          entity.copySync(join(destination.path, basename(entity.path)));
+        }
+      });
 }

@@ -15,6 +15,7 @@ class Configuration {
   String? appName;
   String? publisherName;
   String? identityName;
+  String? assetsFolderPath;
   String? msixVersion;
   String? appDescription;
   String? publisher;
@@ -44,7 +45,7 @@ class Configuration {
 
   Future<void> getConfigValues(List<String> arguments) async {
     _parseCliArguments(arguments);
-    await _getAssetsFolderPath();
+    await _getMsixAssetsFolderPath();
     var pubspec = _getPubspec();
     appName = pubspec['name']?.toString();
     appDescription = pubspec['description']?.toString();
@@ -75,6 +76,8 @@ class Configuration {
         argResults.read('smip') ?? config?['start_menu_icon_path']?.toString();
     tileIconPath =
         argResults.read('tip') ?? config?['tile_icon_path']?.toString();
+    assetsFolderPath =
+        argResults.read('adp') ?? config?['assets_directory_path']?.toString();
     vsGeneratedIconsFolderPath = argResults.read('vsi') ??
         config?['vs_generated_images_folder_path']?.toString();
     iconsBackgroundColor =
@@ -141,6 +144,12 @@ class Configuration {
     if (!Directory(buildFilesFolder).existsSync()) {
       Log.errorAndExit(
           'Build files not found as $buildFilesFolder, first run "flutter build windows" then try again');
+    }
+
+    if (assetsFolderPath != null &&
+        !Directory(assetsFolderPath!).existsSync()) {
+      Log.errorAndExit(
+          'Assets folder path: $assetsFolderPath not found, check the "assets_directory_path" at pubspec.yaml');
     }
 
     final executables = Directory(buildFilesFolder)
@@ -210,6 +219,9 @@ class Configuration {
     Log.taskCompleted(taskName);
   }
 
+  bool haveAssetsFolder() =>
+      assetsFolderPath != null && assetsFolderPath!.isNotEmpty;
+
   bool haveAnyIconFromUser() =>
       !logoPath.isNull || !startMenuIconPath.isNull || !tileIconPath.isNull;
 
@@ -232,6 +244,7 @@ class Configuration {
       ..addOption('lp') // logo_path
       ..addOption('smip') // start_menu_icon_path
       ..addOption('tip') // tile_icon_path
+      ..addOption('adp') // assets_directory_path
       ..addOption('vsi') // vs_generated_images_folder_path
       ..addOption('ibc') // icons_background_color
       ..addOption('so') // signtool_options
@@ -254,7 +267,7 @@ class Configuration {
   }
 
   /// Get the assets folder path from the .packages file
-  Future<void> _getAssetsFolderPath() async {
+  Future<void> _getMsixAssetsFolderPath() async {
     var packagesConfig = await loadPackageConfig(
         File('${Directory.current.path}\\.dart_tool\\package_config.json'));
 

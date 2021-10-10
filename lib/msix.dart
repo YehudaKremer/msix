@@ -21,6 +21,7 @@ class Msix {
     config.validateConfigValues();
     final assets = Assets();
     assets.cleanTemporaryFiles(clearMsixFiles: true);
+    assets.copyAssetsFolder();
     assets.createIconsFolder();
     assets.copyIcons();
     assets.copyVCLibsFiles();
