@@ -71,7 +71,7 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 ### Signing Options
 before using the msix file, we sign it with **certificate**,
 this plugin use `signtool` to sign the file with default **test** certificate.
-you can use your own certificate, see the documentation on the [configuration](https://github.com/YehudaKremer/msix/blob/main/documentation/configuration.md) fields:
+you can use your own certificate by configure the fields:
 - certificate_path
 - certificate_password
 - publisher
