@@ -77,7 +77,9 @@ you can use your own certificate by configure the fields:
 - publisher
 - signtool_options
 
-Also see how to create you own certificate (pfx) in SahajRana's Medium [post](https://sahajrana.medium.com/how-to-generate-a-pfx-certificate-for-flutter-windows-msix-lib-a860cdcebb8 "post")
+See also how to create your own certificate (pfx):
+- [MSIX packaging - Create a self-signed .pfx certificate for local testing](https://flutter.dev/desktop#msix-packaging "Create a self-signed .pfx certificate for local testing")
+- SahajRana's Medium [post](https://sahajrana.medium.com/how-to-generate-a-pfx-certificate-for-flutter-windows-msix-lib-a860cdcebb8 "How to generate a .pfx certificate for Flutter windows MSIX lib?")
 
 ## :label: Windows Store
 If you publish your msix to Windows Store you dont need to sign it, Windows Store does it for you.
