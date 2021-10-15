@@ -83,7 +83,7 @@ See also how to create your own certificate (pfx):
 - SahajRana's Medium [post](https://sahajrana.medium.com/how-to-generate-a-pfx-certificate-for-flutter-windows-msix-lib-a860cdcebb8 "How to generate a .pfx certificate for Flutter windows MSIX lib?")
 
 ## :file_folder: Assets And .dll Files (FFI Library)
-To include your .dll and all other assets in your msix installer, you can use the cobfiguration field: `assets_directory_path`, for exmaple:
+To include your .dll and all other assets in your msix installer, you can use the configuration field: `assets_directory_path`, for exmaple:
 ```yaml
 assets_directory_path:  'C:\Users\me\flutter_project_name\myAssets'
 ```
