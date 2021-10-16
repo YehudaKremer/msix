@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.1
+
+ - Fix error when the app don't have no capabilities
+
 ## 2.3.0
 
  - Added support for assets files for FFI library (documentation update)
