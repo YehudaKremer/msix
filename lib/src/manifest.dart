@@ -159,7 +159,9 @@ class Manifest {
     String capabilitiesString = '';
     const newline = '\n      ';
 
-    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
+    capabilities
+        .where((capability) => !capability.isNullOrEmpty)
+        .forEach((capability) {
       capability = _normalizeCapability(capability);
 
       if (generalUseCapabilities.contains(capability)) {
@@ -169,21 +171,27 @@ class Manifest {
       } else if (generalUseCapabilitiesIot.contains(capability)) {
         capabilitiesString += '<iot:Capability Name="$capability" />$newline';
       } else if (generalUseCapabilitiesMobile.contains(capability)) {
-        capabilitiesString += '<mobile:Capability Name="$capability" />$newline';
+        capabilitiesString +=
+            '<mobile:Capability Name="$capability" />$newline';
       }
     });
 
-    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
+    capabilities
+        .where((capability) => !capability.isNullOrEmpty)
+        .forEach((capability) {
       capability = _normalizeCapability(capability);
 
       if (restrictedCapabilitiesUap.contains(capability)) {
         capabilitiesString += '<uap:Capability Name="$capability" />$newline';
       } else if (restrictedCapabilitiesRescap.contains(capability)) {
-        capabilitiesString += '<rescap:Capability Name="$capability" />$newline';
+        capabilitiesString +=
+            '<rescap:Capability Name="$capability" />$newline';
       }
     });
 
-    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
+    capabilities
+        .where((capability) => !capability.isNullOrEmpty)
+        .forEach((capability) {
       capability = _normalizeCapability(capability);
 
       if (deviceCapabilities.contains(capability)) {
