@@ -2,7 +2,7 @@
 
 ## 2.3.1
 
- - Fix error when the app don't have no capabilities
+ - Fix error when the app have no capabilities
 
 ## 2.3.0
 
