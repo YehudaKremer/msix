@@ -108,7 +108,7 @@ class Log {
     Log.info(
         'but for testing purposes and local install, we signed your msix installer with a TEST certificate.');
     Log.info(
-        'to use this certificate (named: "test_certificate.pfx") you need to install it with the password "1234"');
+        'to use this certificate (named: "test_certificate.pfx") you need to install it on your system with the password "1234"');
     Log.info('you can find the certificate file here:');
     Log.link(pfxTestPath.replaceFirst('/test_certificate.pfx', ''));
     Log.info('and follow the instructions at the following link:');
