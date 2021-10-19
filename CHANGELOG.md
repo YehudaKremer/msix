@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.0
+
+ - use the "certutil" cmd to install automatic the test certificate 
+ - documentation update 
+
 ## 2.3.1
 
  - Fix error when the app have no capabilities

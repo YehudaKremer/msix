@@ -6,6 +6,45 @@ import '../utils/log.dart';
 import '../configuration.dart';
 
 class Signtool {
+  static void installTestCertificate() {
+    const taskName = 'installing test certificate';
+    Log.startingTask(taskName);
+    final config = injector.get<Configuration>();
+
+    var installedCertificatesList =
+        Process.runSync('certutil', ['-store', 'root']);
+
+    if (!installedCertificatesList.stdout
+        .toString()
+        .contains(defaultPublisher)) {
+      var isAdminCheck = Process.runSync('net', ['session']);
+
+      if (isAdminCheck.stderr.toString().contains('Access is denied')) {
+        Log.errorAndExit(
+            'to install the test certificate, you need to run this As-Admin once');
+      }
+
+      var result = Process.runSync('certutil', [
+        '-f',
+        '-enterprise',
+        '-p',
+        '1234',
+        '-importpfx',
+        'root',
+        config.certificatePath!
+      ]);
+
+      if (result.stderr.toString().length > 0) {
+        Log.error(result.stdout);
+        Log.errorAndExit(result.stderr);
+      } else if (result.exitCode != 0) {
+        Log.errorAndExit(result.stdout);
+      }
+    }
+
+    Log.taskCompleted(taskName);
+  }
+
   static void sign() {
     const taskName = 'signing';
     Log.startingTask(taskName);

@@ -30,14 +30,14 @@ class Msix {
     Makeappx.pack();
     assets.cleanTemporaryFiles();
     if (!config.store) {
+      if (config.isUsingTestCertificate) {
+        Signtool.installTestCertificate();
+      }
       Signtool.sign();
     }
 
     Log.success('Msix Installer Created:');
     Log.link('${config.buildFilesFolder}\\${config.appName}.msix'
         .replaceAll('/', r'\'));
-
-    if (config.isUsingTestCertificate)
-      Log.printTestCertificateHelp(config.certificatePath!);
   }
 }

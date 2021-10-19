@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:ansicolor/ansicolor.dart';
 import '../configuration.dart';
 
-int numberOfAllTasks = 12;
+int numberOfAllTasks = 13;
 
 class Log {
   static AnsiPen red = AnsiPen()..red(bold: true);
@@ -96,24 +96,6 @@ class Log {
     Log.warn('For more information see:');
     Log.link(
         'https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing#determine-the-subject-of-your-packaged-app');
-    Log.info('');
-  }
-
-  /// Log `Test Certificate` help information
-  static void printTestCertificateHelp(String pfxTestPath) {
-    Log.info('');
-    Log.warn('☞  Certificate Note:');
-    Log.info(
-        'If you publish your msix to Windows Store you dont need to sign it,');
-    Log.info(
-        'but for testing purposes and local install, we signed your msix installer with a TEST certificate.');
-    Log.info(
-        'to use this certificate (named: "test_certificate.pfx") you need to install it on your system with the password "1234"');
-    Log.info('you can find the certificate file here:');
-    Log.link(pfxTestPath.replaceFirst('/test_certificate.pfx', ''));
-    Log.info('and follow the instructions at the following link:');
-    Log.link(
-        'https://www.advancedinstaller.com/install-test-certificate-from-msix.html');
     Log.info('');
   }
 

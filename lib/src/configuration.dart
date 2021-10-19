@@ -7,7 +7,7 @@ import 'utils/log.dart';
 import 'utils/extensions.dart';
 
 const String defaultPublisher =
-    'CN=Msix Testing, O=Msix Testing Corporation, C=US';
+    'CN=Msix Testing, O=Msix Testing Corporation, S=Some-State, C=US';
 
 class Configuration {
   late ArgResults argResults;
