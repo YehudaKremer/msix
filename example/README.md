@@ -1,6 +1,6 @@
 ### Configurations Examples
 
-###### Basic 
+###### Basic:
 ```yaml
 msix_config:
   display_name: MyAppName
@@ -10,7 +10,7 @@ msix_config:
   logo_path: C:\<PathToIcon>\<Logo.png>
 ```
 
-###### With Capabilities And Generated Icons
+###### With Capabilities And Generated Icons:
 ```yaml
 msix_config:
   display_name: MyAppName
@@ -21,7 +21,7 @@ msix_config:
   capabilities: 'internetClient,location,microphone,webcam'
 ```
 
-###### For Publish To Windows Store
+###### For Publish To Windows Store:
 ```yaml
 msix_config:
   display_name: MyAppName
@@ -32,7 +32,7 @@ msix_config:
   store: true
 ```
 
-###### With Your Own Certificate
+###### With Your Own Certificate:
 ```yaml
 msix_config:
   display_name: MyAppName
