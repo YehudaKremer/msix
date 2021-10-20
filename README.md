@@ -44,7 +44,7 @@ in msix configuration section in your `pubspec.yaml`.
 
 ###### Note:
 For Windows Store publication the configuration values: `publisher_display_name`, `identity_name`, `msix_version`, `publisher` must be valid,
-you can find those values in your windows store account: `Windows Store Dashboard` > `Product` > `Product identity`.
+you can find those values in your windows store [dashboard](https://partner.microsoft.com/dashboard) (`Product` > `Product identity`).
 
 For more information about publish to the Windows Store see: [How to publish your MSIX package to the Microsoft Store](https://www.advancedinstaller.com/msix-publish-microsoft-store.html)
 
