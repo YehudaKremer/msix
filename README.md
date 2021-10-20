@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/msix.svg?color=blue)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix)](https://github.com/YehudaKremer/msix/issues)
 
-# <span style="color:#0078d7">Msix<span>
+# Msix
 A command-line tool that create Msix installer from your flutter windows-build files.
 
 ## :clipboard: Install
@@ -23,7 +23,7 @@ PS c:\src\flutter_project\> flutter pub run msix:create
 The `flutter build windows` is required to build the executable that
 `flutter pub run msix:create` bundles up in the MSIX install file.
 
-## :gear: Configuration <span style="color:gray;font-size:18px">(Optional)</span>
+## :gear: Configuration (Optional)
 This package have default configuration values, but you can configure it to suit your needs by adding `msix_config:` at the end of your `pubspec.yaml` file:
 ```yaml
 msix_config:
@@ -52,7 +52,7 @@ The created installer file (.msix) is automatically sign with default **test** c
 
 If you need, you can use your own certificate using the configuration fields:`certificate_path, certificate_password, publisher` or `signtool_options`
 
-## :file_folder: .dll Files And Assets <span style="color:gray;font-size:18px">(FFI Library)</span>
+## :file_folder: .dll Files And Assets (FFI Library)
 To include your *.dll* and other third party assets in your msix installer, you can use the configuration field: `assets_directory_path`:
 ```yaml
 assets_directory_path:  'C:\Users\me\flutter_project_name\myAssets'
@@ -65,7 +65,7 @@ assets_directory_path:  'C:\Users\me\flutter_project_name\myAssets'
 var helloLib = ffi.DynamicLibrary.open('myAssets/hello.dll');
 var helloLib2 = ffi.DynamicLibrary.open('myAssets/subFolder/hello2.dll');
 ```
-Note: <span style="color:red">don't</span> use absolute-path like this:
+Note: **don't** use absolute-path:
 ```dart
 var absolutePath = path.join(Directory.current.path, 'myAssets/hello.dll');
 var helloLib = ffi.DynamicLibrary.open(absolutePath);
