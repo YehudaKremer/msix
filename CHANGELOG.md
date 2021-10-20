@@ -1,9 +1,13 @@
 # Changelog
 
+## 2.4.1
+
+ - Documentation update
+
 ## 2.4.0
 
- - use the "certutil" cmd to install automatic the test certificate 
- - documentation update 
+ - Use the "certutil" cmd to install automatic the test certificate 
+ - Documentation update 
 
 ## 2.3.1
 

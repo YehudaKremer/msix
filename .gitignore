@@ -1,9 +1,7 @@
 # Files and directories created by pub
 .packages
 .dart_tool/
-.pub/
-.idea/
-build/
+
 # Remove the following pattern if you wish to check in your lock file
 pubspec.lock
 
