@@ -88,11 +88,11 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 |  assets_directory_path | Path to assets folder *(.dll files)* to include in the installer |  `C:\<PathToFolder>\myAssets` |
 |  languages | Declares a language for resources contained in the package | `en-us, ja-jp` |
 |  capabilities | List of the capabilities the application requires. see [full capabilities list](https://docs.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations) | `internetClient,location,microphone,bluetooth,webcam` |
-|  architecture | Describes the architecture of the code contained in the package, one of: `x86`, `x64`, `arm`, `neutral` | x64 |
+|  architecture | Describes the architecture of the code contained in the package, one of: `x86`, `x64`, `arm`, `neutral` | `x64` |
 |  certificate_path | Path to your certificate file | `C:/<PathToCertificate>/<MyCertificate.pfx>` |
 |  certificate_password | The certificate password | `1234` |
 |  publisher | Describes the publisher information. The Publisher attribute **must match** the publisher subject information of the certificate used to sign a package. | `CN=My Company, O=My Company, L=Berlin, S=Berlin, C=DE` |
-|  signtool_options | *Signtool* use the syntax: *[command] [options] [file_name]*, so you can provide here the **[options]** part, [see full documentation](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe) (this **overwriting** the fields: `certificate_path`, `certificate_password`) | /v /fd SHA256 /f C:/Users/me/Desktop/my.cer |
+|  signtool_options | *Signtool* use the syntax: *[command] [options] [file_name]*, so you can provide here the **[options]** part, [see full documentation](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe) (this **overwriting** the fields: `certificate_path`, `certificate_password`) | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer` |
 |  file_extension | File extensions that the app will used to open | `.txt, .myFile, .test1` |
 |  protocol_activation | Protocol activation that will open the app | `http` |
 
