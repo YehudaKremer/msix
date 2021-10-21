@@ -3,16 +3,16 @@ import '../utils/injector.dart';
 import '../utils/log.dart';
 import '../configuration.dart';
 
-class Makeappx {
+class MakeAppx {
   static void pack() {
     const taskName = 'packing';
     Log.startingTask(taskName);
     final config = injector.get<Configuration>();
     var msixPath = '${config.buildFilesFolder}/${config.appName}.msix';
-    var makeappxPath =
+    var makeAppxPath =
         '${config.msixToolkitPath()}/Redist.${config.architecture}/makeappx.exe';
 
-    var result = Process.runSync(makeappxPath,
+    var result = Process.runSync(makeAppxPath,
         ['pack', '/v', '/o', '/d', config.buildFilesFolder, '/p', msixPath]);
 
     if (result.stderr.toString().length > 0) {

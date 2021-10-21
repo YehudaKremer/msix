@@ -26,8 +26,8 @@ class Msix {
     assets.copyIcons();
     assets.copyVCLibsFiles();
     Manifest()..generateAppxManifest();
-    Makepri.generatePRI();
-    Makeappx.pack();
+    MakePri.generatePRI();
+    MakeAppx.pack();
     assets.cleanTemporaryFiles();
     if (!config.store) {
       if (config.isUsingTestCertificate) {

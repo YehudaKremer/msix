@@ -65,7 +65,7 @@ assets_directory_path:  'C:\Users\me\flutter_project_name\myAssets'
 var helloLib = ffi.DynamicLibrary.open('myAssets/hello.dll');
 var helloLib2 = ffi.DynamicLibrary.open('myAssets/subFolder/hello2.dll');
 ```
-Note: **don't** use absolute-path:
+Note: **don't** use absolute path:
 ```dart
 var absolutePath = path.join(Directory.current.path, 'myAssets/hello.dll');
 var helloLib = ffi.DynamicLibrary.open(absolutePath);

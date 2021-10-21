@@ -67,7 +67,7 @@ class Log {
 
   /// Info log on a new task
   static void startingTask(String name) {
-    final emptyStr = _getlastMessageemptyStringLength();
+    final emptyStr = _getlastMessageEmptyStringLength();
     lastMessageLength = name.length;
     _renderProgressBar();
     stdout.write(gray09(' $name..$emptyStr'));
@@ -81,7 +81,7 @@ class Log {
     stdout.writeln(
         '$name                                                             ');
     if (_numberOfTasksCompleted >= numberOfAllTasks) {
-      final emptyStr = _getlastMessageemptyStringLength();
+      final emptyStr = _getlastMessageEmptyStringLength();
       _renderProgressBar();
       stdout.writeln(emptyStr);
     }
@@ -99,7 +99,7 @@ class Log {
     Log.info('');
   }
 
-  static String _getlastMessageemptyStringLength() {
+  static String _getlastMessageEmptyStringLength() {
     var emptyStr = '';
     for (var i = 0; i < lastMessageLength + 8; i++) {
       emptyStr += ' ';

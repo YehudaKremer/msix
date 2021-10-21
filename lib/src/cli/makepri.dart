@@ -3,7 +3,7 @@ import '../utils/injector.dart';
 import '../utils/log.dart';
 import '../configuration.dart';
 
-class Makepri {
+class MakePri {
   static void generatePRI() {
     const taskName = 'generate PRI file';
     Log.startingTask(taskName);
