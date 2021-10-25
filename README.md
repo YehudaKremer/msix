@@ -11,7 +11,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^2.5.1
+  msix: ^2.5.2
 ```
 
 ## :package: Create Msix
@@ -80,6 +80,7 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 |  display_name | A friendly name that can be displayed to users. | `MyAppName` |
 |  publisher_display_name | A friendly name for the publisher that can be displayed to users. | `MyName` |
 |  identity_name | Defines a globally unique identifier for a package. | `com.flutter.MyApp` |
+|  publisher | Describes the publisher information. | `CN=BF212345-5644-46DF-8668-014044C1B138` |
 |  msix_version | The version number of the package. | `1.0.0.0`<br />*(must be this format)* |
 |  store | The installer *(.msix)* is for publish to Windows Store | `false` |
 |  logo_path | Path to the app logo | `C:/<PathToIcon>/<Logo.png>` |
