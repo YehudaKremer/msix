@@ -14,8 +14,16 @@ class Signtool {
     var certificateDetails = Process.runSync('certutil',
         ['-dump', '-p', config.certificatePassword!, config.certificatePath!]);
 
-    const error =
-        'Fail to read the certificate details, please check if the certificate is valid and the password is correct';
+    if (certificateDetails.stderr.toString().length > 0) {
+      if (certificateDetails.stderr.toString().contains('password')) {
+        Log.errorAndExit(
+            'Fail to read the certificate details, check if the certificate password is correct');
+      }
+      Log.error(certificateDetails.stdout);
+      Log.errorAndExit(certificateDetails.stderr);
+    } else if (certificateDetails.exitCode != 0) {
+      Log.errorAndExit(certificateDetails.stdout);
+    }
 
     try {
       config.publisher = certificateDetails.stdout
@@ -25,18 +33,9 @@ class Signtool {
           .replaceFirst('Subject:', '')
           .replaceFirst('subject:', '')
           .trim();
-    } catch (e) {
-      Log.errorAndExit(error);
-    }
-
-    if (certificateDetails.stderr.toString().length > 0 ||
-        certificateDetails.exitCode != 0) Log.errorAndExit(error);
-
-    if (certificateDetails.stderr.toString().length > 0) {
-      Log.error(certificateDetails.stdout);
-      Log.errorAndExit(certificateDetails.stderr);
-    } else if (certificateDetails.exitCode != 0) {
-      Log.errorAndExit(certificateDetails.stdout);
+    } catch (err, stackTrace) {
+      Log.error(err.toString());
+      Log.error(stackTrace.toString());
     }
 
     Log.taskCompleted(taskName);
