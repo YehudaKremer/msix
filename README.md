@@ -11,7 +11,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^2.4.2
+  msix: ^2.5.0
 ```
 
 ## :package: Create Msix
@@ -37,6 +37,14 @@ msix_config:
 
 See [full list of available configurations](#clipboard-available-configuration-fields).
 
+## :black_nib: Signing Options
+**.msix** installer must be sign with certificate (.pfx)
+- This package will automatically sign your app with build in **test certificate**.
+- If you publish your app to the **Windows Store**, the app will automatically sign by the store.
+- If you need to use **your own certificate**, use the configuration fields:`certificate_path, certificate_password`
+
+**Note**: by default, this package will install the certificate on your machine, you can disable it by using the `--dontInstallCert` flag or the configuration: `dont_install_cert: true` 
+
 ## ![MSIX](https://user-images.githubusercontent.com/946652/138161113-c905ec10-78f1-4d96-91ac-1295ae3d2a8c.png) Windows Store
 To generate msix file for publish to the Windows Store, use the `--store` flag or add `store: true` 
 in msix configuration section in your `pubspec.yaml`.
@@ -46,11 +54,6 @@ For Windows Store publication the configuration values: `publisher_display_name`
 you can find those values in your windows store [dashboard](https://partner.microsoft.com/dashboard) (`Product` > `Product identity`).
 
 For more information about publish to the Windows Store see: [How to publish your MSIX package to the Microsoft Store](https://www.advancedinstaller.com/msix-publish-microsoft-store.html)
-
-## :black_nib: Signing Options
-The created installer file (.msix) is automatically sign with default **test** certificate. for publishing, the Windows Store will automatically sign it for you.
-
-If you need, you can use your own certificate using the configuration fields:`certificate_path, certificate_password, publisher` or `signtool_options`
 
 ## :file_folder: .dll Files And Assets (FFI Library)
 To include your *.dll* and other third party assets in your msix installer, you can use the configuration field: `assets_directory_path`:
@@ -90,8 +93,8 @@ Configuration Name | Description (from [microsoft docs](https://docs.microsoft.c
 |  architecture | Describes the architecture of the code contained in the package, one of:<br />`x86`, `x64`, `arm`, `neutral` | `x64` |
 |  certificate_path | Path to your certificate file | `C:/<PathToCertificate>/<MyCertificate.pfx>` |
 |  certificate_password | The certificate password | `1234` |
-|  publisher | Describes the publisher information. The Publisher attribute **must match** the publisher subject information of the certificate used to sign a package. | `CN=My Company, O=My Company, L=Berlin, S=Berlin, C=DE` |
 |  signtool_options | *Signtool* use the syntax: *[command] [options] [file_name]*, so you can provide here the **[options]** part, [see full documentation](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe)<br /><br />this **overwriting** the fields: `certificate_path`, `certificate_password` | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer` |
+|  dont_install_cert | if `true`, the package won't try to install the certificate | `false` |
 |  file_extension | File extensions that the app will used to open | `.txt, .myFile, .test1` |
 |  protocol_activation | Protocol activation that will open the app | `http` |
 
@@ -109,7 +112,6 @@ flutter pub run msix:create --v 1.0.3.3 --c C:/Users/me/Desktop/test_certificate
 - display name: `--dn`
 - publisher display name: `--pdn`
 - identity name: `--in`
-- publisher: `--pu`
 - logo path: `--lp`
 - start_menu icon path: `--smip`
 - tile icon path: `--tip`
@@ -126,6 +128,7 @@ flutter pub run msix:create --v 1.0.3.3 --c C:/Users/me/Desktop/test_certificate
 ###### Available Arguments Flags:
 - store: `--store`
 - debug: `--debug`
+- don't install certificate: `--dontInstallCert`
 
 ---
 package tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`

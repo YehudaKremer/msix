@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:ansicolor/ansicolor.dart';
-import '../configuration.dart';
 
-int numberOfAllTasks = 13;
+int numberOfAllTasks = 14;
 
 class Log {
   static AnsiPen red = AnsiPen()..red(bold: true);
@@ -85,18 +84,6 @@ class Log {
       _renderProgressBar();
       stdout.writeln(emptyStr);
     }
-  }
-
-  /// Log `Certificate Subject` help information
-  static void printCertificateSubjectHelp() {
-    Log.warn(
-        'Please note: The value of Publisher should be in one line and with commas, example:');
-    Log.info(defaultPublisher);
-    Log.info('');
-    Log.warn('For more information see:');
-    Log.link(
-        'https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing#determine-the-subject-of-your-packaged-app');
-    Log.info('');
   }
 
   static String _getlastMessageEmptyStringLength() {

@@ -6,9 +6,6 @@ import 'package:yaml/yaml.dart';
 import 'utils/log.dart';
 import 'utils/extensions.dart';
 
-const String defaultPublisher =
-    'CN=Msix Testing, O=Msix Testing Corporation, S=Some-State, C=US';
-
 class Configuration {
   late ArgResults argResults;
   String msixAssetsPath = '';
@@ -18,11 +15,11 @@ class Configuration {
   String? assetsFolderPath;
   String? msixVersion;
   String? appDescription;
-  String? publisher;
   String buildFilesFolder =
       '${Directory.current.path}/build/windows/runner/Release';
   String? certificatePath;
   String? certificatePassword;
+  String? publisher;
   String? displayName;
   String? architecture;
   String? capabilities;
@@ -36,8 +33,8 @@ class Configuration {
   String? protocolActivation;
   String? fileExtension;
   bool debugSigning = false;
-  bool isUsingTestCertificate = false;
   bool store = false;
+  bool dontInstallCert = false;
   Iterable<String>? languages;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
@@ -60,6 +57,11 @@ class Configuration {
         argResults.read('password') ??
         config?['certificate_password']?.toString();
     debugSigning = argResults.wasParsed('debug') || argResults.wasParsed('d');
+    dontInstallCert = argResults.wasParsed('dontInstallCert') ||
+        config?['dont_install_cert']?.toString().toLowerCase() == 'true';
+    if (dontInstallCert) {
+      numberOfAllTasks--;
+    }
     store = argResults.wasParsed('store') ||
         config?['store']?.toString().toLowerCase() == 'true';
     if (store) {
@@ -70,7 +72,6 @@ class Configuration {
         argResults.read('pdn') ?? config?['publisher_display_name']?.toString();
     identityName =
         argResults.read('in') ?? config?['identity_name']?.toString();
-    publisher = argResults.read('pu') ?? config?['publisher']?.toString();
     logoPath = argResults.read('lp') ?? config?['logo_path']?.toString();
     startMenuIconPath =
         argResults.read('smip') ?? config?['start_menu_icon_path']?.toString();
@@ -178,26 +179,10 @@ class Configuration {
               'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml');
         }
       }
-
-      if (publisher.isNull) {
-        Log.error(
-            'Certificate subject is empty, check "msix_config: publisher" at pubspec.yaml');
-        if (store) {
-          Log.warn(
-              'you can find your store "publisher" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Publisher');
-        } else {
-          Log.warn('see what certificate-subject value is:');
-          Log.link(
-              'https://drive.google.com/file/d/1oAsnrp2Kf-jZ_kaRjyF5llQ0YZy1IwNe/view?usp=sharing');
-        }
-        exit(0);
-      }
     } else {
       /// If no certificate was chosen then use test certificate
       certificatePath = '$msixAssetsPath/test_certificate.pfx';
       certificatePassword = '1234';
-      publisher = defaultPublisher;
-      isUsingTestCertificate = true;
     }
 
     if (!['x86', 'x64'].contains(architecture)) {
@@ -240,7 +225,6 @@ class Configuration {
       ..addOption('dn') // display_name
       ..addOption('pdn') // publisher_display_name
       ..addOption('in') // identity_name
-      ..addOption('pu') // publisher
       ..addOption('lp') // logo_path
       ..addOption('smip') // start_menu_icon_path
       ..addOption('tip') // tile_icon_path
@@ -253,8 +237,9 @@ class Configuration {
       ..addOption('a') // architecture
       ..addOption('cap') // capabilities
       ..addOption('l') // languages
-      ..addFlag('store') // store
-      ..addFlag('debug') // debug
+      ..addFlag('store')
+      ..addFlag('debug')
+      ..addFlag('dontInstallCert')
       ..addFlag('d');
 
     try {

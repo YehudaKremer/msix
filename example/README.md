@@ -42,5 +42,4 @@ msix_config:
   logo_path: C:\<PathToIcon>\<Logo.png>
   certificate_path: C:\<PathToCertificate>\<MyCertificate.pfx>
   certificate_password: 1234
-  publisher: CN=My Company, O=My Company, L=Berlin, S=Berlin, C=DE
 ```

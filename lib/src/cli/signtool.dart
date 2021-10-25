@@ -6,8 +6,44 @@ import '../utils/log.dart';
 import '../configuration.dart';
 
 class Signtool {
-  static void installTestCertificate() {
-    const taskName = 'installing test certificate';
+  static void getCertificatePublisher() {
+    const taskName = 'getting certificate publisher';
+    Log.startingTask(taskName);
+    final config = injector.get<Configuration>();
+
+    var certificateDetails = Process.runSync('certutil',
+        ['-dump', '-p', config.certificatePassword!, config.certificatePath!]);
+
+    const error =
+        'Fail to read the certificate details, please check if the certificate is valid and the password is correct';
+
+    try {
+      config.publisher = certificateDetails.stdout
+          .toString()
+          .split('\n')
+          .firstWhere((row) => row.toLowerCase().trim().startsWith('subject:'))
+          .replaceFirst('Subject:', '')
+          .replaceFirst('subject:', '')
+          .trim();
+    } catch (e) {
+      Log.errorAndExit(error);
+    }
+
+    if (certificateDetails.stderr.toString().length > 0 ||
+        certificateDetails.exitCode != 0) Log.errorAndExit(error);
+
+    if (certificateDetails.stderr.toString().length > 0) {
+      Log.error(certificateDetails.stdout);
+      Log.errorAndExit(certificateDetails.stderr);
+    } else if (certificateDetails.exitCode != 0) {
+      Log.errorAndExit(certificateDetails.stdout);
+    }
+
+    Log.taskCompleted(taskName);
+  }
+
+  static void installCertificate() {
+    const taskName = 'installing certificate';
     Log.startingTask(taskName);
     final config = injector.get<Configuration>();
 
@@ -16,19 +52,19 @@ class Signtool {
 
     if (!installedCertificatesList.stdout
         .toString()
-        .contains(defaultPublisher)) {
+        .contains(config.publisher!)) {
       var isAdminCheck = Process.runSync('net', ['session']);
 
       if (isAdminCheck.stderr.toString().contains('Access is denied')) {
         Log.errorAndExit(
-            'to install the test certificate, you need to run this As-Admin once');
+            'to install the certificate "${config.certificatePath}" you need to "Run as administrator" once');
       }
 
       var result = Process.runSync('certutil', [
         '-f',
         '-enterprise',
         '-p',
-        '1234',
+        config.certificatePassword!,
         '-importpfx',
         'root',
         config.certificatePath!
@@ -101,7 +137,7 @@ class Signtool {
                 .toString()
                 .contains('Error: SignerSign() failed.') &&
             !config.publisher.isNull) {
-          Log.printCertificateSubjectHelp();
+          Log.errorAndExit('signing error');
         }
 
         exit(0);

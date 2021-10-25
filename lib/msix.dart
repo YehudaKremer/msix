@@ -25,13 +25,14 @@ class Msix {
     assets.createIconsFolder();
     assets.copyIcons();
     assets.copyVCLibsFiles();
+    Signtool.getCertificatePublisher();
     Manifest()..generateAppxManifest();
     MakePri.generatePRI();
     MakeAppx.pack();
     assets.cleanTemporaryFiles();
     if (!config.store) {
-      if (config.isUsingTestCertificate) {
-        Signtool.installTestCertificate();
+      if (!config.dontInstallCert) {
+        Signtool.installCertificate();
       }
       Signtool.sign();
     }
