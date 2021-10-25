@@ -11,7 +11,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^2.5.0
+  msix: ^2.5.1
 ```
 
 ## :package: Create Msix
@@ -39,9 +39,9 @@ See [full list of available configurations](#clipboard-available-configuration-f
 
 ## :black_nib: Signing Options
 **.msix** installer must be sign with certificate (.pfx)
-- This package will automatically sign your app with build in **test certificate**.
-- If you publish your app to the **Windows Store**, the app will automatically sign by the store.
-- If you need to use **your own certificate**, use the configuration fields:`certificate_path, certificate_password`
+- this package will automatically sign your app with build in **test certificate**.
+- if you publish your app to the **Windows Store**, the app will automatically sign by the store.
+- if you need to use **your own certificate**, use the configuration fields:`certificate_path, certificate_password`
 
 **Note**: by default, this package will install the certificate on your machine, you can disable it by using the `--dontInstallCert` flag or the configuration: `dont_install_cert: true` 
 
@@ -51,7 +51,7 @@ in msix configuration section in your `pubspec.yaml`.
 
 ###### Note:
 For Windows Store publication the configuration values: `publisher_display_name`, `identity_name`, `msix_version`, `publisher` must be valid,
-you can find those values in your windows store [dashboard](https://partner.microsoft.com/dashboard) (`Product` > `Product identity`).
+you can find those values in your windows store [dashboard](https://partner.microsoft.com/dashboard) (`Product` > `Product identity`) [see image](https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png).
 
 For more information about publish to the Windows Store see: [How to publish your MSIX package to the Microsoft Store](https://www.advancedinstaller.com/msix-publish-microsoft-store.html)
 

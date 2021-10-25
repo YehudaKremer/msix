@@ -65,11 +65,12 @@ class Configuration {
     store = argResults.wasParsed('store') ||
         config?['store']?.toString().toLowerCase() == 'true';
     if (store) {
-      numberOfAllTasks--;
+      numberOfAllTasks -= 2;
     }
     displayName = argResults.read('dn') ?? config?['display_name']?.toString();
     publisherName =
         argResults.read('pdn') ?? config?['publisher_display_name']?.toString();
+    publisher = argResults.read('pu') ?? config?['publisher']?.toString();
     identityName =
         argResults.read('in') ?? config?['identity_name']?.toString();
     logoPath = argResults.read('lp') ?? config?['logo_path']?.toString();
@@ -134,6 +135,13 @@ class Configuration {
       } else {
         publisherName = identityName;
       }
+    }
+    if (store && publisher.isNullOrEmpty) {
+      Log.error(
+          'publisher is empty, check "msix_config: publisher" at pubspec.yaml');
+      Log.warn(
+          'you can find your store "publisher" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/Publisher');
+      exit(0);
     }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
@@ -225,6 +233,7 @@ class Configuration {
       ..addOption('dn') // display_name
       ..addOption('pdn') // publisher_display_name
       ..addOption('in') // identity_name
+      ..addOption('pu') // publisher
       ..addOption('lp') // logo_path
       ..addOption('smip') // start_menu_icon_path
       ..addOption('tip') // tile_icon_path

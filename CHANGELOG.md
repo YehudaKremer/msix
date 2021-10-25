@@ -1,9 +1,9 @@
 # Changelog
 
-## 2.5.0
+## 2.5.1
 
  - certificate "publisher" is now recognize automatic
- - "publisher" configuration field is now deprecate
+ - "publisher" configuration field is needed only for publish to windows store
  - added new flag/configuration-field "dontInstallCert"
 
 ## 2.4.2

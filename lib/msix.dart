@@ -25,7 +25,9 @@ class Msix {
     assets.createIconsFolder();
     assets.copyIcons();
     assets.copyVCLibsFiles();
-    Signtool.getCertificatePublisher();
+    if (!config.store) {
+      Signtool.getCertificatePublisher();
+    }
     Manifest()..generateAppxManifest();
     MakePri.generatePRI();
     MakeAppx.pack();

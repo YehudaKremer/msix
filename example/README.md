@@ -27,8 +27,10 @@ msix_config:
   display_name: MyAppName
   publisher_display_name: MyName
   identity_name: MyCompany.MySuite.MyApp
-  msix_version: 1.0.0.0
+  publisher: CN=BF212345-5644-46DF-8668-014044C1B138
+  msix_version: 1.0.0.1
   logo_path: C:\<PathToIcon>\<Logo.png>
+  store: true
   store: true
 ```
 
