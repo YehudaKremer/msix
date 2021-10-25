@@ -112,6 +112,7 @@ flutter pub run msix:create --v 1.0.3.3 --c C:/Users/me/Desktop/test_certificate
 - debug signing problems: `--d`
 - display name: `--dn`
 - publisher display name: `--pdn`
+- publisher: `--pu`
 - identity name: `--in`
 - logo path: `--lp`
 - start_menu icon path: `--smip`
