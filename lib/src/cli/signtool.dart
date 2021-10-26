@@ -25,17 +25,21 @@ class Signtool {
       Log.errorAndExit(certificateDetails.stdout);
     }
 
+    Log.info('Certificate Details: ${certificateDetails.stdout}');
+
     try {
       config.publisher = certificateDetails.stdout
           .toString()
           .split('\n')
-          .firstWhere((row) => row.toLowerCase().trim().startsWith('subject:'))
+          .firstWhere((row) =>
+              !row.isNullOrEmpty &&
+              row.toLowerCase().trim().startsWith('subject:'))
           .replaceFirst('Subject:', '')
           .replaceFirst('subject:', '')
           .trim();
     } catch (err, stackTrace) {
       Log.error(err.toString());
-      Log.error(stackTrace.toString());
+      Log.errorAndExit(stackTrace.toString());
     }
 
     Log.taskCompleted(taskName);

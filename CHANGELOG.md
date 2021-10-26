@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.5.3
+## 2.5.4
 
  - certificate "publisher" is now recognize automatic
  - "publisher" configuration field is needed only for publish to windows store

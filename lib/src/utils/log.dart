@@ -4,12 +4,12 @@ import 'package:ansicolor/ansicolor.dart';
 int numberOfAllTasks = 14;
 
 class Log {
-  static AnsiPen red = AnsiPen()..red(bold: true);
-  static AnsiPen yellow = AnsiPen()..yellow(bold: true);
-  static AnsiPen green = AnsiPen()..green(bold: true);
-  static AnsiPen blue = AnsiPen()..blue(bold: true);
-  static AnsiPen gray05 = AnsiPen()..gray(level: 0.5);
-  static AnsiPen gray09 = AnsiPen()..gray(level: 0.9);
+  static AnsiPen _red = AnsiPen()..red(bold: true);
+  static AnsiPen _yellow = AnsiPen()..yellow(bold: true);
+  static AnsiPen _green = AnsiPen()..green(bold: true);
+  static AnsiPen _blue = AnsiPen()..blue(bold: true);
+  static AnsiPen _gray05 = AnsiPen()..gray(level: 0.5);
+  static AnsiPen _gray09 = AnsiPen()..gray(level: 0.9);
   static int _numberOfTasksCompleted = 0;
   static int lastMessageLength = 0;
 
@@ -17,12 +17,12 @@ class Log {
   Log();
 
   /// Information log with `white` color
-  static void info(String message) => _write(message, withColor: gray09);
+  static void info(String message) => _write(message, withColor: _gray09);
 
   /// Error log with `red` color
   static void error(String message) {
     stdout.writeln();
-    _write(message, withColor: red);
+    _write(message, withColor: _red);
   }
 
   /// Write `error` log and exit the program
@@ -32,13 +32,13 @@ class Log {
   }
 
   /// Warning log with `yellow` color
-  static void warn(String message) => _write(message, withColor: yellow);
+  static void warn(String message) => _write(message, withColor: _yellow);
 
   /// Success log with `green` color
-  static void success(String message) => _write(message, withColor: green);
+  static void success(String message) => _write(message, withColor: _green);
 
   /// Link log with `blue` color
-  static void link(String message) => _write(message, withColor: blue);
+  static void link(String message) => _write(message, withColor: _blue);
 
   static void _write(String message, {required AnsiPen withColor}) {
     stdout.writeln(withColor(message));
@@ -47,20 +47,20 @@ class Log {
   static void _renderProgressBar() {
     stdout.writeCharCode(13);
 
-    stdout.write(gray09('['));
+    stdout.write(_gray09('['));
     var blueBars = '';
     for (var z = _numberOfTasksCompleted; z > 0; z--) {
       blueBars += '❚❚';
     }
-    stdout.write(blue(blueBars));
+    stdout.write(_blue(blueBars));
     var grayBars = '';
     for (var z = numberOfAllTasks - _numberOfTasksCompleted; z > 0; z--) {
       grayBars += '❚❚';
     }
-    stdout.write(gray05(grayBars));
+    stdout.write(_gray05(grayBars));
 
-    stdout.write(gray09(']'));
-    stdout.write(gray09(
+    stdout.write(_gray09(']'));
+    stdout.write(_gray09(
         ' ${(_numberOfTasksCompleted * 100 / numberOfAllTasks).floor()}%'));
   }
 
@@ -69,14 +69,14 @@ class Log {
     final emptyStr = _getlastMessageEmptyStringLength();
     lastMessageLength = name.length;
     _renderProgressBar();
-    stdout.write(gray09(' $name..$emptyStr'));
+    stdout.write(_gray09(' $name..$emptyStr'));
   }
 
   /// Info log on a completed task
   static void taskCompleted(String name) {
     _numberOfTasksCompleted++;
     stdout.writeCharCode(13);
-    stdout.write(green('☑ '));
+    stdout.write(_green('☑ '));
     stdout.writeln(
         '$name                                                             ');
     if (_numberOfTasksCompleted >= numberOfAllTasks) {

@@ -152,7 +152,7 @@ class Configuration {
 
     if (!Directory(buildFilesFolder).existsSync()) {
       Log.errorAndExit(
-          'Build files not found as $buildFilesFolder, first run "flutter build windows" then try again');
+          'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again');
     }
 
     if (assetsFolderPath != null &&
