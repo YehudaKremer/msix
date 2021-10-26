@@ -28,15 +28,18 @@ class Signtool {
     Log.info('Certificate Details: ${certificateDetails.stdout}');
 
     try {
-      config.publisher = certificateDetails.stdout
+      var subjectRow = certificateDetails.stdout
           .toString()
           .split('\n')
-          .firstWhere((row) =>
+          .lastWhere((row) =>
               !row.isNullOrEmpty &&
-              row.toLowerCase().trim().startsWith('subject:'))
-          .replaceFirst('Subject:', '')
-          .replaceFirst('subject:', '')
+              (row.toLowerCase().contains('cn =') ||
+                  row.toLowerCase().contains('cn=')));
+      Log.info('subjectRow: $subjectRow');
+      config.publisher = subjectRow
+          .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
           .trim();
+      Log.info('config.publisher: ${config.publisher}');
     } catch (err, stackTrace) {
       Log.error(err.toString());
       Log.errorAndExit(stackTrace.toString());

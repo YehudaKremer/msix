@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.5
+
+ - fix bug "Certificate Details can't be read" - https://github.com/YehudaKremer/msix/issues/60
+
 ## 2.5.4
 
  - certificate "publisher" is now recognize automatic
