@@ -8,7 +8,8 @@ class MakeAppx {
     const taskName = 'packing';
     Log.startingTask(taskName);
     final config = injector.get<Configuration>();
-    var msixPath = '${config.buildFilesFolder}/${config.appName}.msix';
+    var msixPath =
+        '${config.outputPath ?? config.buildFilesFolder}/${config.outputName ?? config.appName}.msix';
     var makeAppxPath =
         '${config.msixToolkitPath()}/Redist.${config.architecture}/makeappx.exe';
 

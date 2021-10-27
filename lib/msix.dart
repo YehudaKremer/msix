@@ -40,7 +40,8 @@ class Msix {
     }
 
     Log.success('Msix Installer Created:');
-    Log.link('${config.buildFilesFolder}\\${config.appName}.msix'
-        .replaceAll('/', r'\'));
+    Log.link(
+        '${config.outputPath ?? config.buildFilesFolder}\\${config.outputName ?? config.appName}.msix'
+            .replaceAll('/', r'\'));
   }
 }

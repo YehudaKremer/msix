@@ -136,8 +136,10 @@ class Signtool {
         'sign',
         ...signtoolOptions,
         if (config.debugSigning) '/debug',
-        '${config.buildFilesFolder}\\${config.appName}.msix',
+        '${config.outputPath ?? config.buildFilesFolder}\\${config.outputName ?? config.appName}.msix',
       ]);
+
+      if (config.debugSigning) Log.info(signResults.stdout.toString());
 
       if (!signResults.stdout
               .toString()

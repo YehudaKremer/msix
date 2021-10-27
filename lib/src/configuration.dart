@@ -32,6 +32,8 @@ class Configuration {
   List<String>? signtoolOptions;
   String? protocolActivation;
   String? fileExtension;
+  String? outputPath;
+  String? outputName;
   bool debugSigning = false;
   bool store = false;
   bool dontInstallCert = false;
@@ -47,60 +49,61 @@ class Configuration {
     appName = pubspec['name']?.toString();
     appDescription = pubspec['description']?.toString();
     var config = pubspec['msix_config'];
-    msixVersion = argResults.read('v') ??
-        argResults.read('version') ??
-        config?['msix_version']?.toString();
-    certificatePath = argResults.read('c') ??
-        argResults.read('certificate') ??
+    msixVersion =
+        argResults.read('version') ?? config?['msix_version']?.toString();
+    certificatePath = argResults.read('certificate-path') ??
         config?['certificate_path']?.toString();
-    certificatePassword = argResults.read('p') ??
-        argResults.read('password') ??
+    certificatePassword = argResults.read('certificate-password') ??
         config?['certificate_password']?.toString();
-    debugSigning = argResults.wasParsed('debug') || argResults.wasParsed('d');
-    dontInstallCert = argResults.wasParsed('dontInstallCert') ||
+    outputPath =
+        argResults.read('output-path') ?? config?['output_path']?.toString();
+    outputName =
+        argResults.read('output-name') ?? config?['output_name']?.toString();
+    debugSigning = argResults.wasParsed('debug-signing');
+    dontInstallCert = argResults.wasParsed('dont-install-certificate') ||
         config?['dont_install_cert']?.toString().toLowerCase() == 'true';
-    if (dontInstallCert) {
-      numberOfAllTasks--;
-    }
+    if (dontInstallCert) numberOfAllTasks--;
     store = argResults.wasParsed('store') ||
         config?['store']?.toString().toLowerCase() == 'true';
-    if (store) {
-      numberOfAllTasks -= 2;
-    }
-    displayName = argResults.read('dn') ?? config?['display_name']?.toString();
-    publisherName =
-        argResults.read('pdn') ?? config?['publisher_display_name']?.toString();
-    publisher = argResults.read('pu') ?? config?['publisher']?.toString();
-    identityName =
-        argResults.read('in') ?? config?['identity_name']?.toString();
-    logoPath = argResults.read('lp') ?? config?['logo_path']?.toString();
-    startMenuIconPath =
-        argResults.read('smip') ?? config?['start_menu_icon_path']?.toString();
-    tileIconPath =
-        argResults.read('tip') ?? config?['tile_icon_path']?.toString();
-    assetsFolderPath =
-        argResults.read('adp') ?? config?['assets_directory_path']?.toString();
-    vsGeneratedIconsFolderPath = argResults.read('vsi') ??
+    if (store) numberOfAllTasks -= 2;
+    displayName =
+        argResults.read('display-name') ?? config?['display_name']?.toString();
+    publisherName = argResults.read('publisher-display-name') ??
+        config?['publisher_display_name']?.toString();
+    publisher =
+        argResults.read('publisher') ?? config?['publisher']?.toString();
+    identityName = argResults.read('identity-name') ??
+        config?['identity_name']?.toString();
+    logoPath = argResults.read('logo-path') ?? config?['logo_path']?.toString();
+    startMenuIconPath = argResults.read('start-menu-icon-path') ??
+        config?['start_menu_icon_path']?.toString();
+    tileIconPath = argResults.read('tile-icon-path') ??
+        config?['tile_icon_path']?.toString();
+    assetsFolderPath = argResults.read('assets-directory-path') ??
+        config?['assets_directory_path']?.toString();
+    vsGeneratedIconsFolderPath = argResults.read('vs-generated-images-path') ??
         config?['vs_generated_images_folder_path']?.toString();
-    iconsBackgroundColor =
-        argResults.read('ibc') ?? config?['icons_background_color']?.toString();
-    signtoolOptions = (argResults.read('so') ?? config?['signtool_options'])
-        ?.toString()
-        .split(' ')
-        .where((o) => o.trim().length > 0)
-        .toList();
-    protocolActivation =
-        (argResults.read('pa') ?? config?['protocol_activation'])
+    iconsBackgroundColor = argResults.read('icons-background-color') ??
+        config?['icons_background_color']?.toString();
+    signtoolOptions =
+        (argResults.read('signtool-options') ?? config?['signtool_options'])
             ?.toString()
-            .replaceAll(':', '');
-    fileExtension =
-        argResults.read('fe') ?? config?['file_extension']?.toString();
+            .split(' ')
+            .where((o) => o.trim().length > 0)
+            .toList();
+    protocolActivation = (argResults.read('protocol-activation') ??
+            config?['protocol_activation'])
+        ?.toString()
+        .replaceAll(':', '');
+    fileExtension = argResults.read('file-extension') ??
+        config?['file_extension']?.toString();
     if (fileExtension != null && !fileExtension!.startsWith('.')) {
       fileExtension = '.$fileExtension';
     }
-    architecture = argResults.read('a') ?? config?['architecture']?.toString();
+    architecture =
+        argResults.read('architecture') ?? config?['architecture']?.toString();
     capabilities =
-        argResults.read('cap') ?? config?['capabilities']?.toString();
+        argResults.read('capabilities') ?? config?['capabilities']?.toString();
     languages = _getLanguages(config);
   }
 
@@ -224,32 +227,30 @@ class Configuration {
     Log.startingTask(taskName);
 
     var parser = ArgParser()
-      ..addOption('password')
-      ..addOption('p') // display_name
-      ..addOption('certificate')
-      ..addOption('c') // display_name
-      ..addOption('version')
-      ..addOption('v') // display_name
-      ..addOption('dn') // display_name
-      ..addOption('pdn') // publisher_display_name
-      ..addOption('in') // identity_name
-      ..addOption('pu') // publisher
-      ..addOption('lp') // logo_path
-      ..addOption('smip') // start_menu_icon_path
-      ..addOption('tip') // tile_icon_path
-      ..addOption('adp') // assets_directory_path
-      ..addOption('vsi') // vs_generated_images_folder_path
-      ..addOption('ibc') // icons_background_color
-      ..addOption('so') // signtool_options
-      ..addOption('pa') // protocol_activation
-      ..addOption('fe') // file_extension
-      ..addOption('a') // architecture
-      ..addOption('cap') // capabilities
-      ..addOption('l') // languages
+      ..addOption('certificate-password', abbr: 'p')
+      ..addOption('certificate-path', abbr: 'c')
+      ..addOption('version', abbr: 'v')
+      ..addOption('display-name', abbr: 'd')
+      ..addOption('publisher-display-name', abbr: 'u')
+      ..addOption('identity-name', abbr: 'i')
+      ..addOption('publisher', abbr: 'b')
+      ..addOption('logo-path', abbr: 'l')
+      ..addOption('output-path', abbr: 'o')
+      ..addOption('output-name', abbr: 'n')
+      ..addOption('start-menu-icon-path', abbr: 's')
+      ..addOption('tile-icon-path', abbr: 't')
+      ..addOption('assets-directory-path', abbr: 'a')
+      ..addOption('vs-generated-images-path', abbr: 'g')
+      ..addOption('icons-background-color', abbr: 'k')
+      ..addOption('signtool-options')
+      ..addOption('protocol-activation')
+      ..addOption('file-extension', abbr: 'f')
+      ..addOption('architecture', abbr: 'h')
+      ..addOption('capabilities', abbr: 'e')
+      ..addOption('languages')
       ..addFlag('store')
-      ..addFlag('debug')
-      ..addFlag('dontInstallCert')
-      ..addFlag('d');
+      ..addFlag('debug-signing')
+      ..addFlag('dont-install-certificate');
 
     try {
       argResults = parser.parse(args);
@@ -283,7 +284,7 @@ class Configuration {
 
   Iterable<String>? _getLanguages(dynamic config) {
     var languagesConfig =
-        argResults.read('l') ?? config?['languages']?.toString();
+        argResults.read('languages') ?? config?['languages']?.toString();
     if (languagesConfig != null) {
       var languages = languagesConfig
           .split(',')

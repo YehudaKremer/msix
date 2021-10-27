@@ -1,14 +1,20 @@
 # Changelog
 
+## 2.6.0
+
+ - Added feature #47 and #57
+ - Fix bug #51 and added error logs
+ - Rewrite CLI arguments (see updated documentation)
+
 ## 2.5.5
 
- - fix bug "Certificate Details can't be read" - https://github.com/YehudaKremer/msix/issues/60
+ - Fix bug "Certificate Details can't be read" - https://github.com/YehudaKremer/msix/issues/60
 
 ## 2.5.4
 
- - certificate "publisher" is now recognize automatic
+ - Certificate "publisher" is now recognize automatic
  - "publisher" configuration field is needed only for publish to windows store
- - added new flag/configuration-field "dontInstallCert"
+ - Added new flag/configuration-field "dontInstallCert"
 
 ## 2.4.2
 
@@ -47,23 +53,23 @@
 
 ## 2.0.0
 
- - see - https://github.com/YehudaKremer/msix/issues/37
+ - See - https://github.com/YehudaKremer/msix/issues/37
 
 ## 1.0.6
 
- - add `--debug` flag to debug signing issues, fixed missing argument `/f' for not '.pfx' certificates
+ - Add `--debug` flag to debug signing issues, fixed missing argument `/f' for not '.pfx' certificates
 
 ## 1.0.5
 
- - add terminal explanation about the test certificate installation
+ - Add terminal explanation about the test certificate installation
 
 ## 1.0.4
 
- - support multiple languages - https://github.com/YehudaKremer/msix/issues/35
+ - Support multiple languages - https://github.com/YehudaKremer/msix/issues/35
 
 ## 1.0.3
 
- - fix: command-line arguments not taken into account in case there is no configuration at all
+ - Fix: command-line arguments not taken into account in case there is no configuration at all
 
 ## 1.0.2
 
@@ -72,18 +78,18 @@
 
 ## 1.0.0
 
- - null safety
- - code refactoring
- - move to sync code to increase stability
- - fix: Wrong executable selection - https://github.com/YehudaKremer/msix/pull/32
+ - Null safety
+ - Code refactoring
+ - Move to sync code to increase stability
+ - Fix: Wrong executable selection - https://github.com/YehudaKremer/msix/pull/32
 
 ## 0.1.19
 
- - fix: Sometimes VC libraries are not copied - https://github.com/YehudaKremer/msix/issues/30
+ - Fix: Sometimes VC libraries are not copied - https://github.com/YehudaKremer/msix/issues/30
 
 ## 0.1.15
 
- - fix invalid character in the app name - https://github.com/YehudaKremer/msix/issues/25
+ - Fix invalid character in the app name - https://github.com/YehudaKremer/msix/issues/25
 
 ## 0.1.14
 
@@ -100,11 +106,11 @@
 
 ## 0.1.8
 
-- fix bug: can't get pfx password from config - https://github.com/YehudaKremer/msix/issues/16
+- Fix bug: can't get pfx password from config - https://github.com/YehudaKremer/msix/issues/16
 
 ## 0.1.10
 
-- delete old code and documentation editing 
+- Delete old code and documentation editing 
 
 ## 0.1.8
 
@@ -112,35 +118,35 @@
 
 ## 0.1.5
 
-- backward compatibility for configuration properties
+- Backward compatibility for configuration properties
 
 ## 0.1.4
 
-- backward compatibility for configuration properties
+- Backward compatibility for configuration properties
 
 ## 0.1.2
 
-- can create an unsigned installation file for upload to the store
-- breaking config change: "publisher_name" is now: "publisher_display_name"
-- breaking config change:  "certificate_subject" is now: "publisher"
+- Can create an unsigned installation file for upload to the store
+- Breaking config change: "publisher_name" is now: "publisher_display_name"
+- Breaking config change:  "certificate_subject" is now: "publisher"
 
 ## 0.1.1
 
-- bug fix: automatically find the name of the exe file
+- Bug fix: automatically find the name of the exe file
 
 ## 0.1.0
 
-- add capabilities
-- support all tiles sizes
-- bug fixes
+- Add capabilities
+- Support all tiles sizes
+- Bug fixes
 
 ## 0.0.10
 
-- code refactoring
+- Code refactoring
 
 ## 0.0.9
 
-- fix "create doesn't handle package_names"
+- Fix "create doesn't handle package_names"
 
 ## 0.0.8
 
