@@ -6,7 +6,7 @@ import '../utils/log.dart';
 import '../configuration.dart';
 
 class Signtool {
-  static void getCertificatePublisher() {
+  static void getCertificatePublisher(bool withLogs) {
     const taskName = 'getting certificate publisher';
     Log.startingTask(taskName);
     final config = injector.get<Configuration>();
@@ -25,7 +25,7 @@ class Signtool {
       Log.errorAndExit(certificateDetails.stdout);
     }
 
-    Log.info('Certificate Details: ${certificateDetails.stdout}');
+    if (withLogs) Log.info('Certificate Details: ${certificateDetails.stdout}');
 
     try {
       var subjectRow = certificateDetails.stdout
@@ -35,13 +35,21 @@ class Signtool {
               !row.isNullOrEmpty &&
               (row.toLowerCase().contains('cn =') ||
                   row.toLowerCase().contains('cn=')));
-      Log.info('subjectRow: $subjectRow');
+      if (withLogs) Log.info('subjectRow: $subjectRow');
       config.publisher = subjectRow
           .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
           .trim();
-      Log.info('config.publisher: ${config.publisher}');
+      if (withLogs) Log.info('config.publisher: ${config.publisher}');
     } catch (err, stackTrace) {
+      if (!withLogs) getCertificatePublisher(true);
       Log.error(err.toString());
+      if (withLogs)
+        Log.warn(
+            'This error happen when this package tried to read the certificate details,');
+      if (withLogs)
+        Log.warn(
+            'please report it by pasting all this output (after deleting sensitive info) to:');
+      if (withLogs) Log.link('https://github.com/YehudaKremer/msix/issues');
       Log.errorAndExit(stackTrace.toString());
     }
 

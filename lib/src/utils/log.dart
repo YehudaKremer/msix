@@ -11,10 +11,7 @@ class Log {
   static AnsiPen _gray05 = AnsiPen()..gray(level: 0.5);
   static AnsiPen _gray09 = AnsiPen()..gray(level: 0.9);
   static int _numberOfTasksCompleted = 0;
-  static int lastMessageLength = 0;
-
-  /// Log with colors.
-  Log();
+  static int _lastMessageLength = 0;
 
   /// Information log with `white` color
   static void info(String message) => _write(message, withColor: _gray09);
@@ -67,7 +64,7 @@ class Log {
   /// Info log on a new task
   static void startingTask(String name) {
     final emptyStr = _getlastMessageEmptyStringLength();
-    lastMessageLength = name.length;
+    _lastMessageLength = name.length;
     _renderProgressBar();
     stdout.write(_gray09(' $name..$emptyStr'));
   }
@@ -88,7 +85,7 @@ class Log {
 
   static String _getlastMessageEmptyStringLength() {
     var emptyStr = '';
-    for (var i = 0; i < lastMessageLength + 8; i++) {
+    for (var i = 0; i < _lastMessageLength + 8; i++) {
       emptyStr += ' ';
     }
     return emptyStr;
