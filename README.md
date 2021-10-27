@@ -76,29 +76,29 @@ var helloLib = ffi.DynamicLibrary.open(absolutePath);
 ## :clipboard: Available Configuration Fields:
 Configuration Name &<br />CLI Arg/Flag | Description (from [microsoft docs](https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root "microsoft docs")) | Example
 --- | --- | ---
-|  display_name<br/>`--display-name` `-d` | A friendly name that can be displayed to users. | `MyAppName` |
-|  publisher_display_name<br/>`--publisher-display-name` `-u` | A friendly name for the publisher that can be displayed to users. | `MyName` |
-|  identity_name<br/>`--identity-name` `-i` | Defines a globally unique identifier for a package. | `com.flutter.MyApp` |
-|  publisher<br/>`--publisher` `-b` | Describes the publisher information. | `CN=BF212345-5644-46DF-8668-014044C1B138` |
-|  msix_version<br/>`--version` `-v` | The version number of the package. | `1.0.0.0`<br />*(must be this format)* |
-|  store<br/>`--store` | The installer *(.msix)* is for publish to Windows Store | `false` |
-|  output_path<br/>`--output-path` `-o` | The location to create the .msix file | `C:\Users\me\Desktop\New folder\` |
-|  output_name<br/>`--output-name` `-n` | The name of the created .msix file | `myApp_dev` |
-|  logo_path<br/>`--logo-path` `-l` | Path to the app logo | `C:/<PathToIcon>/<Logo.png>` |
-|  start_menu_icon_path<br/>`--start-menu-icon-path` `-s` |  Path to logo that will used in start-menu.<br />if not specified will use `logo_path` | `C:/<PathToIcon>/<Icon.png>` |
-|  tile_icon_path<br/>`--tile-icon-path` `-t` | Path to logo used as the app tile logo. *(win10)*<br />if not specified will use `logo_path` | `C:/<PathToIcon>/<Icon.png>` |
-|  vs_generated_images<br />_folder_path<br/>`--vs-generated-images-path` `-g` | Visual Studio can generate for you optimized icons *(logo, tile and more)*, [see Thomas's explanation](https://github.com/YehudaKremer/msix/issues/19). This is an alternative for `logo_path`, `start_menu_icon_path`, `tile_icon_path` |  `C:\<PathToFolder>\icons` |
-|  icons_background_color<br/>`--icons-background-color` `-k` | Specifies the background color of the app icons, can be `transparent` or hex color like: `'#ffffff'` *(win10)* | `transparent` |
-|  assets_directory_path<br/>`--assets-directory-path` `-a` | Path to assets folder *(.dll files)* to include in the installer |  `C:\<PathToFolder>\myAssets` |
-|  languages<br/>`--languages` | Declares a language for resources contained in the package | `en-us, ja-jp` |
-|  capabilities<br/>`--capabilities` `-e` | List of the capabilities the application requires.<br />see [full capabilities list](https://docs.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations) | `internetClient,location,microphone,bluetooth,webcam` |
-|  architecture<br/>`--architecture` `-h` | Describes the architecture of the code contained in the package, one of:<br />`x86`, `x64`, `arm`, `neutral` | `x64` |
-|  certificate_path<br/>`--certificate-path` `-c` | Path to your certificate file | `C:/<PathToCertificate>/<MyCertificate.pfx>` |
-|  certificate_password<br/>`--certificate-password` `-p` | The certificate password | `1234` |
-|  signtool_options<br/>`--signtool-options` | *Signtool* use the syntax: *[command] [options] [file_name]*, so you can provide here the **[options]** part, [see full documentation](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe)<br /><br />this **overwriting** the fields: `certificate_path`, `certificate_password` | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer` |
-|  dont_install_cert<br/>`--dont-install-certificate` | if `true`, the package won't try to install the certificate | `false` |
-|  file_extension<br/>`--file-extension` `-f` | File extensions that the app will used to open | `.txt, .myFile, .test1` |
-|  protocol_activation<br/>`--protocol-activation` | Protocol activation that will open the app | `http` |
+|  display_name<br />`--display-name` `-d` | A friendly name that can be displayed to users. | `MyAppName` |
+|  publisher_display_name<br />`--publisher-display-name` `-u` | A friendly name for the publisher that can be displayed to users. | `MyName` |
+|  identity_name<br />`--identity-name` `-i` | Defines a globally unique identifier for a package. | `com.flutter.MyApp` |
+|  publisher<br />`--publisher` `-b` | Describes the publisher information. | `CN=BF212345-5644-46DF-8668-014044C1B138` |
+|  msix_version<br />`--version` `-v` | The version number of the package. | `1.0.0.0`<br />*(must be this format)* |
+|  store<br />`--store` | The installer *(.msix)* is for publish to Windows Store | `false` |
+|  output_path<br />`--output-path` `-o` | The location to create the .msix file | `C:\Users\me\Desktop\New folder\` |
+|  output_name<br />`--output-name` `-n` | The name of the created .msix file | `myApp_dev` |
+|  logo_path<br />`--logo-path` `-l` | Path to the app logo | `C:/<PathToIcon>/<Logo.png>` |
+|  start_menu_icon_path<br />`--start-menu-icon-path` `-s` |  Path to logo that will used in start-menu.<br />if not specified will use `logo_path` | `C:/<PathToIcon>/<Icon.png>` |
+|  tile_icon_path<br />`--tile-icon-path` `-t` | Path to logo used as the app tile logo. *(win10)*<br />if not specified will use `logo_path` | `C:/<PathToIcon>/<Icon.png>` |
+|  vs_generated_images<br />_folder_path<br />`--vs-generated-images-path` `-g` | Visual Studio can generate for you optimized icons *(logo, tile and more)*, [see Thomas's explanation](https://github.com/YehudaKremer/msix/issues/19). This is an alternative for `logo_path`, `start_menu_icon_path`, `tile_icon_path` |  `C:\<PathToFolder>\icons` |
+|  icons_background_color<br />`--icons-background-color` `-k` | Specifies the background color of the app icons, can be `transparent` or hex color like: `'#ffffff'` *(win10)* | `transparent` |
+|  assets_directory_path<br />`--assets-directory-path` `-a` | Path to assets folder *(.dll files)* to include in the installer |  `C:\<PathToFolder>\myAssets` |
+|  languages<br />`--languages` | Declares a language for resources contained in the package | `en-us, ja-jp` |
+|  capabilities<br />`--capabilities` `-e` | List of the capabilities the application requires.<br />see [full capabilities list](https://docs.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations) | `internetClient,location,microphone,bluetooth,webcam` |
+|  architecture<br />`--architecture` `-h` | Describes the architecture of the code contained in the package, one of:<br />`x86`, `x64`, `arm`, `neutral` | `x64` |
+|  certificate_path<br />`--certificate-path` `-c` | Path to your certificate file | `C:/<PathToCertificate>/<MyCertificate.pfx>` |
+|  certificate_password<br />`--certificate-password` `-p` | The certificate password | `1234` |
+|  signtool_options<br />`--signtool-options` | *Signtool* use the syntax: *[command] [options] [file_name]*, so you can provide here the **[options]** part, [see full documentation](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe)<br /><br />this **overwriting** the fields: `certificate_path`, `certificate_password` | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer` |
+|  dont_install_cert<br />`--dont-install-certificate` | if `true`, the package won't try to install the certificate | `false` |
+|  file_extension<br />`--file-extension` `-f` | File extensions that the app will used to open | `.txt, .myFile, .test1` |
+|  protocol_activation<br />`--protocol-activation` | Protocol activation that will open the app | `http` |
 |  `--debug-signing` | Showing more information about the certificate | |
 
 ---
