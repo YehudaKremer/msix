@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.6.2
+
+ - Fix bug #61
+
 ## 2.6.1
 
  - Added feature #47 and #57

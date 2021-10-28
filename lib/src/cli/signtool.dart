@@ -5,6 +5,9 @@ import '../utils/injector.dart';
 import '../utils/log.dart';
 import '../configuration.dart';
 
+var _publisherRegex = RegExp(
+    '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
+
 class Signtool {
   static void getCertificatePublisher(bool withLogs) {
     const taskName = 'getting certificate publisher';
@@ -31,10 +34,7 @@ class Signtool {
       var subjectRow = certificateDetails.stdout
           .toString()
           .split('\n')
-          .lastWhere((row) =>
-              !row.isNullOrEmpty &&
-              (row.toLowerCase().contains('cn =') ||
-                  row.toLowerCase().contains('cn=')));
+          .lastWhere((row) => _publisherRegex.hasMatch(row));
       if (withLogs) Log.info('subjectRow: $subjectRow');
       config.publisher = subjectRow
           .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
@@ -129,7 +129,7 @@ class Signtool {
             'signtool need "/fb" (file digest algorithm) option, for example: "/fd SHA256", more details:');
         Log.link(
             'https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe#sign-command-options');
-        exit(0);
+        exit(-1);
       }
 
       ProcessResult signResults = Process.runSync(signtoolPath, [
@@ -156,7 +156,7 @@ class Signtool {
           Log.errorAndExit('signing error');
         }
 
-        exit(0);
+        exit(-1);
       }
     }
 
