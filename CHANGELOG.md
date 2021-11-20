@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.6.3
+
+ - update example documentation #65
+
 ## 2.6.2
 
  - Fix bug #61
