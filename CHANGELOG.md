@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.6.4
+
+ - added add_execution_alias configuration field
+
 ## 2.6.3
 
  - update example documentation #65
