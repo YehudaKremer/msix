@@ -7,16 +7,16 @@ class MakePri {
   static void generatePRI() {
     const taskName = 'generate PRI file';
     Log.startingTask(taskName);
-    final config = injector.get<Configuration>();
+    final _config = injector.get<Configuration>();
 
-    if (!config.haveAnyIconFromUser()) {
+    if (!_config.haveAnyIconFromUser()) {
       var makepriPath =
-          '${config.msixToolkitPath()}/Redist.${config.architecture}/makepri.exe';
+          '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makepri.exe';
 
       var result = Process.runSync(makepriPath, [
         'createconfig',
         '/cf',
-        '${config.buildFilesFolder}\\priconfig.xml',
+        '${_config.buildFilesFolder}\\priconfig.xml',
         '/dq',
         'en-US',
         '/o'
@@ -32,17 +32,17 @@ class MakePri {
       result = Process.runSync(makepriPath, [
         'new',
         '/cf',
-        '${config.buildFilesFolder}\\priconfig.xml',
+        '${_config.buildFilesFolder}\\priconfig.xml',
         '/pr',
-        config.buildFilesFolder,
+        _config.buildFilesFolder,
         '/mn',
-        '${config.buildFilesFolder}\\AppxManifest.xml',
+        '${_config.buildFilesFolder}\\AppxManifest.xml',
         '/of',
-        '${config.buildFilesFolder}\\resources.pri',
+        '${_config.buildFilesFolder}\\resources.pri',
         '/o',
       ]);
 
-      var priconfig = File('${config.buildFilesFolder}/priconfig.xml');
+      var priconfig = File('${_config.buildFilesFolder}/priconfig.xml');
       if (priconfig.existsSync()) priconfig.deleteSync();
 
       if (result.stderr.toString().length > 0) {

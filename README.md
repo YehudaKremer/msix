@@ -99,6 +99,7 @@ Configuration Name &<br />CLI Arg/Flag | Description (from [microsoft docs](http
 |  dont_install_cert<br />`--dont-install-certificate` | if `true`, the package won't try to install the certificate | `false` |
 |  file_extension<br />`--file-extension` `-f` | File extensions that the app will used to open | `.txt, .myFile, .test1` |
 |  protocol_activation<br />`--protocol-activation` | Protocol activation that will open the app | `http` |
+|  add_execution_alias<br />`--add-execution-alias` | Start your application by using an alias.<br />the alias is the application `name:` from the `pubspec.yaml`  | `true` |
 |  `--debug-signing` | Showing more information about the certificate | |
 
 ---

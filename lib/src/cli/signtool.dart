@@ -12,10 +12,14 @@ class Signtool {
   static void getCertificatePublisher(bool withLogs) {
     const taskName = 'getting certificate publisher';
     Log.startingTask(taskName);
-    final config = injector.get<Configuration>();
+    final _config = injector.get<Configuration>();
 
-    var certificateDetails = Process.runSync('certutil',
-        ['-dump', '-p', config.certificatePassword!, config.certificatePath!]);
+    var certificateDetails = Process.runSync('certutil', [
+      '-dump',
+      '-p',
+      _config.certificatePassword!,
+      _config.certificatePath!
+    ]);
 
     if (certificateDetails.stderr.toString().length > 0) {
       if (certificateDetails.stderr.toString().contains('password')) {
@@ -36,10 +40,10 @@ class Signtool {
           .split('\n')
           .lastWhere((row) => _publisherRegex.hasMatch(row));
       if (withLogs) Log.info('subjectRow: $subjectRow');
-      config.publisher = subjectRow
+      _config.publisher = subjectRow
           .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
           .trim();
-      if (withLogs) Log.info('config.publisher: ${config.publisher}');
+      if (withLogs) Log.info('config.publisher: ${_config.publisher}');
     } catch (err, stackTrace) {
       if (!withLogs) getCertificatePublisher(true);
       Log.error(err.toString());
@@ -59,29 +63,29 @@ class Signtool {
   static void installCertificate() {
     const taskName = 'installing certificate';
     Log.startingTask(taskName);
-    final config = injector.get<Configuration>();
+    final _config = injector.get<Configuration>();
 
     var installedCertificatesList =
         Process.runSync('certutil', ['-store', 'root']);
 
     if (!installedCertificatesList.stdout
         .toString()
-        .contains(config.publisher!)) {
+        .contains(_config.publisher!)) {
       var isAdminCheck = Process.runSync('net', ['session']);
 
       if (isAdminCheck.stderr.toString().contains('Access is denied')) {
         Log.errorAndExit(
-            'to install the certificate "${config.certificatePath}" you need to "Run as administrator" once');
+            'to install the certificate "${_config.certificatePath}" you need to "Run as administrator" once');
       }
 
       var result = Process.runSync('certutil', [
         '-f',
         '-enterprise',
         '-p',
-        config.certificatePassword!,
+        _config.certificatePassword!,
         '-importpfx',
         'root',
-        config.certificatePath!
+        _config.certificatePath!
       ]);
 
       if (result.stderr.toString().length > 0) {
@@ -98,16 +102,16 @@ class Signtool {
   static void sign() {
     const taskName = 'signing';
     Log.startingTask(taskName);
-    final config = injector.get<Configuration>();
+    final _config = injector.get<Configuration>();
 
-    if (!config.certificatePath.isNull || config.signtoolOptions != null) {
+    if (!_config.certificatePath.isNull || _config.signtoolOptions != null) {
       var signtoolPath =
-          '${config.msixToolkitPath()}/Redist.${config.architecture}/signtool.exe';
+          '${_config.msixToolkitPath()}/Redist.${_config.architecture}/signtool.exe';
 
       List<String> signtoolOptions = [];
 
-      if (config.signtoolOptions != null) {
-        signtoolOptions = config.signtoolOptions!;
+      if (_config.signtoolOptions != null) {
+        signtoolOptions = _config.signtoolOptions!;
       } else {
         signtoolOptions = [
           '/v',
@@ -115,10 +119,10 @@ class Signtool {
           'SHA256',
           '/a',
           '/f',
-          config.certificatePath!,
-          if (extension(config.certificatePath!) == '.pfx') '/p',
-          if (extension(config.certificatePath!) == '.pfx')
-            config.certificatePassword!,
+          _config.certificatePath!,
+          if (extension(_config.certificatePath!) == '.pfx') '/p',
+          if (extension(_config.certificatePath!) == '.pfx')
+            _config.certificatePassword!,
           '/tr',
           'http://timestamp.digicert.com'
         ];
@@ -135,11 +139,11 @@ class Signtool {
       ProcessResult signResults = Process.runSync(signtoolPath, [
         'sign',
         ...signtoolOptions,
-        if (config.debugSigning) '/debug',
-        '${config.outputPath ?? config.buildFilesFolder}\\${config.outputName ?? config.appName}.msix',
+        if (_config.debugSigning) '/debug',
+        '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix',
       ]);
 
-      if (config.debugSigning) Log.info(signResults.stdout.toString());
+      if (_config.debugSigning) Log.info(signResults.stdout.toString());
 
       if (!signResults.stdout
               .toString()
@@ -148,11 +152,11 @@ class Signtool {
         Log.error(signResults.stdout);
         Log.error(signResults.stderr);
 
-        if (config.signtoolOptions == null &&
+        if (_config.signtoolOptions == null &&
             signResults.stdout
                 .toString()
                 .contains('Error: SignerSign() failed.') &&
-            !config.publisher.isNull) {
+            !_config.publisher.isNull) {
           Log.errorAndExit('signing error');
         }
 

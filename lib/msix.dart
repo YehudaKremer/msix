@@ -16,24 +16,24 @@ class Msix {
 
   /// Create and sign msix installer file
   Future<void> createMsix(List<String> cliArguments) async {
-    final config = injector.get<Configuration>();
-    await config.getConfigValues(cliArguments);
-    config.validateConfigValues();
+    final _config = injector.get<Configuration>();
+    await _config.getConfigValues(cliArguments);
+    _config.validateConfigValues();
     final assets = Assets();
     assets.cleanTemporaryFiles(clearMsixFiles: true);
     assets.copyAssetsFolder();
     assets.createIconsFolder();
     assets.copyIcons();
     assets.copyVCLibsFiles();
-    if (!config.store) {
+    if (!_config.store) {
       Signtool.getCertificatePublisher(false);
     }
     Manifest()..generateAppxManifest();
     MakePri.generatePRI();
     MakeAppx.pack();
     assets.cleanTemporaryFiles();
-    if (!config.store) {
-      if (!config.dontInstallCert) {
+    if (!_config.store) {
+      if (!_config.dontInstallCert) {
         Signtool.installCertificate();
       }
       Signtool.sign();
@@ -41,7 +41,7 @@ class Msix {
 
     Log.success('Msix Installer Created:');
     Log.link(
-        '${config.outputPath ?? config.buildFilesFolder}\\${config.outputName ?? config.appName}.msix'
+        '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix'
             .replaceAll('/', r'\'));
   }
 }

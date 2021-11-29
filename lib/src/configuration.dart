@@ -37,6 +37,7 @@ class Configuration {
   bool debugSigning = false;
   bool store = false;
   bool dontInstallCert = false;
+  bool addExecutionAlias = false;
   Iterable<String>? languages;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
@@ -60,6 +61,8 @@ class Configuration {
     outputName =
         argResults.read('output-name') ?? config?['output_name']?.toString();
     debugSigning = argResults.wasParsed('debug-signing');
+    addExecutionAlias = argResults.wasParsed('add-execution-alias') ||
+        config?['add_execution_alias']?.toString().toLowerCase() == 'true';
     dontInstallCert = argResults.wasParsed('dont-install-certificate') ||
         config?['dont_install_cert']?.toString().toLowerCase() == 'true';
     if (dontInstallCert) numberOfAllTasks--;
@@ -116,7 +119,7 @@ class Configuration {
       Log.errorAndExit('App name is empty, check \'appName\' at pubspec.yaml');
     }
     if (appDescription.isNull) appDescription = appName;
-    if (displayName.isNull) displayName = appName!.replaceAll('_', '');
+    if (displayName.isNull) displayName = _cleanAppName();
     if (identityName.isNull) {
       if (store) {
         Log.error(
@@ -125,7 +128,7 @@ class Configuration {
             'you can find your store "identity_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Name');
         exit(-1);
       } else {
-        identityName = 'com.flutter.${appName!.replaceAll('_', '')}';
+        identityName = 'com.flutter.${_cleanAppName()}';
       }
     }
     if (publisherName.isNull) {
@@ -166,7 +169,9 @@ class Configuration {
 
     final executables = Directory(buildFilesFolder)
         .listSync()
-        .where((file) => file.path.endsWith('.exe'))
+        .where((file) =>
+            file.path.endsWith('.exe') &&
+            !file.path.contains('PSFLauncher64.exe'))
         .map((file) => basename(file.path));
 
     executableFileName = executables.firstWhere(
@@ -250,6 +255,7 @@ class Configuration {
       ..addOption('languages')
       ..addFlag('store')
       ..addFlag('debug-signing')
+      ..addFlag('add-execution-alias')
       ..addFlag('dont-install-certificate');
 
     try {
@@ -296,4 +302,6 @@ class Configuration {
 
     return null;
   }
+
+  String _cleanAppName() => appName!.replaceAll('_', '');
 }

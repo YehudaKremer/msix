@@ -7,14 +7,14 @@ class MakeAppx {
   static void pack() {
     const taskName = 'packing';
     Log.startingTask(taskName);
-    final config = injector.get<Configuration>();
+    final _config = injector.get<Configuration>();
     var msixPath =
-        '${config.outputPath ?? config.buildFilesFolder}/${config.outputName ?? config.appName}.msix';
+        '${_config.outputPath ?? _config.buildFilesFolder}/${_config.outputName ?? _config.appName}.msix';
     var makeAppxPath =
-        '${config.msixToolkitPath()}/Redist.${config.architecture}/makeappx.exe';
+        '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makeappx.exe';
 
     var result = Process.runSync(makeAppxPath,
-        ['pack', '/v', '/o', '/d', config.buildFilesFolder, '/p', msixPath]);
+        ['pack', '/v', '/o', '/d', _config.buildFilesFolder, '/p', msixPath]);
 
     if (result.stderr.toString().length > 0) {
       Log.error(result.stdout);

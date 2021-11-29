@@ -33,7 +33,8 @@ class Manifest {
           xmlns:rescap6="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities/6" 
           xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" 
           xmlns:com2="http://schemas.microsoft.com/appx/manifest/com/windows10/2" 
-          xmlns:com3="http://schemas.microsoft.com/appx/manifest/com/windows10/3">
+          xmlns:com3="http://schemas.microsoft.com/appx/manifest/com/windows10/3" 
+          IgnorableNamespaces="uap3 desktop">
     <Identity Name="${_config.identityName}" Version="${_config.msixVersion}"
               Publisher="${_config.publisher!.replaceAll(' = ', '=')}" ProcessorArchitecture="${_config.architecture}" />
     <Properties>
@@ -52,7 +53,7 @@ class Manifest {
       ${_getCapabilities()}
   </Capabilities>
     <Applications>
-      <Application Id="${_config.appName!.replaceAll('_', '')}" Executable="${_config.executableFileName}" EntryPoint="Windows.FullTrustApplication">
+      <Application Id="${_config.displayName}" Executable="${_config.executableFileName}" EntryPoint="Windows.FullTrustApplication">
         ${_getVisualElements()}
         ${_getExtensions()}
       </Application>
@@ -116,25 +117,36 @@ class Manifest {
   }
 
   String _getExtensions() {
-    if (!_config.protocolActivation.isNull || !_config.fileExtension.isNull) {
+    if (_config.addExecutionAlias ||
+        !_config.protocolActivation.isNull ||
+        !_config.fileExtension.isNull) {
       return '''<Extensions>
-      ${!_config.protocolActivation.isNull ? _getProtocolActivation() : ''}
-      ${!_config.fileExtension.isNull ? _getFileExtension() : ''}
+      ${_config.addExecutionAlias ? _getAppExecutionAliasExtension() : ''}
+      ${!_config.protocolActivation.isNull ? _getProtocolActivationExtension() : ''}
+      ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
         </Extensions>''';
     } else {
       return '';
     }
   }
 
-  String _getProtocolActivation() {
-    return '''<uap:Extension Category="windows.protocol">
+  String _getAppExecutionAliasExtension() {
+    return '''  <uap3:Extension Category="windows.appExecutionAlias" Executable="${_config.executableFileName}" EntryPoint="Windows.FullTrustApplication">
+            <uap3:AppExecutionAlias>
+              <desktop:ExecutionAlias Alias="${_config.executableFileName}" />
+              </uap3:AppExecutionAlias>
+          </uap3:Extension>''';
+  }
+
+  String _getProtocolActivationExtension() {
+    return '''  <uap:Extension Category="windows.protocol">
             <uap:Protocol Name="${_config.protocolActivation}">
                 <uap:DisplayName>${_config.protocolActivation} URI Scheme</uap:DisplayName>
             </uap:Protocol>
         </uap:Extension>''';
   }
 
-  String _getFileExtension() {
+  String _getFileAssociationsExtension() {
     return '''  <uap:Extension Category="windows.fileTypeAssociation">
             <uap:FileTypeAssociation Name="fileassociations">
               <uap:SupportedFileTypes>
