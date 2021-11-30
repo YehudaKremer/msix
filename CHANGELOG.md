@@ -1,12 +1,16 @@
 # Changelog
 
+## 2.6.5
+
+ - Fix bug #67
+
 ## 2.6.4
 
- - added add_execution_alias configuration field
+ - Added add_execution_alias configuration field
 
 ## 2.6.3
 
- - update example documentation #65
+ - Update example documentation #65
 
 ## 2.6.2
 

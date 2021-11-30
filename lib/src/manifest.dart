@@ -53,7 +53,7 @@ class Manifest {
       ${_getCapabilities()}
   </Capabilities>
     <Applications>
-      <Application Id="${_config.displayName}" Executable="${_config.executableFileName}" EntryPoint="Windows.FullTrustApplication">
+      <Application Id="${_config.appName!.replaceAll('_', '')}" Executable="${_config.executableFileName}" EntryPoint="Windows.FullTrustApplication">
         ${_getVisualElements()}
         ${_getExtensions()}
       </Application>
