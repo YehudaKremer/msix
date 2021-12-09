@@ -14,6 +14,11 @@ class Msix {
     ansiColorDisabled = false;
   }
 
+  static void registerWith() {
+    print(
+        '-----> "MSIX" package needs to be under development dependencies (dev_dependencies) <-----');
+  }
+
   /// Create and sign msix installer file
   Future<void> createMsix(List<String> cliArguments) async {
     final _config = injector.get<Configuration>();

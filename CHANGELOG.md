@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.6.6
+
+ - Fix bug #68
+ - Log style improvements
+
 ## 2.6.5
 
  - Fix bug #67

@@ -44,7 +44,6 @@ class Log {
   static void _renderProgressBar() {
     stdout.writeCharCode(13);
 
-    stdout.write(_gray09('['));
     var blueBars = '';
     for (var z = _numberOfTasksCompleted; z > 0; z--) {
       blueBars += '❚❚';
@@ -56,9 +55,9 @@ class Log {
     }
     stdout.write(_gray05(grayBars));
 
-    stdout.write(_gray09(']'));
-    stdout.write(_gray09(
-        ' ${(_numberOfTasksCompleted * 100 / numberOfAllTasks).floor()}%'));
+    var percentage = (_numberOfTasksCompleted * 100 / numberOfAllTasks).floor();
+    stdout.write(
+        percentage == 100 ? _green(' $percentage%') : _yellow(' $percentage%'));
   }
 
   /// Info log on a new task
@@ -66,16 +65,16 @@ class Log {
     final emptyStr = _getlastMessageEmptyStringLength();
     _lastMessageLength = name.length;
     _renderProgressBar();
-    stdout.write(_gray09(' $name..$emptyStr'));
+    stdout.write(_yellow(' $name..$emptyStr'));
   }
 
   /// Info log on a completed task
   static void taskCompleted(String name) {
     _numberOfTasksCompleted++;
     stdout.writeCharCode(13);
-    stdout.write(_green('☑ '));
+    stdout.write(_green('✓ '));
     stdout.writeln(
-        '$name                                                             ');
+        '$name                                                           ');
     if (_numberOfTasksCompleted >= numberOfAllTasks) {
       final emptyStr = _getlastMessageEmptyStringLength();
       _renderProgressBar();
