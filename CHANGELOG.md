@@ -1,129 +1,134 @@
 # Changelog
 
+## 2.6.7
+
+- Update documentation: `icons_background_color` is ignore on windows [version 20H2](https://docs.microsoft.com/en-us/windows/whats-new/whats-new-windows-10-version-20h2#windows-shell) and above
+- `icons_background_color` can be "color name" too
+
 ## 2.6.6
 
- - Fix bug #68
- - Log style improvements
+- Fix bug #68
+- Log style improvements
 
 ## 2.6.5
 
- - Fix bug #67
+- Fix bug #67
 
 ## 2.6.4
 
- - Added add_execution_alias configuration field
+- Added add_execution_alias configuration field
 
 ## 2.6.3
 
- - Update example documentation #65
+- Update example documentation #65
 
 ## 2.6.2
 
- - Fix bug #61
+- Fix bug #61
 
 ## 2.6.1
 
- - Added feature #47 and #57
- - Fix bug #51 and added error logs
- - Rewrite CLI arguments (see updated documentation)
+- Added feature #47 and #57
+- Fix bug #51 and added error logs
+- Rewrite CLI arguments (see updated documentation)
 
 ## 2.5.5
 
- - Fix bug "Certificate Details can't be read" - https://github.com/YehudaKremer/msix/issues/60
+- Fix bug "Certificate Details can't be read" - https://github.com/YehudaKremer/msix/issues/60
 
 ## 2.5.4
 
- - Certificate "publisher" is now recognize automatic
- - "publisher" configuration field is needed only for publish to windows store
- - Added new flag/configuration-field "dontInstallCert"
+- Certificate "publisher" is now recognize automatic
+- "publisher" configuration field is needed only for publish to windows store
+- Added new flag/configuration-field "dontInstallCert"
 
 ## 2.4.2
 
- - Documentation update
+- Documentation update
 
 ## 2.4.0
 
- - Use the "certutil" cmd to install automatic the test certificate 
- - Documentation update 
+- Use the "certutil" cmd to install automatic the test certificate
+- Documentation update
 
 ## 2.3.1
 
- - Fix error when the app have no capabilities
+- Fix error when the app have no capabilities
 
 ## 2.3.0
 
- - Added support for assets files for FFI library (documentation update)
+- Added support for assets files for FFI library (documentation update)
 
 ## 2.2.3
 
- - Added support for all the capabilities types (documentation update)
- - Update dependencies versions 
+- Added support for all the capabilities types (documentation update)
+- Update dependencies versions
 
 ## 2.1.3
 
- - Added support for association to multiple file extensions - https://github.com/YehudaKremer/msix/pull/46
+- Added support for association to multiple file extensions - https://github.com/YehudaKremer/msix/pull/46
 
 ## 2.1.2
 
- - Update terminal logs 
+- Update terminal logs
 
 ## 2.1.1
 
- - Add `--store` flag see - https://github.com/YehudaKremer/msix/issues/42
- - Add BadgeLogo icons
+- Add `--store` flag see - https://github.com/YehudaKremer/msix/issues/42
+- Add BadgeLogo icons
 
 ## 2.0.0
 
- - See - https://github.com/YehudaKremer/msix/issues/37
+- See - https://github.com/YehudaKremer/msix/issues/37
 
 ## 1.0.6
 
- - Add `--debug` flag to debug signing issues, fixed missing argument `/f' for not '.pfx' certificates
+- Add `--debug` flag to debug signing issues, fixed missing argument `/f' for not '.pfx' certificates
 
 ## 1.0.5
 
- - Add terminal explanation about the test certificate installation
+- Add terminal explanation about the test certificate installation
 
 ## 1.0.4
 
- - Support multiple languages - https://github.com/YehudaKremer/msix/issues/35
+- Support multiple languages - https://github.com/YehudaKremer/msix/issues/35
 
 ## 1.0.3
 
- - Fix: command-line arguments not taken into account in case there is no configuration at all
+- Fix: command-line arguments not taken into account in case there is no configuration at all
 
 ## 1.0.2
 
- - Command-Line Arguments extensions - https://github.com/YehudaKremer/msix/pull/33
- - fix: Incorrect description for certificate_password - https://github.com/YehudaKremer/msix/issues/34
+- Command-Line Arguments extensions - https://github.com/YehudaKremer/msix/pull/33
+- fix: Incorrect description for certificate_password - https://github.com/YehudaKremer/msix/issues/34
 
 ## 1.0.0
 
- - Null safety
- - Code refactoring
- - Move to sync code to increase stability
- - Fix: Wrong executable selection - https://github.com/YehudaKremer/msix/pull/32
+- Null safety
+- Code refactoring
+- Move to sync code to increase stability
+- Fix: Wrong executable selection - https://github.com/YehudaKremer/msix/pull/32
 
 ## 0.1.19
 
- - Fix: Sometimes VC libraries are not copied - https://github.com/YehudaKremer/msix/issues/30
+- Fix: Sometimes VC libraries are not copied - https://github.com/YehudaKremer/msix/issues/30
 
 ## 0.1.15
 
- - Fix invalid character in the app name - https://github.com/YehudaKremer/msix/issues/25
+- Fix invalid character in the app name - https://github.com/YehudaKremer/msix/issues/25
 
 ## 0.1.14
 
- - Using Dart Package Configuration File v2.0
- - Add decode for packages path - https://github.com/YehudaKremer/msix/issues/21
+- Using Dart Package Configuration File v2.0
+- Add decode for packages path - https://github.com/YehudaKremer/msix/issues/21
 
 ## 0.1.13
 
- - Sign with time stamp
+- Sign with time stamp
 
 ## 0.1.12
 
- - Add support for icons generated by Visual Studio
+- Add support for icons generated by Visual Studio
 
 ## 0.1.8
 
@@ -131,7 +136,7 @@
 
 ## 0.1.10
 
-- Delete old code and documentation editing 
+- Delete old code and documentation editing
 
 ## 0.1.8
 
@@ -149,7 +154,7 @@
 
 - Can create an unsigned installation file for upload to the store
 - Breaking config change: "publisher_name" is now: "publisher_display_name"
-- Breaking config change:  "certificate_subject" is now: "publisher"
+- Breaking config change: "certificate_subject" is now: "publisher"
 
 ## 0.1.1
 

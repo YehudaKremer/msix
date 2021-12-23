@@ -206,17 +206,6 @@ class Configuration {
           'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml');
     }
 
-    if (iconsBackgroundColor != 'transparent' &&
-        !iconsBackgroundColor!.contains('#'))
-      iconsBackgroundColor = '#$iconsBackgroundColor';
-
-    if (iconsBackgroundColor != 'transparent' &&
-        !RegExp(r'^#(?:[0-9a-fA-F]{3}){1,2}$')
-            .hasMatch(iconsBackgroundColor!)) {
-      Log.errorAndExit(
-          'Icons background color can be only in this format: "#ffffff"');
-    }
-
     Log.taskCompleted(taskName);
   }
 
