@@ -40,7 +40,7 @@ class Manifest {
     <Properties>
       <DisplayName>${_config.displayName}</DisplayName>
       <PublisherDisplayName>${_config.publisherName}</PublisherDisplayName>
-      ${_getLogo()}
+      <Logo>Images\\StoreLogo.png</Logo>
       <Description>${_config.appDescription}</Description>
     </Properties>
     <Resources>
@@ -54,7 +54,20 @@ class Manifest {
   </Capabilities>
     <Applications>
       <Application Id="${_config.appName!.replaceAll('_', '')}" Executable="${_config.executableFileName}" EntryPoint="Windows.FullTrustApplication">
-        ${_getVisualElements()}
+        <uap:VisualElements BackgroundColor="transparent"
+          DisplayName="${_config.displayName}" Square150x150Logo="Images\\Square150x150Logo.png"
+          Square44x44Logo="Images\\Square44x44Logo.png" Description="${_config.appDescription}">
+          <uap:DefaultTile ShortName="${_config.displayName}" Square310x310Logo="Images\\LargeTile.png"
+          Square71x71Logo="Images\\SmallTile.png" Wide310x150Logo="Images\\Wide310x150Logo.png">
+            <uap:ShowNameOnTiles>
+              <uap:ShowOn Tile="square150x150Logo"/>
+              <uap:ShowOn Tile="square310x310Logo"/>
+              <uap:ShowOn Tile="wide310x150Logo"/>
+            </uap:ShowNameOnTiles>
+          </uap:DefaultTile>
+          <uap:SplashScreen Image="Images\\SplashScreen.png"/>
+          <uap:LockScreen BadgeLogo="Images\\BadgeLogo.png" Notification="badge"/>
+        </uap:VisualElements>
         ${_getExtensions()}
       </Application>
     </Applications>
@@ -72,48 +85,6 @@ class Manifest {
     }
 
     Log.taskCompleted(taskName);
-  }
-
-  String _getVisualElements() {
-    if (_config.haveAnyIconFromUser()) {
-      return '''<uap:VisualElements BackgroundColor="${_config.iconsBackgroundColor}"
-        DisplayName="${_config.displayName}" Square150x150Logo="${_config.tileIconPath}"
-        Square44x44Logo="${_config.startMenuIconPath}" Description="${_config.appDescription}">
-        <uap:DefaultTile ShortName="${_config.displayName}" Square310x310Logo="${_config.tileIconPath}"
-        Square71x71Logo="${_config.startMenuIconPath}" Wide310x150Logo="${_config.tileIconPath}">
-          <uap:ShowNameOnTiles>
-            <uap:ShowOn Tile="square150x150Logo"/>
-            <uap:ShowOn Tile="square310x310Logo"/>
-            <uap:ShowOn Tile="wide310x150Logo"/>
-          </uap:ShowNameOnTiles>
-        </uap:DefaultTile>
-        <uap:SplashScreen Image="${_config.tileIconPath}"/>
-        <uap:LockScreen BadgeLogo="${_config.tileIconPath}" Notification="badge"/>
-      </uap:VisualElements>''';
-    } else {
-      return '''<uap:VisualElements BackgroundColor="${_config.iconsBackgroundColor}"
-        DisplayName="${_config.displayName}" Square150x150Logo="Images\\Square150x150Logo.png"
-        Square44x44Logo="Images\\Square44x44Logo.png" Description="${_config.appDescription}">
-        <uap:DefaultTile ShortName="${_config.displayName}" Square310x310Logo="Images\\LargeTile.png"
-        Square71x71Logo="Images\\SmallTile.png" Wide310x150Logo="Images\\Wide310x150Logo.png">
-          <uap:ShowNameOnTiles>
-            <uap:ShowOn Tile="square150x150Logo"/>
-            <uap:ShowOn Tile="square310x310Logo"/>
-            <uap:ShowOn Tile="wide310x150Logo"/>
-          </uap:ShowNameOnTiles>
-        </uap:DefaultTile>
-        <uap:SplashScreen Image="Images\\SplashScreen.png"/>
-        <uap:LockScreen BadgeLogo="Images\\BadgeLogo.png" Notification="badge"/>
-      </uap:VisualElements>''';
-    }
-  }
-
-  String _getLogo() {
-    if (_config.haveAnyIconFromUser()) {
-      return '''<Logo>${_config.logoPath}</Logo>''';
-    } else {
-      return '<Logo>Images\\StoreLogo.png</Logo>';
-    }
   }
 
   String _getExtensions() {

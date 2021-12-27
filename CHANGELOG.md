@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.7.0
+
+- Generate set of [optimized icons](https://docs.microsoft.com/en-us/windows/apps/design/style/app-icons-and-logos) (like [VS assets tool](https://docs.microsoft.com/en-us/windows/apps/design/style/app-icons-and-logos#generating-all-assets-at-once)) base on the logo image (`logo_path`), support only **.png**, **.svg** formats
+- also support SVG format for the logo image
+
+### Breaking Changes
+
+**deleted configurations options:**
+
+- vs_generated_images_folder_path (from this version those icons generate automatically)
+- icons_background_color (ignore on windows [version 20H2](https://docs.microsoft.com/en-us/windows/whats-new/whats-new-windows-10-version-20h2#windows-shell) and above)
+- tile_icon_path (generate automatically)
+- start_menu_icon_path (generate automatically)
+
 ## 2.6.7
 
 - Update documentation: `icons_background_color` is ignore on windows [version 20H2](https://docs.microsoft.com/en-us/windows/whats-new/whats-new-windows-10-version-20h2#windows-shell) and above

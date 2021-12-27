@@ -1,6 +1,7 @@
 ### Configurations Examples
 
 ###### Basic:
+
 ```yaml
 msix_config:
   display_name: MyAppName
@@ -11,17 +12,18 @@ msix_config:
 ```
 
 ###### With Capabilities And Generated Icons:
+
 ```yaml
 msix_config:
   display_name: MyAppName
   publisher_display_name: MyName
   identity_name: MyCompany.MySuite.MyApp
   msix_version: 2.0.2.0
-  vs_generated_images_folder_path: C:\<PathToFolder>\icons
-  capabilities: 'internetClient,location,microphone,webcam'
+  capabilities: "internetClient,location,microphone,webcam"
 ```
 
 ###### For Publish To Windows Store:
+
 ```yaml
 msix_config:
   display_name: MyAppName
@@ -34,6 +36,7 @@ msix_config:
 ```
 
 ###### With Your Own Certificate:
+
 ```yaml
 msix_config:
   display_name: MyAppName

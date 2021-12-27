@@ -24,11 +24,7 @@ class Configuration {
   String? architecture;
   String? capabilities;
   String? logoPath;
-  String? startMenuIconPath;
-  String? tileIconPath;
-  String? vsGeneratedIconsFolderPath;
   String? executableFileName;
-  String? iconsBackgroundColor;
   List<String>? signtoolOptions;
   String? protocolActivation;
   String? fileExtension;
@@ -42,6 +38,7 @@ class Configuration {
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
   String msixToolkitPath() => '$msixAssetsPath/MSIX-Toolkit';
+  String iconsGeneratorPath() => '$msixAssetsPath/IconsGenerator';
 
   Future<void> getConfigValues(List<String> arguments) async {
     _parseCliArguments(arguments);
@@ -78,16 +75,9 @@ class Configuration {
     identityName = argResults.read('identity-name') ??
         config?['identity_name']?.toString();
     logoPath = argResults.read('logo-path') ?? config?['logo_path']?.toString();
-    startMenuIconPath = argResults.read('start-menu-icon-path') ??
-        config?['start_menu_icon_path']?.toString();
-    tileIconPath = argResults.read('tile-icon-path') ??
-        config?['tile_icon_path']?.toString();
+    if (logoPath.isNull) numberOfAllTasks--;
     assetsFolderPath = argResults.read('assets-directory-path') ??
         config?['assets_directory_path']?.toString();
-    vsGeneratedIconsFolderPath = argResults.read('vs-generated-images-path') ??
-        config?['vs_generated_images_folder_path']?.toString();
-    iconsBackgroundColor = argResults.read('icons-background-color') ??
-        config?['icons_background_color']?.toString();
     signtoolOptions =
         (argResults.read('signtool-options') ?? config?['signtool_options'])
             ?.toString()
@@ -153,7 +143,6 @@ class Configuration {
     if (architecture.isNull) architecture = 'x64';
     if (capabilities.isNull)
       capabilities = 'internetClient,location,microphone,webcam';
-    if (iconsBackgroundColor.isNull) iconsBackgroundColor = 'transparent';
     if (languages == null) languages = ['en-us'];
 
     if (!Directory(buildFilesFolder).existsSync()) {
@@ -211,9 +200,7 @@ class Configuration {
 
   bool haveAssetsFolder() =>
       assetsFolderPath != null && assetsFolderPath!.isNotEmpty;
-
-  bool haveAnyIconFromUser() =>
-      !logoPath.isNull || !startMenuIconPath.isNull || !tileIconPath.isNull;
+  bool haveLogoPath() => !logoPath.isNull;
 
   /// parse the cli arguments
   void _parseCliArguments(List<String> args) {
@@ -231,11 +218,7 @@ class Configuration {
       ..addOption('logo-path', abbr: 'l')
       ..addOption('output-path', abbr: 'o')
       ..addOption('output-name', abbr: 'n')
-      ..addOption('start-menu-icon-path', abbr: 's')
-      ..addOption('tile-icon-path', abbr: 't')
       ..addOption('assets-directory-path', abbr: 'a')
-      ..addOption('vs-generated-images-path', abbr: 'g')
-      ..addOption('icons-background-color', abbr: 'k')
       ..addOption('signtool-options')
       ..addOption('protocol-activation')
       ..addOption('file-extension', abbr: 'f')

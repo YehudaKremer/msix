@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart';
+import 'cli/iconsGenerator.dart';
 import 'utils/injector.dart';
 import 'utils/log.dart';
 import 'configuration.dart';
@@ -47,21 +48,14 @@ class Assets {
     const taskName = 'copying app icons';
     Log.startingTask(taskName);
 
-    if (_config.haveAnyIconFromUser()) {
-      _config.tileIconPath = _copyIconToBuildFolder(_config.tileIconPath ??
-          _config.logoPath ??
-          '${_config.defaultsIconsFolderPath()}/Square150x150Logo.scale-400.png');
-
-      _config.startMenuIconPath = _copyIconToBuildFolder(_config
-              .startMenuIconPath ??
-          _config.logoPath ??
-          '${_config.defaultsIconsFolderPath()}/Square44x44Logo.altform-lightunplated_targetsize-256.png');
-
-      _config.logoPath = _copyIconToBuildFolder(_config.logoPath ??
-          '${_config.defaultsIconsFolderPath()}/StoreLogo.scale-400.png');
+    if (_config.haveLogoPath()) {
+      try {
+        IconsGenerator.generateIcons();
+      } catch (e) {
+        _copyVsGeneratedIcons(_config.defaultsIconsFolderPath());
+      }
     } else {
-      _copyVsGeneratedIcons(_config.vsGeneratedIconsFolderPath ??
-          _config.defaultsIconsFolderPath());
+      _copyVsGeneratedIcons(_config.defaultsIconsFolderPath());
     }
 
     Log.taskCompleted(taskName);

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:ansicolor/ansicolor.dart';
 
-int numberOfAllTasks = 14;
+int numberOfAllTasks = 15;
 
 class Log {
   static AnsiPen _red = AnsiPen()..red(bold: true);
