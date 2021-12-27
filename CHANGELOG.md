@@ -1,9 +1,9 @@
 # Changelog
 
-## 2.7.0
+## 2.7.1
 
 - Generate set of [optimized icons](https://docs.microsoft.com/en-us/windows/apps/design/style/app-icons-and-logos) (like [VS assets tool](https://docs.microsoft.com/en-us/windows/apps/design/style/app-icons-and-logos#generating-all-assets-at-once)) base on the logo image (`logo_path`), support only **.png**, **.svg** formats
-- also support SVG format for the logo image
+- Also support SVG format for the logo image
 
 ### Breaking Changes
 

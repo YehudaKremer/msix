@@ -14,7 +14,7 @@ In your `pubspec.yaml`, add `msix` as a new dependency:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^2.7.0
+  msix: ^2.7.1
 ```
 
 ## :package: Create Msix
@@ -93,7 +93,7 @@ var helloLib = ffi.DynamicLibrary.open(absolutePath);
 | Configuration Name &<br />CLI Arg/Flag                      | Description (from [microsoft docs](https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root "microsoft docs"))                                                                                                                                                       | Example                                               |
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | display_name<br />`--display-name` `-d`                     | A friendly name that can be displayed to users.                                                                                                                                                                                                                                                     | `MyAppName`                                           |
-| logo_path<br />`--logo-path` `-l`                           | Path to the app logo.<br/>support **.png**, **.svg** formats.                                                                                                                                                                                                                                       | `C:/<PathToIcon>/<Logo.png>`                          |
+| logo_path<br />`--logo-path` `-l`                           | Path to the app logo.<br />support **.png**, **.svg** formats.                                                                                                                                                                                                                                      | `C:/<PathToIcon>/<Logo.png>`                          |
 | msix_version<br />`--version` `-v`                          | The version number of the package.                                                                                                                                                                                                                                                                  | `1.0.0.0`<br />_(must be this format)_                |
 | store<br />`--store`                                        | The installer _(.msix)_ is for publish to Windows Store                                                                                                                                                                                                                                             | `false`                                               |
 | publisher_display_name<br />`--publisher-display-name` `-u` | A friendly name for the publisher that can be displayed to users.                                                                                                                                                                                                                                   | `MyName`                                              |
