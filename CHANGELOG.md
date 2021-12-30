@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.7.3
+
+- fix bug [#70](https://github.com/YehudaKremer/msix/issues/70)
+
 ## 2.7.2
 
 - fix [https://github.com/YehudaKremer/msix/issues/69#issuecomment-1001878037](https://github.com/YehudaKremer/msix/issues/69#issuecomment-1001878037)
