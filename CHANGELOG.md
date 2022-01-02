@@ -1,17 +1,23 @@
 # Changelog
 
+## 2.8.0
+
+- switch icons generator from **.NET** third party program to **dart** code (using [`image`](https://pub.dev/packages/image) package)
+- `logo_path` is now support multiple [image formats](https://github.com/brendan-duncan/image#supported-image-formats), fix blurry icons and trim transparent padding (fix [#71](https://github.com/YehudaKremer/msix/issues/70))
+- breaking change: .svg format not supported (for now)
+
 ## 2.7.3
 
 - fix bug [#70](https://github.com/YehudaKremer/msix/issues/70)
 
 ## 2.7.2
 
-- fix [https://github.com/YehudaKremer/msix/issues/69#issuecomment-1001878037](https://github.com/YehudaKremer/msix/issues/69#issuecomment-1001878037)
+- fix [#69](https://github.com/YehudaKremer/msix/issues/69#issuecomment-1001878037)
 
 ## 2.7.1
 
-- Generate set of [optimized icons](https://docs.microsoft.com/en-us/windows/apps/design/style/app-icons-and-logos) (like [VS assets tool](https://docs.microsoft.com/en-us/windows/apps/design/style/app-icons-and-logos#generating-all-assets-at-once)) base on the logo image (`logo_path`), support only **.png**, **.svg** formats
-- Also support SVG format for the logo image
+- generate set of [optimized icons](https://docs.microsoft.com/en-us/windows/apps/design/style/app-icons-and-logos) (like [VS assets tool](https://docs.microsoft.com/en-us/windows/apps/design/style/app-icons-and-logos#generating-all-assets-at-once)) base on the logo image (`logo_path`), support only **.png**, **.svg** formats
+- also support SVG format for the logo image
 
 ### Breaking Changes
 
@@ -24,178 +30,178 @@
 
 ## 2.6.7
 
-- Update documentation: `icons_background_color` is ignore on windows [version 20H2](https://docs.microsoft.com/en-us/windows/whats-new/whats-new-windows-10-version-20h2#windows-shell) and above
+- update documentation: `icons_background_color` is ignore on windows [version 20H2](https://docs.microsoft.com/en-us/windows/whats-new/whats-new-windows-10-version-20h2#windows-shell) and above
 - `icons_background_color` can be "color name" too
 
 ## 2.6.6
 
-- Fix bug #68
-- Log style improvements
+- fix bug [#68](https://github.com/YehudaKremer/msix/issues/68)
+- log style improvements
 
 ## 2.6.5
 
-- Fix bug #67
+- fix bug [#67](https://github.com/YehudaKremer/msix/issues/67)
 
 ## 2.6.4
 
-- Added add_execution_alias configuration field
+- added add_execution_alias configuration field
 
 ## 2.6.3
 
-- Update example documentation #65
+- update example documentation [#65](https://github.com/YehudaKremer/msix/issues/65)
 
 ## 2.6.2
 
-- Fix bug #61
+- fix bug [#61](https://github.com/YehudaKremer/msix/issues/61)
 
 ## 2.6.1
 
-- Added feature #47 and #57
-- Fix bug #51 and added error logs
-- Rewrite CLI arguments (see updated documentation)
+- added feature [#47](https://github.com/YehudaKremer/msix/issues/47) and [#57](https://github.com/YehudaKremer/msix/issues/57)
+- fix bug [#51](https://github.com/YehudaKremer/msix/issues/51) and added error logs
+- rewrite CLI arguments (see updated documentation)
 
 ## 2.5.5
 
-- Fix bug "Certificate Details can't be read" - https://github.com/YehudaKremer/msix/issues/60
+- fix bug "Certificate Details can't be read" - https://github.com/YehudaKremer/msix/issues/60
 
 ## 2.5.4
 
-- Certificate "publisher" is now recognize automatic
+- certificate "publisher" is now recognize automatic
 - "publisher" configuration field is needed only for publish to windows store
-- Added new flag/configuration-field "dontInstallCert"
+- added new flag/configuration-field "dontInstallCert"
 
 ## 2.4.2
 
-- Documentation update
+- documentation update
 
 ## 2.4.0
 
-- Use the "certutil" cmd to install automatic the test certificate
-- Documentation update
+- use the "certutil" cmd to install automatic the test certificate
+- documentation update
 
 ## 2.3.1
 
-- Fix error when the app have no capabilities
+- fix error when the app have no capabilities
 
 ## 2.3.0
 
-- Added support for assets files for FFI library (documentation update)
+- added support for assets files for FFI library (documentation update)
 
 ## 2.2.3
 
-- Added support for all the capabilities types (documentation update)
+- added support for all the capabilities types (documentation update)
 - Update dependencies versions
 
 ## 2.1.3
 
-- Added support for association to multiple file extensions - https://github.com/YehudaKremer/msix/pull/46
+- added support for association to multiple file extensions - https://github.com/YehudaKremer/msix/pull/46
 
 ## 2.1.2
 
-- Update terminal logs
+- update terminal logs
 
 ## 2.1.1
 
-- Add `--store` flag see - https://github.com/YehudaKremer/msix/issues/42
-- Add BadgeLogo icons
+- add `--store` flag see - https://github.com/YehudaKremer/msix/issues/42
+- add BadgeLogo icons
 
 ## 2.0.0
 
-- See - https://github.com/YehudaKremer/msix/issues/37
+- see - https://github.com/YehudaKremer/msix/issues/37
 
 ## 1.0.6
 
-- Add `--debug` flag to debug signing issues, fixed missing argument `/f' for not '.pfx' certificates
+- add `--debug` flag to debug signing issues, fixed missing argument `/f' for not '.pfx' certificates
 
 ## 1.0.5
 
-- Add terminal explanation about the test certificate installation
+- add terminal explanation about the test certificate installation
 
 ## 1.0.4
 
-- Support multiple languages - https://github.com/YehudaKremer/msix/issues/35
+- support multiple languages - https://github.com/YehudaKremer/msix/issues/35
 
 ## 1.0.3
 
-- Fix: command-line arguments not taken into account in case there is no configuration at all
+- fix: command-line arguments not taken into account in case there is no configuration at all
 
 ## 1.0.2
 
-- Command-Line Arguments extensions - https://github.com/YehudaKremer/msix/pull/33
+- command-Line Arguments extensions - https://github.com/YehudaKremer/msix/pull/33
 - fix: Incorrect description for certificate_password - https://github.com/YehudaKremer/msix/issues/34
 
 ## 1.0.0
 
-- Null safety
-- Code refactoring
-- Move to sync code to increase stability
-- Fix: Wrong executable selection - https://github.com/YehudaKremer/msix/pull/32
+- null safety
+- code refactoring
+- move to sync code to increase stability
+- fix: Wrong executable selection - https://github.com/YehudaKremer/msix/pull/32
 
 ## 0.1.19
 
-- Fix: Sometimes VC libraries are not copied - https://github.com/YehudaKremer/msix/issues/30
+- fix: Sometimes VC libraries are not copied - https://github.com/YehudaKremer/msix/issues/30
 
 ## 0.1.15
 
-- Fix invalid character in the app name - https://github.com/YehudaKremer/msix/issues/25
+- fix invalid character in the app name - https://github.com/YehudaKremer/msix/issues/25
 
 ## 0.1.14
 
-- Using Dart Package Configuration File v2.0
-- Add decode for packages path - https://github.com/YehudaKremer/msix/issues/21
+- using Dart Package Configuration File v2.0
+- add decode for packages path - https://github.com/YehudaKremer/msix/issues/21
 
 ## 0.1.13
 
-- Sign with time stamp
+- sign with time stamp
 
 ## 0.1.12
 
-- Add support for icons generated by Visual Studio
+- add support for icons generated by Visual Studio
 
 ## 0.1.8
 
-- Fix bug: can't get pfx password from config - https://github.com/YehudaKremer/msix/issues/16
+- fix bug: can't get pfx password from config - https://github.com/YehudaKremer/msix/issues/16
 
 ## 0.1.10
 
-- Delete old code and documentation editing
+- delete old code and documentation editing
 
 ## 0.1.8
 
-- Allow setting certificate password via the command-line arguments
+- allow setting certificate password via the command-line arguments
 
 ## 0.1.5
 
-- Backward compatibility for configuration properties
+- backward compatibility for configuration properties
 
 ## 0.1.4
 
-- Backward compatibility for configuration properties
+- backward compatibility for configuration properties
 
 ## 0.1.2
 
-- Can create an unsigned installation file for upload to the store
-- Breaking config change: "publisher_name" is now: "publisher_display_name"
-- Breaking config change: "certificate_subject" is now: "publisher"
+- can create an unsigned installation file for upload to the store
+- breaking config change: "publisher_name" is now: "publisher_display_name"
+- breaking config change: "certificate_subject" is now: "publisher"
 
 ## 0.1.1
 
-- Bug fix: automatically find the name of the exe file
+- bug fix: automatically find the name of the exe file
 
 ## 0.1.0
 
-- Add capabilities
-- Support all tiles sizes
-- Bug fixes
+- add capabilities
+- support all tiles sizes
+- bug fixes
 
 ## 0.0.10
 
-- Code refactoring
+- code refactoring
 
 ## 0.0.9
 
-- Fix "create doesn't handle package_names"
+- fix "create doesn't handle package_names"
 
 ## 0.0.8
 
-- Initial version.
+- initial version.

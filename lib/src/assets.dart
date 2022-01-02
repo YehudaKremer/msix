@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:msix/src/utils/generateIcons.dart';
 import 'package:path/path.dart';
-import 'cli/iconsGenerator.dart';
 import 'utils/injector.dart';
 import 'utils/log.dart';
 import 'configuration.dart';
@@ -50,8 +50,13 @@ class Assets {
 
     if (_config.haveLogoPath()) {
       try {
-        IconsGenerator.generateIcons();
+        generateIcons();
       } catch (e) {
+        Log.warn(
+            'fail to generate icons from: "${_config.logoPath!}", using defaults icons instead.');
+        Log.warn('please report this to:');
+        Log.link('https://github.com/YehudaKremer/msix/issues');
+
         _copyVsGeneratedIcons(_config.defaultsIconsFolderPath());
       }
     } else {
