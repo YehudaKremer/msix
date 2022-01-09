@@ -14,7 +14,8 @@ Version: `e.g. v0.7.5`
 ### :speech_balloon: Description
 <!--- What is the issue? Does it fail during execution? Does it produce incorrect / wrong icons? Please include all details here --->
 
-Enter a description of your problem here
+Enter a description of your problem here. <br />
+Any logs, error and assets you have that can help to find this bug.
 
 
 ### :scroll: Pubspec.yaml
