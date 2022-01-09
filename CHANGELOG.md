@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.1
+
+- fix [#73](https://github.com/YehudaKremer/msix/issues/73)
+
 ## 2.8.0
 
 - switch icons generator from **.NET** third party program to **dart** code (using [`image`](https://pub.dev/packages/image) package)

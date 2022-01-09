@@ -52,6 +52,7 @@ class Assets {
       try {
         generateIcons();
       } catch (e) {
+        Log.errorAndExit('Error generating icons: $e');
         Log.warn(
             'fail to generate icons from: "${_config.logoPath!}", using defaults icons instead.');
         Log.warn('please report this to:');

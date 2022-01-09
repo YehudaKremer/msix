@@ -212,7 +212,9 @@ class AssetIcon {
             ? Interpolation.average
             : Interpolation.cubic;
 
-    image = trim(image);
+    try {
+      image = trim(image);
+    } catch (e) {}
 
     Image resizedImage;
     if (widthLessPaddingWidth > heightLessPaddingHeight) {
@@ -230,11 +232,14 @@ class AssetIcon {
     }
 
     Image imageCanvas = Image(scaledWidth.ceil(), scaledHeight.ceil());
+
+    var drawX = imageCanvas.width ~/ 2 - resizedImage.width ~/ 2;
+    var drawY = imageCanvas.height ~/ 2 - resizedImage.height ~/ 2;
     drawImage(
       imageCanvas,
       resizedImage,
-      dstX: imageCanvas.width ~/ 2 - resizedImage.width ~/ 2,
-      dstY: imageCanvas.height ~/ 2 - resizedImage.height ~/ 2,
+      dstX: drawX > 0 ? drawX : 0,
+      dstY: drawY > 0 ? drawY : 0,
       blend: false,
     );
 
