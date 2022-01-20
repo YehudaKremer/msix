@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.8.1
+## 2.8.2
 
 - fix [#73](https://github.com/YehudaKremer/msix/issues/73)
 
