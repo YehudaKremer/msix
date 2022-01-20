@@ -10,11 +10,8 @@ A command-line tool that create Msix installer from your flutter windows-build f
 
 In your `pubspec.yaml`, add `msix` as a new dependency:
 
-```yaml
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  msix: ^2.8.1
+```console
+PS c:\src\flutter_project\> flutter pub add --dev msix
 ```
 
 ## :package: Create Msix
