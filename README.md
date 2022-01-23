@@ -18,7 +18,7 @@ PS c:\src\flutter_project\> flutter pub add --dev msix
 
 Run the commands:
 
-```bash
+```console
 PS c:\src\flutter_project\> flutter build windows
 PS c:\src\flutter_project\> flutter pub run msix:create
 ```
