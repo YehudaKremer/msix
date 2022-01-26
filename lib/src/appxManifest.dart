@@ -1,18 +1,18 @@
 import 'dart:io';
 import 'capabilities.dart';
-import 'utils/injector.dart';
-import 'utils/log.dart';
 import 'configuration.dart';
-import 'utils/extensions.dart';
+import 'extensions.dart';
+import 'log.dart';
 
-class Manifest {
+class AppxManifest {
   Configuration _config;
+  Log _log;
 
-  Manifest() : _config = injector.get<Configuration>();
+  AppxManifest(this._config, this._log);
 
-  void generateAppxManifest() {
+  Future<void> generateAppxManifest() async {
     const taskName = 'generate appx manifest';
-    Log.startingTask(taskName);
+    _log.startingTask(taskName);
 
     var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
   <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
@@ -78,13 +78,13 @@ class Manifest {
 
     var appxManifestPath = '${_config.buildFilesFolder}\\AppxManifest.xml';
     try {
-      File(appxManifestPath).createSync();
-      File(appxManifestPath).writeAsStringSync(manifestContent);
+      await File(appxManifestPath).create();
+      await File(appxManifestPath).writeAsString(manifestContent);
     } catch (e) {
-      Log.errorAndExit('fail to create manifest file: $e');
+      _log.errorAndExit('fail to create manifest file: $e');
     }
 
-    Log.taskCompleted(taskName);
+    _log.taskCompleted(taskName);
   }
 
   String _getExtensions() {
@@ -142,42 +142,34 @@ class Manifest {
     String capabilitiesString = '';
     const newline = '\n      ';
 
-    capabilities
-        .where((capability) => !capability.isNullOrEmpty)
-        .forEach((capability) {
+    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
       capability = _normalizeCapability(capability);
 
-      if (generalUseCapabilities.contains(capability)) {
+      if (appCapabilities['generalUseCapabilities']!.contains(capability)) {
         capabilitiesString += '<Capability Name="$capability" />$newline';
-      } else if (generalUseCapabilitiesUap.contains(capability)) {
+      } else if (appCapabilities['generalUseCapabilitiesUap']!.contains(capability)) {
         capabilitiesString += '<uap:Capability Name="$capability" />$newline';
-      } else if (generalUseCapabilitiesIot.contains(capability)) {
+      } else if (appCapabilities['generalUseCapabilitiesIot']!.contains(capability)) {
         capabilitiesString += '<iot:Capability Name="$capability" />$newline';
-      } else if (generalUseCapabilitiesMobile.contains(capability)) {
-        capabilitiesString +=
-            '<mobile:Capability Name="$capability" />$newline';
+      } else if (appCapabilities['generalUseCapabilitiesMobile']!.contains(capability)) {
+        capabilitiesString += '<mobile:Capability Name="$capability" />$newline';
       }
     });
 
-    capabilities
-        .where((capability) => !capability.isNullOrEmpty)
-        .forEach((capability) {
+    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
       capability = _normalizeCapability(capability);
 
-      if (restrictedCapabilitiesUap.contains(capability)) {
+      if (appCapabilities['restrictedCapabilitiesUap']!.contains(capability)) {
         capabilitiesString += '<uap:Capability Name="$capability" />$newline';
-      } else if (restrictedCapabilitiesRescap.contains(capability)) {
-        capabilitiesString +=
-            '<rescap:Capability Name="$capability" />$newline';
+      } else if (appCapabilities['restrictedCapabilitiesRescap']!.contains(capability)) {
+        capabilitiesString += '<rescap:Capability Name="$capability" />$newline';
       }
     });
 
-    capabilities
-        .where((capability) => !capability.isNullOrEmpty)
-        .forEach((capability) {
+    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
       capability = _normalizeCapability(capability);
 
-      if (deviceCapabilities.contains(capability)) {
+      if (appCapabilities['deviceCapabilities']!.contains(capability)) {
         capabilitiesString += '<DeviceCapability Name="$capability" />$newline';
       }
     });

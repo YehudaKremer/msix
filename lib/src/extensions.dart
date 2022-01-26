@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:args/args.dart';
 
 extension StringValidations on String? {
@@ -7,4 +10,9 @@ extension StringValidations on String? {
 
 extension ArgResultsReader on ArgResults {
   String? read(String key) => this.wasParsed(key) ? this[key] : null;
+}
+
+extension FileSystemEntityExtensions on FileSystemEntity {
+  Future<FileSystemEntity?> deleteIfExists({bool recursive = false}) async =>
+      await this.exists() ? this.delete(recursive: recursive) : Future.value();
 }

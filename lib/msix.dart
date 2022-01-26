@@ -1,17 +1,19 @@
 import 'package:ansicolor/ansicolor.dart';
-import 'src/utils/injector.dart';
-import 'src/utils/log.dart';
 import 'src/configuration.dart';
 import 'src/assets.dart';
-import 'src/cli/makepri.dart';
-import 'src/manifest.dart';
-import 'src/cli/makeappx.dart';
-import 'src/cli/signtool.dart';
+import 'src/makePri.dart';
+import 'src/appxManifest.dart';
+import 'src/makeAppx.dart';
+import 'src/signTool.dart';
+import 'src/log.dart';
 
 class Msix {
+  Log _log = Log();
+  late Configuration _config;
+
   Msix() {
-    initInjector();
     ansiColorDisabled = false;
+    _config = Configuration(_log);
   }
 
   static void registerWith() {
@@ -21,31 +23,33 @@ class Msix {
 
   /// Create and sign msix installer file
   Future<void> createMsix(List<String> cliArguments) async {
-    final _config = injector.get<Configuration>();
     await _config.getConfigValues(cliArguments);
-    _config.validateConfigValues();
-    final assets = Assets();
-    assets.cleanTemporaryFiles(clearMsixFiles: true);
-    assets.copyAssetsFolder();
-    assets.createIconsFolder();
-    assets.copyIcons();
-    assets.copyVCLibsFiles();
+
+    final _assets = Assets(_config, _log);
+    final _signTool = SignTool(_config, _log);
+
+    await _config.validateConfigValues();
+    await _assets.cleanTemporaryFiles(clearMsixFiles: true);
+    await _assets.copyAssetsFolder();
+    await _assets.createIconsFolder();
+    await _assets.copyIcons();
+    await _assets.copyVCLibsFiles();
     if (!_config.store) {
-      Signtool.getCertificatePublisher(false);
+      await _signTool.getCertificatePublisher(false);
     }
-    Manifest()..generateAppxManifest();
-    MakePri.generatePRI();
-    MakeAppx.pack();
-    assets.cleanTemporaryFiles();
+    await AppxManifest(_config, _log).generateAppxManifest();
+    await MakePri(_config, _log).generatePRI();
+    await MakeAppx(_config, _log).pack();
+    await _assets.cleanTemporaryFiles();
     if (!_config.store) {
       if (!_config.dontInstallCert) {
-        Signtool.installCertificate();
+        await _signTool.installCertificate();
       }
-      Signtool.sign();
+      await _signTool.sign();
     }
 
-    Log.success('Msix Installer Created:');
-    Log.link(
+    _log.success('Msix Installer Created:');
+    _log.link(
         '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix'
             .replaceAll('/', r'\'));
   }
