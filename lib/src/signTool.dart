@@ -17,8 +17,12 @@ class SignTool {
     const taskName = 'getting certificate publisher';
     _log.startingTask(taskName);
 
-    var certificateDetails = await Process.run(
-        'certutil', ['-dump', '-p', _config.certificatePassword!, _config.certificatePath!]);
+    var certificateDetails = await Process.run('certutil', [
+      '-dump',
+      '-p',
+      _config.certificatePassword!,
+      _config.certificatePath!
+    ]);
 
     if (certificateDetails.stderr.toString().length > 0) {
       if (certificateDetails.stderr.toString().contains('password')) {
@@ -31,7 +35,8 @@ class SignTool {
       _log.errorAndExit(certificateDetails.stdout);
     }
 
-    if (withLogs) _log.info('Certificate Details: ${certificateDetails.stdout}');
+    if (withLogs)
+      _log.info('Certificate Details: ${certificateDetails.stdout}');
 
     try {
       var subjectRow = certificateDetails.stdout
@@ -39,14 +44,16 @@ class SignTool {
           .split('\n')
           .lastWhere((row) => _publisherRegex.hasMatch(row));
       if (withLogs) _log.info('subjectRow: $subjectRow');
-      _config.publisher =
-          subjectRow.substring(subjectRow.indexOf(':') + 1, subjectRow.length).trim();
+      _config.publisher = subjectRow
+          .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
+          .trim();
       if (withLogs) _log.info('config.publisher: ${_config.publisher}');
     } catch (err, stackTrace) {
       if (!withLogs) await getCertificatePublisher(true);
       _log.error(err.toString());
       if (withLogs)
-        _log.warn('This error happen when this package tried to read the certificate details,');
+        _log.warn(
+            'This error happen when this package tried to read the certificate details,');
       if (withLogs)
         _log.warn(
             'please report it by pasting all this output (after deleting sensitive info) to:');
@@ -61,9 +68,12 @@ class SignTool {
     const taskName = 'installing certificate';
     _log.startingTask(taskName);
 
-    var installedCertificatesList = await Process.run('certutil', ['-store', 'root']);
+    var installedCertificatesList =
+        await Process.run('certutil', ['-store', 'root']);
 
-    if (!installedCertificatesList.stdout.toString().contains(_config.publisher!)) {
+    if (!installedCertificatesList.stdout
+        .toString()
+        .contains(_config.publisher!)) {
       var isAdminCheck = await Process.run('net', ['session']);
 
       if (isAdminCheck.stderr.toString().contains('Access is denied')) {
@@ -97,7 +107,8 @@ class SignTool {
     _log.startingTask(taskName);
 
     if (!_config.certificatePath.isNull || _config.signToolOptions != null) {
-      var signtoolPath = '${_config.msixToolkitPath()}/Redist.${_config.architecture}/signtool.exe';
+      var signtoolPath =
+          '${_config.msixToolkitPath()}/Redist.${_config.architecture}/signtool.exe';
 
       List<String> signtoolOptions = [];
 
@@ -112,7 +123,8 @@ class SignTool {
           '/f',
           _config.certificatePath!,
           if (extension(_config.certificatePath!) == '.pfx') '/p',
-          if (extension(_config.certificatePath!) == '.pfx') _config.certificatePassword!,
+          if (extension(_config.certificatePath!) == '.pfx')
+            _config.certificatePassword!,
           '/tr',
           'http://timestamp.digicert.com'
         ];
@@ -135,13 +147,17 @@ class SignTool {
 
       if (_config.debugSigning) _log.info(signResults.stdout.toString());
 
-      if (!signResults.stdout.toString().contains('Number of files successfully Signed: 1') &&
+      if (!signResults.stdout
+              .toString()
+              .contains('Number of files successfully Signed: 1') &&
           signResults.stderr.toString().length > 0) {
         _log.error(signResults.stdout);
         _log.error(signResults.stderr);
 
         if (_config.signToolOptions == null &&
-            signResults.stdout.toString().contains('Error: SignerSign() failed.') &&
+            signResults.stdout
+                .toString()
+                .contains('Error: SignerSign() failed.') &&
             !_config.publisher.isNull) {
           _log.errorAndExit('signing error');
         }

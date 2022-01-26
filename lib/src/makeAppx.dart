@@ -14,10 +14,11 @@ class MakeAppx {
 
     var msixPath =
         '${_config.outputPath ?? _config.buildFilesFolder}/${_config.outputName ?? _config.appName}.msix';
-    var makeAppxPath = '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makeappx.exe';
+    var makeAppxPath =
+        '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makeappx.exe';
 
-    var result = await Process.run(
-        makeAppxPath, ['pack', '/v', '/o', '/d', _config.buildFilesFolder, '/p', msixPath]);
+    var result = await Process.run(makeAppxPath,
+        ['pack', '/v', '/o', '/d', _config.buildFilesFolder, '/p', msixPath]);
 
     if (result.stderr.toString().length > 0) {
       _log.error(result.stdout);

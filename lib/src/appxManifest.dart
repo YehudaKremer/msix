@@ -142,31 +142,43 @@ class AppxManifest {
     String capabilitiesString = '';
     const newline = '\n      ';
 
-    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
+    capabilities
+        .where((capability) => !capability.isNullOrEmpty)
+        .forEach((capability) {
       capability = _normalizeCapability(capability);
 
       if (appCapabilities['generalUseCapabilities']!.contains(capability)) {
         capabilitiesString += '<Capability Name="$capability" />$newline';
-      } else if (appCapabilities['generalUseCapabilitiesUap']!.contains(capability)) {
+      } else if (appCapabilities['generalUseCapabilitiesUap']!
+          .contains(capability)) {
         capabilitiesString += '<uap:Capability Name="$capability" />$newline';
-      } else if (appCapabilities['generalUseCapabilitiesIot']!.contains(capability)) {
+      } else if (appCapabilities['generalUseCapabilitiesIot']!
+          .contains(capability)) {
         capabilitiesString += '<iot:Capability Name="$capability" />$newline';
-      } else if (appCapabilities['generalUseCapabilitiesMobile']!.contains(capability)) {
-        capabilitiesString += '<mobile:Capability Name="$capability" />$newline';
+      } else if (appCapabilities['generalUseCapabilitiesMobile']!
+          .contains(capability)) {
+        capabilitiesString +=
+            '<mobile:Capability Name="$capability" />$newline';
       }
     });
 
-    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
+    capabilities
+        .where((capability) => !capability.isNullOrEmpty)
+        .forEach((capability) {
       capability = _normalizeCapability(capability);
 
       if (appCapabilities['restrictedCapabilitiesUap']!.contains(capability)) {
         capabilitiesString += '<uap:Capability Name="$capability" />$newline';
-      } else if (appCapabilities['restrictedCapabilitiesRescap']!.contains(capability)) {
-        capabilitiesString += '<rescap:Capability Name="$capability" />$newline';
+      } else if (appCapabilities['restrictedCapabilitiesRescap']!
+          .contains(capability)) {
+        capabilitiesString +=
+            '<rescap:Capability Name="$capability" />$newline';
       }
     });
 
-    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
+    capabilities
+        .where((capability) => !capability.isNullOrEmpty)
+        .forEach((capability) {
       capability = _normalizeCapability(capability);
 
       if (appCapabilities['deviceCapabilities']!.contains(capability)) {

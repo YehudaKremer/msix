@@ -12,7 +12,8 @@ class Assets {
   Log _log;
 
   Assets(this._config, this._log) {
-    _vCLibsFiles = _getAllDirectoryFiles('${_config.vcLibsFolderPath()}/${_config.architecture}')
+    _vCLibsFiles = _getAllDirectoryFiles(
+            '${_config.vcLibsFolderPath()}/${_config.architecture}')
         .asBroadcastStream();
   }
 
@@ -39,7 +40,8 @@ class Assets {
     try {
       await Directory(iconsFolderPath).create();
     } catch (e) {
-      _log.errorAndExit('fail to create app icons folder in: $iconsFolderPath\n$e');
+      _log.errorAndExit(
+          'fail to create app icons folder in: $iconsFolderPath\n$e');
     }
 
     _log.taskCompleted(taskName);
@@ -73,7 +75,8 @@ class Assets {
     _log.startingTask(taskName);
 
     await for (File file in _vCLibsFiles) {
-      await File(file.path).copy('${_config.buildFilesFolder}/${basename(file.path)}');
+      await File(file.path)
+          .copy('${_config.buildFilesFolder}/${basename(file.path)}');
     }
 
     _log.taskCompleted(taskName);
@@ -96,7 +99,8 @@ class Assets {
           'resources.scale-400.pri'
         ].map((fileName) => File('$buildPath/$fileName').deleteIfExists()),
         Directory('$buildPath/Images').deleteIfExists(recursive: true),
-        _vCLibsFiles.forEach((file) => File('$buildPath/${basename(file.path)}').deleteIfExists()),
+        _vCLibsFiles.forEach((file) =>
+            File('$buildPath/${basename(file.path)}').deleteIfExists()),
         _config.haveAssetsFolder()
             ? Directory('$buildPath/${basename(_config.assetsFolderPath!)}')
                 .deleteIfExists(recursive: true)
@@ -116,13 +120,16 @@ class Assets {
   }
 
   Stream<File> _getAllDirectoryFiles(String directory) {
-    return Directory(directory).list(recursive: true, followLinks: false).map((e) => File(e.path));
+    return Directory(directory)
+        .list(recursive: true, followLinks: false)
+        .map((e) => File(e.path));
   }
 
   Future<void> _copyDirectory(Directory source, Directory destination) async {
     await source.list(recursive: false).forEach((var entity) async {
       if (entity is Directory) {
-        var newDirectory = Directory(join(destination.absolute.path, basename(entity.path)));
+        var newDirectory =
+            Directory(join(destination.absolute.path, basename(entity.path)));
         newDirectory.create();
 
         await _copyDirectory(entity.absolute, newDirectory);
@@ -133,14 +140,19 @@ class Assets {
   }
 
   Future<void> _generateIcon(String name, Size size,
-      {double scale = 1, double paddingWidthPercent = 0, double paddingHeightPercent = 0}) async {
+      {double scale = 1,
+      double paddingWidthPercent = 0,
+      double paddingHeightPercent = 0}) async {
     double scaledWidth = size.width * scale;
     double scaledHeight = size.height * scale;
-    int widthLessPaddingWidth = (scaledWidth - (scaledWidth * paddingWidthPercent)).ceil();
-    int heightLessPaddingHeight = (scaledHeight - (scaledHeight * paddingHeightPercent)).ceil();
-    Interpolation interpolation = widthLessPaddingWidth < 200 || heightLessPaddingHeight < 200
-        ? Interpolation.average
-        : Interpolation.cubic;
+    int widthLessPaddingWidth =
+        (scaledWidth - (scaledWidth * paddingWidthPercent)).ceil();
+    int heightLessPaddingHeight =
+        (scaledHeight - (scaledHeight * paddingHeightPercent)).ceil();
+    Interpolation interpolation =
+        widthLessPaddingWidth < 200 || heightLessPaddingHeight < 200
+            ? Interpolation.average
+            : Interpolation.cubic;
 
     try {
       image = trim(image);
@@ -269,35 +281,63 @@ class Assets {
       _generateIcon('Square44x44Logo.targetsize-80', Size(80, 80)),
       _generateIcon('Square44x44Logo.targetsize-96', Size(96, 96)),
       // unplated targetsize
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-16', Size(16, 16)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-24', Size(24, 24)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-32', Size(32, 32)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-48', Size(48, 48)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-256', Size(256, 256)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-20', Size(20, 20)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-30', Size(30, 30)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-36', Size(36, 36)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-40', Size(40, 40)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-60', Size(60, 60)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-64', Size(64, 64)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-72', Size(72, 72)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-80', Size(80, 80)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-96', Size(96, 96)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-16', Size(16, 16)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-24', Size(24, 24)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-32', Size(32, 32)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-48', Size(48, 48)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-256', Size(256, 256)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-20', Size(20, 20)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-30', Size(30, 30)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-36', Size(36, 36)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-40', Size(40, 40)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-60', Size(60, 60)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-64', Size(64, 64)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-72', Size(72, 72)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-80', Size(80, 80)),
+      _generateIcon(
+          'Square44x44Logo.altform-unplated_targetsize-96', Size(96, 96)),
       // light unplated targetsize
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-16', Size(16, 16)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-24', Size(24, 24)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-32', Size(32, 32)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-48', Size(48, 48)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-256', Size(256, 256)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-20', Size(20, 20)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-30', Size(30, 30)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-36', Size(36, 36)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-40', Size(40, 40)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-60', Size(60, 60)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-64', Size(64, 64)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-72', Size(72, 72)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-80', Size(80, 80)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-96', Size(96, 96)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-16', Size(16, 16)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-24', Size(24, 24)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-32', Size(32, 32)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-48', Size(48, 48)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-256',
+          Size(256, 256)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-20', Size(20, 20)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-30', Size(30, 30)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-36', Size(36, 36)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-40', Size(40, 40)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-60', Size(60, 60)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-64', Size(64, 64)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-72', Size(72, 72)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-80', Size(80, 80)),
+      _generateIcon(
+          'Square44x44Logo.altform-lightunplated_targetsize-96', Size(96, 96)),
       // SplashScreen
       _generateIcon('SplashScreen', Size(620, 300),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),

@@ -13,10 +13,17 @@ class MakePri {
     _log.startingTask(taskName);
 
     final buildPath = _config.buildFilesFolder;
-    var makePriPath = '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makepri.exe';
+    var makePriPath =
+        '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makepri.exe';
 
-    var result = await Process.run(
-        makePriPath, ['createconfig', '/cf', '$buildPath\\priconfig.xml', '/dq', 'en-US', '/o']);
+    var result = await Process.run(makePriPath, [
+      'createconfig',
+      '/cf',
+      '$buildPath\\priconfig.xml',
+      '/dq',
+      'en-US',
+      '/o'
+    ]);
 
     if (result.stderr.toString().length > 0) {
       _log.error(result.stdout);

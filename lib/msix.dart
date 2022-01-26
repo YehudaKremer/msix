@@ -28,7 +28,6 @@ class Msix {
     final _assets = Assets(_config, _log);
     final _signTool = SignTool(_config, _log);
 
-    await _config.validateConfigValues();
     await _assets.cleanTemporaryFiles(clearMsixFiles: true);
     await _assets.copyAssetsFolder();
     await _assets.createIconsFolder();

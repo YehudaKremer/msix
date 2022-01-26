@@ -16,7 +16,8 @@ class Configuration {
   String? assetsFolderPath;
   String? msixVersion;
   String? appDescription;
-  String buildFilesFolder = '${Directory.current.path}/build/windows/runner/Release';
+  String buildFilesFolder =
+      '${Directory.current.path}/build/windows/runner/Release';
   String? certificatePath;
   String? certificatePassword;
   String? publisher;
@@ -49,45 +50,59 @@ class Configuration {
     appName = pubspec['name']?.toString();
     appDescription = pubspec['description']?.toString();
     var config = pubspec['msix_config'];
-    msixVersion = argResults.read('version') ?? config?['msix_version']?.toString();
-    certificatePath =
-        argResults.read('certificate-path') ?? config?['certificate_path']?.toString();
-    certificatePassword =
-        argResults.read('certificate-password') ?? config?['certificate_password']?.toString();
-    outputPath = argResults.read('output-path') ?? config?['output_path']?.toString();
-    outputName = argResults.read('output-name') ?? config?['output_name']?.toString();
+    msixVersion =
+        argResults.read('version') ?? config?['msix_version']?.toString();
+    certificatePath = argResults.read('certificate-path') ??
+        config?['certificate_path']?.toString();
+    certificatePassword = argResults.read('certificate-password') ??
+        config?['certificate_password']?.toString();
+    outputPath =
+        argResults.read('output-path') ?? config?['output_path']?.toString();
+    outputName =
+        argResults.read('output-name') ?? config?['output_name']?.toString();
     debugSigning = argResults.wasParsed('debug-signing');
     addExecutionAlias = argResults.wasParsed('add-execution-alias') ||
         config?['add_execution_alias']?.toString().toLowerCase() == 'true';
     dontInstallCert = argResults.wasParsed('dont-install-certificate') ||
         config?['dont_install_cert']?.toString().toLowerCase() == 'true';
     if (dontInstallCert) numberOfAllTasks--;
-    store = argResults.wasParsed('store') || config?['store']?.toString().toLowerCase() == 'true';
+    store = argResults.wasParsed('store') ||
+        config?['store']?.toString().toLowerCase() == 'true';
     if (store) numberOfAllTasks -= 2;
-    displayName = argResults.read('display-name') ?? config?['display_name']?.toString();
-    publisherName =
-        argResults.read('publisher-display-name') ?? config?['publisher_display_name']?.toString();
-    publisher = argResults.read('publisher') ?? config?['publisher']?.toString();
-    identityName = argResults.read('identity-name') ?? config?['identity_name']?.toString();
+    displayName =
+        argResults.read('display-name') ?? config?['display_name']?.toString();
+    publisherName = argResults.read('publisher-display-name') ??
+        config?['publisher_display_name']?.toString();
+    publisher =
+        argResults.read('publisher') ?? config?['publisher']?.toString();
+    identityName = argResults.read('identity-name') ??
+        config?['identity_name']?.toString();
     logoPath = argResults.read('logo-path') ?? config?['logo_path']?.toString();
     if (logoPath.isNull) numberOfAllTasks--;
-    assetsFolderPath =
-        argResults.read('assets-directory-path') ?? config?['assets_directory_path']?.toString();
-    signToolOptions = (argResults.read('signtool-options') ?? config?['signtool_options'])
-        ?.toString()
-        .split(' ')
-        .where((o) => o.trim().length > 0)
-        .toList();
-    protocolActivation = (argResults.read('protocol-activation') ?? config?['protocol_activation'])
+    assetsFolderPath = argResults.read('assets-directory-path') ??
+        config?['assets_directory_path']?.toString();
+    signToolOptions =
+        (argResults.read('signtool-options') ?? config?['signtool_options'])
+            ?.toString()
+            .split(' ')
+            .where((o) => o.trim().length > 0)
+            .toList();
+    protocolActivation = (argResults.read('protocol-activation') ??
+            config?['protocol_activation'])
         ?.toString()
         .replaceAll(':', '');
-    fileExtension = argResults.read('file-extension') ?? config?['file_extension']?.toString();
+    fileExtension = argResults.read('file-extension') ??
+        config?['file_extension']?.toString();
     if (fileExtension != null && !fileExtension!.startsWith('.')) {
       fileExtension = '.$fileExtension';
     }
-    architecture = argResults.read('architecture') ?? config?['architecture']?.toString();
-    capabilities = argResults.read('capabilities') ?? config?['capabilities']?.toString();
+    architecture =
+        argResults.read('architecture') ?? config?['architecture']?.toString();
+    capabilities =
+        argResults.read('capabilities') ?? config?['capabilities']?.toString();
     languages = _getLanguages(config);
+
+    await validateConfigValues();
   }
 
   /// Validate the configuration values and set default values
@@ -102,7 +117,8 @@ class Configuration {
     if (displayName.isNull) displayName = _cleanAppName();
     if (identityName.isNull) {
       if (store) {
-        _log.error('identity name is empty, check "msix_config: identity_name" at pubspec.yaml');
+        _log.error(
+            'identity name is empty, check "msix_config: identity_name" at pubspec.yaml');
         _log.warn(
             'you can find your store "identity_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Name');
         exit(-1);
@@ -122,14 +138,16 @@ class Configuration {
       }
     }
     if (store && publisher.isNullOrEmpty) {
-      _log.error('publisher is empty, check "msix_config: publisher" at pubspec.yaml');
+      _log.error(
+          'publisher is empty, check "msix_config: publisher" at pubspec.yaml');
       _log.warn(
           'you can find your store "publisher" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/Publisher');
       exit(-1);
     }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
-    if (capabilities.isNull) capabilities = 'internetClient,location,microphone,webcam';
+    if (capabilities.isNull)
+      capabilities = 'internetClient,location,microphone,webcam';
     if (languages == null) languages = ['en-us'];
 
     if (!(await Directory(buildFilesFolder).exists())) {
@@ -137,7 +155,8 @@ class Configuration {
           'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again');
     }
 
-    if (assetsFolderPath != null && !(await Directory(assetsFolderPath!).exists())) {
+    if (assetsFolderPath != null &&
+        !(await Directory(assetsFolderPath!).exists())) {
       _log.errorAndExit(
           'Assets folder path: $assetsFolderPath not found, check the "assets_directory_path" at pubspec.yaml');
     }
@@ -145,7 +164,9 @@ class Configuration {
     executableFileName = await Directory(buildFilesFolder)
         .list()
         .firstWhere(
-            (file) => file.path.endsWith('.exe') && !file.path.contains('PSFLauncher64.exe'),
+            (file) =>
+                file.path.endsWith('.exe') &&
+                !file.path.contains('PSFLauncher64.exe'),
             orElse: () => Directory(buildFilesFolder).listSync().first)
         .then((file) => basename(file.path));
 
@@ -160,7 +181,8 @@ class Configuration {
               'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml');
         }
 
-        if (extension(certificatePath!) == '.pfx' && certificatePassword.isNull) {
+        if (extension(certificatePath!) == '.pfx' &&
+            certificatePassword.isNull) {
           _log.errorAndExit(
               'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml');
         }
@@ -179,7 +201,8 @@ class Configuration {
     _log.taskCompleted(taskName);
   }
 
-  bool haveAssetsFolder() => assetsFolderPath != null && assetsFolderPath!.isNotEmpty;
+  bool haveAssetsFolder() =>
+      assetsFolderPath != null && assetsFolderPath!.isNotEmpty;
   bool haveLogoPath() => !logoPath.isNull;
 
   /// parse the cli arguments
@@ -221,11 +244,14 @@ class Configuration {
 
   /// Get the assets folder path from the .packages file
   Future<void> _getMsixAssetsFolderPath() async {
-    var packagesConfig =
-        await loadPackageConfig(File('${Directory.current.path}\\.dart_tool\\package_config.json'));
+    var packagesConfig = await loadPackageConfig(
+        File('${Directory.current.path}\\.dart_tool\\package_config.json'));
 
-    var msixPackage = packagesConfig.packages.firstWhere((package) => package.name == "msix");
-    var path = msixPackage.packageUriRoot.toString().replaceAll('file:///', '') + 'assets';
+    var msixPackage =
+        packagesConfig.packages.firstWhere((package) => package.name == "msix");
+    var path =
+        msixPackage.packageUriRoot.toString().replaceAll('file:///', '') +
+            'assets';
 
     msixAssetsPath = Uri.decodeFull(path);
   }
@@ -238,10 +264,13 @@ class Configuration {
   }
 
   Iterable<String>? _getLanguages(dynamic config) {
-    var languagesConfig = argResults.read('languages') ?? config?['languages']?.toString();
+    var languagesConfig =
+        argResults.read('languages') ?? config?['languages']?.toString();
     if (languagesConfig != null) {
-      var languages =
-          languagesConfig.split(',').map((e) => e.trim()).where((element) => element.length > 0);
+      var languages = languagesConfig
+          .split(',')
+          .map((e) => e.trim())
+          .where((element) => element.length > 0);
 
       if (languages.length > 0) return languages;
     }
