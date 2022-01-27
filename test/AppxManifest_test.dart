@@ -203,7 +203,6 @@ void main() {
   });
 
   test('languages is valid', () async {
-    var testValue = 'videosLibrary,microphone,  documentsLibrary';
     await AppxManifest(config..languages = ['en-us', 'he-il'], log)
         .generateAppxManifest();
     var manifestContent =

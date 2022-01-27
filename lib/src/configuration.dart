@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:args/args.dart' show ArgParser, ArgResults;
+import 'package:args/args.dart';
 import 'package:package_config/package_config.dart';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
