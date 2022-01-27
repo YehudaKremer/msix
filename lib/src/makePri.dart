@@ -2,6 +2,7 @@ import 'dart:io';
 import 'configuration.dart';
 import 'log.dart';
 
+/// Use the makepri.exe tool to generate package resource indexing files
 class MakePri {
   Configuration _config;
   Log _log;

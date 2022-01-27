@@ -43,6 +43,7 @@ class Configuration {
 
   Configuration(this._log);
 
+  /// Gets the configuration values from pubspec.yaml file and from [arguments]
   Future<void> getConfigValues(List<String> arguments) async {
     _parseCliArguments(arguments);
     await _getMsixAssetsFolderPath();
@@ -102,6 +103,7 @@ class Configuration {
         argResults.read('capabilities') ?? config?['capabilities']?.toString();
     languages = _getLanguages(config);
 
+// After got the configuration values, time to validate them
     await validateConfigValues();
   }
 

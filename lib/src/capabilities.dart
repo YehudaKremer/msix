@@ -1,3 +1,4 @@
+/// List of (all) the possible capabilities in appx manifest
 const appCapabilities = {
   'generalUseCapabilities': [
     'internetClient',

@@ -7,12 +7,14 @@ import 'log.dart';
 var _publisherRegex = RegExp(
     '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
 
+/// Handles signing operations
 class SignTool {
   Configuration _config;
   Log _log;
 
   SignTool(this._config, this._log);
 
+  /// Use the certutil.exe tool to detect the certificate publisher name (Subject)
   Future<void> getCertificatePublisher(bool withLogs) async {
     const taskName = 'getting certificate publisher';
     _log.startingTask(taskName);
@@ -64,6 +66,8 @@ class SignTool {
     _log.taskCompleted(taskName);
   }
 
+  /// Use the certutil.exe tool to install the certificate on the local machine
+  /// this helps to avoid the need to install the certificate by hand
   Future<void> installCertificate() async {
     const taskName = 'installing certificate';
     _log.startingTask(taskName);
@@ -102,6 +106,7 @@ class SignTool {
     _log.taskCompleted(taskName);
   }
 
+  /// Sign the created msix installer with the certificate
   Future<void> sign() async {
     const taskName = 'signing';
     _log.startingTask(taskName);

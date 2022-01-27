@@ -4,12 +4,14 @@ import 'configuration.dart';
 import 'extensions.dart';
 import 'log.dart';
 
+/// Handles the creation of the manifest file
 class AppxManifest {
   Configuration _config;
   Log _log;
 
   AppxManifest(this._config, this._log);
 
+  /// Generates the manifest file according to the user configuration values
   Future<void> generateAppxManifest() async {
     const taskName = 'generate appx manifest';
     _log.startingTask(taskName);

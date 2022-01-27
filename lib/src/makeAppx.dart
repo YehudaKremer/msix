@@ -2,6 +2,7 @@ import 'dart:io';
 import 'configuration.dart';
 import 'log.dart';
 
+/// Use the makeappx.exe tool to generate manifest file
 class MakeAppx {
   Configuration _config;
   Log _log;

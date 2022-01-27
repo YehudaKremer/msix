@@ -3,6 +3,7 @@ import 'package:ansicolor/ansicolor.dart';
 
 int numberOfAllTasks = 15;
 
+/// Handles simple logs, visual logs, colored, and errors logs
 class Log {
   AnsiPen ansiPen = AnsiPen();
   AnsiPen _red = AnsiPen()..red(bold: true);

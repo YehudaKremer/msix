@@ -5,6 +5,7 @@ import 'configuration.dart';
 import 'extensions.dart';
 import 'log.dart';
 
+/// Handles all the msix/user assets files
 class Assets {
   Configuration _config;
   late Stream<File> _vCLibsFiles;
@@ -17,6 +18,7 @@ class Assets {
         .asBroadcastStream();
   }
 
+  /// Copy user folder assets [assetsFolderPath] into the msix package
   Future<void> copyAssetsFolder() async {
     const taskName = 'copying assets folder';
     _log.startingTask(taskName);
@@ -32,6 +34,7 @@ class Assets {
     _log.taskCompleted(taskName);
   }
 
+  ///  Create icons folder in the msix package
   Future<void> createIconsFolder() async {
     const taskName = 'creating app icons folder';
     _log.startingTask(taskName);
@@ -47,13 +50,14 @@ class Assets {
     _log.taskCompleted(taskName);
   }
 
+  /// Copy default or generate app icons to icons folder in the msix package
   Future<void> copyIcons() async {
     const taskName = 'copying app icons';
     _log.startingTask(taskName);
 
     if (_config.haveLogoPath()) {
       try {
-        await generateAssetsIcons();
+        await _generateAssetsIcons();
       } catch (e) {
         _log.errorAndExit('Error generating icons: $e');
         _log.warn(
@@ -70,6 +74,7 @@ class Assets {
     _log.taskCompleted(taskName);
   }
 
+  /// Copy the vc libs files (msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll) to the msix package
   Future<void> copyVCLibsFiles() async {
     const taskName = 'copying VC libraries';
     _log.startingTask(taskName);
@@ -82,6 +87,7 @@ class Assets {
     _log.taskCompleted(taskName);
   }
 
+  /// Clear the build folder from temporary files
   Future<void> cleanTemporaryFiles({clearMsixFiles = false}) async {
     const taskName = 'cleaning temporary files';
     _log.startingTask(taskName);
@@ -119,18 +125,17 @@ class Assets {
     _log.taskCompleted(taskName);
   }
 
-  Stream<File> _getAllDirectoryFiles(String directory) {
-    return Directory(directory)
-        .list(recursive: true, followLinks: false)
-        .map((e) => File(e.path));
-  }
+  Stream<File> _getAllDirectoryFiles(String directory) => Directory(directory)
+      .list(recursive: true, followLinks: false)
+      .map((e) => File(e.path));
 
+  /// Copy directory content (filses and sub directories)
   Future<void> _copyDirectory(Directory source, Directory destination) async {
     await source.list(recursive: false).forEach((var entity) async {
       if (entity is Directory) {
         var newDirectory =
             Directory(join(destination.absolute.path, basename(entity.path)));
-        newDirectory.create();
+        await newDirectory.create();
 
         await _copyDirectory(entity.absolute, newDirectory);
       } else if (entity is File) {
@@ -139,6 +144,7 @@ class Assets {
     });
   }
 
+  /// Generate icon with specified size, padding and scale
   Future<void> _generateIcon(String name, Size size,
       {double scale = 1,
       double paddingWidthPercent = 0,
@@ -194,7 +200,8 @@ class Assets {
         .writeAsBytes(encodePng(imageCanvas));
   }
 
-  Future<void> generateAssetsIcons() async {
+  /// Generate optimized msix icons from the user logo
+  Future<void> _generateAssetsIcons() async {
     const taskName = 'generating icons';
     _log.startingTask(taskName);
 
@@ -366,6 +373,7 @@ class Assets {
     _log.taskCompleted(taskName);
   }
 
+  /// Copy generated icons to icons folder in the msix package
   Future<void> _copyGeneratedIcons(String iconsFolderPath) async {
     await for (File file in _getAllDirectoryFiles(iconsFolderPath)) {
       final path = file.path, newPath = 'Images/${basename(path)}';

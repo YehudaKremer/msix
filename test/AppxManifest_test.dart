@@ -5,7 +5,7 @@ import 'package:msix/src/configuration.dart';
 import 'package:msix/src/log.dart';
 import 'package:test/test.dart';
 
-const tempFolderPath = 'test/temp/';
+const tempFolderPath = 'test/appx_manifest_temp';
 
 void main() {
   var log = Log();
@@ -26,11 +26,11 @@ void main() {
     ..languages = ['en-us'];
 
   setUp(() async {
-    await Directory(tempFolderPath).create(recursive: true);
+    await Directory('$tempFolderPath/').create(recursive: true);
   });
 
   tearDown(() async {
-    await Directory(tempFolderPath).delete(recursive: true);
+    await Directory('$tempFolderPath/').delete(recursive: true);
   });
 
   test('manifest created', () async {
