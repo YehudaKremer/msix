@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.3
+
+- package code refactoring, without any functionality changes
+
 ## 2.8.2
 
 - fix [#73](https://github.com/YehudaKremer/msix/issues/73)
