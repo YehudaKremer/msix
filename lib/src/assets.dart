@@ -19,15 +19,15 @@ class Assets {
   }
 
   /// Copy user folder assets [assetsFolderPath] into the msix package
-  Future<void> copyAssetsFolder() async {
+  void copyAssetsFolder() {
     const taskName = 'copying assets folder';
     _log.startingTask(taskName);
 
     if (_config.haveAssetsFolder()) {
       var assetsFolderName = basename(_config.assetsFolderPath!);
-      await Directory('${_config.buildFilesFolder}/$assetsFolderName').create();
+      Directory('${_config.buildFilesFolder}/$assetsFolderName').createSync();
 
-      await _copyDirectory(Directory(_config.assetsFolderPath!),
+      _copyDirectory(Directory(_config.assetsFolderPath!),
           Directory('${_config.buildFilesFolder}/$assetsFolderName'));
     }
 
@@ -131,15 +131,15 @@ class Assets {
 
   /// Copy directory content (filses and sub directories)
   Future<void> _copyDirectory(Directory source, Directory destination) async {
-    await source.list(recursive: false).forEach((var entity) async {
+    source.listSync(recursive: false).forEach((var entity) {
       if (entity is Directory) {
         var newDirectory =
             Directory(join(destination.absolute.path, basename(entity.path)));
-        await newDirectory.create();
+        newDirectory.createSync();
 
-        await _copyDirectory(entity.absolute, newDirectory);
+        _copyDirectory(entity.absolute, newDirectory);
       } else if (entity is File) {
-        await entity.copy(join(destination.path, basename(entity.path)));
+        entity.copySync(join(destination.path, basename(entity.path)));
       }
     });
   }

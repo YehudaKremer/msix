@@ -28,10 +28,12 @@ void main() {
 
   setUp(() async {
     await Directory('$tempFolderPath/').create(recursive: true);
+    await Future.delayed(Duration(milliseconds: 100));
   });
 
   tearDown(() async {
     await Directory('$tempFolderPath/').delete(recursive: true);
+    await Future.delayed(Duration(milliseconds: 100));
   });
 
   test('copy assets folder', () async {
@@ -41,9 +43,7 @@ void main() {
     await File('$sourceFolder/test2.txt').create(recursive: true);
     await File('$sourceFolder/subFolder/test3.txt').create(recursive: true);
 
-    await Assets(config..assetsFolderPath = sourceFolder, log)
-        .copyAssetsFolder();
-    await Future.delayed(Duration(milliseconds: 1));
+    Assets(config..assetsFolderPath = sourceFolder, log).copyAssetsFolder();
     expect(
         await File('$tempFolderPath/$folderNameTest/test1.txt').exists(), true);
     expect(

@@ -27,10 +27,12 @@ void main() {
 
   setUp(() async {
     await Directory('$tempFolderPath/').create(recursive: true);
+    await Future.delayed(Duration(milliseconds: 100));
   });
 
   tearDown(() async {
     await Directory('$tempFolderPath/').delete(recursive: true);
+    await Future.delayed(Duration(milliseconds: 100));
   });
 
   test('manifest created', () async {
