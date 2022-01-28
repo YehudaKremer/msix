@@ -34,9 +34,13 @@ class Log {
   }
 
   /// Write `error` log and exit the program
-  void errorAndExit(String message) {
-    error(message);
-    exit(-1);
+  void errorAndExit(GeneralException exception) {
+    error(exception.message);
+    if (Platform.environment.containsKey('FLUTTER_TEST')) {
+      throw exception;
+    } else {
+      exit(-1);
+    }
   }
 
   void _write(String message, {required AnsiPen withColor}) {
@@ -91,4 +95,9 @@ class Log {
     }
     return emptyStr;
   }
+}
+
+class GeneralException implements Exception {
+  String message;
+  GeneralException(this.message);
 }

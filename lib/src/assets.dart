@@ -43,8 +43,8 @@ class Assets {
     try {
       await Directory(iconsFolderPath).create();
     } catch (e) {
-      _log.errorAndExit(
-          'fail to create app icons folder in: $iconsFolderPath\n$e');
+      _log.errorAndExit(GeneralException(
+          'fail to create app icons folder in: $iconsFolderPath\n$e'));
     }
 
     _log.taskCompleted(taskName);
@@ -59,7 +59,7 @@ class Assets {
       try {
         await _generateAssetsIcons();
       } catch (e) {
-        _log.errorAndExit('Error generating icons: $e');
+        _log.errorAndExit(GeneralException('Error generating icons: $e'));
         _log.warn(
             'fail to generate icons from: "${_config.logoPath!}", using defaults icons instead.');
         _log.warn('please report this to:');
@@ -119,7 +119,8 @@ class Assets {
             : Future.value()
       ]);
     } catch (e) {
-      _log.errorAndExit('fail to clean temporary files from $buildPath: $e');
+      _log.errorAndExit(GeneralException(
+          'fail to clean temporary files from $buildPath: $e'));
     }
 
     _log.taskCompleted(taskName);
@@ -206,13 +207,15 @@ class Assets {
     _log.startingTask(taskName);
 
     if (!(await File(_config.logoPath!).exists())) {
-      _log.errorAndExit('Logo file not found at ${_config.logoPath}');
+      _log.errorAndExit(
+          GeneralException('Logo file not found at ${_config.logoPath}'));
     }
 
     try {
       image = decodeImage(await File(_config.logoPath!).readAsBytes())!;
     } catch (e) {
-      _log.errorAndExit('Error reading logo file: ${_config.logoPath!}');
+      _log.errorAndExit(
+          GeneralException('Error reading logo file: ${_config.logoPath!}'));
       exit(-1);
     }
 
@@ -381,7 +384,7 @@ class Assets {
       try {
         await File(path).copy('${_config.buildFilesFolder}/$newPath');
       } catch (e) {
-        _log.errorAndExit('fail to copy icon: $path\n$e');
+        _log.errorAndExit(GeneralException('fail to copy icon: $path\n$e'));
       }
     }
   }

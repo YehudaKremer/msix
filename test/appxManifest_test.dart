@@ -9,23 +9,25 @@ const tempFolderPath = 'test/appx_manifest_temp';
 
 void main() {
   var log = Log();
-  var config = Configuration(log)
-    ..identityName = 'identityName_test'
-    ..publisher = 'publisher_test'
-    ..publisherName = 'publisherName_test'
-    ..msixVersion = '1.2.3.0'
-    ..appName = 'appName_test'
-    ..appDescription = 'appDescription_test'
-    ..displayName = 'displayName_test'
-    ..architecture = 'x64'
-    ..executableFileName = 'executableFileName_test'
-    ..protocolActivation = 'protocolActivation_test'
-    ..fileExtension = 'fileExtension_test'
-    ..buildFilesFolder = tempFolderPath
-    ..capabilities = 'location,microphone'
-    ..languages = ['en-us'];
+  late Configuration config;
 
   setUp(() async {
+    config = Configuration(log)
+      ..identityName = 'identityName_test'
+      ..publisher = 'publisher_test'
+      ..publisherName = 'publisherName_test'
+      ..msixVersion = '1.2.3.0'
+      ..appName = 'appName_test'
+      ..appDescription = 'appDescription_test'
+      ..displayName = 'displayName_test'
+      ..architecture = 'x64'
+      ..executableFileName = 'executableFileName_test'
+      ..protocolActivation = 'protocolActivation_test'
+      ..fileExtension = 'fileExtension_test'
+      ..buildFilesFolder = tempFolderPath
+      ..capabilities = 'location,microphone'
+      ..languages = ['en-us'];
+
     await Directory('$tempFolderPath/').create(recursive: true);
     await Future.delayed(Duration(milliseconds: 100));
   });

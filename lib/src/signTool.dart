@@ -28,8 +28,8 @@ class SignTool {
 
     if (certificateDetails.stderr.toString().length > 0) {
       if (certificateDetails.stderr.toString().contains('password')) {
-        _log.errorAndExit(
-            'Fail to read the certificate details, check if the certificate password is correct');
+        _log.errorAndExit(GeneralException(
+            'Fail to read the certificate details, check if the certificate password is correct'));
       }
       _log.error(certificateDetails.stdout);
       _log.errorAndExit(certificateDetails.stderr);
@@ -60,7 +60,7 @@ class SignTool {
         _log.warn(
             'please report it by pasting all this output (after deleting sensitive info) to:');
       if (withLogs) _log.link('https://github.com/YehudaKremer/msix/issues');
-      _log.errorAndExit(stackTrace.toString());
+      _log.errorAndExit(GeneralException(stackTrace.toString()));
     }
 
     _log.taskCompleted(taskName);
@@ -81,8 +81,8 @@ class SignTool {
       var isAdminCheck = await Process.run('net', ['session']);
 
       if (isAdminCheck.stderr.toString().contains('Access is denied')) {
-        _log.errorAndExit(
-            'to install the certificate "${_config.certificatePath}" you need to "Run as administrator" once');
+        _log.errorAndExit(GeneralException(
+            'to install the certificate "${_config.certificatePath}" you need to "Run as administrator" once'));
       }
 
       var result = await Process.run('certutil', [
@@ -164,7 +164,7 @@ class SignTool {
                 .toString()
                 .contains('Error: SignerSign() failed.') &&
             !_config.publisher.isNull) {
-          _log.errorAndExit('signing error');
+          _log.errorAndExit(GeneralException('signing error'));
         }
 
         exit(-1);
