@@ -29,13 +29,15 @@ void main() {
       ..capabilities = 'location,microphone'
       ..languages = ['en-us'];
 
-    await Directory('$tempFolderPath/').create(recursive: true);
+    Directory('$tempFolderPath/').createSync(recursive: true);
     await Future.delayed(Duration(milliseconds: 100));
   });
 
   tearDown(() async {
-    await Directory('$tempFolderPath/').delete(recursive: true);
-    await Future.delayed(Duration(milliseconds: 100));
+    if (Directory('$tempFolderPath/').existsSync()) {
+      Directory('$tempFolderPath/').deleteSync(recursive: true);
+      await Future.delayed(Duration(milliseconds: 100));
+    }
   });
 
   test('copy assets folder', () async {
@@ -66,7 +68,6 @@ void main() {
     await File('$tempFolderPath/icons/test1.png').create(recursive: true);
     await File('$tempFolderPath/icons/test2.png').create(recursive: true);
     await Directory('$tempFolderPath/Images').create(recursive: true);
-
     await Assets(config..msixAssetsPath = tempFolderPath, log).copyIcons();
     expect(await File('$tempFolderPath/Images/test1.png').exists(), true);
     expect(await File('$tempFolderPath/Images/test2.png').exists(), true);

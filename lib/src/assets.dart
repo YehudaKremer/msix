@@ -8,15 +8,11 @@ import 'log.dart';
 /// Handles all the msix/user assets files
 class Assets {
   Configuration _config;
-  late Stream<File> _vCLibsFiles;
+  List<File> _vCLibsFiles = [];
   late Image image;
   Log _log;
 
-  Assets(this._config, this._log) {
-    _vCLibsFiles = _getAllDirectoryFiles(
-            '${_config.vcLibsFolderPath()}/${_config.architecture}')
-        .asBroadcastStream();
-  }
+  Assets(this._config, this._log);
 
   /// Copy user folder assets [assetsFolderPath] into the msix package
   void copyAssetsFolder() {
@@ -65,10 +61,10 @@ class Assets {
         _log.warn('please report this to:');
         _log.link('https://github.com/YehudaKremer/msix/issues');
 
-        await _copyGeneratedIcons(_config.defaultsIconsFolderPath());
+        _copyGeneratedIcons(_config.defaultsIconsFolderPath());
       }
     } else {
-      await _copyGeneratedIcons(_config.defaultsIconsFolderPath());
+      _copyGeneratedIcons(_config.defaultsIconsFolderPath());
     }
 
     _log.taskCompleted(taskName);
@@ -79,7 +75,10 @@ class Assets {
     const taskName = 'copying VC libraries';
     _log.startingTask(taskName);
 
-    await for (File file in _vCLibsFiles) {
+    _vCLibsFiles = _getAllDirectoryFiles(
+        '${_config.vcLibsFolderPath()}/${_config.architecture}');
+
+    for (File file in _vCLibsFiles) {
       await File(file.path)
           .copy('${_config.buildFilesFolder}/${basename(file.path)}');
     }
@@ -105,8 +104,6 @@ class Assets {
           'resources.scale-400.pri'
         ].map((fileName) => File('$buildPath/$fileName').deleteIfExists()),
         Directory('$buildPath/Images').deleteIfExists(recursive: true),
-        _vCLibsFiles.forEach((file) =>
-            File('$buildPath/${basename(file.path)}').deleteIfExists()),
         _config.haveAssetsFolder()
             ? Directory('$buildPath/${basename(_config.assetsFolderPath!)}')
                 .deleteIfExists(recursive: true)
@@ -118,6 +115,9 @@ class Assets {
                 .forEach((file) => file.delete())
             : Future.value()
       ]);
+
+      _vCLibsFiles.forEach((file) async =>
+          await File('$buildPath/${basename(file.path)}').deleteIfExists());
     } catch (e) {
       _log.errorAndExit(GeneralException(
           'fail to clean temporary files from $buildPath: $e'));
@@ -126,12 +126,13 @@ class Assets {
     _log.taskCompleted(taskName);
   }
 
-  Stream<File> _getAllDirectoryFiles(String directory) => Directory(directory)
-      .list(recursive: true, followLinks: false)
-      .map((e) => File(e.path));
+  List<File> _getAllDirectoryFiles(String directory) => Directory(directory)
+      .listSync(recursive: true, followLinks: false)
+      .map((e) => File(e.path))
+      .toList();
 
   /// Copy directory content (filses and sub directories)
-  Future<void> _copyDirectory(Directory source, Directory destination) async {
+  void _copyDirectory(Directory source, Directory destination) {
     source.listSync(recursive: false).forEach((var entity) {
       if (entity is Directory) {
         var newDirectory =
@@ -377,12 +378,12 @@ class Assets {
   }
 
   /// Copy generated icons to icons folder in the msix package
-  Future<void> _copyGeneratedIcons(String iconsFolderPath) async {
-    await for (File file in _getAllDirectoryFiles(iconsFolderPath)) {
+  void _copyGeneratedIcons(String iconsFolderPath) async {
+    for (File file in _getAllDirectoryFiles(iconsFolderPath)) {
       final path = file.path, newPath = 'Images/${basename(path)}';
 
       try {
-        await File(path).copy('${_config.buildFilesFolder}/$newPath');
+        File(path).copySync('${_config.buildFilesFolder}/$newPath');
       } catch (e) {
         _log.errorAndExit(GeneralException('fail to copy icon: $path\n$e'));
       }

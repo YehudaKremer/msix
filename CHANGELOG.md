@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.5
+
+- fix bug #79
+
 ## 2.8.4
 
 - package code refactoring, without any functionality changes

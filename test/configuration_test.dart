@@ -21,13 +21,15 @@ msix_config:
       ..pubspecYamlPath = yamlTestPath
       ..buildFilesFolder = tempFolderPath;
 
-    await Directory('$tempFolderPath/').create(recursive: true);
+    Directory('$tempFolderPath/').createSync(recursive: true);
     await Future.delayed(Duration(milliseconds: 100));
   });
 
   tearDown(() async {
-    await Directory('$tempFolderPath/').delete(recursive: true);
-    await Future.delayed(Duration(milliseconds: 100));
+    if (Directory('$tempFolderPath/').existsSync()) {
+      Directory('$tempFolderPath/').deleteSync(recursive: true);
+      await Future.delayed(Duration(milliseconds: 100));
+    }
   });
 
   group('app name:', () {
