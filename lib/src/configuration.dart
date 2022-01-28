@@ -40,6 +40,7 @@ class Configuration {
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
   String msixToolkitPath() => '$msixAssetsPath/MSIX-Toolkit';
   String iconsGeneratorPath() => '$msixAssetsPath/IconsGenerator';
+  String pubspecYamlPath = "pubspec.yaml";
 
   Configuration(this._log);
 
@@ -260,7 +261,7 @@ class Configuration {
 
   /// Get pubspec.yaml content
   dynamic _getPubspec() async {
-    var pubspecString = await File("pubspec.yaml").readAsString();
+    var pubspecString = await File(pubspecYamlPath).readAsString();
     var pubspec = loadYaml(pubspecString);
     return pubspec;
   }
