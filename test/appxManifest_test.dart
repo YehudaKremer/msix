@@ -28,14 +28,15 @@ void main() {
       ..capabilities = 'location,microphone'
       ..languages = ['en-us'];
 
-    Directory('$tempFolderPath/').createSync(recursive: true);
-    await Future.delayed(Duration(milliseconds: 100));
+    await Directory('$tempFolderPath/').create(recursive: true);
+    await Future.delayed(Duration(milliseconds: 150));
   });
 
   tearDown(() async {
-    if (Directory('$tempFolderPath/').existsSync()) {
-      Directory('$tempFolderPath/').deleteSync(recursive: true);
-      await Future.delayed(Duration(milliseconds: 100));
+    if (await Directory('$tempFolderPath/').exists()) {
+      await Future.delayed(Duration(milliseconds: 150));
+      await Directory('$tempFolderPath/').delete(recursive: true);
+      await Future.delayed(Duration(milliseconds: 150));
     }
   });
 

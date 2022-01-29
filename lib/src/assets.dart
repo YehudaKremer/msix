@@ -102,7 +102,8 @@ class Assets {
           'resources.scale-150.pri',
           'resources.scale-200.pri',
           'resources.scale-400.pri'
-        ].map((fileName) => File('$buildPath/$fileName').deleteIfExists()),
+        ].map((fileName) async =>
+            await File('$buildPath/$fileName').deleteIfExists()),
         Directory('$buildPath/Images').deleteIfExists(recursive: true),
         _config.haveAssetsFolder()
             ? Directory('$buildPath/${basename(_config.assetsFolderPath!)}')
@@ -112,7 +113,7 @@ class Assets {
             ? Directory(buildPath)
                 .list(recursive: true, followLinks: false)
                 .where((f) => basename(f.path).contains('.msix'))
-                .forEach((file) => file.delete())
+                .forEach((file) async => await file.delete())
             : Future.value()
       ]);
 
