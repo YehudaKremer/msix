@@ -3,8 +3,10 @@
 [![pub package](https://img.shields.io/pub/v/msix.svg?color=blue)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix)](https://github.com/YehudaKremer/msix/issues)
 
 # Msix
+MSIX is a Windows app package format that combines the best features of MSI, .appx, App-V, and ClickOnce to provide a modern and reliable packaging experience. ([microsoft docs](https://docs.microsoft.com/en-us/windows/msix/))
 
-A command-line tool that create Msix installer from your flutter windows-build files.
+This package is a command-line tool that create Msix installer from your flutter windows-build files,
+making this step easy and quick.
 
 ## :clipboard: Install
 
