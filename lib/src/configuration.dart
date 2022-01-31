@@ -286,42 +286,34 @@ class Configuration {
   String _cleanAppName() => appName!.replaceAll('_', '');
 }
 
-class VersionException implements GeneralException {
-  String message;
-  VersionException(this.message);
+class VersionException extends GeneralException {
+  VersionException(String message) : super(message);
 }
 
-class AppNameException implements GeneralException {
-  String message;
-  AppNameException(this.message);
+class AppNameException extends GeneralException {
+  AppNameException(String message) : super(message);
 }
 
-class BuildFilesException implements GeneralException {
-  String message;
-  BuildFilesException(this.message);
+class BuildFilesException extends GeneralException {
+  BuildFilesException(String message) : super(message);
 }
 
-class AssetsFolderException implements GeneralException {
-  String message;
-  AssetsFolderException(this.message);
+class AssetsFolderException extends GeneralException {
+  AssetsFolderException(String message) : super(message);
 }
 
-class CertificateException implements GeneralException {
-  String message;
-  CertificateException(this.message);
+class CertificateException extends GeneralException {
+  CertificateException(String message) : super(message);
 }
 
-class CertificatePasswordException implements GeneralException {
-  String message;
-  CertificatePasswordException(this.message);
+class CertificatePasswordException extends GeneralException {
+  CertificatePasswordException(String message) : super(message);
 }
 
-class ArchitectureException implements GeneralException {
-  String message;
-  ArchitectureException(this.message);
+class ArchitectureException extends GeneralException {
+  ArchitectureException(String message) : super(message);
 }
 
-class ArgumentsException implements GeneralException {
-  String message;
-  ArgumentsException(this.message);
+class ArgumentsException extends GeneralException {
+  ArgumentsException(String message) : super(message);
 }
