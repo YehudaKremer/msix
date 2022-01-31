@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.8.6
+
+### Breaking Changes
+
+- remove `assets_directory_path` (we can use the formal [loading-assets](https://docs.flutter.dev/development/ui/assets-and-images#loading-assets) instead)
+
 ## 2.8.5
 
 - fix bug #79

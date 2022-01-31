@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:ansicolor/ansicolor.dart';
 
-int numberOfAllTasks = 15;
+int numberOfAllTasks = 14;
 
 /// Handles simple logs, visual logs, colored, and errors logs
 class Log {

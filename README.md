@@ -54,7 +54,6 @@ msix_config:
 | publisher<br />`--publisher` `-b`                           | Describes the publisher information.                                                                                                                                                                                                                                                                | `CN=BF212345-5644-46DF-8668-014044C1B138`             |
 | output_path<br />`--output-path` `-o`                       | The location to create the .msix file                                                                                                                                                                                                                                                               | `C:\Users\me\Desktop\New folder\`                     |
 | output_name<br />`--output-name` `-n`                       | The name of the created .msix file                                                                                                                                                                                                                                                                  | `myApp_dev`                                           |
-| assets_directory_path<br />`--assets-directory-path` `-a`   | Path to assets folder _(.dll files)_ to include in the installer                                                                                                                                                                                                                                    | `C:\<PathToFolder>\myAssets`                          |
 | languages<br />`--languages`                                | Declares a language for resources contained in the package                                                                                                                                                                                                                                          | `en-us, ja-jp`                                        |
 | capabilities<br />`--capabilities` `-e`                     | List of the capabilities the application requires.<br />see [full capabilities list](https://docs.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations)                                                                                                                            | `internetClient,location,microphone,bluetooth,webcam` |
 | architecture<br />`--architecture` `-h`                     | Describes the architecture of the code contained in the package, one of:<br />`x86`, `x64`, `arm`, `neutral`                                                                                                                                                                                        | `x64`                                                 |
@@ -90,27 +89,6 @@ For Windows Store publication the configuration values: `publisher_display_name`
 you can find those values in your windows store [dashboard](https://partner.microsoft.com/dashboard) (`Product` > `Product identity`) [see image](https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png).
 
 For more information about publish to the Windows Store see: [How to publish your MSIX package to the Microsoft Store](https://www.advancedinstaller.com/msix-publish-microsoft-store.html)
-
-## :file_folder: .dll Files And Assets ([FFI Library](https://pub.dev/packages/ffi "FFI package"))
-
-To include your _.dll_ and other third party assets in your msix installer, you can use the configuration:
-
-```yaml
-assets_directory_path: 'C:\Users\me\flutter_project_name\myAssets'
-```
-
-1. create new folder in your root project folder (where `pubspec.yaml` is located)
-2. put there all your assets (_.dll_ etc.)
-3. in your application code, use the [FFI](https://pub.dev/packages/ffi "FFI package") package like so:
-
-```dart
-var helloLib = ffi.DynamicLibrary.open('myAssets/hello.dll');
-var helloLib2 = ffi.DynamicLibrary.open('myAssets/subFolder/hello2.dll');
-
-//Note: ---> DONT <--- use absolute path:
-var absolutePath = path.join(Directory.current.path, 'myAssets/hello.dll');
-var helloLib = ffi.DynamicLibrary.open(absolutePath);
-```
 
 ---
 

@@ -42,24 +42,6 @@ void main() {
     }
   });
 
-  test('copy assets folder', () async {
-    const folderNameTest = 'folder_name_test';
-    const sourceFolder = '$tempFolderPath/source/$folderNameTest/';
-    await File('$sourceFolder/test1.txt').create(recursive: true);
-    await File('$sourceFolder/test2.txt').create(recursive: true);
-    await File('$sourceFolder/subFolder/test3.txt').create(recursive: true);
-
-    Assets(config..assetsFolderPath = sourceFolder, log).copyAssetsFolder();
-    expect(
-        await File('$tempFolderPath/$folderNameTest/test1.txt').exists(), true);
-    expect(
-        await File('$tempFolderPath/$folderNameTest/test2.txt').exists(), true);
-    expect(
-        await File('$tempFolderPath/$folderNameTest/subFolder/test3.txt')
-            .exists(),
-        true);
-  });
-
   test('create icons folder', () async {
     await Assets(config..msixAssetsPath = tempFolderPath, log)
         .createIconsFolder();

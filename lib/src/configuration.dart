@@ -13,7 +13,6 @@ class Configuration {
   String? appName;
   String? publisherName;
   String? identityName;
-  String? assetsFolderPath;
   String? msixVersion;
   String? appDescription;
   String buildFilesFolder =
@@ -81,8 +80,6 @@ class Configuration {
         config?['identity_name']?.toString();
     logoPath = argResults.read('logo-path') ?? config?['logo_path']?.toString();
     if (logoPath.isNull) numberOfAllTasks--;
-    assetsFolderPath = argResults.read('assets-directory-path') ??
-        config?['assets_directory_path']?.toString();
     signToolOptions =
         (argResults.read('signtool-options') ?? config?['signtool_options'])
             ?.toString()
@@ -159,12 +156,6 @@ class Configuration {
           'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again'));
     }
 
-    if (assetsFolderPath != null &&
-        !(await Directory(assetsFolderPath!).exists())) {
-      _log.errorAndExit(AssetsFolderException(
-          'Assets folder path: $assetsFolderPath not found, check the "assets_directory_path" at pubspec.yaml'));
-    }
-
     executableFileName = await Directory(buildFilesFolder)
         .list()
         .firstWhere(
@@ -206,8 +197,6 @@ class Configuration {
     _log.taskCompleted(taskName);
   }
 
-  bool haveAssetsFolder() =>
-      assetsFolderPath != null && assetsFolderPath!.isNotEmpty;
   bool haveLogoPath() => !logoPath.isNull;
 
   /// parse the cli arguments
@@ -226,7 +215,6 @@ class Configuration {
       ..addOption('logo-path', abbr: 'l')
       ..addOption('output-path', abbr: 'o')
       ..addOption('output-name', abbr: 'n')
-      ..addOption('assets-directory-path', abbr: 'a')
       ..addOption('signtool-options')
       ..addOption('protocol-activation')
       ..addOption('file-extension', abbr: 'f')

@@ -14,22 +14,6 @@ class Assets {
 
   Assets(this._config, this._log);
 
-  /// Copy user folder assets [assetsFolderPath] into the msix package
-  void copyAssetsFolder() {
-    const taskName = 'copying assets folder';
-    _log.startingTask(taskName);
-
-    if (_config.haveAssetsFolder()) {
-      var assetsFolderName = basename(_config.assetsFolderPath!);
-      Directory('${_config.buildFilesFolder}/$assetsFolderName').createSync();
-
-      _copyDirectory(Directory(_config.assetsFolderPath!),
-          Directory('${_config.buildFilesFolder}/$assetsFolderName'));
-    }
-
-    _log.taskCompleted(taskName);
-  }
-
   ///  Create icons folder in the msix package
   Future<void> createIconsFolder() async {
     const taskName = 'creating app icons folder';
@@ -105,10 +89,6 @@ class Assets {
         ].map((fileName) async =>
             await File('$buildPath/$fileName').deleteIfExists()),
         Directory('$buildPath/Images').deleteIfExists(recursive: true),
-        _config.haveAssetsFolder()
-            ? Directory('$buildPath/${basename(_config.assetsFolderPath!)}')
-                .deleteIfExists(recursive: true)
-            : Future.value(),
         clearMsixFiles
             ? Directory(buildPath)
                 .list(recursive: true, followLinks: false)
