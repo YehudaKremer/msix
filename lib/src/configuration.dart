@@ -30,6 +30,7 @@ class Configuration {
   String? fileExtension;
   String? outputPath;
   String? outputName;
+  String? mainPackageIdentityName;
   bool debugSigning = false;
   bool store = false;
   bool dontInstallCert = false;
@@ -61,6 +62,8 @@ class Configuration {
         argResults.read('output-path') ?? config?['output_path']?.toString();
     outputName =
         argResults.read('output-name') ?? config?['output_name']?.toString();
+    mainPackageIdentityName = argResults.read('main-package-identity-name') ??
+        config?['main_package_identity_name']?.toString();
     debugSigning = argResults.wasParsed('debug-signing');
     addExecutionAlias = argResults.wasParsed('add-execution-alias') ||
         config?['add_execution_alias']?.toString().toLowerCase() == 'true';
@@ -215,6 +218,7 @@ class Configuration {
       ..addOption('logo-path', abbr: 'l')
       ..addOption('output-path', abbr: 'o')
       ..addOption('output-name', abbr: 'n')
+      ..addOption('main-package-identity-name', abbr: 'm')
       ..addOption('signtool-options')
       ..addOption('protocol-activation')
       ..addOption('file-extension', abbr: 'f')
