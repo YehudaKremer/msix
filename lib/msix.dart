@@ -1,4 +1,5 @@
 import 'package:ansicolor/ansicolor.dart' show ansiColorDisabled;
+import 'package:msix/src/windowsBuild.dart';
 import 'src/configuration.dart';
 import 'src/assets.dart';
 import 'src/makePri.dart';
@@ -32,6 +33,8 @@ class Msix {
   /// flutter pub run msix:create [cliArguments]
   Future<void> createMsix(List<String> cliArguments) async {
     await _config.getConfigValues(cliArguments);
+    await WindowsBuild(_config, _log).build();
+    await _config.validateBuildFiles();
 
     final _assets = Assets(_config, _log);
     final _signTool = SignTool(_config, _log);

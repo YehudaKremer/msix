@@ -19,12 +19,9 @@ class SignTool {
     const taskName = 'getting certificate publisher';
     _log.startingTask(taskName);
 
-    var certificateDetails = await Process.run('certutil', [
-      '-dump',
-      '-p',
-      _config.certificatePassword!,
-      _config.certificatePath!
-    ]);
+    var certificateDetails = await Process.run('certutil',
+        ['-dump', '-p', _config.certificatePassword!, _config.certificatePath!],
+        runInShell: true);
 
     if (certificateDetails.stderr.toString().length > 0) {
       if (certificateDetails.stderr.toString().contains('password')) {
