@@ -2,7 +2,6 @@
 
 [![pub package](https://img.shields.io/pub/v/msix.svg?color=blue)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix)](https://github.com/YehudaKremer/msix/issues)
 
-# Msix
 [MSIX] is a Windows app packaging format from Microsoft that combines the best
 features of MSI, .appx, App-V, and ClickOnce to provide a modern and reliable
 packaging experience.
@@ -11,7 +10,7 @@ This package offers a command line tool for creating MSIX installers from your
 Flutter app, making it easy to [publish your app to the Microsoft Store] or host
 it on a website. 
 
-## :clipboard: Install
+## :clipboard: Installation
 
 In your `pubspec.yaml`, add the `msix` package as a new [dev dependency] with
 the following command:
@@ -20,7 +19,7 @@ the following command:
 PS c:\src\flutter_project\> flutter pub add --dev msix
 ```
 
-## :package: Create Msix
+## :package: Creating an MSIX installer
 
 To create a MSIX installer from your package, run the following two commands:
 
@@ -34,7 +33,7 @@ dependencies into the `build\` subdirectory. In turn, the `msix:create` command
 bundles those files along with other necessary dependencies into an MSIX install
 file.
 
-## :gear: Configuration (Optional)
+## :gear: Configuring your installer
 
 You will almost certainly want to customize various settings in the MSIX
 installer, such as the application title, the default icon, and which [Windows
@@ -80,7 +79,7 @@ msix_config:
 
 </details>
 
-## :black_nib: Signing Options
+## :black_nib: Signing options
 
 Published MSIX installers should be [signed with a certificate], to help ensure
 that app installs and updates come from trustworthy sources.
@@ -104,7 +103,7 @@ the `certificate_path` and `certificate_password` fields.
 machine. You can disable this by using the `--dontInstallCert` flag, or the YAML
 option `dont_install_cert: true`.
 
-## ![Microsoft Store logo][] Microsoft Store
+## ![Microsoft Store logo][] Publishing to the Microsoft Store
 
 To generate an MSIX file for publishing to the Microsoft Store, use the
 `--store` flag, or alternatively add `store: true` to the YAML configuration.
