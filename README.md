@@ -3,14 +3,18 @@
 [![pub package](https://img.shields.io/pub/v/msix.svg?color=blue)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix)](https://github.com/YehudaKremer/msix/issues)
 
 # Msix
-MSIX is a Windows app package format that combines the best features of MSI, .appx, App-V, and ClickOnce to provide a modern and reliable packaging experience. ([microsoft docs](https://docs.microsoft.com/en-us/windows/msix/))
+[MSIX] is a Windows app packaging format from Microsoft that combines the best
+features of MSI, .appx, App-V, and ClickOnce to provide a modern and reliable
+packaging experience.
 
-This package is a command-line tool that create Msix installer from your flutter windows-build files,
-making this step easy and quick.
+This package offers a command line tool for creating MSIX installers from your
+Flutter app, making it easy to [publish your app to the Microsoft Store] or host
+it on a website. 
 
 ## :clipboard: Install
 
-In your `pubspec.yaml`, add `msix` as a new dependency:
+In your `pubspec.yaml`, add the `msix` package as a new [dev dependency] with
+the following command:
 
 ```console
 PS c:\src\flutter_project\> flutter pub add --dev msix
@@ -18,19 +22,25 @@ PS c:\src\flutter_project\> flutter pub add --dev msix
 
 ## :package: Create Msix
 
-Run the commands:
+To create a MSIX installer from your package, run the following two commands:
 
 ```console
 PS c:\src\flutter_project\> flutter build windows
 PS c:\src\flutter_project\> flutter pub run msix:create
 ```
 
-The `flutter build windows` is required to build the executable that
-`flutter pub run msix:create` bundles up in the MSIX install file.
+The `flutter build windows` command compiles release executables and
+dependencies into the `build\` subdirectory. In turn, the `msix:create` command
+bundles those files along with other necessary dependencies into an MSIX install
+file.
 
 ## :gear: Configuration (Optional)
 
-This package have default configuration values, but you can configure it to suit your needs by adding `msix_config:` at the end of your `pubspec.yaml` file:
+You will almost certainly want to customize various settings in the MSIX
+installer, such as the application title, the default icon, and which [Windows
+capabilities] your application needs. You can customize the generated MSIX
+installer by adding declarations to an `msix_config:` node in your
+`pubspec.yaml` file:
 
 ```yaml
 msix_config:
@@ -43,55 +53,81 @@ msix_config:
 ```
 
 <details>
-<summary>See full list of available configurations (Click to expand)</summary>
+<summary>Full list of available configurations (click to expand)</summary>
 
-| Configuration Name &<br />CLI Arg/Flag                      | Description (from [microsoft docs](https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root "microsoft docs"))                                                                                                                                                       | Example                                               |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| display_name<br />`--display-name` `-d`                     | A friendly name that can be displayed to users.                                                                                                                                                                                                                                                     | `MyAppName`                                           |
-| logo_path<br />`--logo-path` `-l`                           | Path to the app logo.<br /><br />recommended minimum size of **400px** on **400px**<br /><br />[see supported formats](https://github.com/brendan-duncan/image#supported-image-formats)                                                                                                             | `C:/<PathToIcon>/<Logo.png>`                          |
-| msix_version<br />`--version` `-v`                          | The version number of the package.                                                                                                                                                                                                                                                                  | `1.0.0.0`<br />_(must be this format)_                |
-| store<br />`--store`                                        | The installer _(.msix)_ is for publish to Windows Store                                                                                                                                                                                                                                             | `false`                                               |
-| publisher_display_name<br />`--publisher-display-name` `-u` | A friendly name for the publisher that can be displayed to users.                                                                                                                                                                                                                                   | `MyName`                                              |
-| identity_name<br />`--identity-name` `-i`                   | Defines a globally unique identifier for a package.                                                                                                                                                                                                                                                 | `com.flutter.MyApp`                                   |
-| publisher<br />`--publisher` `-b`                           | Describes the publisher information.                                                                                                                                                                                                                                                                | `CN=BF212345-5644-46DF-8668-014044C1B138`             |
-| output_path<br />`--output-path` `-o`                       | The location to create the .msix file                                                                                                                                                                                                                                                               | `C:\Users\me\Desktop\New folder\`                     |
-| output_name<br />`--output-name` `-n`                       | The name of the created .msix file                                                                                                                                                                                                                                                                  | `myApp_dev`                                           |
-| languages<br />`--languages`                                | Declares a language for resources contained in the package                                                                                                                                                                                                                                          | `en-us, ja-jp`                                        |
-| capabilities<br />`--capabilities` `-e`                     | List of the capabilities the application requires.<br />see [full capabilities list](https://docs.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations)                                                                                                                            | `internetClient,location,microphone,bluetooth,webcam` |
-| architecture<br />`--architecture` `-h`                     | Describes the architecture of the code contained in the package, one of:<br />`x86`, `x64`, `arm`, `neutral`                                                                                                                                                                                        | `x64`                                                 |
-| certificate_path<br />`--certificate-path` `-c`             | Path to your certificate file                                                                                                                                                                                                                                                                       | `C:/<PathToCertificate>/<MyCertificate.pfx>`          |
-| certificate_password<br />`--certificate-password` `-p`     | The certificate password                                                                                                                                                                                                                                                                            | `1234`                                                |
-| signtool_options<br />`--signtool-options`                  | _Signtool_ use the syntax: _[command] [options] [file_name]_, so you can provide here the **[options]** part, [see full documentation](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe)<br /><br />this **overwriting** the fields: `certificate_path`, `certificate_password` | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer`         |
-| dont_install_cert<br />`--dont-install-certificate`         | if `true`, the package won't try to install the certificate                                                                                                                                                                                                                                         | `false`                                               |
-| file_extension<br />`--file-extension` `-f`                 | File extensions that the app will used to open                                                                                                                                                                                                                                                      | `.txt, .myFile, .test1`                               |
-| protocol_activation<br />`--protocol-activation`            | Protocol activation that will open the app                                                                                                                                                                                                                                                          | `http`                                                |
-| add_execution_alias<br />`--add-execution-alias`            | Start your application by using an alias.<br />the alias is the application `name:` from the `pubspec.yaml`                                                                                                                                                                                         | `true`                                                |
-| `--debug-signing`                                           | Showing more information about the certificate                                                                                                                                                                                                                                                      |                                                       |
+| YAML name                | Command-line argument           | Description (from Microsoft [Package manifest schema reference])      | Example                                       |
+| ------------------------ | ------------------------------- | --------------------------------------------------------------------- | --------------------------------------------- |
+| `display_name`           | `--display-name` `-d`           | A friendly app name that can be displayed to users.                   | `Flutter Gallery`                             |
+| `logo_path`              | `--logo-path` `-l`              | Path to an [image file] for use as the app icon (at least 400x400px). | `C:\images\gallery.png`                       |
+| `msix_version`           | `--version` `-v`                | The version number of the package, in `a.b.c.d` format.               | `1.0.0.0`                                     |
+| `store`                  | `--store`                       | Generate a MSIX file for publishing to the Microsoft Store.           | `false`                                       |
+| `publisher_display_name` | `--publisher-display-name` `-u` | A friendly name for the publisher that can be displayed to users.     | `MyName`                                      |
+| `identity_name`          | `--identity-name` `-i`          | Defines the unique identifier for the app.                            | `dev.flutter.Gallery`                         |
+| `publisher`              | `--publisher` `-b`              | Describes the publisher.                                              | `CN=BF212345-5644-46DF-8668-014044C1B138`     |
+| `output_path`            | `--output-path` `-o`            | The directory where the output MSIX file should be stored.            | `C:\src\myapp\msix`                           |
+| `output_name`            | `--output-name` `-n`            | The filename that should be given to the created MSIX file.           | `myApp_dev`                                   |
+| `languages`              | `--languages`                   | Declares the language resources contained in the package.             | `en-us, ja-jp`                                |
+| `capabilities`           | `--capabilities` `-e`           | List of the [capabilities][Windows capabilities] the app requires.    | `internetClient,location,microphone,webcam`   |
+| `architecture`           | `--architecture` `-h`           | Describes the architecture of the code in the package.                | `x64`                                         |
+| `certificate_path`       | `--certificate-path` `-c`       | Path to the certificate content to place in the store.                | `C:\certs\signcert.pfx`                       |
+| `certificate_password`   | `--certificate-password` `-p`   | Password for the certificate.                                         | `1234`                                        |
+| `signtool_options`       | `--signtool-options`            | Options to be provided to the `signtool` for app signing (see below.) | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer` |
+| `dont_install_cert`      | `--dont-install-certificate`    | If `true`, don't try to install the certificate.                      | `false`                                       |
+| `file_extension`         | `--file-extension` `-f`         | File extensions that the app may be registered to open.               | `.picture, .image`                            |
+| `protocol_activation`    | `--protocol-activation`         | [Protocol activation] that will open the app.                         | `myapp`                                       |
+| `add_execution_alias`    | `--add-execution-alias`         | Add an alias for running the app, using `pubspec.yaml` `name:` node   | `true`                                        |
+|                          | `--debug-signing`               | Show more information about the certificate.                          |                                               |
 
 </details>
 
 ## :black_nib: Signing Options
 
-**.msix** installer must be sign with certificate (.pfx)
+Published MSIX installers should be [signed with a certificate], to help ensure
+that app installs and updates come from trustworthy sources.
 
-- this package will automatically sign your app with build in **test certificate**.
-- if you publish your app to the **Windows Store**, the app will automatically sign by the store.
-- if you need to use **your own certificate**, use the configuration fields:`certificate_path, certificate_password`
+- For development purposes, this package is configured by default to
+  automatically sign your app with a **test certificate**, which makes it easy
+  to test your install prior to release. 
+- If you publish your app to the **Microsoft Store**, the installation package
+  will be signed automatically by the store.
+- If you need to use your **own signing certificate**, for example to release
+  the app outside of the Microsoft Store, you can use the configuration fields
+  `certificate_path` and `certificate_password` to configure a certificate of
+  your choice.
 
-**Note**: by default, this package will install the certificate on your machine, you can disable it by using the `--dontInstallCert` flag or the configuration: `dont_install_cert: true`
+You can also provide custom options to the signing tool with the
+`--signtool-options` command, as shown above. For more information on available
+options, see the [signtool documentation]. Note that using this option overrides
+the `certificate_path` and `certificate_password` fields.
 
-## ![MSIX](https://user-images.githubusercontent.com/946652/138161113-c905ec10-78f1-4d96-91ac-1295ae3d2a8c.png) Windows Store
+**Note**: By default, the MSIX package will install the certificate on your
+machine. You can disable this by using the `--dontInstallCert` flag, or the YAML
+option `dont_install_cert: true`.
 
-To generate msix file for publish to the Windows Store, use the `--store` flag or add `store: true`
-in msix configuration section in your `pubspec.yaml`.
+## ![Microsoft Store logo][] Microsoft Store
 
-###### Note:
+To generate an MSIX file for publishing to the Microsoft Store, use the
+`--store` flag, or alternatively add `store: true` to the YAML configuration.
 
-For Windows Store publication the configuration values: `publisher_display_name`, `identity_name`, `msix_version`, `publisher` must be valid,
-you can find those values in your windows store [dashboard](https://partner.microsoft.com/dashboard) (`Product` > `Product identity`) [see image](https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png).
 
-For more information about publish to the Windows Store see: [How to publish your MSIX package to the Microsoft Store](https://www.advancedinstaller.com/msix-publish-microsoft-store.html)
+**Note**: For apps published to the Microsoft Store, the configuration values
+ `publisher_display_name`, `identity_name`, `msix_version` and `publisher` must
+ all be configured and should match the registered publisher and app name from
+ the [Microsoft Store dashboard], as per [this screenshot].
 
 ---
 
 Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
+
+[MSIX]: https://docs.microsoft.com/en-us/windows/msix/
+[publish your app to the Microsoft Store]: https://docs.microsoft.com/en-us/windows/uwp/publish/app-submissions
+[dev dependency]: https://dart.dev/tools/pub/dependencies#dev-dependencies
+[Windows capabilities]: https://docs.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations
+[Package manifest schema reference]: https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root
+[image file]: https://github.com/brendan-duncan/image#supported-image-formats
+[Protocol activation]: https://docs.microsoft.com/en-us/windows/uwp/launch-resume/handle-uri-activation
+[signed with a certificate]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing
+[signtool documentation]: https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
+[Microsoft Store logo]: https://user-images.githubusercontent.com/946652/138161113-c905ec10-78f1-4d96-91ac-1295ae3d2a8c.png
+[Microsoft Store dashboard]: https://partner.microsoft.com/dashboard
+[this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png
