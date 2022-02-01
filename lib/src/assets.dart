@@ -112,21 +112,6 @@ class Assets {
       .map((e) => File(e.path))
       .toList();
 
-  /// Copy directory content (filses and sub directories)
-  void _copyDirectory(Directory source, Directory destination) {
-    source.listSync(recursive: false).forEach((var entity) {
-      if (entity is Directory) {
-        var newDirectory =
-            Directory(join(destination.absolute.path, basename(entity.path)));
-        newDirectory.createSync();
-
-        _copyDirectory(entity.absolute, newDirectory);
-      } else if (entity is File) {
-        entity.copySync(join(destination.path, basename(entity.path)));
-      }
-    });
-  }
-
   /// Generate icon with specified size, padding and scale
   Future<void> _generateIcon(String name, Size size,
       {double scale = 1,
