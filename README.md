@@ -1,4 +1,15 @@
+<div style="position: relative; max-width:838px">
+
 ![MSIX](https://user-images.githubusercontent.com/946652/138101650-bf934b21-ced7-4836-a197-2e424ee1f86c.png)
+
+<a href="https://flutter.dev/docs/development/packages-and-plugins/favorites" title="Flutter Favorite program">
+<img
+  src="https://user-images.githubusercontent.com/946652/152225760-309041e9-266e-42da-9915-34478ee74736.png"
+  alt="Flutter Favorite Badge"
+  align="right" style="position: absolute; top: 5px; right: 5px;background-color: transparent; max-width: 18%;">
+</a>
+
+<div>
 
 [![pub package](https://img.shields.io/pub/v/msix.svg?color=blue)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix)](https://github.com/YehudaKremer/msix/issues)
 
@@ -8,7 +19,7 @@ packaging experience.
 
 This package offers a command line tool for creating MSIX installers from your
 Flutter app, making it easy to [publish your app to the Microsoft Store] or host
-it on a website. 
+it on a website.
 
 ## :clipboard: Installation
 
@@ -66,7 +77,7 @@ msix_config:
 | `output_path`            | `--output-path` `-o`            | The directory where the output MSIX file should be stored.            | `C:\src\myapp\msix`                           |
 | `output_name`            | `--output-name` `-n`            | The filename that should be given to the created MSIX file.           | `myApp_dev`                                   |
 | `languages`              | `--languages`                   | Declares the language resources contained in the package.             | `en-us, ja-jp`                                |
-| `capabilities`           | `--capabilities` `-e`           | List of the [capabilities][Windows capabilities] the app requires.    | `internetClient,location,microphone,webcam`   |
+| `capabilities`           | `--capabilities` `-e`           | List of the [capabilities][windows capabilities] the app requires.    | `internetClient,location,microphone,webcam`   |
 | `architecture`           | `--architecture` `-h`           | Describes the architecture of the code in the package.                | `x64`                                         |
 | `certificate_path`       | `--certificate-path` `-c`       | Path to the certificate content to place in the store.                | `C:\certs\signcert.pfx`                       |
 | `certificate_password`   | `--certificate-password` `-p`   | Password for the certificate.                                         | `1234`                                        |
@@ -86,7 +97,7 @@ that app installs and updates come from trustworthy sources.
 
 - For development purposes, this package is configured by default to
   automatically sign your app with a **test certificate**, which makes it easy
-  to test your install prior to release. 
+  to test your install prior to release.
 - If you publish your app to the **Microsoft Store**, the installation package
   will be signed automatically by the store.
 - If you need to use your **own signing certificate**, for example to release
@@ -108,25 +119,24 @@ option `dont_install_cert: true`.
 To generate an MSIX file for publishing to the Microsoft Store, use the
 `--store` flag, or alternatively add `store: true` to the YAML configuration.
 
-
 **Note**: For apps published to the Microsoft Store, the configuration values
- `publisher_display_name`, `identity_name`, `msix_version` and `publisher` must
- all be configured and should match the registered publisher and app name from
- the [Microsoft Store dashboard], as per [this screenshot].
+`publisher_display_name`, `identity_name`, `msix_version` and `publisher` must
+all be configured and should match the registered publisher and app name from
+the [Microsoft Store dashboard], as per [this screenshot].
 
 ---
 
 Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
 
-[MSIX]: https://docs.microsoft.com/en-us/windows/msix/
-[publish your app to the Microsoft Store]: https://docs.microsoft.com/en-us/windows/uwp/publish/app-submissions
+[msix]: https://docs.microsoft.com/en-us/windows/msix/
+[publish your app to the microsoft store]: https://docs.microsoft.com/en-us/windows/uwp/publish/app-submissions
 [dev dependency]: https://dart.dev/tools/pub/dependencies#dev-dependencies
-[Windows capabilities]: https://docs.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations
-[Package manifest schema reference]: https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root
+[windows capabilities]: https://docs.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations
+[package manifest schema reference]: https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appxmanifestschema/schema-root
 [image file]: https://github.com/brendan-duncan/image#supported-image-formats
-[Protocol activation]: https://docs.microsoft.com/en-us/windows/uwp/launch-resume/handle-uri-activation
+[protocol activation]: https://docs.microsoft.com/en-us/windows/uwp/launch-resume/handle-uri-activation
 [signed with a certificate]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing
 [signtool documentation]: https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
-[Microsoft Store logo]: https://user-images.githubusercontent.com/946652/138161113-c905ec10-78f1-4d96-91ac-1295ae3d2a8c.png
-[Microsoft Store dashboard]: https://partner.microsoft.com/dashboard
+[microsoft store logo]: https://user-images.githubusercontent.com/946652/138161113-c905ec10-78f1-4d96-91ac-1295ae3d2a8c.png
+[microsoft store dashboard]: https://partner.microsoft.com/dashboard
 [this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png
