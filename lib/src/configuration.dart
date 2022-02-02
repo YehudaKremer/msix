@@ -151,20 +151,6 @@ class Configuration {
       capabilities = 'internetClient,location,microphone,webcam';
     if (languages == null) languages = ['en-us'];
 
-    if (!(await Directory(buildFilesFolder).exists())) {
-      _log.errorAndExit(BuildFilesException(
-          'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again'));
-    }
-
-    executableFileName = await Directory(buildFilesFolder)
-        .list()
-        .firstWhere(
-            (file) =>
-                file.path.endsWith('.exe') &&
-                !file.path.contains('PSFLauncher64.exe'),
-            orElse: () => Directory(buildFilesFolder).listSync().first)
-        .then((file) => basename(file.path));
-
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {
       _log.errorAndExit(VersionException(
           'Msix version can be only in this format: "1.0.0.0"'));
@@ -193,6 +179,27 @@ class Configuration {
       _log.errorAndExit(ArchitectureException(
           'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml'));
     }
+
+    _log.taskCompleted(taskName);
+  }
+
+  Future<void> validateBuildFiles() async {
+    const taskName = 'validating build files';
+    _log.startingTask(taskName);
+
+    if (!(await Directory(buildFilesFolder).exists())) {
+      _log.errorAndExit(BuildFilesException(
+          'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again'));
+    }
+
+    executableFileName = await Directory(buildFilesFolder)
+        .list()
+        .firstWhere(
+            (file) =>
+                file.path.endsWith('.exe') &&
+                !file.path.contains('PSFLauncher64.exe'),
+            orElse: () => Directory(buildFilesFolder).listSync().first)
+        .then((file) => basename(file.path));
 
     _log.taskCompleted(taskName);
   }
