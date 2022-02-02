@@ -26,10 +26,7 @@ class MakePri {
       '/o'
     ]);
 
-    if (result.stderr.toString().length > 0) {
-      _log.error(result.stdout);
-      throw result.stderr;
-    } else if (result.exitCode != 0) {
+    if (result.exitCode != 0) {
       throw result.stdout;
     }
 
@@ -49,10 +46,7 @@ class MakePri {
     var priconfig = File('$buildPath/priconfig.xml');
     if (await priconfig.exists()) await priconfig.delete();
 
-    if (result.stderr.toString().length > 0) {
-      _log.error(result.stdout);
-      throw result.stderr;
-    } else if (result.exitCode != 0) {
+    if (result.exitCode != 0) {
       throw result.stdout;
     }
 

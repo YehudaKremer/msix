@@ -22,10 +22,7 @@ class WindowsBuild {
     var result =
         await Process.run('flutter', ['build', 'windows'], runInShell: true);
 
-    if (result.stderr.toString().length > 0) {
-      _log.error(result.stdout);
-      throw result.stderr;
-    } else if (result.exitCode != 0) {
+    if (result.exitCode != 0) {
       throw result.stdout;
     }
     _log.taskCompleted(taskName);

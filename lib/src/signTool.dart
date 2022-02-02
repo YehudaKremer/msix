@@ -90,10 +90,7 @@ class SignTool {
         _config.certificatePath!
       ]);
 
-      if (result.stderr.toString().length > 0) {
-        _log.error(result.stdout);
-        throw result.stderr;
-      } else if (result.exitCode != 0) {
+      if (result.exitCode != 0) {
         throw result.stdout;
       }
     }
