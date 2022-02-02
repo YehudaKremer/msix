@@ -39,7 +39,7 @@ class Assets {
       try {
         await _generateAssetsIcons();
       } catch (e) {
-        _log.errorAndExit(GeneralException('Error generating icons: $e'));
+        _log.warn('Error generating icons: $e');
         _log.warn(
             'fail to generate icons from: "${_config.logoPath!}", using defaults icons instead.');
         _log.warn('please report this to:');
