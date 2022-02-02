@@ -28,9 +28,9 @@ class MakePri {
 
     if (result.stderr.toString().length > 0) {
       _log.error(result.stdout);
-      _log.errorAndExit(GeneralException(result.stderr));
+      throw result.stderr;
     } else if (result.exitCode != 0) {
-      _log.errorAndExit(GeneralException(result.stdout));
+      throw result.stdout;
     }
 
     result = await Process.run(makePriPath, [
@@ -51,9 +51,9 @@ class MakePri {
 
     if (result.stderr.toString().length > 0) {
       _log.error(result.stdout);
-      _log.errorAndExit(GeneralException(result.stderr));
+      throw result.stderr;
     } else if (result.exitCode != 0) {
-      _log.errorAndExit(GeneralException(result.stdout));
+      throw result.stdout;
     }
 
     _log.taskCompleted(taskName);

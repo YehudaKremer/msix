@@ -33,16 +33,6 @@ class Log {
     _write(message, withColor: _red);
   }
 
-  /// Write `error` log and exit the program
-  void errorAndExit(GeneralException exception) {
-    error(exception.message);
-    if (Platform.environment.containsKey('FLUTTER_TEST')) {
-      throw exception;
-    } else {
-      exit(-1);
-    }
-  }
-
   void _write(String message, {required AnsiPen withColor}) {
     stdout.writeln(withColor(message));
   }

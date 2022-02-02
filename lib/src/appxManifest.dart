@@ -83,7 +83,7 @@ class AppxManifest {
       await File(appxManifestPath).create();
       await File(appxManifestPath).writeAsString(manifestContent);
     } catch (e) {
-      _log.errorAndExit(GeneralException('fail to create manifest file: $e'));
+      throw 'fail to create manifest file: $e';
     }
 
     _log.taskCompleted(taskName);

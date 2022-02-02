@@ -25,13 +25,12 @@ class SignTool {
 
     if (certificateDetails.stderr.toString().length > 0) {
       if (certificateDetails.stderr.toString().contains('password')) {
-        _log.errorAndExit(GeneralException(
-            'Fail to read the certificate details, check if the certificate password is correct'));
+        throw 'Fail to read the certificate details, check if the certificate password is correct';
       }
       _log.error(certificateDetails.stdout);
-      _log.errorAndExit(certificateDetails.stderr);
+      throw certificateDetails.stderr;
     } else if (certificateDetails.exitCode != 0) {
-      _log.errorAndExit(certificateDetails.stdout);
+      throw certificateDetails.stdout;
     }
 
     if (withLogs)
@@ -57,7 +56,7 @@ class SignTool {
         _log.warn(
             'please report it by pasting all this output (after deleting sensitive info) to:');
       if (withLogs) _log.link('https://github.com/YehudaKremer/msix/issues');
-      _log.errorAndExit(GeneralException(stackTrace.toString()));
+      throw stackTrace;
     }
 
     _log.taskCompleted(taskName);
@@ -78,8 +77,7 @@ class SignTool {
       var isAdminCheck = await Process.run('net', ['session']);
 
       if (isAdminCheck.stderr.toString().contains('Access is denied')) {
-        _log.errorAndExit(GeneralException(
-            'to install the certificate "${_config.certificatePath}" you need to "Run as administrator" once'));
+        throw 'to install the certificate "${_config.certificatePath}" you need to "Run as administrator" once';
       }
 
       var result = await Process.run('certutil', [
@@ -94,9 +92,9 @@ class SignTool {
 
       if (result.stderr.toString().length > 0) {
         _log.error(result.stdout);
-        _log.errorAndExit(GeneralException(result.stderr));
+        throw result.stderr;
       } else if (result.exitCode != 0) {
-        _log.errorAndExit(GeneralException(result.stdout));
+        throw result.stdout;
       }
     }
 
@@ -161,7 +159,7 @@ class SignTool {
                 .toString()
                 .contains('Error: SignerSign() failed.') &&
             !_config.publisher.isNull) {
-          _log.errorAndExit(GeneralException('signing error'));
+          throw 'signing error';
         }
 
         exit(-1);

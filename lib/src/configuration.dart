@@ -111,8 +111,8 @@ class Configuration {
     _log.startingTask(taskName);
 
     if (appName.isNull) {
-      _log.errorAndExit(AppNameException(
-          'App name is empty, check the general \'name:\' property at pubspec.yaml'));
+      throw AppNameException(
+          'App name is empty, check the general \'name:\' property at pubspec.yaml');
     }
     if (appDescription.isNull) appDescription = appName;
     if (displayName.isNull) displayName = _cleanAppName();
@@ -152,21 +152,21 @@ class Configuration {
     if (languages == null) languages = ['en-us'];
 
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {
-      _log.errorAndExit(VersionException(
-          'Msix version can be only in this format: "1.0.0.0"'));
+      throw VersionException(
+          'Msix version can be only in this format: "1.0.0.0"');
     }
 
     if (!certificatePath.isNull || signToolOptions != null || store) {
       if (!certificatePath.isNull) {
         if (!(await File(certificatePath!).exists())) {
-          _log.errorAndExit(CertificateException(
-              'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml'));
+          throw CertificateException(
+              'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml');
         }
 
         if (extension(certificatePath!) == '.pfx' &&
             certificatePassword.isNull) {
-          _log.errorAndExit(CertificatePasswordException(
-              'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml'));
+          throw CertificatePasswordException(
+              'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml');
         }
       }
     } else {
@@ -176,8 +176,8 @@ class Configuration {
     }
 
     if (!['x86', 'x64'].contains(architecture)) {
-      _log.errorAndExit(ArchitectureException(
-          'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml'));
+      throw ArchitectureException(
+          'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml');
     }
 
     _log.taskCompleted(taskName);
@@ -188,8 +188,8 @@ class Configuration {
     _log.startingTask(taskName);
 
     if (!(await Directory(buildFilesFolder).exists())) {
-      _log.errorAndExit(BuildFilesException(
-          'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again'));
+      throw BuildFilesException(
+          'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again');
     }
 
     executableFileName = await Directory(buildFilesFolder)
@@ -236,7 +236,7 @@ class Configuration {
     try {
       argResults = parser.parse(args);
     } catch (e) {
-      _log.errorAndExit(ArgumentsException('invalid cli arguments: $e'));
+      throw ArgumentsException('invalid cli arguments: $e');
     }
 
     _log.taskCompleted(taskName);
