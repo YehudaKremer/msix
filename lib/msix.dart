@@ -31,9 +31,18 @@ class Msix {
 
   /// User executes this with optional arguments:
   /// flutter pub run msix:create [cliArguments]
-  Future<void> createMsix(List<String> cliArguments) async {
+  /// or: flutter pub run msix:buildAndCreate [cliArguments]
+  Future<void> loadConfigurations(List<String> cliArguments) async {
     await _config.getConfigValues(cliArguments);
+    await _config.validateConfigValues();
+  }
+
+  Future<void> buildWindowsFilesAndCreateMsix() async {
     await WindowsBuild(_config, _log).build();
+    await createMsix();
+  }
+
+  Future<void> createMsix() async {
     await _config.validateBuildFiles();
 
     final _assets = Assets(_config, _log);

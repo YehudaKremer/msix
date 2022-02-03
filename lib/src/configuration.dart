@@ -100,9 +100,6 @@ class Configuration {
     capabilities =
         argResults.read('capabilities') ?? config?['capabilities']?.toString();
     languages = _getLanguages(config);
-
-// After got the configuration values, time to validate them
-    await validateConfigValues();
   }
 
   /// Validate the configuration values and set default values
