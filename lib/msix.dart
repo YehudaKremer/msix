@@ -63,9 +63,7 @@ class Msix {
     // If the package is intended for store publish
     // then don't install cert or sign the package
     if (!_config.store) {
-      if (!_config.dontInstallCert) {
-        await _signTool.installCertificate();
-      }
+      if (_config.installCert) await _signTool.installCertificate();
       await _signTool.sign();
     }
 

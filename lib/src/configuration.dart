@@ -31,7 +31,7 @@ class Configuration {
   String? outputPath;
   String? outputName;
   bool store = false;
-  bool dontInstallCert = false;
+  bool installCert = true;
   bool addExecutionAlias = false;
   Iterable<String>? languages;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
@@ -62,9 +62,10 @@ class Configuration {
         argResults.read('output-name') ?? config?['output_name']?.toString();
     addExecutionAlias = argResults.wasParsed('add-execution-alias') ||
         config?['add_execution_alias']?.toString().toLowerCase() == 'true';
-    dontInstallCert = argResults.wasParsed('dont-install-certificate') ||
-        config?['dont_install_cert']?.toString().toLowerCase() == 'true';
-    if (dontInstallCert) numberOfAllTasks--;
+    installCert =
+        argResults.read('install-certificate')?.toString() != 'false' &&
+            config?['install_certificate']?.toString() != 'false';
+    if (!installCert) numberOfAllTasks--;
     store = argResults.wasParsed('store') ||
         config?['store']?.toString().toLowerCase() == 'true';
     if (store) numberOfAllTasks -= 2;
@@ -217,9 +218,9 @@ class Configuration {
       ..addOption('architecture', abbr: 'h')
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
+      ..addOption('install-certificate')
       ..addFlag('store')
-      ..addFlag('add-execution-alias')
-      ..addFlag('dont-install-certificate');
+      ..addFlag('add-execution-alias');
 
     try {
       argResults = parser.parse(args);

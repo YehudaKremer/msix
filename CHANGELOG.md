@@ -5,6 +5,7 @@
 ### Breaking Changes
 
 - remove `debug-signing` (not printing useful info)
+- change `dont-install-certificate` to `install-certificate` with default of true
 
 ## 2.8.8
 

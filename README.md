@@ -72,7 +72,7 @@ msix_config:
 | `certificate_path`       | `--certificate-path` `-c`       | Path to the certificate content to place in the store.                | `C:\certs\signcert.pfx`                       |
 | `certificate_password`   | `--certificate-password` `-p`   | Password for the certificate.                                         | `1234`                                        |
 | `signtool_options`       | `--signtool-options`            | Options to be provided to the `signtool` for app signing (see below.) | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer` |
-| `dont_install_cert`      | `--dont-install-certificate`    | If `true`, don't try to install the certificate.                      | `false`                                       |
+| `install_certificate`    | `--install-certificate`         | If `false`, don't install the certificate, default is `true`.         | `true`                                        |
 | `file_extension`         | `--file-extension` `-f`         | File extensions that the app may be registered to open.               | `.picture, .image`                            |
 | `protocol_activation`    | `--protocol-activation`         | [Protocol activation] that will open the app.                         | `myapp`                                       |
 | `add_execution_alias`    | `--add-execution-alias`         | Add an alias for running the app, using `pubspec.yaml` `name:` node   | `true`                                        |
