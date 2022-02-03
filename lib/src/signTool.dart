@@ -32,9 +32,9 @@ class SignTool {
             'Fail to read the certificate details, check if the certificate password is correct'));
       }
       _log.error(certificateDetails.stdout);
-      _log.errorAndExit(certificateDetails.stderr);
+      _log.errorAndExit(GeneralException(certificateDetails.stderr));
     } else if (certificateDetails.exitCode != 0) {
-      _log.errorAndExit(certificateDetails.stdout);
+      _log.errorAndExit(GeneralException(certificateDetails.stdout));
     }
 
     if (withLogs)
