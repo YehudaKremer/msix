@@ -38,7 +38,7 @@ PS c:\src\flutter_project\> flutter pub run msix:buildAndCreate
 ```
 
 This command will run the `flutter build windows` for you,
-and also update the company-name in the Runner.rc file. (link to the documentation ???)
+and also update the company-name in the Runner.rc file with the `identity-name` value. (link to the documentation ???)
 
 ## :gear: Configuring your installer
 
