@@ -44,7 +44,7 @@ class Msix {
     await _assets.copyIcons();
     await _assets.copyVCLibsFiles();
     if (!_config.store) {
-      await _signTool.getCertificatePublisher(false);
+      await _signTool.getCertificatePublisher();
     }
     await AppxManifest(_config, _log).generateAppxManifest();
     await MakePri(_config, _log).generatePRI();

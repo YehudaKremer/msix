@@ -15,48 +15,30 @@ class SignTool {
   SignTool(this._config, this._log);
 
   /// Use the certutil.exe tool to detect the certificate publisher name (Subject)
-  Future<void> getCertificatePublisher(bool withLogs) async {
+  Future<void> getCertificatePublisher() async {
     const taskName = 'getting certificate publisher';
     _log.startingTask(taskName);
 
-    var certificateDetails = await Process.run('certutil',
+    var result = await Process.run('certutil',
         ['-dump', '-p', _config.certificatePassword!, _config.certificatePath!],
         runInShell: true);
 
-    if (certificateDetails.stderr.toString().length > 0) {
-      if (certificateDetails.stderr.toString().contains('password')) {
-        throw 'Fail to read the certificate details, check if the certificate password is correct';
-      }
-      _log.error(certificateDetails.stdout);
-      throw certificateDetails.stderr;
-    } else if (certificateDetails.exitCode != 0) {
-      throw certificateDetails.stdout;
+    if (result.exitCode != 0) {
+      throw result.stdout;
     }
 
-    if (withLogs)
-      _log.info('Certificate Details: ${certificateDetails.stdout}');
-
     try {
-      var subjectRow = certificateDetails.stdout
+      var subjectRow = result.stdout
           .toString()
           .split('\n')
           .lastWhere((row) => _publisherRegex.hasMatch(row));
-      if (withLogs) _log.info('subjectRow: $subjectRow');
+
       _config.publisher = subjectRow
           .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
           .trim();
-      if (withLogs) _log.info('config.publisher: ${_config.publisher}');
-    } catch (err, stackTrace) {
-      if (!withLogs) await getCertificatePublisher(true);
-      _log.error(err.toString());
-      if (withLogs)
-        _log.warn(
-            'This error happen when this package tried to read the certificate details,');
-      if (withLogs)
-        _log.warn(
-            'please report it by pasting all this output (after deleting sensitive info) to:');
-      if (withLogs) _log.link('https://github.com/YehudaKremer/msix/issues');
-      throw stackTrace;
+    } catch (e) {
+      _log.error('Error while getting certificate publisher');
+      throw e;
     }
 
     _log.taskCompleted(taskName);
@@ -127,39 +109,15 @@ class SignTool {
         ];
       }
 
-      if (!signtoolOptions.contains('/fd')) {
-        _log.error(
-            'signtool need "/fb" (file digest algorithm) option, for example: "/fd SHA256", more details:');
-        _log.link(
-            'https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe#sign-command-options');
-        exit(-1);
-      }
-
-      ProcessResult signResults = await Process.run(signtoolPath, [
+      ProcessResult result = await Process.run(signtoolPath, [
         'sign',
         ...signtoolOptions,
         if (_config.debugSigning) '/debug',
         '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix',
       ]);
 
-      if (_config.debugSigning) _log.info(signResults.stdout.toString());
-
-      if (!signResults.stdout
-              .toString()
-              .contains('Number of files successfully Signed: 1') &&
-          signResults.stderr.toString().length > 0) {
-        _log.error(signResults.stdout);
-        _log.error(signResults.stderr);
-
-        if (_config.signToolOptions == null &&
-            signResults.stdout
-                .toString()
-                .contains('Error: SignerSign() failed.') &&
-            !_config.publisher.isNull) {
-          throw 'signing error';
-        }
-
-        exit(-1);
+      if (result.exitCode != 0) {
+        throw result.stdout;
       }
     }
 

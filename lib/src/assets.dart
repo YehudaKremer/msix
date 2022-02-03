@@ -179,7 +179,6 @@ class Assets {
       image = decodeImage(await File(_config.logoPath!).readAsBytes())!;
     } catch (e) {
       throw 'Error reading logo file: ${_config.logoPath!}';
-      exit(-1);
     }
 
     await Future.wait([

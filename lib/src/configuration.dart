@@ -120,9 +120,7 @@ class Configuration {
       if (store) {
         _log.error(
             'identity name is empty, check "msix_config: identity_name" at pubspec.yaml');
-        _log.warn(
-            'you can find your store "identity_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Name');
-        exit(-1);
+        throw 'you can find your store "identity_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Name';
       } else {
         identityName = 'com.flutter.${_cleanAppName()}';
       }
@@ -131,9 +129,7 @@ class Configuration {
       if (store) {
         _log.error(
             'publisher display name is empty, check "msix_config: publisher_display_name" at pubspec.yaml');
-        _log.warn(
-            'you can find your store "publisher_display_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/PublisherDisplayName');
-        exit(-1);
+        throw 'you can find your store "publisher_display_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/PublisherDisplayName';
       } else {
         publisherName = identityName;
       }
@@ -141,9 +137,7 @@ class Configuration {
     if (store && publisher.isNullOrEmpty) {
       _log.error(
           'publisher is empty, check "msix_config: publisher" at pubspec.yaml');
-      _log.warn(
-          'you can find your store "publisher" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/Publisher');
-      exit(-1);
+      throw 'you can find your store "publisher" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/Publisher';
     }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
