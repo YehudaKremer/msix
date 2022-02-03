@@ -40,7 +40,7 @@ dependencies into the `build\` subdirectory. In turn, the `msix:create` command
 bundles those files along with other necessary dependencies into an MSIX install
 file.
 
-## :gear: Configuring your installer
+## ![github settings icon][] Configuring your installer
 
 You will almost certainly want to customize various settings in the MSIX
 installer, such as the application title, the default icon, and which [Windows
@@ -134,5 +134,6 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [signed with a certificate]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing
 [signtool documentation]: https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
 [microsoft store logo]: https://user-images.githubusercontent.com/946652/138161113-c905ec10-78f1-4d96-91ac-1295ae3d2a8c.png
+[github settings icon]: https://user-images.githubusercontent.com/946652/152310815-22fcf01c-478c-4705-91e6-c82735b25d6d.png
 [microsoft store dashboard]: https://partner.microsoft.com/dashboard
 [this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png
