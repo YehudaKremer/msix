@@ -14,11 +14,15 @@ class WindowsBuild {
 
   /// Run "flutter build windows" command
   Future<void> build() async {
-    const taskName = 'running "flutter build windows" command';
+    var buildWindowsArguments = ['build', 'windows'];
+    if (_config.createWithDebugBuildFiles) buildWindowsArguments.add('--debug');
+
+    var taskName =
+        'running "flutter ${buildWindowsArguments.join(' ')}" command';
     _log.startingTask(taskName);
 
     var result =
-        await Process.run('flutter', ['build', 'windows'], runInShell: true);
+        await Process.run('flutter', buildWindowsArguments, runInShell: true);
 
     if (result.exitCode != 0) {
       throw result.stdout;
