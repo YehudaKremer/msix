@@ -76,7 +76,6 @@ msix_config:
 | `file_extension`         | `--file-extension` `-f`         | File extensions that the app may be registered to open.               | `.picture, .image`                            |
 | `protocol_activation`    | `--protocol-activation`         | [Protocol activation] that will open the app.                         | `myapp`                                       |
 | `add_execution_alias`    | `--add-execution-alias`         | Add an alias for running the app, using `pubspec.yaml` `name:` node   | `true`                                        |
-|                          | `--debug-signing`               | Show more information about the certificate.                          |                                               |
 
 </details>
 
