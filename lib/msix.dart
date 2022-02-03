@@ -38,6 +38,7 @@ class Msix {
   }
 
   Future<void> buildWindowsFilesAndCreateMsix() async {
+    await WindowsBuild(_config, _log).updateRunnerCompanyName();
     await WindowsBuild(_config, _log).build();
     await createMsix();
   }

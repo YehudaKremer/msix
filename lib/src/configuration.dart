@@ -32,6 +32,7 @@ class Configuration {
   String? outputName;
   bool store = false;
   bool installCert = true;
+  bool updateCompanyName = true;
   bool addExecutionAlias = false;
   Iterable<String>? languages;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
@@ -66,6 +67,10 @@ class Configuration {
         argResults.read('install-certificate')?.toString() != 'false' &&
             config?['install_certificate']?.toString() != 'false';
     if (!installCert) numberOfAllTasks--;
+    updateCompanyName =
+        argResults.read('update-company-name')?.toString() != 'false' &&
+            config?['update_company_name']?.toString() != 'false';
+    if (!updateCompanyName) numberOfAllTasks--;
     store = argResults.wasParsed('store') ||
         config?['store']?.toString().toLowerCase() == 'true';
     if (store) numberOfAllTasks -= 2;
@@ -219,6 +224,7 @@ class Configuration {
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
       ..addOption('install-certificate')
+      ..addOption('update-company-name')
       ..addFlag('store')
       ..addFlag('add-execution-alias');
 

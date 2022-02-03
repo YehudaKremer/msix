@@ -2,6 +2,9 @@
 
 ## 3.0.0
 
+- added `msix:buildAndCreate` command
+- added new configuration options: `update-company-name`
+
 ### Breaking Changes
 
 - remove `debug-signing` (not printing useful info)

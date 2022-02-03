@@ -17,8 +17,6 @@ class WindowsBuild {
     const taskName = 'running "flutter build windows" command';
     _log.startingTask(taskName);
 
-    await _updateRunnerCompanyName();
-
     var result =
         await Process.run('flutter', ['build', 'windows'], runInShell: true);
 
@@ -29,21 +27,38 @@ class WindowsBuild {
   }
 
   /// Update the company name 'com.example' in the Runner.rc file
-  Future<void> _updateRunnerCompanyName() async {
-    if (_config.identityName.isNull) return;
+  Future<void> updateRunnerCompanyName() async {
+    if (!_config.updateCompanyName ||
+        _config.identityName.isNull ||
+        await File(runnerRcPath).exists() == false) return;
+
+    var taskName =
+        'updating Runner.rc "CompanyName" to "${_config.identityName}"';
+    _log.startingTask(taskName);
 
     try {
-      var runnerRcExists = await File(runnerRcPath).exists();
-      if (runnerRcExists) {
-        var runnerRcContent = await File(runnerRcPath).readAsString();
-        var runnerRcUpdatedContent =
-            runnerRcContent.replaceAll('com.example', _config.identityName!);
-        await File(runnerRcPath).writeAsString(runnerRcUpdatedContent);
+      var runnerRcContentLines = await File(runnerRcPath).readAsLines();
+      var updatedRunnerRcContent = '';
+
+      for (var line in runnerRcContentLines) {
+        if (line.contains('VALUE "CompanyName"')) {
+          line =
+              '            VALUE "CompanyName", "${_config.identityName}" "\\0"';
+        } else if (line.contains('VALUE "LegalCopyright"')) {
+          line =
+              '            VALUE "LegalCopyright", "Copyright (C) ${DateTime.now().year} ${_config.identityName}. All rights reserved." "\\0"';
+        }
+
+        updatedRunnerRcContent += '$line\n';
       }
+
+      await File(runnerRcPath).writeAsString(updatedRunnerRcContent);
     } catch (e) {
       _log.warn(
           'Failed to update company name "com.example" in windows/runner/Runner.rc');
       _log.warn(e.toString());
     }
+
+    _log.taskCompleted(taskName);
   }
 }
