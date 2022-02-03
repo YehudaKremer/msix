@@ -110,7 +110,7 @@ the `certificate_path` and `certificate_password` fields.
 machine. You can disable this by using the `--dontInstallCert` flag, or the YAML
 option `dont_install_cert: true`.
 
-## ![Microsoft Store logo][] Publishing to the Microsoft Store
+## ![microsoft store icon][] Publishing to the Microsoft Store
 
 To generate an MSIX file for publishing to the Microsoft Store, use the
 `--store` flag, or alternatively add `store: true` to the YAML configuration.
@@ -133,7 +133,7 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [protocol activation]: https://docs.microsoft.com/en-us/windows/uwp/launch-resume/handle-uri-activation
 [signed with a certificate]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing
 [signtool documentation]: https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
-[microsoft store logo]: https://user-images.githubusercontent.com/946652/138161113-c905ec10-78f1-4d96-91ac-1295ae3d2a8c.png
-[github settings icon]: https://user-images.githubusercontent.com/946652/152310815-22fcf01c-478c-4705-91e6-c82735b25d6d.png
+[microsoft store icon]: https://user-images.githubusercontent.com/946652/152312614-1e86b108-98af-4bcf-8a75-d7a4449078b2.png
+[github settings icon]: https://user-images.githubusercontent.com/946652/152312495-173eb794-337c-4630-a149-2167810614ae.png
 [microsoft store dashboard]: https://partner.microsoft.com/dashboard
 [this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png

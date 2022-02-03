@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.8.9
+## 2.8.10
 
 ### Breaking Changes
 
