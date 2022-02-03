@@ -38,15 +38,7 @@ PS c:\src\flutter_project\> flutter pub run msix:buildAndCreate
 ```
 
 This command will run the `flutter build windows` for you,
-and also update the company-name in the Runner.rc file.
-
-## :package: Creating an MSIX installer
-
-To create a MSIX installer from your package, run the following command:
-
-```console
-PS c:\src\flutter_project\> flutter pub run msix:create
-```
+and also update the company-name in the Runner.rc file. (link to the documentation ???)
 
 ## :gear: Configuring your installer
 
