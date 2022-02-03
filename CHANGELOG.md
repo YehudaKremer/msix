@@ -10,7 +10,7 @@
 - remove `debug-signing` (not printing useful info)
 - change `dont-install-certificate` to `install-certificate` with default of true
 
-## 2.8.8
+## 2.8.10
 
 ### Breaking Changes
 
@@ -18,7 +18,7 @@
 
 ## 2.8.5
 
-- fix bug #79
+- fix bug [#79](https://github.com/YehudaKremer/msix/issues/79)
 
 ## 2.8.4
 

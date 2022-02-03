@@ -40,7 +40,7 @@ PS c:\src\flutter_project\> flutter pub run msix:buildAndCreate
 This command will run the `flutter build windows` for you,
 and also update the company-name in the Runner.rc file with the `identity-name` value. (link to the documentation ???)
 
-## :gear: Configuring your installer
+## ![github settings icon][] Configuring your installer
 
 You will almost certainly want to customize various settings in the MSIX
 installer, such as the application title, the default icon, and which [Windows
@@ -110,7 +110,7 @@ the `certificate_path` and `certificate_password` fields.
 machine. You can disable this by using the `--dontInstallCert` flag, or the YAML
 option `dont_install_cert: true`.
 
-## ![Microsoft Store logo][] Publishing to the Microsoft Store
+## ![microsoft store icon][] Publishing to the Microsoft Store
 
 To generate an MSIX file for publishing to the Microsoft Store, use the
 `--store` flag, or alternatively add `store: true` to the YAML configuration.
@@ -133,6 +133,7 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [protocol activation]: https://docs.microsoft.com/en-us/windows/uwp/launch-resume/handle-uri-activation
 [signed with a certificate]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing
 [signtool documentation]: https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
-[microsoft store logo]: https://user-images.githubusercontent.com/946652/138161113-c905ec10-78f1-4d96-91ac-1295ae3d2a8c.png
+[microsoft store icon]: https://user-images.githubusercontent.com/946652/152312614-1e86b108-98af-4bcf-8a75-d7a4449078b2.png
+[github settings icon]: https://user-images.githubusercontent.com/946652/152312495-173eb794-337c-4630-a149-2167810614ae.png
 [microsoft store dashboard]: https://partner.microsoft.com/dashboard
 [this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png
