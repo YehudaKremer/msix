@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.11
+
+- add `--debug --release` flags and `debug` configurations
+
 ## 2.8.10
 
 ### Breaking Changes

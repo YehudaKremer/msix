@@ -34,6 +34,7 @@ class Configuration {
   bool store = false;
   bool dontInstallCert = false;
   bool addExecutionAlias = false;
+  bool createWithDebugBuildFiles = false;
   Iterable<String>? languages;
   String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
   String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
@@ -70,6 +71,10 @@ class Configuration {
     store = argResults.wasParsed('store') ||
         config?['store']?.toString().toLowerCase() == 'true';
     if (store) numberOfAllTasks -= 2;
+    createWithDebugBuildFiles = argResults.wasParsed('debug') ||
+        config?['debug']?.toString().toLowerCase() == 'true';
+    if (createWithDebugBuildFiles)
+      buildFilesFolder = buildFilesFolder.replaceFirst('Release', 'Debug');
     displayName =
         argResults.read('display-name') ?? config?['display_name']?.toString();
     publisherName = argResults.read('publisher-display-name') ??
@@ -224,7 +229,9 @@ class Configuration {
       ..addFlag('store')
       ..addFlag('debug-signing')
       ..addFlag('add-execution-alias')
-      ..addFlag('dont-install-certificate');
+      ..addFlag('dont-install-certificate')
+      ..addFlag('debug')
+      ..addFlag('release');
 
     try {
       argResults = parser.parse(args);
