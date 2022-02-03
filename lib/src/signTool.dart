@@ -112,7 +112,6 @@ class SignTool {
       ProcessResult result = await Process.run(signtoolPath, [
         'sign',
         ...signtoolOptions,
-        if (_config.debugSigning) '/debug',
         '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix',
       ]);
 

@@ -30,7 +30,6 @@ class Configuration {
   String? fileExtension;
   String? outputPath;
   String? outputName;
-  bool debugSigning = false;
   bool store = false;
   bool dontInstallCert = false;
   bool addExecutionAlias = false;
@@ -61,7 +60,6 @@ class Configuration {
         argResults.read('output-path') ?? config?['output_path']?.toString();
     outputName =
         argResults.read('output-name') ?? config?['output_name']?.toString();
-    debugSigning = argResults.wasParsed('debug-signing');
     addExecutionAlias = argResults.wasParsed('add-execution-alias') ||
         config?['add_execution_alias']?.toString().toLowerCase() == 'true';
     dontInstallCert = argResults.wasParsed('dont-install-certificate') ||
@@ -220,7 +218,6 @@ class Configuration {
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
       ..addFlag('store')
-      ..addFlag('debug-signing')
       ..addFlag('add-execution-alias')
       ..addFlag('dont-install-certificate');
 

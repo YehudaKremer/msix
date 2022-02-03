@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0
+
+### Breaking Changes
+
+- remove `debug-signing` (not printing useful info)
+
 ## 2.8.8
 
 ### Breaking Changes
