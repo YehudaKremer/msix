@@ -11,6 +11,10 @@
 - change `dont-install-certificate` to `install-certificate` with default of true
 -
 
+## 2.8.12
+
+- fix log bug
+
 ## 2.8.11
 
 - add `--debug --release` flags and `debug` configurations

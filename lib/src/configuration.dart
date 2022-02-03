@@ -246,8 +246,10 @@ class Configuration {
 
   /// Get the assets folder path from the .packages file
   Future<void> _getMsixAssetsFolderPath() async {
-    var packagesConfig = await loadPackageConfig(
-        File('${Directory.current.path}\\.dart_tool\\package_config.json'));
+    var packagesConfig = await findPackageConfig(Directory.current);
+    if (packagesConfig == null) {
+      throw 'Failed to locate or read package config.';
+    }
 
     var msixPackage =
         packagesConfig.packages.firstWhere((package) => package.name == "msix");

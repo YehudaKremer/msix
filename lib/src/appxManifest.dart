@@ -78,7 +78,7 @@ class AppxManifest {
     //clear empty rows
     manifestContent = manifestContent.replaceAll('    \n', '');
 
-    var appxManifestPath = '${_config.buildFilesFolder}\\AppxManifest.xml';
+    var appxManifestPath = '${_config.buildFilesFolder}/AppxManifest.xml';
     try {
       await File(appxManifestPath).create();
       await File(appxManifestPath).writeAsString(manifestContent);

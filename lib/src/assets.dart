@@ -19,7 +19,7 @@ class Assets {
     const taskName = 'creating app icons folder';
     _log.startingTask(taskName);
 
-    var iconsFolderPath = '${_config.buildFilesFolder}\\Images';
+    var iconsFolderPath = '${_config.buildFilesFolder}/Images';
     try {
       await Directory(iconsFolderPath).create();
     } catch (e) {
