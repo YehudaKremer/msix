@@ -108,8 +108,8 @@ options, see the [signtool documentation]. Note that using this option overrides
 the `certificate_path` and `certificate_password` fields.
 
 **Note**: By default, the MSIX package will install the certificate on your
-machine. You can disable this by using the `--dontInstallCert` flag, or the YAML
-option `dont_install_cert: true`.
+machine. You can disable this by using the `--install-certificate false` option, or the YAML
+option `install_certificate: false`.
 
 ## ![microsoft store icon][] Publishing to the Microsoft Store
 
