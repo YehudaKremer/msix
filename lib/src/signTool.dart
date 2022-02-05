@@ -3,6 +3,7 @@ import 'package:msix/src/extensions.dart';
 import 'package:path/path.dart';
 import 'configuration.dart';
 import 'log.dart';
+import 'extensions.dart';
 
 var _publisherRegex = RegExp(
     '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
@@ -25,30 +26,25 @@ class SignTool {
       "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject"
     ]);
 
-    if (certificateDetails.stderr.toString().length > 0) {
-      if (certificateDetails.stderr.toString().contains('password')) {
-        _log.errorAndExit(GeneralException(
-            'Fail to read the certificate details, check if the certificate password is correct'));
-      }
-      _log.error(certificateDetails.stdout);
-      _log.errorAndExit(GeneralException(certificateDetails.stderr));
-    } else if (certificateDetails.exitCode != 0) {
-      _log.errorAndExit(GeneralException(certificateDetails.stdout));
+    if (certificateDetails.exitCode != 0) {
+      throw certificateDetails.stderr;
+    }
+
+    var subjectRow = certificateDetails.stdout.toString();
+
+    if (!_publisherRegex.hasMatch(subjectRow)) {
+      throw 'Invalid certificate subject: $subjectRow';
     }
 
     if (withLogs)
       _log.info('Certificate Details: ${certificateDetails.stdout}');
 
     try {
-      var subjectRow = certificateDetails.stdout
-          .toString()
-          .split('\n')
-          .lastWhere((row) => _publisherRegex.hasMatch(row));
       if (withLogs) _log.info('subjectRow: $subjectRow');
       _config.publisher = subjectRow
           .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
-          .replaceAll("\"", "&quot;")
           .trim();
+
       if (withLogs) _log.info('config.publisher: ${_config.publisher}');
     } catch (err, stackTrace) {
       if (!withLogs) await getCertificatePublisher(true);
@@ -69,15 +65,23 @@ class SignTool {
   /// Use the certutil.exe tool to install the certificate on the local machine
   /// this helps to avoid the need to install the certificate by hand
   Future<void> installCertificate() async {
-    const taskName = 'installing certificate';
-    _log.startingTask(taskName);
+    var getInstalledCertificate = await Process.run('powershell.exe', [
+      '-NoProfile',
+      '-NonInteractive',
+      "dir Cert:\\CurrentUser\\Root | Where-Object { \$_.Subject -eq  '${_config.publisher}'}"
+    ]);
 
-    var installedCertificatesList =
-        await Process.run('certutil', ['-store', 'root']);
+    if (getInstalledCertificate.exitCode != 0) {
+      throw getInstalledCertificate.stderr;
+    }
 
-    if (!installedCertificatesList.stdout
-        .toString()
-        .contains(_config.publisher!)) {
+    var isCertificateNotInstalled =
+        getInstalledCertificate.stdout.toString().isNullOrEmpty;
+
+    if (isCertificateNotInstalled) {
+      const taskName = 'installing certificate';
+      _log.startingTask(taskName);
+
       var isAdminCheck = await Process.run('net', ['session']);
 
       if (isAdminCheck.stderr.toString().contains('Access is denied')) {
@@ -101,9 +105,9 @@ class SignTool {
       } else if (result.exitCode != 0) {
         _log.errorAndExit(GeneralException(result.stdout));
       }
-    }
 
-    _log.taskCompleted(taskName);
+      _log.taskCompleted(taskName);
+    }
   }
 
   /// Sign the created msix installer with the certificate

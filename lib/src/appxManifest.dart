@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert' show HtmlEscape;
 import 'capabilities.dart';
 import 'configuration.dart';
 import 'extensions.dart';
@@ -38,7 +39,7 @@ class AppxManifest {
           xmlns:com3="http://schemas.microsoft.com/appx/manifest/com/windows10/3" 
           IgnorableNamespaces="uap3 desktop">
     <Identity Name="${_config.identityName}" Version="${_config.msixVersion}"
-              Publisher="${_config.publisher!.replaceAll(' = ', '=')}" ProcessorArchitecture="${_config.architecture}" />
+              Publisher="${HtmlEscape().convert(_config.publisher!.replaceAll(' = ', '='))}" ProcessorArchitecture="${_config.architecture}" />
     <Properties>
       <DisplayName>${_config.displayName}</DisplayName>
       <PublisherDisplayName>${_config.publisherName}</PublisherDisplayName>

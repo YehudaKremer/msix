@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.14
+
+- fix [#74](https://github.com/YehudaKremer/msix/issues/74)
+
 ## 2.8.13
 
 - fix log bug
