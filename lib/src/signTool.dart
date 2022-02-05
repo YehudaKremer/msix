@@ -86,7 +86,7 @@ class SignTool {
 
       if (isAdminCheck.stderr.toString().contains('Access is denied')) {
         _log.errorAndExit(GeneralException(
-            'to install the certificate "${_config.certificatePath}" you need to "Run as administrator" once'));
+            'To install the test certificate run the command "flutter pub run msix:create" as administrator'));
       }
 
       var result = await Process.run('certutil', [
