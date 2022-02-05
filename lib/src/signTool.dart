@@ -19,11 +19,10 @@ class SignTool {
     const taskName = 'getting certificate publisher';
     _log.startingTask(taskName);
 
-    var certificateDetails = await Process.run('certutil', [
-      '-dump',
-      '-p',
-      _config.certificatePassword!,
-      _config.certificatePath!
+    var certificateDetails = await Process.run('powershell.exe', [
+      '-NoProfile',
+      '-NonInteractive',
+      "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject"
     ]);
 
     if (certificateDetails.stderr.toString().length > 0) {
@@ -48,6 +47,7 @@ class SignTool {
       if (withLogs) _log.info('subjectRow: $subjectRow');
       _config.publisher = subjectRow
           .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
+          .replaceAll("\"", "&quot;")
           .trim();
       if (withLogs) _log.info('config.publisher: ${_config.publisher}');
     } catch (err, stackTrace) {
