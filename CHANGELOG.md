@@ -11,7 +11,11 @@
 - change `dont-install-certificate` to `install-certificate` with default of true
 -
 
-## 2.8.12
+## 2.8.14
+
+- fix [#74](https://github.com/YehudaKremer/msix/issues/74)
+
+## 2.8.13
 
 - fix log bug
 

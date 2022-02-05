@@ -3,6 +3,7 @@ import 'package:msix/src/extensions.dart';
 import 'package:path/path.dart';
 import 'configuration.dart';
 import 'log.dart';
+import 'extensions.dart';
 
 var _publisherRegex = RegExp(
     '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
@@ -19,20 +20,23 @@ class SignTool {
     const taskName = 'getting certificate publisher';
     _log.startingTask(taskName);
 
-    var result = await Process.run('certutil',
-        ['-dump', '-p', _config.certificatePassword!, _config.certificatePath!],
-        runInShell: true);
+    var certificateDetails = await Process.run('powershell.exe', [
+      '-NoProfile',
+      '-NonInteractive',
+      "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject"
+    ]);
 
-    if (result.exitCode != 0) {
-      throw result.stdout;
+    if (certificateDetails.exitCode != 0) {
+      throw certificateDetails.stderr;
+    }
+
+    var subjectRow = certificateDetails.stdout.toString();
+
+    if (!_publisherRegex.hasMatch(subjectRow)) {
+      throw 'Invalid certificate subject: $subjectRow';
     }
 
     try {
-      var subjectRow = result.stdout
-          .toString()
-          .split('\n')
-          .lastWhere((row) => _publisherRegex.hasMatch(row));
-
       _config.publisher = subjectRow
           .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
           .trim();
@@ -47,15 +51,23 @@ class SignTool {
   /// Use the certutil.exe tool to install the certificate on the local machine
   /// this helps to avoid the need to install the certificate by hand
   Future<void> installCertificate() async {
-    const taskName = 'installing certificate';
-    _log.startingTask(taskName);
+    var getInstalledCertificate = await Process.run('powershell.exe', [
+      '-NoProfile',
+      '-NonInteractive',
+      "dir Cert:\\CurrentUser\\Root | Where-Object { \$_.Subject -eq  '${_config.publisher}'}"
+    ]);
 
-    var installedCertificatesList =
-        await Process.run('certutil', ['-store', 'root']);
+    if (getInstalledCertificate.exitCode != 0) {
+      throw getInstalledCertificate.stderr;
+    }
 
-    if (!installedCertificatesList.stdout
-        .toString()
-        .contains(_config.publisher!)) {
+    var isCertificateNotInstalled =
+        getInstalledCertificate.stdout.toString().isNullOrEmpty;
+
+    if (isCertificateNotInstalled) {
+      const taskName = 'installing certificate';
+      _log.startingTask(taskName);
+
       var isAdminCheck = await Process.run('net', ['session']);
 
       if (isAdminCheck.stderr.toString().contains('Access is denied')) {
@@ -75,9 +87,9 @@ class SignTool {
       if (result.exitCode != 0) {
         throw result.stdout;
       }
-    }
 
-    _log.taskCompleted(taskName);
+      _log.taskCompleted(taskName);
+    }
   }
 
   /// Sign the created msix installer with the certificate
