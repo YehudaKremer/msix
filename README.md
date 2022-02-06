@@ -17,6 +17,15 @@ This package offers a command line tool for creating MSIX installers from your
 Flutter app, making it easy to [publish your app to the Microsoft Store] or host
 it on a website.
 
+## :clipboard: Installation
+
+In your `pubspec.yaml`, add the `msix` package as a new [dev dependency] with
+the following command:
+
+```console
+PS c:\src\flutter_project\> flutter pub add --dev msix
+```
+
 ## :package: Creating an MSIX installer
 
 To create a MSIX installer from your package, run the following two commands:
