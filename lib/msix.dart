@@ -7,16 +7,11 @@ import 'src/appxManifest.dart';
 import 'src/makeAppx.dart';
 import 'src/signTool.dart';
 
-/// Execute all the steps to prepare an msix package
 class Msix {
   late Logger _logger;
 
-  /// Configuration instance for all sub classes instances
   late Configuration _config;
 
-  /// User executes this with optional arguments:
-  /// flutter pub run msix:create [cliArguments]
-  /// or: flutter pub run msix:buildAndCreate [cliArguments]
   Msix(List<String> args) {
     _logger = args.contains('-v')
         ? Logger.verbose()
@@ -61,8 +56,6 @@ class Msix {
     await MakeAppx(_config, _logger).pack();
     await _assets.cleanTemporaryFiles();
 
-    // If the package is intended for store publish
-    // then don't install cert or sign the package
     if (!_config.store) {
       if (_config.installCert) await _signTool.installCertificate();
       await _signTool.sign();
@@ -70,13 +63,13 @@ class Msix {
 
     loggerProgress.finish(showTiming: true);
 
-    _logger.write('${Ansi(true).green}msix created:${Ansi(true).none} ');
+    _logger.write(Ansi(true)
+        .emphasized('${Ansi(true).green}msix created:${Ansi(true).none} '));
 
-    // Print the created msix installer path
     var installerPath =
         '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix';
-    _logger.stdout(
+    _logger.stdout(Ansi(true).emphasized(
         '${Ansi(true).blue}${installerPath.substring(installerPath.indexOf('build/windows'))}${Ansi(true).none}'
-            .replaceAll('/', r'\'));
+            .replaceAll('/', r'\')));
   }
 }

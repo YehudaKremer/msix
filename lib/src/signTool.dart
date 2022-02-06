@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cli_dialog/cli_dialog.dart';
 import 'package:msix/src/extensions.dart';
 import 'package:path/path.dart';
 import 'configuration.dart';
@@ -8,14 +9,12 @@ import 'extensions.dart';
 var _publisherRegex = RegExp(
     '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
 
-/// Handles signing operations
 class SignTool {
   Configuration _config;
   Logger _logger;
 
   SignTool(this._config, this._logger);
 
-  /// Use the certutil.exe tool to detect the certificate publisher name (Subject)
   Future<void> getCertificatePublisher() async {
     _logger.trace('getting certificate publisher');
 
@@ -45,8 +44,6 @@ class SignTool {
     }
   }
 
-  /// Use the certutil.exe tool to install the certificate on the local machine
-  /// this helps to avoid the need to install the certificate by hand
   Future<void> installCertificate() async {
     var getInstalledCertificate = await Process.run('powershell.exe', [
       '-NoProfile',
@@ -64,29 +61,58 @@ class SignTool {
     if (isCertificateNotInstalled) {
       _logger.trace('installing certificate');
 
-      var isAdminCheck = await Process.run('net', ['session']);
-
-      if (isAdminCheck.stderr.toString().contains('Access is denied')) {
-        throw 'To install the test certificate run the command "flutter pub run msix:create" as administrator';
-      }
-
-      var result = await Process.run('certutil', [
-        '-f',
-        '-enterprise',
-        '-p',
-        _config.certificatePassword!,
-        '-importpfx',
-        'root',
-        _config.certificatePath!
+      var isRunningAsAdmin = await Process.run('powershell.exe', [
+        '-NoProfile',
+        '-NonInteractive',
+        '([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)'
       ]);
 
-      if (result.exitCode != 0) {
-        throw result.stdout;
+      if (isRunningAsAdmin.exitCode != 0) {
+        throw isRunningAsAdmin.stderr;
+      }
+
+      _logger.stdout('');
+      final dialog = CLI_Dialog(booleanQuestions: [
+        [
+          'Do you want to install the certificate: "${basename(File(_config.certificatePath!).path)}" ?',
+          'install'
+        ]
+      ]);
+      final wantToInstallCertificate = dialog.ask()['install'];
+
+      if (wantToInstallCertificate) {
+        var installCertificateScript =
+            'Import-PfxCertificate -FilePath \"${_config.certificatePath}\" -Password (ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force) -CertStoreLocation Cert:\\LocalMachine\\Root';
+        var installCertificateScriptPath =
+            '${_config.msixAssetsPath}/installCertificate.ps1';
+        await File(installCertificateScriptPath)
+            .writeAsString(installCertificateScript);
+
+        var importCertificate = await Process.run('powershell.exe', [
+          '-NoProfile',
+          '-NonInteractive',
+          'Start-Process powershell -ArgumentList \"$installCertificateScriptPath" -Wait -Verb runAs -WindowStyle Hidden'
+        ]);
+
+        await File(installCertificateScriptPath).deleteIfExists();
+
+        if (importCertificate.exitCode != 0) {
+          if (importCertificate.stderr
+              .toString()
+              .contains('was canceled by the user')) {
+            _logger.stderr(Ansi(true).emphasized(
+                Ansi(true).error('the certificate installation was canceled')));
+          } else {
+            throw importCertificate.stderr;
+          }
+        } else {
+          _logger.stdout(Ansi(true).emphasized(
+              '${Ansi(true).green}the certificate installed successfully${Ansi(true).none} '));
+        }
       }
     }
   }
 
-  /// Sign the created msix installer with the certificate
   Future<void> sign() async {
     _logger.trace('signing');
 
