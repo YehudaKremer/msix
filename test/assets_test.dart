@@ -1,19 +1,19 @@
 import 'dart:io';
 
+import 'package:cli_util/cli_logging.dart';
 import 'package:image/image.dart';
 import 'package:msix/src/assets.dart';
 import 'package:msix/src/configuration.dart';
-import 'package:msix/src/log.dart';
 import 'package:test/test.dart';
 
 const tempFolderPath = 'test/assets_temp';
 
 void main() {
-  var log = Log();
+  var log = Logger.verbose();
   late Configuration config;
 
   setUp(() async {
-    config = Configuration(log)
+    config = Configuration([], log)
       ..identityName = 'identityName_test'
       ..publisher = 'publisher_test'
       ..publisherName = 'publisherName_test'

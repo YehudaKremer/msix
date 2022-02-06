@@ -1,26 +1,27 @@
-import 'package:ansicolor/ansicolor.dart' show ansiColorDisabled;
 import 'package:msix/src/windowsBuild.dart';
+import 'package:cli_util/cli_logging.dart';
 import 'src/configuration.dart';
 import 'src/assets.dart';
 import 'src/makePri.dart';
 import 'src/appxManifest.dart';
 import 'src/makeAppx.dart';
 import 'src/signTool.dart';
-import 'src/log.dart';
 
 /// Execute all the steps to prepare an msix package
 class Msix {
-  /// Log instance for all sub classes instances
-  Log _log = Log();
+  late Logger _logger;
 
   /// Configuration instance for all sub classes instances
   late Configuration _config;
 
-  Msix() {
-    // To enable colored logs
-    ansiColorDisabled = false;
-
-    _config = Configuration(_log);
+  /// User executes this with optional arguments:
+  /// flutter pub run msix:create [cliArguments]
+  /// or: flutter pub run msix:buildAndCreate [cliArguments]
+  Msix(List<String> args) {
+    _logger = args.contains('-v')
+        ? Logger.verbose()
+        : Logger.standard(ansi: Ansi(true));
+    _config = Configuration(args, _logger);
   }
 
   /// Print if msix is under dependencies instead of dev_dependencies
@@ -29,25 +30,24 @@ class Msix {
         '-----> "MSIX" package needs to be under development dependencies (dev_dependencies) <-----');
   }
 
-  /// User executes this with optional arguments:
-  /// flutter pub run msix:create [cliArguments]
-  /// or: flutter pub run msix:buildAndCreate [cliArguments]
-  Future<void> loadConfigurations(List<String> cliArguments) async {
-    await _config.getConfigValues(cliArguments);
+  Future<void> loadConfigurations() async {
+    await _config.getConfigValues();
     await _config.validateConfigValues();
   }
 
   Future<void> buildWindowsFilesAndCreateMsix() async {
-    await WindowsBuild(_config, _log).updateRunnerCompanyName();
-    await WindowsBuild(_config, _log).build();
+    await WindowsBuild(_config, _logger).updateRunnerCompanyName();
+    await WindowsBuild(_config, _logger).build();
     await createMsix();
   }
 
   Future<void> createMsix() async {
+    var loggerProgress = _logger.progress('creating msix installer');
+
     await _config.validateBuildFiles();
 
-    final _assets = Assets(_config, _log);
-    final _signTool = SignTool(_config, _log);
+    final _assets = Assets(_config, _logger);
+    final _signTool = SignTool(_config, _logger);
 
     await _assets.cleanTemporaryFiles(clearMsixFiles: true);
     await _assets.createIconsFolder();
@@ -56,9 +56,9 @@ class Msix {
     if (!_config.store) {
       await _signTool.getCertificatePublisher();
     }
-    await AppxManifest(_config, _log).generateAppxManifest();
-    await MakePri(_config, _log).generatePRI();
-    await MakeAppx(_config, _log).pack();
+    await AppxManifest(_config, _logger).generateAppxManifest();
+    await MakePri(_config, _logger).generatePRI();
+    await MakeAppx(_config, _logger).pack();
     await _assets.cleanTemporaryFiles();
 
     // If the package is intended for store publish
@@ -68,11 +68,15 @@ class Msix {
       await _signTool.sign();
     }
 
-    _log.success('Msix Installer Created:');
+    loggerProgress.finish(showTiming: true);
+
+    _logger.write('${Ansi(true).green}msix created:${Ansi(true).none} ');
 
     // Print the created msix installer path
-    _log.link(
-        '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix'
+    var installerPath =
+        '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix';
+    _logger.stdout(
+        '${Ansi(true).blue}${installerPath.substring(installerPath.indexOf('build/windows'))}${Ansi(true).none}'
             .replaceAll('/', r'\'));
   }
 }

@@ -3,19 +3,18 @@ import 'dart:convert' show HtmlEscape;
 import 'capabilities.dart';
 import 'configuration.dart';
 import 'extensions.dart';
-import 'log.dart';
+import 'package:cli_util/cli_logging.dart';
 
 /// Handles the creation of the manifest file
 class AppxManifest {
   Configuration _config;
-  Log _log;
+  Logger _logger;
 
-  AppxManifest(this._config, this._log);
+  AppxManifest(this._config, this._logger);
 
   /// Generates the manifest file according to the user configuration values
   Future<void> generateAppxManifest() async {
-    const taskName = 'generate appx manifest';
-    _log.startingTask(taskName);
+    _logger.trace('generate appx manifest');
 
     var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
   <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
@@ -86,8 +85,6 @@ class AppxManifest {
     } catch (e) {
       throw 'fail to create manifest file: $e';
     }
-
-    _log.taskCompleted(taskName);
   }
 
   String _getExtensions() {

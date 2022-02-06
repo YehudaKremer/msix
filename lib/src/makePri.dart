@@ -1,17 +1,16 @@
 import 'dart:io';
 import 'configuration.dart';
-import 'log.dart';
+import 'package:cli_util/cli_logging.dart';
 
 /// Use the makepri.exe tool to generate package resource indexing files
 class MakePri {
   Configuration _config;
-  Log _log;
+  Logger _logger;
 
-  MakePri(this._config, this._log);
+  MakePri(this._config, this._logger);
 
   Future<void> generatePRI() async {
-    const taskName = 'generate package resource indexing files';
-    _log.startingTask(taskName);
+    _logger.trace('generate package resource indexing files');
 
     final buildPath = _config.buildFilesFolder;
     var makePriPath =
@@ -49,7 +48,5 @@ class MakePri {
     if (result.exitCode != 0) {
       throw result.stdout;
     }
-
-    _log.taskCompleted(taskName);
   }
 }

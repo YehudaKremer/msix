@@ -3,21 +3,20 @@ import 'package:image/image.dart';
 import 'package:path/path.dart';
 import 'configuration.dart';
 import 'extensions.dart';
-import 'log.dart';
+import 'package:cli_util/cli_logging.dart';
 
 /// Handles all the msix and user assets files
 class Assets {
   Configuration _config;
   List<File> _vCLibsFiles = [];
   late Image image;
-  Log _log;
+  Logger _logger;
 
-  Assets(this._config, this._log);
+  Assets(this._config, this._logger);
 
   ///  Create icons folder in the msix package
   Future<void> createIconsFolder() async {
-    const taskName = 'creating app icons folder';
-    _log.startingTask(taskName);
+    _logger.trace('creating app icons folder');
 
     var iconsFolderPath = '${_config.buildFilesFolder}/Images';
     try {
@@ -25,38 +24,22 @@ class Assets {
     } catch (e) {
       throw 'fail to create app icons folder in: $iconsFolderPath\n$e';
     }
-
-    _log.taskCompleted(taskName);
   }
 
   /// Copy default or generate app icons to icons folder in the msix package
   Future<void> copyIcons() async {
-    const taskName = 'copying app icons';
-    _log.startingTask(taskName);
+    _logger.trace('copying app icons');
 
     if (_config.haveLogoPath()) {
-      try {
-        await _generateAssetsIcons();
-      } catch (e) {
-        _log.warn('Error generating icons: $e');
-        _log.warn(
-            'fail to generate icons from: "${_config.logoPath!}", using defaults icons instead.');
-        _log.warn('please report this to:');
-        _log.link('https://github.com/YehudaKremer/msix/issues');
-
-        _copyGeneratedIcons(_config.defaultsIconsFolderPath());
-      }
+      await _generateAssetsIcons();
     } else {
       _copyGeneratedIcons(_config.defaultsIconsFolderPath());
     }
-
-    _log.taskCompleted(taskName);
   }
 
   /// Copy the vc libs files (msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll) to the msix package
   Future<void> copyVCLibsFiles() async {
-    const taskName = 'copying VC libraries';
-    _log.startingTask(taskName);
+    _logger.trace('copying VC libraries');
 
     _vCLibsFiles = _getAllDirectoryFiles(
         '${_config.vcLibsFolderPath()}/${_config.architecture}');
@@ -65,14 +48,11 @@ class Assets {
       await File(file.path)
           .copy('${_config.buildFilesFolder}/${basename(file.path)}');
     }
-
-    _log.taskCompleted(taskName);
   }
 
   /// Clear the build folder from temporary files
   Future<void> cleanTemporaryFiles({clearMsixFiles = false}) async {
-    const taskName = 'cleaning temporary files';
-    _log.startingTask(taskName);
+    _logger.trace('cleaning temporary files');
 
     final buildPath = _config.buildFilesFolder;
 
@@ -101,8 +81,6 @@ class Assets {
     } catch (e) {
       throw 'fail to clean temporary files from $buildPath: $e';
     }
-
-    _log.taskCompleted(taskName);
   }
 
   List<File> _getAllDirectoryFiles(String directory) => Directory(directory)
@@ -168,8 +146,7 @@ class Assets {
 
   /// Generate optimized msix icons from the user logo
   Future<void> _generateAssetsIcons() async {
-    const taskName = 'generating icons';
-    _log.startingTask(taskName);
+    _logger.trace('generating icons');
 
     if (!(await File(_config.logoPath!).exists())) {
       throw 'Logo file not found at ${_config.logoPath}';
@@ -334,8 +311,6 @@ class Assets {
       _generateIcon('StoreLogo', Size(50, 50), scale: 2),
       _generateIcon('StoreLogo', Size(50, 50), scale: 4),
     ]);
-
-    _log.taskCompleted(taskName);
   }
 
   /// Copy generated icons to icons folder in the msix package

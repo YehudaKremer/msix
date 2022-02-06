@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:msix/src/extensions.dart';
 import 'package:path/path.dart';
 import 'configuration.dart';
-import 'log.dart';
+import 'package:cli_util/cli_logging.dart';
 import 'extensions.dart';
 
 var _publisherRegex = RegExp(
@@ -11,14 +11,13 @@ var _publisherRegex = RegExp(
 /// Handles signing operations
 class SignTool {
   Configuration _config;
-  Log _log;
+  Logger _logger;
 
-  SignTool(this._config, this._log);
+  SignTool(this._config, this._logger);
 
   /// Use the certutil.exe tool to detect the certificate publisher name (Subject)
   Future<void> getCertificatePublisher() async {
-    const taskName = 'getting certificate publisher';
-    _log.startingTask(taskName);
+    _logger.trace('getting certificate publisher');
 
     var certificateDetails = await Process.run('powershell.exe', [
       '-NoProfile',
@@ -41,11 +40,9 @@ class SignTool {
           .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
           .trim();
     } catch (e) {
-      _log.error('Error while getting certificate publisher');
+      _logger.stderr('Error while getting certificate publisher');
       throw e;
     }
-
-    _log.taskCompleted(taskName);
   }
 
   /// Use the certutil.exe tool to install the certificate on the local machine
@@ -65,8 +62,7 @@ class SignTool {
         getInstalledCertificate.stdout.toString().isNullOrEmpty;
 
     if (isCertificateNotInstalled) {
-      const taskName = 'installing certificate';
-      _log.startingTask(taskName);
+      _logger.trace('installing certificate');
 
       var isAdminCheck = await Process.run('net', ['session']);
 
@@ -87,15 +83,12 @@ class SignTool {
       if (result.exitCode != 0) {
         throw result.stdout;
       }
-
-      _log.taskCompleted(taskName);
     }
   }
 
   /// Sign the created msix installer with the certificate
   Future<void> sign() async {
-    const taskName = 'signing';
-    _log.startingTask(taskName);
+    _logger.trace('signing');
 
     if (!_config.certificatePath.isNull || _config.signToolOptions != null) {
       var signtoolPath =
@@ -131,7 +124,5 @@ class SignTool {
         throw result.stdout;
       }
     }
-
-    _log.taskCompleted(taskName);
   }
 }

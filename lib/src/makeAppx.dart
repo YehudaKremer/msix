@@ -1,17 +1,16 @@
 import 'dart:io';
 import 'configuration.dart';
-import 'log.dart';
+import 'package:cli_util/cli_logging.dart';
 
 /// Use the makeappx.exe tool to generate manifest file
 class MakeAppx {
   Configuration _config;
-  Log _log;
+  Logger _logger;
 
-  MakeAppx(this._config, this._log);
+  MakeAppx(this._config, this._logger);
 
   Future<void> pack() async {
-    const taskName = 'packing';
-    _log.startingTask(taskName);
+    _logger.trace('packing');
 
     var msixPath =
         '${_config.outputPath ?? _config.buildFilesFolder}/${_config.outputName ?? _config.appName}.msix';
@@ -24,7 +23,5 @@ class MakeAppx {
     if (result.exitCode != 0) {
       throw result.stdout;
     }
-
-    _log.taskCompleted(taskName);
   }
 }

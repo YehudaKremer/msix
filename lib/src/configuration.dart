@@ -1,13 +1,14 @@
 import 'dart:io';
 import 'package:args/args.dart';
+import 'package:cli_util/cli_logging.dart';
 import 'package:package_config/package_config.dart';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 import 'extensions.dart';
-import 'log.dart';
 
 class Configuration {
-  Log _log;
+  List<String> _args;
+  Logger _logger;
   late ArgResults argResults;
   String msixAssetsPath = '';
   String? appName;
@@ -42,11 +43,11 @@ class Configuration {
   String iconsGeneratorPath() => '$msixAssetsPath/IconsGenerator';
   String pubspecYamlPath = "pubspec.yaml";
 
-  Configuration(this._log);
+  Configuration(this._args, this._logger);
 
-  /// Gets the configuration values from pubspec.yaml file and from [arguments]
-  Future<void> getConfigValues(List<String> arguments) async {
-    _parseCliArguments(arguments);
+  /// Gets the configuration values from pubspec.yaml file and from [_args]
+  Future<void> getConfigValues() async {
+    _parseCliArguments(_args);
     await _getMsixAssetsFolderPath();
     var pubspec = await _getPubspec();
     appName = pubspec['name']?.toString();
@@ -67,14 +68,11 @@ class Configuration {
     installCert =
         argResults.read('install-certificate')?.toString() != 'false' &&
             config?['install_certificate']?.toString() != 'false';
-    if (!installCert) numberOfAllTasks--;
     updateCompanyName =
         argResults.read('update-company-name')?.toString() != 'false' &&
             config?['update_company_name']?.toString() != 'false';
-    if (!updateCompanyName) numberOfAllTasks--;
     store = argResults.wasParsed('store') ||
         config?['store']?.toString().toLowerCase() == 'true';
-    if (store) numberOfAllTasks -= 2;
     createWithDebugBuildFiles = argResults.wasParsed('debug') ||
         config?['debug']?.toString().toLowerCase() == 'true';
     if (createWithDebugBuildFiles)
@@ -88,7 +86,6 @@ class Configuration {
     identityName = argResults.read('identity-name') ??
         config?['identity_name']?.toString();
     logoPath = argResults.read('logo-path') ?? config?['logo_path']?.toString();
-    if (logoPath.isNull) numberOfAllTasks--;
     signToolOptions =
         (argResults.read('signtool-options') ?? config?['signtool_options'])
             ?.toString()
@@ -113,18 +110,16 @@ class Configuration {
 
   /// Validate the configuration values and set default values
   Future<void> validateConfigValues() async {
-    const taskName = 'validating config values';
-    _log.startingTask(taskName);
+    _logger.trace('validating config values');
 
     if (appName.isNull) {
-      throw AppNameException(
-          'App name is empty, check the general \'name:\' property at pubspec.yaml');
+      throw 'App name is empty, check the general \'name:\' property at pubspec.yaml';
     }
     if (appDescription.isNull) appDescription = appName;
     if (displayName.isNull) displayName = _cleanAppName();
     if (identityName.isNull) {
       if (store) {
-        _log.error(
+        _logger.stderr(
             'identity name is empty, check "msix_config: identity_name" at pubspec.yaml');
         throw 'you can find your store "identity_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Name';
       } else {
@@ -133,7 +128,7 @@ class Configuration {
     }
     if (publisherName.isNull) {
       if (store) {
-        _log.error(
+        _logger.stderr(
             'publisher display name is empty, check "msix_config: publisher_display_name" at pubspec.yaml');
         throw 'you can find your store "publisher_display_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/PublisherDisplayName';
       } else {
@@ -141,7 +136,7 @@ class Configuration {
       }
     }
     if (store && publisher.isNullOrEmpty) {
-      _log.error(
+      _logger.stderr(
           'publisher is empty, check "msix_config: publisher" at pubspec.yaml');
       throw 'you can find your store "publisher" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/Publisher';
     }
@@ -152,8 +147,7 @@ class Configuration {
     if (languages == null) languages = ['en-us'];
 
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {
-      throw VersionException(
-          'Msix version can be only in this format: "1.0.0.0"');
+      throw 'Msix version can be only in this format: "1.0.0.0"';
     }
 
     if (!certificatePath.isNull || signToolOptions != null || store) {
@@ -165,8 +159,7 @@ class Configuration {
 
         if (extension(certificatePath!) == '.pfx' &&
             certificatePassword.isNull) {
-          throw CertificatePasswordException(
-              'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml');
+          throw 'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml';
         }
       }
     } else {
@@ -176,20 +169,15 @@ class Configuration {
     }
 
     if (!['x86', 'x64'].contains(architecture)) {
-      throw ArchitectureException(
-          'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml');
+      throw 'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml';
     }
-
-    _log.taskCompleted(taskName);
   }
 
   Future<void> validateBuildFiles() async {
-    const taskName = 'validating build files';
-    _log.startingTask(taskName);
+    _logger.trace('validating build files');
 
     if (!(await Directory(buildFilesFolder).exists())) {
-      throw BuildFilesException(
-          'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again');
+      throw 'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again';
     }
 
     executableFileName = await Directory(buildFilesFolder)
@@ -200,21 +188,18 @@ class Configuration {
                 !file.path.contains('PSFLauncher64.exe'),
             orElse: () => Directory(buildFilesFolder).listSync().first)
         .then((file) => basename(file.path));
-
-    _log.taskCompleted(taskName);
   }
 
   bool haveLogoPath() => !logoPath.isNull;
 
   /// parse the cli arguments
   void _parseCliArguments(List<String> args) {
-    const taskName = 'parsing cli arguments';
-    _log.startingTask(taskName);
+    _logger.trace('parsing cli arguments');
 
     var parser = ArgParser()
       ..addOption('certificate-password', abbr: 'p')
       ..addOption('certificate-path', abbr: 'c')
-      ..addOption('version', abbr: 'v')
+      ..addOption('version')
       ..addOption('display-name', abbr: 'd')
       ..addOption('publisher-display-name', abbr: 'u')
       ..addOption('identity-name', abbr: 'i')
@@ -235,13 +220,8 @@ class Configuration {
       ..addFlag('debug')
       ..addFlag('release');
 
-    try {
-      argResults = parser.parse(args);
-    } catch (e) {
-      throw ArgumentsException('invalid cli arguments: $e');
-    }
-
-    _log.taskCompleted(taskName);
+    /// exclude -v (verbose) from the arguments
+    argResults = parser.parse(args.where((arg) => arg != '-v'));
   }
 
   /// Get the assets folder path from the .packages file
@@ -283,36 +263,4 @@ class Configuration {
   }
 
   String _cleanAppName() => appName!.replaceAll('_', '');
-}
-
-class VersionException extends GeneralException {
-  VersionException(String message) : super(message);
-}
-
-class AppNameException extends GeneralException {
-  AppNameException(String message) : super(message);
-}
-
-class BuildFilesException extends GeneralException {
-  BuildFilesException(String message) : super(message);
-}
-
-class AssetsFolderException extends GeneralException {
-  AssetsFolderException(String message) : super(message);
-}
-
-class CertificateException extends GeneralException {
-  CertificateException(String message) : super(message);
-}
-
-class CertificatePasswordException extends GeneralException {
-  CertificatePasswordException(String message) : super(message);
-}
-
-class ArchitectureException extends GeneralException {
-  ArchitectureException(String message) : super(message);
-}
-
-class ArgumentsException extends GeneralException {
-  ArgumentsException(String message) : super(message);
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'package:cli_util/cli_logging.dart';
+
 import 'configuration.dart';
-import 'log.dart';
 import 'package:msix/src/extensions.dart';
 
 const runnerRcPath = 'windows/runner/Runner.rc';
@@ -8,18 +9,17 @@ const runnerRcPath = 'windows/runner/Runner.rc';
 /// Handles windows (pre-)build steps.
 class WindowsBuild {
   Configuration _config;
-  Log _log;
+  Logger _logger;
 
-  WindowsBuild(this._config, this._log);
+  WindowsBuild(this._config, this._logger);
 
   /// Run "flutter build windows" command
   Future<void> build() async {
     var buildWindowsArguments = ['build', 'windows'];
     if (_config.createWithDebugBuildFiles) buildWindowsArguments.add('--debug');
 
-    var taskName =
-        'running "flutter ${buildWindowsArguments.join(' ')}" command';
-    _log.startingTask(taskName);
+    var loggerProgress = _logger.progress(
+        'running "flutter ${buildWindowsArguments.join(' ')}" command');
 
     var result =
         await Process.run('flutter', buildWindowsArguments, runInShell: true);
@@ -27,7 +27,8 @@ class WindowsBuild {
     if (result.exitCode != 0) {
       throw result.stdout;
     }
-    _log.taskCompleted(taskName);
+
+    loggerProgress.finish(showTiming: true);
   }
 
   /// Update the company name 'com.example' in the Runner.rc file
@@ -36,33 +37,24 @@ class WindowsBuild {
         _config.identityName.isNull ||
         await File(runnerRcPath).exists() == false) return;
 
-    var taskName =
-        'updating Runner.rc "CompanyName" to "${_config.identityName}"';
-    _log.startingTask(taskName);
+    _logger
+        .trace('updating Runner.rc "CompanyName" to "${_config.identityName}"');
 
-    try {
-      var runnerRcContentLines = await File(runnerRcPath).readAsLines();
-      var updatedRunnerRcContent = '';
+    var runnerRcContentLines = await File(runnerRcPath).readAsLines();
+    var updatedRunnerRcContent = '';
 
-      for (var line in runnerRcContentLines) {
-        if (line.contains('VALUE "CompanyName"')) {
-          line =
-              '            VALUE "CompanyName", "${_config.identityName}" "\\0"';
-        } else if (line.contains('VALUE "LegalCopyright"')) {
-          line =
-              '            VALUE "LegalCopyright", "Copyright (C) ${DateTime.now().year} ${_config.identityName}. All rights reserved." "\\0"';
-        }
-
-        updatedRunnerRcContent += '$line\n';
+    for (var line in runnerRcContentLines) {
+      if (line.contains('VALUE "CompanyName"')) {
+        line =
+            '            VALUE "CompanyName", "${_config.identityName}" "\\0"';
+      } else if (line.contains('VALUE "LegalCopyright"')) {
+        line =
+            '            VALUE "LegalCopyright", "Copyright (C) ${DateTime.now().year} ${_config.identityName}. All rights reserved." "\\0"';
       }
 
-      await File(runnerRcPath).writeAsString(updatedRunnerRcContent);
-    } catch (e) {
-      _log.warn(
-          'Failed to update company name "com.example" in windows/runner/Runner.rc');
-      _log.warn(e.toString());
+      updatedRunnerRcContent += '$line\n';
     }
 
-    _log.taskCompleted(taskName);
+    await File(runnerRcPath).writeAsString(updatedRunnerRcContent);
   }
 }
