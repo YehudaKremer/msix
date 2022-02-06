@@ -17,11 +17,11 @@ class MakeAppx {
     var makeAppxPath =
         '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makeappx.exe';
 
-    var result = await Process.run(makeAppxPath,
+    var makeAppxProcess = await Process.run(makeAppxPath,
         ['pack', '/v', '/o', '/d', _config.buildFilesFolder, '/p', msixPath]);
 
-    if (result.exitCode != 0) {
-      throw result.stdout;
+    if (makeAppxProcess.exitCode != 0) {
+      throw makeAppxProcess.stderr;
     }
   }
 }

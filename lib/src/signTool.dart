@@ -18,30 +18,25 @@ class SignTool {
   Future<void> getCertificatePublisher() async {
     _logger.trace('getting certificate publisher');
 
-    var certificateDetails = await Process.run('powershell.exe', [
+    var certificateDetailsProcess = await Process.run('powershell.exe', [
       '-NoProfile',
       '-NonInteractive',
       "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject"
     ]);
 
-    if (certificateDetails.exitCode != 0) {
-      throw certificateDetails.stderr;
+    if (certificateDetailsProcess.exitCode != 0) {
+      throw certificateDetailsProcess.stderr;
     }
 
-    var subjectRow = certificateDetails.stdout.toString();
+    var subjectRow = certificateDetailsProcess.stdout.toString();
 
     if (!_publisherRegex.hasMatch(subjectRow)) {
-      throw 'Invalid certificate subject: $subjectRow';
+      throw 'invalid certificate subject: $subjectRow';
     }
 
-    try {
-      _config.publisher = subjectRow
-          .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
-          .trim();
-    } catch (e) {
-      _logger.stderr('Error while getting certificate publisher');
-      throw e;
-    }
+    _config.publisher = subjectRow
+        .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
+        .trim();
   }
 
   Future<void> installCertificate() async {
@@ -97,13 +92,12 @@ class SignTool {
         await File(installCertificateScriptPath).deleteIfExists();
 
         if (importCertificate.exitCode != 0) {
-          if (importCertificate.stderr
-              .toString()
-              .contains('was canceled by the user')) {
+          var error = importCertificate.stderr.toString();
+          if (error.contains('was canceled by the user')) {
             _logger.stderr(Ansi(true).emphasized(
                 Ansi(true).error('the certificate installation was canceled')));
           } else {
-            throw importCertificate.stderr;
+            throw error;
           }
         } else {
           _logger.stdout(Ansi(true).emphasized(
@@ -140,14 +134,14 @@ class SignTool {
         ];
       }
 
-      ProcessResult result = await Process.run(signtoolPath, [
+      ProcessResult signProcess = await Process.run(signtoolPath, [
         'sign',
         ...signtoolOptions,
         '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix',
       ]);
 
-      if (result.exitCode != 0) {
-        throw result.stdout;
+      if (signProcess.exitCode != 0) {
+        throw signProcess.stderr;
       }
     }
   }

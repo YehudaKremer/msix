@@ -12,11 +12,11 @@ class Msix {
 
   late Configuration _config;
 
-  Msix(List<String> args) {
-    _logger = args.contains('-v')
+  Msix(List<String> arguments) {
+    _logger = arguments.contains('-v')
         ? Logger.verbose()
         : Logger.standard(ansi: Ansi(true));
-    _config = Configuration(args, _logger);
+    _config = Configuration(arguments, _logger);
   }
 
   /// Print if msix is under dependencies instead of dev_dependencies

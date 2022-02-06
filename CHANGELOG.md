@@ -7,7 +7,7 @@
 - added new configuration options: `update-company-name`
 - logs are now minimal by default, use the `-v` argument to print extended logs (useful for debugging and bug reporting)
 - the user is asked (cli dialog) if he wants can install the certificate (done with powershell)
-- many more features ([App Install](https://docs.microsoft.com/en-us/windows/msix/app-installer/app-installer-file-overview)) will be added in 3.0v...
+- many more features ([App Installer](https://docs.microsoft.com/en-us/windows/msix/app-installer/app-installer-file-overview)) will be added in 3.0v...
 
 ### Breaking Changes
 

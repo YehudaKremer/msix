@@ -19,11 +19,7 @@ class Assets {
     _logger.trace('creating app icons folder');
 
     var iconsFolderPath = '${_config.buildFilesFolder}/Images';
-    try {
-      await Directory(iconsFolderPath).create();
-    } catch (e) {
-      throw 'fail to create app icons folder in: $iconsFolderPath\n$e';
-    }
+    await Directory(iconsFolderPath).create();
   }
 
   /// Copy default or generate app icons to icons folder in the msix package
@@ -56,31 +52,27 @@ class Assets {
 
     final buildPath = _config.buildFilesFolder;
 
-    try {
-      await Future.wait([
-        ...[
-          'AppxManifest.xml',
-          'resources.pri',
-          'resources.scale-125.pri',
-          'resources.scale-150.pri',
-          'resources.scale-200.pri',
-          'resources.scale-400.pri'
-        ].map((fileName) async =>
-            await File('$buildPath/$fileName').deleteIfExists()),
-        Directory('$buildPath/Images').deleteIfExists(recursive: true),
-        clearMsixFiles
-            ? Directory(buildPath)
-                .list(recursive: true, followLinks: false)
-                .where((f) => basename(f.path).contains('.msix'))
-                .forEach((file) async => await file.delete())
-            : Future.value()
-      ]);
+    await Future.wait([
+      ...[
+        'AppxManifest.xml',
+        'resources.pri',
+        'resources.scale-125.pri',
+        'resources.scale-150.pri',
+        'resources.scale-200.pri',
+        'resources.scale-400.pri'
+      ].map((fileName) async =>
+          await File('$buildPath/$fileName').deleteIfExists()),
+      Directory('$buildPath/Images').deleteIfExists(recursive: true),
+      clearMsixFiles
+          ? Directory(buildPath)
+              .list(recursive: true, followLinks: false)
+              .where((f) => basename(f.path).contains('.msix'))
+              .forEach((file) async => await file.deleteIfExists())
+          : Future.value()
+    ]);
 
-      _vCLibsFiles.forEach((file) async =>
-          await File('$buildPath/${basename(file.path)}').deleteIfExists());
-    } catch (e) {
-      throw 'fail to clean temporary files from $buildPath: $e';
-    }
+    _vCLibsFiles.forEach((file) async =>
+        await File('$buildPath/${basename(file.path)}').deleteIfExists());
   }
 
   List<File> _getAllDirectoryFiles(String directory) => Directory(directory)
@@ -317,12 +309,7 @@ class Assets {
   void _copyGeneratedIcons(String iconsFolderPath) async {
     for (File file in _getAllDirectoryFiles(iconsFolderPath)) {
       final path = file.path, newPath = 'Images/${basename(path)}';
-
-      try {
-        File(path).copySync('${_config.buildFilesFolder}/$newPath');
-      } catch (e) {
-        throw 'fail to copy icon: $path\n$e';
-      }
+      File(path).copySync('${_config.buildFilesFolder}/$newPath');
     }
   }
 }

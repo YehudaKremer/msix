@@ -79,12 +79,7 @@ class AppxManifest {
     manifestContent = manifestContent.replaceAll('    \n', '');
 
     var appxManifestPath = '${_config.buildFilesFolder}/AppxManifest.xml';
-    try {
-      await File(appxManifestPath).create();
-      await File(appxManifestPath).writeAsString(manifestContent);
-    } catch (e) {
-      throw 'fail to create manifest file: $e';
-    }
+    await File(appxManifestPath).writeAsString(manifestContent);
   }
 
   String _getExtensions() {

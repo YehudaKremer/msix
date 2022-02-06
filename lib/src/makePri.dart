@@ -1,6 +1,7 @@
 import 'dart:io';
-import 'configuration.dart';
 import 'package:cli_util/cli_logging.dart';
+import 'configuration.dart';
+import 'extensions.dart';
 
 /// Use the makepri.exe tool to generate package resource indexing files
 class MakePri {
@@ -16,7 +17,7 @@ class MakePri {
     var makePriPath =
         '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makepri.exe';
 
-    var result = await Process.run(makePriPath, [
+    var makePriConfigProcess = await Process.run(makePriPath, [
       'createconfig',
       '/cf',
       '$buildPath\\priconfig.xml',
@@ -25,11 +26,11 @@ class MakePri {
       '/o'
     ]);
 
-    if (result.exitCode != 0) {
-      throw result.stdout;
+    if (makePriConfigProcess.exitCode != 0) {
+      throw makePriConfigProcess.stderr;
     }
 
-    result = await Process.run(makePriPath, [
+    var makePriProcess = await Process.run(makePriPath, [
       'new',
       '/cf',
       '$buildPath\\priconfig.xml',
@@ -42,11 +43,10 @@ class MakePri {
       '/o',
     ]);
 
-    var priconfig = File('$buildPath/priconfig.xml');
-    if (await priconfig.exists()) await priconfig.delete();
+    await File('$buildPath/priconfig.xml').deleteIfExists();
 
-    if (result.exitCode != 0) {
-      throw result.stdout;
+    if (makePriProcess.exitCode != 0) {
+      throw makePriProcess.stderr;
     }
   }
 }

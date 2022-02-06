@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:io';
 import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
@@ -7,9 +8,9 @@ import 'package:yaml/yaml.dart';
 import 'extensions.dart';
 
 class Configuration {
-  List<String> _args;
+  List<String> _arguments;
   Logger _logger;
-  late ArgResults argResults;
+  late ArgResults _args;
   String msixAssetsPath = '';
   String? appName;
   String? publisherName;
@@ -43,69 +44,56 @@ class Configuration {
   String iconsGeneratorPath() => '$msixAssetsPath/IconsGenerator';
   String pubspecYamlPath = "pubspec.yaml";
 
-  Configuration(this._args, this._logger);
+  Configuration(this._arguments, this._logger);
 
-  /// Gets the configuration values from pubspec.yaml file and from [_args]
+  /// Gets the configuration values from pubspec.yaml file and from [_arguments]
   Future<void> getConfigValues() async {
-    _parseCliArguments(_args);
+    _parseCliArguments(_arguments);
     await _getMsixAssetsFolderPath();
     var pubspec = await _getPubspec();
-    appName = pubspec['name']?.toString();
-    appDescription = pubspec['description']?.toString();
-    var config = pubspec['msix_config'];
-    msixVersion =
-        argResults.read('version') ?? config?['msix_version']?.toString();
-    certificatePath = argResults.read('certificate-path') ??
-        config?['certificate_path']?.toString();
-    certificatePassword = argResults.read('certificate-password') ??
-        config?['certificate_password']?.toString();
-    outputPath =
-        argResults.read('output-path') ?? config?['output_path']?.toString();
-    outputName =
-        argResults.read('output-name') ?? config?['output_name']?.toString();
-    addExecutionAlias = argResults.wasParsed('add-execution-alias') ||
-        config?['add_execution_alias']?.toString().toLowerCase() == 'true';
-    installCert =
-        argResults.read('install-certificate')?.toString() != 'false' &&
-            config?['install_certificate']?.toString() != 'false';
-    updateCompanyName =
-        argResults.read('update-company-name')?.toString() != 'false' &&
-            config?['update_company_name']?.toString() != 'false';
-    store = argResults.wasParsed('store') ||
-        config?['store']?.toString().toLowerCase() == 'true';
-    createWithDebugBuildFiles = argResults.wasParsed('debug') ||
-        config?['debug']?.toString().toLowerCase() == 'true';
+    appName = pubspec['name'];
+    appDescription = pubspec['description'];
+    var yaml = pubspec['msix_config'] ?? YamlMap();
+    msixVersion = _args['version'] ?? yaml['msix_version'];
+    certificatePath = _args['certificate-path'] ?? yaml['certificate_path'];
+    certificatePassword = _args['certificate-password'] ??
+        yaml['certificate_password']?.toString();
+    outputPath = _args['output-path'] ?? yaml['output_path'];
+    outputName = _args['output-name'] ?? yaml['output_name'];
+    addExecutionAlias = _args.wasParsed('add-execution-alias') ||
+        yaml['add_execution_alias']?.toLowerCase() == 'true';
+    installCert = _args['install-certificate'] != 'false' &&
+        yaml['install_certificate'] != 'false';
+    updateCompanyName = _args['update-company-name'] != 'false' &&
+        yaml['update_company_name'] != 'false';
+    store = _args.wasParsed('store') ||
+        yaml['store']?.toString().toLowerCase() == 'true';
+    createWithDebugBuildFiles = _args.wasParsed('debug') ||
+        yaml['debug']?.toString().toLowerCase() == 'true';
     if (createWithDebugBuildFiles)
       buildFilesFolder = buildFilesFolder.replaceFirst('Release', 'Debug');
-    displayName =
-        argResults.read('display-name') ?? config?['display_name']?.toString();
-    publisherName = argResults.read('publisher-display-name') ??
-        config?['publisher_display_name']?.toString();
-    publisher =
-        argResults.read('publisher') ?? config?['publisher']?.toString();
-    identityName = argResults.read('identity-name') ??
-        config?['identity_name']?.toString();
-    logoPath = argResults.read('logo-path') ?? config?['logo_path']?.toString();
-    signToolOptions =
-        (argResults.read('signtool-options') ?? config?['signtool_options'])
-            ?.toString()
-            .split(' ')
-            .where((o) => o.trim().length > 0)
-            .toList();
-    protocolActivation = (argResults.read('protocol-activation') ??
-            config?['protocol_activation'])
+    displayName = _args['display-name'] ?? yaml['display_name'];
+    publisherName =
+        _args['publisher-display-name'] ?? yaml['publisher_display_name'];
+    publisher = _args['publisher'] ?? yaml['publisher'];
+    identityName = _args['identity-name'] ?? yaml['identity_name'];
+    logoPath = _args['logo-path'] ?? yaml['logo_path'];
+    signToolOptions = (_args['signtool-options'] ?? yaml['signtool_options'])
         ?.toString()
-        .replaceAll(':', '');
-    fileExtension = argResults.read('file-extension') ??
-        config?['file_extension']?.toString();
+        .split(' ')
+        .where((o) => o.trim().length > 0)
+        .toList();
+    protocolActivation =
+        (_args['protocol-activation'] ?? yaml['protocol_activation'])
+            ?.toString()
+            .replaceAll(':', '');
+    fileExtension = _args['file-extension'] ?? yaml['file_extension'];
     if (fileExtension != null && !fileExtension!.startsWith('.')) {
       fileExtension = '.$fileExtension';
     }
-    architecture =
-        argResults.read('architecture') ?? config?['architecture']?.toString();
-    capabilities =
-        argResults.read('capabilities') ?? config?['capabilities']?.toString();
-    languages = _getLanguages(config);
+    architecture = _args['architecture'] ?? yaml['architecture'];
+    capabilities = _args['capabilities'] ?? yaml['capabilities'];
+    languages = _getLanguages(yaml);
   }
 
   /// Validate the configuration values and set default values
@@ -147,14 +135,13 @@ class Configuration {
     if (languages == null) languages = ['en-us'];
 
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {
-      throw 'Msix version can be only in this format: "1.0.0.0"';
+      throw 'msix version can be only in this format: "1.0.0.0"';
     }
 
     if (!certificatePath.isNull || signToolOptions != null || store) {
       if (!certificatePath.isNull) {
         if (!(await File(certificatePath!).exists())) {
-          throw CertificateException(
-              'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml');
+          throw 'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml';
         }
 
         if (extension(certificatePath!) == '.pfx' &&
@@ -221,7 +208,7 @@ class Configuration {
       ..addFlag('release');
 
     /// exclude -v (verbose) from the arguments
-    argResults = parser.parse(args.where((arg) => arg != '-v'));
+    _args = parser.parse(args.where((arg) => arg != '-v'));
   }
 
   /// Get the assets folder path from the .packages file
@@ -247,20 +234,11 @@ class Configuration {
     return pubspec;
   }
 
-  Iterable<String>? _getLanguages(dynamic config) {
-    var languagesConfig =
-        argResults.read('languages') ?? config?['languages']?.toString();
-    if (languagesConfig != null) {
-      var languages = languagesConfig
-          .split(',')
+  Iterable<String>? _getLanguages(dynamic config) =>
+      ((_args['languages'] ?? config['languages']) as String?)
+          ?.split(',')
           .map((e) => e.trim())
           .where((element) => element.length > 0);
-
-      if (languages.length > 0) return languages;
-    }
-
-    return null;
-  }
 
   String _cleanAppName() => appName!.replaceAll('_', '');
 }

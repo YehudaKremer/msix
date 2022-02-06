@@ -21,11 +21,11 @@ class WindowsBuild {
     var loggerProgress = _logger.progress(
         'running "flutter ${buildWindowsArguments.join(' ')}" command');
 
-    var result =
+    var windowsBuildProcess =
         await Process.run('flutter', buildWindowsArguments, runInShell: true);
 
-    if (result.exitCode != 0) {
-      throw result.stdout;
+    if (windowsBuildProcess.exitCode != 0) {
+      throw windowsBuildProcess.stderr;
     }
 
     loggerProgress.finish(showTiming: true);
