@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.16
+
+- fix [#90](https://github.com/YehudaKremer/msix/issues/90)
+
 ## 2.8.15
 
 - fix [#74](https://github.com/YehudaKremer/msix/issues/74)
