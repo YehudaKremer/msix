@@ -41,7 +41,6 @@ class Configuration {
   bool forceUpdateFromAnyVersion = true;
   bool store = false;
   bool installCert = true;
-  bool updateCompanyName = true;
   bool addExecutionAlias = false;
   bool createWithDebugBuildFiles = false;
   Iterable<String>? languages;
@@ -71,8 +70,6 @@ class Configuration {
         yaml['add_execution_alias']?.toLowerCase() == 'true';
     installCert = _args['install-certificate'] != 'false' &&
         yaml['install_certificate'] != 'false';
-    updateCompanyName = _args['update-company-name'] != 'false' &&
-        yaml['update_company_name'] != 'false';
     store = _args.wasParsed('store') ||
         yaml['store']?.toString().toLowerCase() == 'true';
     createWithDebugBuildFiles = _args.wasParsed('debug') ||
@@ -246,7 +243,6 @@ class Configuration {
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
       ..addOption('install-certificate')
-      ..addOption('update-company-name')
       ..addOption('publish-folder-path')
       ..addOption('installer-path')
       ..addOption('hours-between-update-checks')

@@ -15,6 +15,9 @@ class WindowsBuild {
 
   /// Run "flutter build windows" command
   Future<void> build() async {
+    var originalRunnerRcContent = await _getRunnerRcContent();
+    _updateRunnerCompanyName();
+
     var buildWindowsArguments = ['build', 'windows'];
     if (_config.createWithDebugBuildFiles) buildWindowsArguments.add('--debug');
 
@@ -29,14 +32,20 @@ class WindowsBuild {
     }
 
     loggerProgress.finish(showTiming: true);
+
+    await _restoreRunnerRcContent(originalRunnerRcContent);
+  }
+
+  Future<String> _getRunnerRcContent() async =>
+      await File(runnerRcPath).readAsString();
+
+  Future<File> _restoreRunnerRcContent(String content) async {
+    _logger.trace('restore Runner.rc content');
+    return await File(runnerRcPath).writeAsString(content);
   }
 
   /// Update the company name 'com.example' in the Runner.rc file
-  Future<void> updateRunnerCompanyName() async {
-    if (!_config.updateCompanyName ||
-        _config.identityName.isNull ||
-        await File(runnerRcPath).exists() == false) return;
-
+  Future<void> _updateRunnerCompanyName() async {
     _logger
         .trace('updating Runner.rc "CompanyName" to "${_config.identityName}"');
 

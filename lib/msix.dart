@@ -25,18 +25,12 @@ class Msix {
         '-----> "MSIX" package needs to be under development dependencies (dev_dependencies) <-----');
   }
 
-  Future<void> loadConfigurations() async {
+  Future<void> createMsix() async {
     await _config.getConfigValues();
     await _config.validateConfigValues();
-  }
 
-  Future<void> buildWindowsFilesAndCreateMsix() async {
-    await WindowsBuild(_config, _logger).updateRunnerCompanyName();
     await WindowsBuild(_config, _logger).build();
-    await createMsix();
-  }
 
-  Future<void> createMsix() async {
     var loggerProgress = _logger.progress('creating msix installer');
 
     await _config.validateBuildFiles();

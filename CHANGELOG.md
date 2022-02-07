@@ -3,8 +3,6 @@
 ## 3.0.0-dev.1
 
 - code refactoring
-- added `msix:buildAndCreate` command
-- added new configuration options: `update-company-name`
 - logs are now minimal by default, use the `-v` argument to print extended logs (useful for debugging and bug reporting)
 - the user is asked (cli dialog) if he wants can install the certificate (done with powershell)
 - many more features ([App Installer](https://docs.microsoft.com/en-us/windows/msix/app-installer/app-installer-file-overview)) will be added in 3.0v...
