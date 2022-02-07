@@ -28,7 +28,7 @@ PS c:\src\flutter_project\> flutter pub add --dev msix
 
 ## :package: Creating an MSIX installer
 
-To create a MSIX installer from your package, the following command:
+To create a MSIX installer, the following command:
 
 ```console
 PS c:\src\flutter_project\> flutter pub run msix:create
