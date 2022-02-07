@@ -84,11 +84,13 @@ class AppxManifest {
   String _getExtensions() {
     if (_config.addExecutionAlias ||
         !_config.protocolActivation.isNull ||
-        !_config.fileExtension.isNull) {
+        !_config.fileExtension.isNull ||
+        !_config.toastActivatorCLSID.isNull) {
       return '''<Extensions>
       ${_config.addExecutionAlias ? _getAppExecutionAliasExtension() : ''}
       ${!_config.protocolActivation.isNull ? _getProtocolActivationExtension() : ''}
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
+      ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
         </Extensions>''';
     } else {
       return '';
@@ -121,6 +123,19 @@ class AppxManifest {
               </uap:SupportedFileTypes>
             </uap:FileTypeAssociation>
           </uap:Extension>''';
+  }
+
+  String _getToastNotificationActivationExtension() {
+    return '''  <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="${_config.executableFileName.toHtmlEscape()}" Arguments="${_config.toastActivatorArguments.toHtmlEscape()}" DisplayName="${_config.toastActivatorDisplayName.toHtmlEscape()}">
+              <com:Class Id="${_config.toastActivatorCLSID.toHtmlEscape()}"/>
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+        <desktop:Extension Category="windows.toastNotificationActivation">
+          <desktop:ToastNotificationActivation ToastActivatorCLSID="${_config.toastActivatorCLSID.toHtmlEscape()}"/>
+        </desktop:Extension>''';
   }
 
   String _normalizeCapability(String capability) {

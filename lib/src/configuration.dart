@@ -30,6 +30,9 @@ class Configuration {
   List<String>? signToolOptions;
   String? protocolActivation;
   String? fileExtension;
+  String? toastActivatorCLSID;
+  String? toastActivatorArguments;
+  String? toastActivatorDisplayName;
   String? outputPath;
   String? outputName;
   bool store = false;
@@ -94,6 +97,18 @@ class Configuration {
     architecture = _args['architecture'] ?? yaml['architecture'];
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
+
+    // toast activator configurations
+    var toastActivatorYaml = yaml['toast-activator'] ?? YamlMap();
+
+    toastActivatorCLSID =
+        _args['toast-activator-clsid'] ?? toastActivatorYaml['clsid'];
+    toastActivatorArguments = _args['toast-activator-arguments'] ??
+        toastActivatorYaml['arguments'] ??
+        '----AppNotificationActivationServer';
+    toastActivatorDisplayName = _args['toast-activator-display-name'] ??
+        toastActivatorYaml['display_name'] ??
+        'Toast activator';
   }
 
   /// Validate the configuration values and set default values
@@ -214,6 +229,9 @@ class Configuration {
       ..addOption('languages')
       ..addOption('install-certificate')
       ..addOption('update-company-name')
+      ..addOption('toast-activator-clsid')
+      ..addOption('toast-activator-arguments')
+      ..addOption('toast-activator-display-name')
       ..addFlag('store')
       ..addFlag('add-execution-alias')
       ..addFlag('debug')
