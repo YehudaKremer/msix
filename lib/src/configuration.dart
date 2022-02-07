@@ -163,7 +163,10 @@ class Configuration {
   Future<void> validateBuildFiles() async {
     _logger.trace('validating build files');
 
-    if (!(await Directory(buildFilesFolder).exists())) {
+    if (!await Directory(buildFilesFolder).exists() ||
+        !await Directory(buildFilesFolder)
+            .list()
+            .any((file) => file.path.endsWith('.exe'))) {
       throw 'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again';
     }
 
