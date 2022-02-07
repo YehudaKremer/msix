@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:convert' show HtmlEscape;
 import 'capabilities.dart';
 import 'configuration.dart';
 import 'extensions.dart';
@@ -38,12 +37,12 @@ class AppxManifest {
           xmlns:com3="http://schemas.microsoft.com/appx/manifest/com/windows10/3" 
           IgnorableNamespaces="uap3 desktop">
     <Identity Name="${_config.identityName}" Version="${_config.msixVersion}"
-              Publisher="${HtmlEscape().convert(_config.publisher!.replaceAll(' = ', '='))}" ProcessorArchitecture="${_config.architecture}" />
+              Publisher="${_config.publisher!.replaceAll(' = ', '=').toHtmlEscape()}" ProcessorArchitecture="${_config.architecture}" />
     <Properties>
-      <DisplayName>${_config.displayName}</DisplayName>
-      <PublisherDisplayName>${_config.publisherName}</PublisherDisplayName>
+      <DisplayName>${_config.displayName.toHtmlEscape()}</DisplayName>
+      <PublisherDisplayName>${_config.publisherName.toHtmlEscape()}</PublisherDisplayName>
       <Logo>Images\\StoreLogo.png</Logo>
-      <Description>${_config.appDescription}</Description>
+      <Description>${_config.appDescription.toHtmlEscape()}</Description>
     </Properties>
     <Resources>
       ${_config.languages!.map((language) => '<Resource Language="$language" />').join('')}
@@ -55,11 +54,11 @@ class AppxManifest {
       ${_getCapabilities()}
   </Capabilities>
     <Applications>
-      <Application Id="${_config.appName!.replaceAll('_', '')}" Executable="${_config.executableFileName}" EntryPoint="Windows.FullTrustApplication">
+      <Application Id="${_config.appName!.replaceAll('_', '')}" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
         <uap:VisualElements BackgroundColor="transparent"
-          DisplayName="${_config.displayName}" Square150x150Logo="Images\\Square150x150Logo.png"
-          Square44x44Logo="Images\\Square44x44Logo.png" Description="${_config.appDescription}">
-          <uap:DefaultTile ShortName="${_config.displayName}" Square310x310Logo="Images\\LargeTile.png"
+          DisplayName="${_config.displayName.toHtmlEscape()}" Square150x150Logo="Images\\Square150x150Logo.png"
+          Square44x44Logo="Images\\Square44x44Logo.png" Description="${_config.appDescription.toHtmlEscape()}">
+          <uap:DefaultTile ShortName="${_config.displayName.toHtmlEscape()}" Square310x310Logo="Images\\LargeTile.png"
           Square71x71Logo="Images\\SmallTile.png" Wide310x150Logo="Images\\Wide310x150Logo.png">
             <uap:ShowNameOnTiles>
               <uap:ShowOn Tile="square150x150Logo"/>
@@ -97,17 +96,17 @@ class AppxManifest {
   }
 
   String _getAppExecutionAliasExtension() {
-    return '''  <uap3:Extension Category="windows.appExecutionAlias" Executable="${_config.executableFileName}" EntryPoint="Windows.FullTrustApplication">
+    return '''  <uap3:Extension Category="windows.appExecutionAlias" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
             <uap3:AppExecutionAlias>
-              <desktop:ExecutionAlias Alias="${_config.executableFileName}" />
+              <desktop:ExecutionAlias Alias="${_config.executableFileName.toHtmlEscape()}" />
               </uap3:AppExecutionAlias>
           </uap3:Extension>''';
   }
 
   String _getProtocolActivationExtension() {
     return '''  <uap:Extension Category="windows.protocol">
-            <uap:Protocol Name="${_config.protocolActivation}">
-                <uap:DisplayName>${_config.protocolActivation} URI Scheme</uap:DisplayName>
+            <uap:Protocol Name="${_config.protocolActivation.toHtmlEscape()}">
+                <uap:DisplayName>${_config.protocolActivation.toHtmlEscape()} URI Scheme</uap:DisplayName>
             </uap:Protocol>
         </uap:Extension>''';
   }

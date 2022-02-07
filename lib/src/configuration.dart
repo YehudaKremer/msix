@@ -142,6 +142,14 @@ class Configuration {
       throw 'msix version can be only in this format: "1.0.0.0"';
     }
 
+    if (displayName != null && displayName!.length > 256) {
+      throw '"display name" is too long, it should be less than 256 characters';
+    }
+
+    if (publisherName != null && publisherName!.length > 256) {
+      throw '"publisher display name" is too long, it should be less than 256 characters';
+    }
+
     if (!certificatePath.isNull || signToolOptions != null || store) {
       if (!certificatePath.isNull) {
         if (!(await File(certificatePath!).exists())) {
