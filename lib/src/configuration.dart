@@ -113,6 +113,10 @@ class Configuration {
       } else {
         identityName = 'com.flutter.${_cleanAppName()}';
       }
+    } else {
+      if (!RegExp(r'^[a-zA-Z0-9.-]{3,50}$').hasMatch(identityName!)) {
+        throw 'invalid identity name ("identity_name"): "$identityName". need to be a string between 3 and 50 characters in length that consists of alpha-numeric, period, and dash characters.';
+      }
     }
     if (publisherName.isNull) {
       if (store) {

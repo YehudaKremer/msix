@@ -15,6 +15,10 @@
 - change `dont-install-certificate` to `install-certificate` with default of true
 - setting msix-version via Command-line argument is allow only with `--version 1.0.0.1` and not with `-v` (use now for extended logs)
 
+## 2.8.16
+
+- fix [#90](https://github.com/YehudaKremer/msix/issues/90)
+
 ## 2.8.15
 
 - fix [#74](https://github.com/YehudaKremer/msix/issues/74)
