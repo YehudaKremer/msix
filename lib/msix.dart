@@ -25,7 +25,24 @@ class Msix {
         '-----> "MSIX" package needs to be under development dependencies (dev_dependencies) <-----');
   }
 
-  Future<void> createMsix() async {
+  Future<void> create() async {
+    await _createMsix();
+
+    _logger.write(Ansi(true)
+        .emphasized('${Ansi(true).green}msix created:${Ansi(true).none} '));
+
+    var installerPath =
+        '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix';
+    _logger.stdout(Ansi(true).emphasized(
+        '${Ansi(true).blue}${installerPath.substring(installerPath.indexOf('build/windows'))}${Ansi(true).none}'
+            .replaceAll('/', r'\')));
+  }
+
+  Future<void> publish() async {
+    await _createMsix();
+  }
+
+  Future<void> _createMsix() async {
     await _config.getConfigValues();
     await _config.validateConfigValues();
 
@@ -56,14 +73,5 @@ class Msix {
     }
 
     loggerProgress.finish(showTiming: true);
-
-    _logger.write(Ansi(true)
-        .emphasized('${Ansi(true).green}msix created:${Ansi(true).none} '));
-
-    var installerPath =
-        '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix';
-    _logger.stdout(Ansi(true).emphasized(
-        '${Ansi(true).blue}${installerPath.substring(installerPath.indexOf('build/windows'))}${Ansi(true).none}'
-            .replaceAll('/', r'\')));
   }
 }
