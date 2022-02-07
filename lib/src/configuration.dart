@@ -44,10 +44,10 @@ class Configuration {
   bool addExecutionAlias = false;
   bool createWithDebugBuildFiles = false;
   Iterable<String>? languages;
-  String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
-  String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
-  String msixToolkitPath() => '$msixAssetsPath/MSIX-Toolkit';
-  String iconsGeneratorPath() => '$msixAssetsPath/IconsGenerator';
+  String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
+  String get vcLibsFolderPath => '$msixAssetsPath/VCLibs';
+  String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
+  String get iconsGeneratorPath => '$msixAssetsPath/IconsGenerator';
   String pubspecYamlPath = "pubspec.yaml";
 
   Configuration(this._arguments, this._logger);

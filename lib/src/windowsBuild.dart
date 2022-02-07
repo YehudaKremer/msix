@@ -28,6 +28,7 @@ class WindowsBuild {
         await Process.run('flutter', buildWindowsArguments, runInShell: true);
 
     if (windowsBuildProcess.exitCode != 0) {
+      _logger.stderr(windowsBuildProcess.stdout);
       throw windowsBuildProcess.stderr;
     }
 

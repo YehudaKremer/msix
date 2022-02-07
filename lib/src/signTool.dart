@@ -25,6 +25,7 @@ class SignTool {
     ]);
 
     if (certificateDetailsProcess.exitCode != 0) {
+      _logger.stderr(certificateDetailsProcess.stdout);
       throw certificateDetailsProcess.stderr;
     }
 
@@ -47,6 +48,7 @@ class SignTool {
     ]);
 
     if (getInstalledCertificate.exitCode != 0) {
+      _logger.stderr(getInstalledCertificate.stdout);
       throw getInstalledCertificate.stderr;
     }
 
@@ -63,6 +65,7 @@ class SignTool {
       ]);
 
       if (isRunningAsAdmin.exitCode != 0) {
+        _logger.stderr(isRunningAsAdmin.stdout);
         throw isRunningAsAdmin.stderr;
       }
 
@@ -112,7 +115,7 @@ class SignTool {
 
     if (!_config.certificatePath.isNull || _config.signToolOptions != null) {
       var signtoolPath =
-          '${_config.msixToolkitPath()}/Redist.${_config.architecture}/signtool.exe';
+          '${_config.msixToolkitPath}/Redist.${_config.architecture}/signtool.exe';
 
       List<String> signtoolOptions = [];
 
@@ -137,10 +140,11 @@ class SignTool {
       ProcessResult signProcess = await Process.run(signtoolPath, [
         'sign',
         ...signtoolOptions,
-        '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix',
+        '${_config.outputPath ?? _config.buildFilesFolder}/${_config.outputName ?? _config.appName}.msix',
       ]);
 
       if (signProcess.exitCode != 0) {
+        _logger.stderr(signProcess.stdout);
         throw signProcess.stderr;
       }
     }
