@@ -123,16 +123,6 @@ class Configuration {
                     ?.toString()
                     .toLowerCase() ==
                 'true';
-
-    print('12312312312312');
-    print('publishFolderPath: $publishFolderPath');
-    print('installerPath: $installerPath');
-    print('hoursBetweenUpdateChecks: $hoursBetweenUpdateChecks');
-    print('automaticBackgroundTask: $automaticBackgroundTask');
-    print('updateBlocksActivation: $updateBlocksActivation');
-    print('showPrompt: $showPrompt');
-    print('forceUpdateFromAnyVersion: $forceUpdateFromAnyVersion');
-    print('12312312312312');
   }
 
   /// Validate the configuration values and set default values
