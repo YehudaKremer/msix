@@ -253,14 +253,14 @@ class Configuration {
     _logger.trace('validating app installer config values');
 
     if (publishFolderPath.isNullOrEmpty ||
-        await Directory(publishFolderPath!).exists()) {
-      throw 'publish folder path is empty or not exists, check "msix_config: publish_folder_path" at pubspec.yaml';
+        !await Directory(publishFolderPath!).exists()) {
+      throw 'publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml';
     }
 
     if (installerPath.isNullOrEmpty) {
       installerPath = publishFolderPath;
     } else if (Uri.tryParse(installerPath!) == null) {
-      throw 'installer path is empty or not a valid url, check "msix_config: installer_path" at pubspec.yaml';
+      throw 'installer path is empty or not a valid url, check "app_installer: installer_path" at pubspec.yaml';
     } else {
       installerPath = Uri.decodeFull(installerPath!);
     }
