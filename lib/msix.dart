@@ -1,3 +1,4 @@
+import 'package:msix/src/appInstaller.dart';
 import 'package:msix/src/windowsBuild.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'src/configuration.dart';
@@ -40,6 +41,10 @@ class Msix {
 
   Future<void> publish() async {
     await _createMsix();
+
+    var appInstaller = AppInstaller(_config, _logger);
+    await appInstaller.copyMsixToVersionsFolder();
+    await appInstaller.generateAppInstaller();
   }
 
   Future<void> _createMsix() async {
