@@ -32,6 +32,13 @@ class Configuration {
   String? fileExtension;
   String? outputPath;
   String? outputName;
+  String? publishFolderPath;
+  String? installerPath;
+  int hoursBetweenUpdateChecks = 0;
+  bool automaticBackgroundTask = true;
+  bool updateBlocksActivation = true;
+  bool showPrompt = true;
+  bool forceUpdateFromAnyVersion = true;
   bool store = false;
   bool installCert = true;
   bool updateCompanyName = true;
@@ -94,6 +101,41 @@ class Configuration {
     architecture = _args['architecture'] ?? yaml['architecture'];
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
+
+    // app installer configurations
+    var installerYaml = yaml['app_installer'] ?? YamlMap();
+
+    publishFolderPath =
+        _args['publish-folder-path'] ?? installerYaml['publish_folder_path'];
+    installerPath = _args['installer-path'] ?? installerYaml['installer_path'];
+    hoursBetweenUpdateChecks = int.parse(_args['hours-between-update-checks'] ??
+        installerYaml['hours_between_update_checks']?.toString() ??
+        '0');
+    if (hoursBetweenUpdateChecks < 0) hoursBetweenUpdateChecks = 0;
+    automaticBackgroundTask = _args.wasParsed('automatic-background-task') ||
+        installerYaml['automatic_background_task']?.toString().toLowerCase() ==
+            'true';
+    updateBlocksActivation = _args.wasParsed('update-blocks-activation') ||
+        installerYaml['update_blocks_activation']?.toString().toLowerCase() ==
+            'true';
+    showPrompt = _args.wasParsed('show-prompt') ||
+        installerYaml['show_prompt']?.toString().toLowerCase() == 'true';
+    forceUpdateFromAnyVersion =
+        _args.wasParsed('force-update-from-any-version') ||
+            installerYaml['force_update_from_any_version']
+                    ?.toString()
+                    .toLowerCase() ==
+                'true';
+
+    print('12312312312312');
+    print('publishFolderPath: $publishFolderPath');
+    print('installerPath: $installerPath');
+    print('hoursBetweenUpdateChecks: $hoursBetweenUpdateChecks');
+    print('automaticBackgroundTask: $automaticBackgroundTask');
+    print('updateBlocksActivation: $updateBlocksActivation');
+    print('showPrompt: $showPrompt');
+    print('forceUpdateFromAnyVersion: $forceUpdateFromAnyVersion');
+    print('12312312312312');
   }
 
   /// Validate the configuration values and set default values
@@ -205,13 +247,33 @@ class Configuration {
       ..addOption('languages')
       ..addOption('install-certificate')
       ..addOption('update-company-name')
+      ..addOption('publish-folder-path')
+      ..addOption('installer-path')
+      ..addOption('hours-between-update-checks')
       ..addFlag('store')
       ..addFlag('add-execution-alias')
       ..addFlag('debug')
-      ..addFlag('release');
+      ..addFlag('release')
+      ..addFlag('automatic-background-task')
+      ..addFlag('update-blocks-activation')
+      ..addFlag('show-prompt')
+      ..addFlag('force-update-from-any-version');
 
     /// exclude -v (verbose) from the arguments
     _args = parser.parse(args.where((arg) => arg != '-v'));
+  }
+
+  Future<void> validateAppInstallerConfigValues() async {
+    _logger.trace('validating app installer config values');
+
+    if (publishFolderPath.isNullOrEmpty ||
+        await Directory(publishFolderPath!).exists()) {
+      throw 'publish folder path is empty or not exists, check "msix_config: publish_folder_path" at pubspec.yaml';
+    }
+
+    if (installerPath.isNullOrEmpty || Uri.tryParse(installerPath!) == null) {
+      throw 'installer path is empty or not a valid url, check "msix_config: installer_path" at pubspec.yaml';
+    }
   }
 
   /// Get the assets folder path from the .packages file
