@@ -257,8 +257,12 @@ class Configuration {
       throw 'publish folder path is empty or not exists, check "msix_config: publish_folder_path" at pubspec.yaml';
     }
 
-    if (installerPath.isNullOrEmpty || Uri.tryParse(installerPath!) == null) {
+    if (installerPath.isNullOrEmpty) {
+      installerPath = publishFolderPath;
+    } else if (Uri.tryParse(installerPath!) == null) {
       throw 'installer path is empty or not a valid url, check "msix_config: installer_path" at pubspec.yaml';
+    } else {
+      installerPath = Uri.decodeFull(installerPath!);
     }
   }
 
