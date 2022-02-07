@@ -27,30 +27,42 @@ class Msix {
   }
 
   Future<void> create() async {
+    await _initConfig();
     await _createMsix();
 
     _logger.write(Ansi(true)
         .emphasized('${Ansi(true).green}msix created:${Ansi(true).none} '));
 
     var installerPath =
-        '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix';
+        '${_config.outputPath ?? _config.buildFilesFolder}/${_config.outputName ?? _config.appName}.msix';
     _logger.stdout(Ansi(true).emphasized(
         '${Ansi(true).blue}${installerPath.substring(installerPath.indexOf('build/windows'))}${Ansi(true).none}'
             .replaceAll('/', r'\')));
   }
 
   Future<void> publish() async {
-    await _createMsix();
+    await _initConfig();
 
     var appInstaller = AppInstaller(_config, _logger);
+    await appInstaller.validatePublishVersion();
+
+    await _createMsix();
+
+    var loggerProgress = _logger.progress('publish');
+
+    await _config.validateAppInstallerConfigValues();
     await appInstaller.copyMsixToVersionsFolder();
     await appInstaller.generateAppInstaller();
+
+    loggerProgress.finish(showTiming: true);
+  }
+
+  Future<void> _initConfig() async {
+    await _config.getConfigValues();
+    await _config.validateConfigValues();
   }
 
   Future<void> _createMsix() async {
-    await _config.getConfigValues();
-    await _config.validateConfigValues();
-
     await WindowsBuild(_config, _logger).build();
 
     var loggerProgress = _logger.progress('creating msix installer');
