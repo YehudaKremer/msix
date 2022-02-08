@@ -42,18 +42,15 @@ class Msix {
 
   Future<void> publish() async {
     await _initConfig();
-
+    await _config.validateAppInstallerConfigValues();
     var appInstaller = AppInstaller(_config, _logger);
     await appInstaller.validatePublishVersion();
 
     await _createMsix();
 
     var loggerProgress = _logger.progress('publish');
-
-    await _config.validateAppInstallerConfigValues();
     await appInstaller.copyMsixToVersionsFolder();
     await appInstaller.generateAppInstaller();
-
     loggerProgress.finish(showTiming: true);
   }
 

@@ -33,12 +33,12 @@ class Configuration {
   String? outputPath;
   String? outputName;
   String? publishFolderPath;
-  String? installerPath;
+  String? appInstallerFolderPath;
   int hoursBetweenUpdateChecks = 0;
   bool automaticBackgroundTask = true;
   bool updateBlocksActivation = true;
   bool showPrompt = true;
-  bool forceUpdateFromAnyVersion = true;
+  bool forceUpdateFromAnyVersion = false;
   bool store = false;
   bool installCert = true;
   bool addExecutionAlias = false;
@@ -104,7 +104,8 @@ class Configuration {
 
     publishFolderPath =
         _args['publish-folder-path'] ?? installerYaml['publish_folder_path'];
-    installerPath = _args['installer-path'] ?? installerYaml['installer_path'];
+    appInstallerFolderPath = _args['app-installer-folder-path'] ??
+        installerYaml['app_installer_folder_path'];
     hoursBetweenUpdateChecks = int.parse(_args['hours-between-update-checks'] ??
         installerYaml['hours_between_update_checks']?.toString() ??
         '0');
@@ -234,7 +235,7 @@ class Configuration {
       ..addOption('languages')
       ..addOption('install-certificate')
       ..addOption('publish-folder-path')
-      ..addOption('installer-path')
+      ..addOption('app-installer-folder-path')
       ..addOption('hours-between-update-checks')
       ..addFlag('store')
       ..addFlag('add-execution-alias')
@@ -254,15 +255,19 @@ class Configuration {
 
     if (publishFolderPath.isNullOrEmpty ||
         !await Directory(publishFolderPath!).exists()) {
-      throw 'publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml';
+      _logger.stderr(
+          '${Ansi(true).red}publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml${Ansi(true).none}');
+      exit(-1);
     }
 
-    if (installerPath.isNullOrEmpty) {
-      installerPath = publishFolderPath;
-    } else if (Uri.tryParse(installerPath!) == null) {
-      throw 'installer path is empty or not a valid url, check "app_installer: installer_path" at pubspec.yaml';
+    if (appInstallerFolderPath.isNullOrEmpty) {
+      appInstallerFolderPath = publishFolderPath;
+    } else if (Uri.tryParse(appInstallerFolderPath!) == null) {
+      _logger.stderr(
+          '${Ansi(true).red}installer path is a valid url, check "app_installer: app_installer_folder_path" at pubspec.yaml${Ansi(true).none}');
+      exit(-1);
     } else {
-      installerPath = Uri.decodeFull(installerPath!);
+      appInstallerFolderPath = Uri.decodeFull(appInstallerFolderPath!);
     }
   }
 
