@@ -25,50 +25,50 @@ class MyApp extends StatelessWidget {
                   width: 210,
                   child: Image(image: AssetImage('logo.png')),
                 ),
-                Container(height: 20),
-                SizedBox(
-                  width: 210,
-                  child: Expander(
-                    header: Text(
-                      'Additional Links',
-                      style: subTitleStyle,
-                    ),
-                    content: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                            child: MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: Text(
-                                'Publisher Certificate',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ),
-                            onTap: () async {
-                              await launch('CERTIFICATE_LINK');
-                            }),
-                        Container(height: 20),
-                        GestureDetector(
-                            child: MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: Text(
-                                '.msix',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ),
-                            onTap: () async {
-                              await launch('MSIX_LINK');
-                            }),
-                      ],
-                    ),
-                  ),
-                ),
+                // Container(height: 20),
+                // SizedBox(
+                //   width: 210,
+                //   child: Expander(
+                //     header: Text(
+                //       'Additional Links',
+                //       style: subTitleStyle,
+                //     ),
+                //     content: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         GestureDetector(
+                //             child: MouseRegion(
+                //               cursor: SystemMouseCursors.click,
+                //               child: Text(
+                //                 'Publisher Certificate',
+                //                 style: TextStyle(
+                //                   color: Colors.blue,
+                //                   fontWeight: FontWeight.normal,
+                //                 ),
+                //               ),
+                //             ),
+                //             onTap: () async {
+                //               await launch('CERTIFICATE_LINK');
+                //             }),
+                //         Container(height: 20),
+                //         GestureDetector(
+                //             child: MouseRegion(
+                //               cursor: SystemMouseCursors.click,
+                //               child: Text(
+                //                 '.msix',
+                //                 style: TextStyle(
+                //                   color: Colors.blue,
+                //                   fontWeight: FontWeight.normal,
+                //                 ),
+                //               ),
+                //             ),
+                //             onTap: () async {
+                //               await launch('MSIX_LINK');
+                //             }),
+                //       ],
+                //     ),
+                //   ),
+                // ),
               ],
             ),
             Container(width: 30),
@@ -101,7 +101,7 @@ class MyApp extends StatelessWidget {
                         ),
                       ),
                       onPressed: () async {
-                        await launch('MSIX_LINK');
+                        await launch('APP_INSTALLER_LINK');
                       }),
                 ),
                 Container(height: 15),

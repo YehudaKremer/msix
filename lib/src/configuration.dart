@@ -36,7 +36,7 @@ class Configuration {
   String? outputPath;
   String? outputName;
   String? publishFolderPath;
-  String? appInstallerFolderPath;
+  String? appInstallerUri;
   int hoursBetweenUpdateChecks = 0;
   bool automaticBackgroundTask = true;
   bool updateBlocksActivation = true;
@@ -51,7 +51,9 @@ class Configuration {
   String get vcLibsFolderPath => '$msixAssetsPath/VCLibs';
   String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
   String get iconsGeneratorPath => '$msixAssetsPath/IconsGenerator';
+  String get appInstallerWebSitePath => '$msixAssetsPath/appInstallerSite';
   String pubspecYamlPath = "pubspec.yaml";
+  String osMinVersion = '10.0.17763.0';
 
   Configuration(this._arguments, this._logger);
 
@@ -119,8 +121,8 @@ class Configuration {
 
     publishFolderPath =
         _args['publish-folder-path'] ?? installerYaml['publish_folder_path'];
-    appInstallerFolderPath = _args['app-installer-folder-path'] ??
-        installerYaml['app_installer_folder_path'];
+    appInstallerUri =
+        _args['app-installer-uri'] ?? installerYaml['app_installer_uri'];
     hoursBetweenUpdateChecks = int.parse(_args['hours-between-update-checks'] ??
         installerYaml['hours_between_update_checks']?.toString() ??
         '0');
@@ -237,8 +239,6 @@ class Configuration {
         .then((file) => basename(file.path));
   }
 
-  bool haveLogoPath() => !logoPath.isNull;
-
   /// parse the cli arguments
   void _parseCliArguments(List<String> args) {
     _logger.trace('parsing cli arguments');
@@ -265,7 +265,7 @@ class Configuration {
       ..addOption('toast-activator-arguments')
       ..addOption('toast-activator-display-name')
       ..addOption('publish-folder-path')
-      ..addOption('app-installer-folder-path')
+      ..addOption('app-installer-uri')
       ..addOption('hours-between-update-checks')
       ..addFlag('store')
       ..addFlag('add-execution-alias')
@@ -290,14 +290,17 @@ class Configuration {
       exit(-1);
     }
 
-    if (appInstallerFolderPath.isNullOrEmpty) {
-      appInstallerFolderPath = publishFolderPath;
-    } else if (Uri.tryParse(appInstallerFolderPath!) == null) {
+    if (appInstallerUri.isNullOrEmpty ||
+        Uri.tryParse(appInstallerUri!) == null) {
       _logger.stderr(
-          '${Ansi(true).red}installer path is a valid url, check "app_installer: app_installer_folder_path" at pubspec.yaml${Ansi(true).none}');
+          '${Ansi(true).red}installer path is a not exists or invalid url, check "app_installer: app_installer_uri" at pubspec.yaml${Ansi(true).none}');
+      exit(-1);
+    } else if (!appInstallerUri!.endsWith('.appinstaller')) {
+      _logger.stderr(
+          '${Ansi(true).red}installer path must be full path to the .appinstaller file${Ansi(true).none}');
       exit(-1);
     } else {
-      appInstallerFolderPath = Uri.decodeFull(appInstallerFolderPath!);
+      appInstallerUri = Uri.decodeFull(appInstallerUri!);
     }
   }
 

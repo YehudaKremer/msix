@@ -160,7 +160,7 @@ msix_config:
   publisher_display_name: MyApp
   app_installer: #<-- app installer configuration
     publish_folder_path: c:\path\to\myPublishFolder
-    app_installer_folder_path: c:\path\to\mySiteFolderOrShareFolder
+    app_installer_uri: http://localhost:5000/MyApp.appinstaller
     hours_between_update_checks: 0
     automatic_background_task: true
     update_blocks_activation: true
@@ -169,15 +169,15 @@ msix_config:
   msix_version: 1.0.3.0
 ```
 
-| YAML name                       | Command-line argument             | Description (from Microsoft [schema reference])                                                                                                                                                           | Example                                |
-| ------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| `publish_folder_path`           | `--publish-folder-path`           | A path to the publish folder.                                                                                                                                                                             | `c:\path\to\myPublishFolder`           |
-| `app_installer_folder_path`     | `--app-installer-folder-path`     | A path to the folder contains the App Installer file, accessible by the clients to install and get updates from. can be http or local file share. if not set, using the `publish_folder_path` as default. | `c:\path\to\mySiteFolderOrShareFolder` |
-| `hours_between_update_checks`   | `--hours-between-update-checks`   | Defines the minimal time gap between update checks, when the user open the app. default is 0 (will check for update every time the app opened)                                                            | `2`                                    |
-| `automatic_background_task`     | `--automatic-background-task`     | Checks for updates in the background every 8 hours independently of whether the user launched the app. default is **true**                                                                                | `true`                                 |
-| `update_blocks_activation`      | `--update-blocks-activation`      | Defines the experience when an app update is checked for. default is **true**                                                                                                                             | `true`                                 |
-| `show_prompt`                   | `--show-prompt`                   | Defines if a window is displayed when updates are being installed, and when updates are being checked for. default is **true**                                                                            | `true`                                 |
-| `force_update_from_any_version` | `--force-update-from-any-version` | Allows the app to update from version x to version x++ or to downgrade from version x to version x--. default is **false**                                                                                | `true`                                 |
+| YAML name                       | Command-line argument             | Description (from Microsoft [schema reference])                                                                                                | Example                                    |
+| ------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `publish_folder_path`           | `--publish-folder-path`           | A path to the publish folder.                                                                                                                  | `c:\path\to\myPublishFolder`               |
+| `app_installer_uri`             | `--app-installer-uri`             | A path/Url .appinstaller file, accessible by the clients to install and get updates from. can be http or local file share.                     | `http://localhost:5000/MyApp.appinstaller` |
+| `hours_between_update_checks`   | `--hours-between-update-checks`   | Defines the minimal time gap between update checks, when the user open the app. default is 0 (will check for update every time the app opened) | `2`                                        |
+| `automatic_background_task`     | `--automatic-background-task`     | Checks for updates in the background every 8 hours independently of whether the user launched the app. default is **true**                     | `true`                                     |
+| `update_blocks_activation`      | `--update-blocks-activation`      | Defines the experience when an app update is checked for. default is **true**                                                                  | `true`                                     |
+| `show_prompt`                   | `--show-prompt`                   | Defines if a window is displayed when updates are being installed, and when updates are being checked for. default is **true**                 | `true`                                     |
+| `force_update_from_any_version` | `--force-update-from-any-version` | Allows the app to update from version x to version x++ or to downgrade from version x to version x--. default is **false**                     | `true`                                     |
 
 </details>
 

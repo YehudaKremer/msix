@@ -50,7 +50,9 @@ class Msix {
 
     var loggerProgress = _logger.progress('publish');
     await appInstaller.copyMsixToVersionsFolder();
+    await appInstaller.copyCertificateToVersionsFolder();
     await appInstaller.generateAppInstaller();
+    await appInstaller.generateAppInstallerWebSite();
     loggerProgress.finish(showTiming: true);
   }
 

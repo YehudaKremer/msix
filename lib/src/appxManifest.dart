@@ -48,7 +48,7 @@ class AppxManifest {
       ${_config.languages!.map((language) => '<Resource Language="$language" />').join('')}
     </Resources>
     <Dependencies>
-      <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22000.1" />
+      <TargetDeviceFamily Name="Windows.Desktop" MinVersion="${_config.osMinVersion}" MaxVersionTested="10.0.22000.1" />
     </Dependencies>
     <Capabilities>
       ${_getCapabilities()}

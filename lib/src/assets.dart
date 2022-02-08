@@ -26,7 +26,7 @@ class Assets {
   Future<void> copyIcons() async {
     _logger.trace('copying app icons');
 
-    if (_config.haveLogoPath()) {
+    if (_config.logoPath != null) {
       await _generateAssetsIcons();
     } else {
       _copyGeneratedIcons(_config.defaultsIconsFolderPath);
