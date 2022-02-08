@@ -30,6 +30,9 @@ class Configuration {
   List<String>? signToolOptions;
   String? protocolActivation;
   String? fileExtension;
+  String? toastActivatorCLSID;
+  String? toastActivatorArguments;
+  String? toastActivatorDisplayName;
   String? outputPath;
   String? outputName;
   String? publishFolderPath;
@@ -99,6 +102,18 @@ class Configuration {
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
 
+    // toast activator configurations
+    var toastActivatorYaml = yaml['toast-activator'] ?? YamlMap();
+
+    toastActivatorCLSID =
+        _args['toast-activator-clsid'] ?? toastActivatorYaml['clsid'];
+    toastActivatorArguments = _args['toast-activator-arguments'] ??
+        toastActivatorYaml['arguments'] ??
+        '----AppNotificationActivationServer';
+    toastActivatorDisplayName = _args['toast-activator-display-name'] ??
+        toastActivatorYaml['display_name'] ??
+        'Toast activator';
+    
     // app installer configurations
     var installerYaml = yaml['app_installer'] ?? YamlMap();
 
@@ -246,6 +261,9 @@ class Configuration {
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
       ..addOption('install-certificate')
+      ..addOption('toast-activator-clsid')
+      ..addOption('toast-activator-arguments')
+      ..addOption('toast-activator-display-name')
       ..addOption('publish-folder-path')
       ..addOption('app-installer-folder-path')
       ..addOption('hours-between-update-checks')
