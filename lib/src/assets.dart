@@ -29,7 +29,7 @@ class Assets {
     if (_config.haveLogoPath()) {
       await _generateAssetsIcons();
     } else {
-      _copyGeneratedIcons(_config.defaultsIconsFolderPath());
+      _copyGeneratedIcons(_config.defaultsIconsFolderPath);
     }
   }
 
@@ -38,7 +38,7 @@ class Assets {
     _logger.trace('copying VC libraries');
 
     _vCLibsFiles = _getAllDirectoryFiles(
-        '${_config.vcLibsFolderPath()}/${_config.architecture}');
+        '${_config.vcLibsFolderPath}/${_config.architecture}');
 
     for (File file in _vCLibsFiles) {
       await File(file.path)

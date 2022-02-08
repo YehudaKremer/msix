@@ -15,7 +15,7 @@ class MakePri {
 
     final buildPath = _config.buildFilesFolder;
     var makePriPath =
-        '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makepri.exe';
+        '${_config.msixToolkitPath}/Redist.${_config.architecture}/makepri.exe';
 
     var makePriConfigProcess = await Process.run(makePriPath, [
       'createconfig',
@@ -27,6 +27,7 @@ class MakePri {
     ]);
 
     if (makePriConfigProcess.exitCode != 0) {
+      _logger.stderr(makePriConfigProcess.stdout);
       throw makePriConfigProcess.stderr;
     }
 
@@ -46,6 +47,7 @@ class MakePri {
     await File('$buildPath/priconfig.xml').deleteIfExists();
 
     if (makePriProcess.exitCode != 0) {
+      _logger.stderr(makePriProcess.stdout);
       throw makePriProcess.stderr;
     }
   }
