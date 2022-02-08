@@ -105,13 +105,13 @@ class Configuration {
     // toast activator configurations
     var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
 
-    toastActivatorCLSID =
-        _args['toast-activator-clsid'] ?? toastActivatorYaml['clsid'];
+    toastActivatorCLSID = _args['toast-activator-clsid'] ??
+        toastActivatorYaml['clsid']?.toString();
     toastActivatorArguments = _args['toast-activator-arguments'] ??
-        toastActivatorYaml['arguments'] ??
+        toastActivatorYaml['arguments']?.toString() ??
         '----AppNotificationActivationServer';
     toastActivatorDisplayName = _args['toast-activator-display-name'] ??
-        toastActivatorYaml['display_name'] ??
+        toastActivatorYaml['display_name']?.toString() ??
         'Toast activator';
 
     // app installer configurations
