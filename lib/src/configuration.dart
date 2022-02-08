@@ -103,7 +103,7 @@ class Configuration {
     languages = _getLanguages(yaml);
 
     // toast activator configurations
-    var toastActivatorYaml = yaml['toast-activator'] ?? YamlMap();
+    var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
 
     toastActivatorCLSID =
         _args['toast-activator-clsid'] ?? toastActivatorYaml['clsid'];
@@ -113,7 +113,7 @@ class Configuration {
     toastActivatorDisplayName = _args['toast-activator-display-name'] ??
         toastActivatorYaml['display_name'] ??
         'Toast activator';
-    
+
     // app installer configurations
     var installerYaml = yaml['app_installer'] ?? YamlMap();
 
