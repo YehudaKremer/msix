@@ -1,11 +1,13 @@
 # Changelog
 
-## 3.0.0-dev.2
+## 3.0.0-dev.3
 
-- code refactoring
-- logs are now minimal by default, use the `-v` argument to print extended logs (useful for debugging and bug reporting)
+- add `publish` command and configurations, for sideloading publish (outside the microsoft store)
+- before publish - the user is asked (cli dialog) if he wants to **increment version number** (if needed)
 - the user is asked (cli dialog) if he wants can install the certificate (done with powershell)
-- many more features ([App Installer](https://docs.microsoft.com/en-us/windows/msix/app-installer/app-installer-file-overview)) will be added in 3.0v...
+- add [toast notifications](https://github.com/YehudaKremer/msix/issues/94) configuration
+- logs are now minimal by default, use the `-v` argument to print extended logs (useful for debugging and bug reporting)
+- code refactoring
 
 ### Breaking Changes
 
