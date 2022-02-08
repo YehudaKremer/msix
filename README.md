@@ -143,6 +143,12 @@ To create a App Installer file, first set the `publish_folder_path` configuratio
 PS c:\src\flutter_project> flutter pub run msix:publish
 ```
 
+This command will:
+
+- create msix installer in the publish folder (`publish_folder_path`)
+- create app installer file in the app installer folder (`app_installer_folder_path`)
+- create web site page in the app installer folder (`app_installer_folder_path`)
+
 <details>
 <summary>Available configurations for App Installer (click to expand)</summary>
 
