@@ -32,16 +32,22 @@ class Configuration {
   String? fileExtension;
   String? outputPath;
   String? outputName;
+  String? publishFolderPath;
+  String? appInstallerFolderPath;
+  int hoursBetweenUpdateChecks = 0;
+  bool automaticBackgroundTask = true;
+  bool updateBlocksActivation = true;
+  bool showPrompt = true;
+  bool forceUpdateFromAnyVersion = false;
   bool store = false;
   bool installCert = true;
-  bool updateCompanyName = true;
   bool addExecutionAlias = false;
   bool createWithDebugBuildFiles = false;
   Iterable<String>? languages;
-  String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
-  String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
-  String msixToolkitPath() => '$msixAssetsPath/MSIX-Toolkit';
-  String iconsGeneratorPath() => '$msixAssetsPath/IconsGenerator';
+  String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
+  String get vcLibsFolderPath => '$msixAssetsPath/VCLibs';
+  String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
+  String get iconsGeneratorPath => '$msixAssetsPath/IconsGenerator';
   String pubspecYamlPath = "pubspec.yaml";
 
   Configuration(this._arguments, this._logger);
@@ -64,8 +70,6 @@ class Configuration {
         yaml['add_execution_alias']?.toLowerCase() == 'true';
     installCert = _args['install-certificate'] != 'false' &&
         yaml['install_certificate'] != 'false';
-    updateCompanyName = _args['update-company-name'] != 'false' &&
-        yaml['update_company_name'] != 'false';
     store = _args.wasParsed('store') ||
         yaml['store']?.toString().toLowerCase() == 'true';
     createWithDebugBuildFiles = _args.wasParsed('debug') ||
@@ -94,6 +98,32 @@ class Configuration {
     architecture = _args['architecture'] ?? yaml['architecture'];
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
+
+    // app installer configurations
+    var installerYaml = yaml['app_installer'] ?? YamlMap();
+
+    publishFolderPath =
+        _args['publish-folder-path'] ?? installerYaml['publish_folder_path'];
+    appInstallerFolderPath = _args['app-installer-folder-path'] ??
+        installerYaml['app_installer_folder_path'];
+    hoursBetweenUpdateChecks = int.parse(_args['hours-between-update-checks'] ??
+        installerYaml['hours_between_update_checks']?.toString() ??
+        '0');
+    if (hoursBetweenUpdateChecks < 0) hoursBetweenUpdateChecks = 0;
+    automaticBackgroundTask = _args.wasParsed('automatic-background-task') ||
+        installerYaml['automatic_background_task']?.toString().toLowerCase() ==
+            'true';
+    updateBlocksActivation = _args.wasParsed('update-blocks-activation') ||
+        installerYaml['update_blocks_activation']?.toString().toLowerCase() ==
+            'true';
+    showPrompt = _args.wasParsed('show-prompt') ||
+        installerYaml['show_prompt']?.toString().toLowerCase() == 'true';
+    forceUpdateFromAnyVersion =
+        _args.wasParsed('force-update-from-any-version') ||
+            installerYaml['force_update_from_any_version']
+                    ?.toString()
+                    .toLowerCase() ==
+                'true';
   }
 
   /// Validate the configuration values and set default values
@@ -175,7 +205,10 @@ class Configuration {
   Future<void> validateBuildFiles() async {
     _logger.trace('validating build files');
 
-    if (!(await Directory(buildFilesFolder).exists())) {
+    if (!await Directory(buildFilesFolder).exists() ||
+        !await Directory(buildFilesFolder)
+            .list()
+            .any((file) => file.path.endsWith('.exe'))) {
       throw 'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again';
     }
 
@@ -213,14 +246,41 @@ class Configuration {
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
       ..addOption('install-certificate')
-      ..addOption('update-company-name')
+      ..addOption('publish-folder-path')
+      ..addOption('app-installer-folder-path')
+      ..addOption('hours-between-update-checks')
       ..addFlag('store')
       ..addFlag('add-execution-alias')
       ..addFlag('debug')
-      ..addFlag('release');
+      ..addFlag('release')
+      ..addFlag('automatic-background-task')
+      ..addFlag('update-blocks-activation')
+      ..addFlag('show-prompt')
+      ..addFlag('force-update-from-any-version');
 
     /// exclude -v (verbose) from the arguments
     _args = parser.parse(args.where((arg) => arg != '-v'));
+  }
+
+  Future<void> validateAppInstallerConfigValues() async {
+    _logger.trace('validating app installer config values');
+
+    if (publishFolderPath.isNullOrEmpty ||
+        !await Directory(publishFolderPath!).exists()) {
+      _logger.stderr(
+          '${Ansi(true).red}publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml${Ansi(true).none}');
+      exit(-1);
+    }
+
+    if (appInstallerFolderPath.isNullOrEmpty) {
+      appInstallerFolderPath = publishFolderPath;
+    } else if (Uri.tryParse(appInstallerFolderPath!) == null) {
+      _logger.stderr(
+          '${Ansi(true).red}installer path is a valid url, check "app_installer: app_installer_folder_path" at pubspec.yaml${Ansi(true).none}');
+      exit(-1);
+    } else {
+      appInstallerFolderPath = Uri.decodeFull(appInstallerFolderPath!);
+    }
   }
 
   /// Get the assets folder path from the .packages file
