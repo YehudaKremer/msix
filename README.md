@@ -78,6 +78,25 @@ msix_config:
 | `add_execution_alias`    | `--add-execution-alias`         | Add an alias for running the app, using `pubspec.yaml` `name:` node                                                   | `true`                                        |
 | `debug`                  | `--debug` or `--release`        | Create MSIX from the debug/release build files (`\build\windows\runner\<Debug/Release>`), **release** is the default. | `true`                                        |
 
+##### [Toast Notifications] configuration example:
+
+```yaml
+msix_config:
+  display_name: MyApp
+  publisher_display_name: MyApp
+  toast_activator: #<-- toast notifications configuration
+    clsid: A1232234-1234-1234-1234-123412341234
+    arguments: "1,2,3"
+    display_name: "TEST"
+  msix_version: 1.0.3.0
+```
+
+| YAML name      | Command-line argument                 | Description                               | Example                                |
+| -------------- | ------------------------------------- | ----------------------------------------- | -------------------------------------- |
+| `clsid`        | `--toast-activator-clsid` `-d`        | The UUID CLSID.                           | `replaced-with-your-guid-C173E6ADF0C3` |
+| `arguments`    | `--toast-activator-arguments`         | Arguments for the toast notifications.    | `----AppNotificationActivationServer`  |
+| `display_name` | `--toast-activator-display-name` `-d` | Display name for the toast notifications. | `Toast activator`                      |
+
 </details>
 
 ## :black_nib: Signing options
@@ -127,6 +146,23 @@ PS c:\src\flutter_project\> flutter pub run msix:publish
 <details>
 <summary>Available configurations for App Installer (click to expand)</summary>
 
+##### App Installer configuration example:
+
+```yaml
+msix_config:
+  display_name: MyApp
+  publisher_display_name: MyApp
+  app_installer: #<-- app installer configuration
+    publish_folder_path: c:\path\to\myPublishFolder
+    app_installer_folder_path: c:\path\to\mySiteFolderOrShareFolder
+    hours_between_update_checks: 0
+    automatic_background_task: true
+    update_blocks_activation: true
+    show_prompt: true
+    force_update_from_any_version: false
+  msix_version: 1.0.3.0
+```
+
 | YAML name                       | Command-line argument             | Description (from Microsoft [schema reference])                                                                                                                                                           | Example                                |
 | ------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
 | `publish_folder_path`           | `--publish-folder-path`           | A path to the publish folder.                                                                                                                                                                             | `c:\path\to\myPublishFolder`           |
@@ -158,3 +194,4 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [github settings icon]: https://user-images.githubusercontent.com/946652/152312495-173eb794-337c-4630-a149-2167810614ae.png
 [microsoft store dashboard]: https://partner.microsoft.com/dashboard
 [this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png
+[toast notifications]: https://docs.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast-desktop-cpp-wrl#msixsparse-package
