@@ -7,6 +7,7 @@ import 'src/makePri.dart';
 import 'src/appxManifest.dart';
 import 'src/makeAppx.dart';
 import 'src/signTool.dart';
+import 'src/extensions.dart';
 
 class Msix {
   late Logger _logger;
@@ -30,14 +31,12 @@ class Msix {
     await _initConfig();
     await _createMsix();
 
-    _logger.write(Ansi(true)
-        .emphasized('${Ansi(true).green}msix created:${Ansi(true).none} '));
-
-    var installerPath =
-        '${_config.outputPath ?? _config.buildFilesFolder}/${_config.outputName ?? _config.appName}.msix';
-    _logger.stdout(Ansi(true).emphasized(
-        '${Ansi(true).blue}${installerPath.substring(installerPath.indexOf('build/windows'))}${Ansi(true).none}'
-            .replaceAll('/', r'\')));
+    _logger.write('msix created: '.green.emphasized);
+    _logger.stdout(_config.msixPath
+        .substring(_config.msixPath.indexOf('build/windows'))
+        .blue
+        .emphasized
+        .replaceAll('/', r'\'));
   }
 
   Future<void> publish() async {
@@ -54,6 +53,10 @@ class Msix {
     await appInstaller.generateAppInstaller();
     await appInstaller.generateAppInstallerWebSite();
     loggerProgress.finish(showTiming: true);
+
+    _logger.write('appinstaller created: '.green.emphasized);
+    _logger
+        .stdout(_config.appInstallerPath.blue.emphasized.replaceAll('/', r'\'));
   }
 
   Future<void> _initConfig() async {

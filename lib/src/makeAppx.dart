@@ -12,13 +12,18 @@ class MakeAppx {
   Future<void> pack() async {
     _logger.trace('packing');
 
-    var msixPath =
-        '${_config.outputPath ?? _config.buildFilesFolder}/${_config.outputName ?? _config.appName}.msix';
     var makeAppxPath =
         '${_config.msixToolkitPath}/Redist.${_config.architecture}/makeappx.exe';
 
-    var makeAppxProcess = await Process.run(makeAppxPath,
-        ['pack', '/v', '/o', '/d', _config.buildFilesFolder, '/p', msixPath]);
+    var makeAppxProcess = await Process.run(makeAppxPath, [
+      'pack',
+      '/v',
+      '/o',
+      '/d',
+      _config.buildFilesFolder,
+      '/p',
+      _config.msixPath
+    ]);
 
     if (makeAppxProcess.exitCode != 0) {
       _logger.stderr(makeAppxProcess.stdout);

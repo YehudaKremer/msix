@@ -97,14 +97,14 @@ class SignTool {
         if (importCertificate.exitCode != 0) {
           var error = importCertificate.stderr.toString();
           if (error.contains('was canceled by the user')) {
-            _logger.stderr(Ansi(true).emphasized(
-                Ansi(true).error('the certificate installation was canceled')));
+            _logger.stderr(
+                'the certificate installation was canceled'.red.emphasized);
           } else {
             throw error;
           }
         } else {
-          _logger.stdout(Ansi(true).emphasized(
-              '${Ansi(true).green}the certificate installed successfully${Ansi(true).none} '));
+          _logger.stdout(
+              'the certificate installed successfully '.green.emphasized);
         }
       }
     }
@@ -140,7 +140,7 @@ class SignTool {
       ProcessResult signProcess = await Process.run(signtoolPath, [
         'sign',
         ...signtoolOptions,
-        '${_config.outputPath ?? _config.buildFilesFolder}/${_config.outputName ?? _config.appName}.msix',
+        _config.msixPath,
       ]);
 
       if (signProcess.exitCode != 0) {

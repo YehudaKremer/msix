@@ -33,7 +33,6 @@
 
 # Web related
 lib/generated_plugin_registrant.dart
-logo.png
 web/favicon.png
 
 # Symbolication related

@@ -36,7 +36,6 @@ class Configuration {
   String? outputPath;
   String? outputName;
   String? publishFolderPath;
-  String? appInstallerUri;
   int hoursBetweenUpdateChecks = 0;
   bool automaticBackgroundTask = true;
   bool updateBlocksActivation = true;
@@ -52,6 +51,10 @@ class Configuration {
   String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
   String get iconsGeneratorPath => '$msixAssetsPath/IconsGenerator';
   String get appInstallerWebSitePath => '$msixAssetsPath/appInstallerSite';
+  String get msixPath =>
+      '${outputPath ?? buildFilesFolder}/${outputName ?? appName}.msix';
+  String get appInstallerPath =>
+      '$publishFolderPath/${basename(msixPath)}.appinstaller';
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
 
@@ -121,8 +124,6 @@ class Configuration {
 
     publishFolderPath =
         _args['publish-folder-path'] ?? installerYaml['publish_folder_path'];
-    appInstallerUri =
-        _args['app-installer-uri'] ?? installerYaml['app_installer_uri'];
     hoursBetweenUpdateChecks = int.parse(_args['hours-between-update-checks'] ??
         installerYaml['hours_between_update_checks']?.toString() ??
         '0');
@@ -265,7 +266,6 @@ class Configuration {
       ..addOption('toast-activator-arguments')
       ..addOption('toast-activator-display-name')
       ..addOption('publish-folder-path')
-      ..addOption('app-installer-uri')
       ..addOption('hours-between-update-checks')
       ..addFlag('store')
       ..addFlag('add-execution-alias')
@@ -286,21 +286,11 @@ class Configuration {
     if (publishFolderPath.isNullOrEmpty ||
         !await Directory(publishFolderPath!).exists()) {
       _logger.stderr(
-          '${Ansi(true).red}publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml${Ansi(true).none}');
-      exit(-1);
-    }
-
-    if (appInstallerUri.isNullOrEmpty ||
-        Uri.tryParse(appInstallerUri!) == null) {
-      _logger.stderr(
-          '${Ansi(true).red}installer path is a not exists or invalid url, check "app_installer: app_installer_uri" at pubspec.yaml${Ansi(true).none}');
-      exit(-1);
-    } else if (!appInstallerUri!.endsWith('.appinstaller')) {
-      _logger.stderr(
-          '${Ansi(true).red}installer path must be full path to the .appinstaller file${Ansi(true).none}');
+          'publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml'
+              .red);
       exit(-1);
     } else {
-      appInstallerUri = Uri.decodeFull(appInstallerUri!);
+      publishFolderPath = Uri.decodeFull(publishFolderPath!);
     }
   }
 

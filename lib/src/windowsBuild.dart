@@ -21,8 +21,8 @@ class WindowsBuild {
     var buildWindowsArguments = ['build', 'windows'];
     if (_config.createWithDebugBuildFiles) buildWindowsArguments.add('--debug');
 
-    var loggerProgress = _logger.progress(
-        'running "flutter ${buildWindowsArguments.join(' ')}" command');
+    var loggerProgress = _logger
+        .progress('running "flutter ${buildWindowsArguments.join(' ')}"');
 
     var windowsBuildProcess =
         await Process.run('flutter', buildWindowsArguments, runInShell: true);

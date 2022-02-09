@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:path/path.dart' as path;
 import 'dart:convert' show HtmlEscape;
 import 'package:cli_dialog/cli_dialog.dart';
 import 'package:path/path.dart';
@@ -13,24 +12,28 @@ class AppInstaller {
   Configuration _config;
   Logger _logger;
 
-  String get publishVersionsFolderPath =>
-      '${_config.publishFolderPath}/versions';
-  String get publishMsixPath =>
-      '$publishVersionsFolderPath/${_config.appName}_${_config.msixVersion}.msix';
-  String get appInstallerPath =>
-      '${_config.publishFolderPath}/${path.basename(_config.appInstallerUri!)}';
+  String get versionsFolderPath => '${_config.publishFolderPath}/versions';
+  String get msixVersionPath =>
+      '$versionsFolderPath/${_config.appName}_${_config.msixVersion}.msix';
+
   File get htmlFile =>
       File('${_config.appInstallerWebSitePath}/web/index.html');
   File get mainFile => File('${_config.appInstallerWebSitePath}/lib/main.dart');
+  String get webSiteLogoPath => '${_config.appInstallerWebSitePath}/logo.png';
+  String get webSiteFaviconPath =>
+      '${_config.appInstallerWebSitePath}/web/favicon.png';
+  String get defaultLogoPath =>
+      '${_config.defaultsIconsFolderPath}/Square44x44Logo.altform-lightunplated_targetsize-256.png';
 
   AppInstaller(this._config, this._logger);
 
   Future<void> validatePublishVersion() async {
     _logger.trace('validate publish version');
 
-    if (!await File(appInstallerPath).exists()) return;
+    if (!await File(_config.appInstallerPath).exists()) return;
 
-    var appInstallerContent = await File(appInstallerPath).readAsString();
+    var appInstallerContent =
+        await File(_config.appInstallerPath).readAsString();
     var appInstallerVersion = appInstallerContent.substring(
         appInstallerContent.indexOf('Version="') + 9,
         appInstallerContent.indexOf(
@@ -66,21 +69,22 @@ class AppInstaller {
     }
   }
 
+  Future<void> _createVersionFolder() async =>
+      await Directory(versionsFolderPath).create(recursive: true);
+
   Future<void> copyMsixToVersionsFolder() async {
     _logger.trace('copy msix to versions folder');
 
-    await Directory(publishVersionsFolderPath).create(recursive: true);
-    await File(
-            '${_config.outputPath ?? _config.buildFilesFolder}/${_config.outputName ?? _config.appName}.msix')
-        .copy(publishMsixPath);
+    await _createVersionFolder();
+    await File(_config.msixPath).copy(msixVersionPath);
   }
 
   Future<void> copyCertificateToVersionsFolder() async {
     _logger.trace('copy certificate to versions folder');
 
-    await Directory(publishVersionsFolderPath).create(recursive: true);
-    await File(_config.certificatePath!).copy(
-        '$publishVersionsFolderPath/${basename(_config.certificatePath!)}');
+    await _createVersionFolder();
+    await File(_config.certificatePath!)
+        .copy('$versionsFolderPath/${basename(_config.certificatePath!)}');
   }
 
   Future<void> generateAppInstaller() async {
@@ -88,10 +92,10 @@ class AppInstaller {
 
     var appInstallerContent = '''<?xml version="1.0" encoding="utf-8"?>
   <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2021"
-    Uri="${_config.appInstallerUri}" Version="${_config.msixVersion}">
+    Uri="${_config.appInstallerPath}" Version="${_config.msixVersion}">
     <MainPackage Name="${_config.identityName}" Version="${_config.msixVersion}"
       Publisher="${HtmlEscape().convert(_config.publisher!.replaceAll(' = ', '='))}"
-      Uri="$publishMsixPath"
+      Uri="$msixVersionPath"
       ProcessorArchitecture="${_config.architecture}" />
     <UpdateSettings>
       <OnLaunch HoursBetweenUpdateChecks="${_config.hoursBetweenUpdateChecks}" 
@@ -101,7 +105,7 @@ class AppInstaller {
     </UpdateSettings>
   </AppInstaller>''';
 
-    await File(appInstallerPath).writeAsString(appInstallerContent);
+    await File(_config.appInstallerPath).writeAsString(appInstallerContent);
   }
 
   Future<void> generateAppInstallerWebSite() async {
@@ -124,16 +128,12 @@ class AppInstaller {
 
     mainFileContent = mainFileContent.replaceAll(
         'PAGE_TITLE', _config.displayName ?? _config.appName!);
-    mainFileContent = mainFileContent.replaceAll('CERTIFICATE_LINK',
-        '$publishVersionsFolderPath/${basename(_config.certificatePath!)}');
-    mainFileContent = mainFileContent.replaceAll(
-        'MSIX_LINK', publishMsixPath.replaceAll('\\', '/'));
     mainFileContent = mainFileContent.replaceAll(
         'APP_NAME', _config.displayName ?? _config.appName!);
     mainFileContent =
         mainFileContent.replaceAll('APP_VERSION', _config.msixVersion!);
     mainFileContent = mainFileContent.replaceAll(
-        'APP_INSTALLER_LINK', _config.appInstallerUri!);
+        'APP_INSTALLER_LINK', '/${basename(_config.appInstallerPath)}');
     mainFileContent =
         mainFileContent.replaceAll('REQUIRED_OS_VERSION', _config.osMinVersion);
     mainFileContent =
@@ -141,15 +141,10 @@ class AppInstaller {
     mainFileContent =
         mainFileContent.replaceAll('PUBLISHER_NAME', _config.publisherName!);
 
-    var webSiteLogoPath = '${_config.appInstallerWebSitePath}/logo.png';
-    var webSiteFaviconPath =
-        '${_config.appInstallerWebSitePath}/web/favicon.png';
-
     try {
       await mainFile.writeAsString(mainFileContent);
 
-      var logoFile = File(_config.logoPath ??
-          '${_config.defaultsIconsFolderPath}/Square44x44Logo.altform-lightunplated_targetsize-256.png');
+      var logoFile = File(_config.logoPath ?? defaultLogoPath);
 
       await logoFile.copy(webSiteLogoPath);
       await logoFile.copy(webSiteFaviconPath);
@@ -165,30 +160,15 @@ class AppInstaller {
 
       await Directory('${_config.publishFolderPath}/website')
           .create(recursive: true);
-      await _copyDirectory(
-          Directory('${_config.appInstallerWebSitePath}/build/web'),
-          Directory('${_config.publishFolderPath}/website'));
+      await Directory('${_config.appInstallerWebSitePath}/build/web')
+          .copyDirectory(Directory('${_config.publishFolderPath}'));
     } catch (e) {
       throw e;
     } finally {
       await _restoreAppInstallerWebSiteContent(
           htmlFileOriginalContent, mainFileOriginalContent);
-      await File(webSiteLogoPath).deleteIfExists();
-      await File(webSiteFaviconPath).deleteIfExists();
-    }
-  }
-
-  Future<void> _copyDirectory(Directory source, Directory destination) async {
-    await for (var entity in source.list(recursive: false)) {
-      if (entity is Directory) {
-        var newDirectory = Directory(
-            path.join(destination.absolute.path, path.basename(entity.path)));
-        await newDirectory.create();
-        await _copyDirectory(entity.absolute, newDirectory);
-      } else if (entity is File) {
-        await entity
-            .copy(path.join(destination.path, path.basename(entity.path)));
-      }
+      await File(defaultLogoPath).copy(webSiteLogoPath);
+      await File(defaultLogoPath).copy(webSiteFaviconPath);
     }
   }
 
@@ -196,6 +176,5 @@ class AppInstaller {
       String htmlFileContent, String mainFileContent) async {
     await htmlFile.writeAsString(htmlFileContent);
     await mainFile.writeAsString(mainFileContent);
-    await File('${_config.appInstallerWebSitePath}/logo.png').deleteIfExists();
   }
 }
