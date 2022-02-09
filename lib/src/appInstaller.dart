@@ -1,11 +1,10 @@
 import 'dart:io';
-import 'dart:convert' show HtmlEscape;
+import 'dart:convert' show HtmlEscape, base64Encode;
 import 'package:cli_dialog/cli_dialog.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'configuration.dart';
-import 'extensions.dart';
 
 /// Handles the creation of the manifest file
 class AppInstaller {
@@ -15,15 +14,6 @@ class AppInstaller {
   String get versionsFolderPath => '${_config.publishFolderPath}/versions';
   String get msixVersionPath =>
       '$versionsFolderPath/${_config.appName}_${_config.msixVersion}.msix';
-
-  File get htmlFile =>
-      File('${_config.appInstallerWebSitePath}/web/index.html');
-  File get mainFile => File('${_config.appInstallerWebSitePath}/lib/main.dart');
-  String get webSiteLogoPath => '${_config.appInstallerWebSitePath}/logo.png';
-  String get webSiteFaviconPath =>
-      '${_config.appInstallerWebSitePath}/web/favicon.png';
-  String get defaultLogoPath =>
-      '${_config.defaultsIconsFolderPath}/Square44x44Logo.altform-lightunplated_targetsize-256.png';
 
   AppInstaller(this._config, this._logger);
 
@@ -79,14 +69,6 @@ class AppInstaller {
     await File(_config.msixPath).copy(msixVersionPath);
   }
 
-  Future<void> copyCertificateToVersionsFolder() async {
-    _logger.trace('copy certificate to versions folder');
-
-    await _createVersionFolder();
-    await File(_config.certificatePath!)
-        .copy('$versionsFolderPath/${basename(_config.certificatePath!)}');
-  }
-
   Future<void> generateAppInstaller() async {
     _logger.trace('generate app installer');
 
@@ -111,8 +93,9 @@ class AppInstaller {
   Future<void> generateAppInstallerWebSite() async {
     _logger.trace('generate app installer web site');
 
-    var htmlFileContent = await htmlFile.readAsString();
-    var htmlFileOriginalContent = htmlFileContent;
+    var htmlFileContent =
+        await File('${_config.msixAssetsPath}/appInstallerSite.html')
+            .readAsString();
 
     htmlFileContent = htmlFileContent.replaceAll(
         'PAGE_TITLE', _config.displayName ?? _config.appName!);
@@ -120,61 +103,28 @@ class AppInstaller {
         'PAGE_DESCRIPTION',
         _config.appDescription ??
             '${_config.displayName ?? _config.appName!} installer');
-
-    await htmlFile.writeAsString(htmlFileContent);
-
-    var mainFileContent = await mainFile.readAsString();
-    var mainFileOriginalContent = mainFileContent;
-
-    mainFileContent = mainFileContent.replaceAll(
+    htmlFileContent = htmlFileContent.replaceAll(
         'PAGE_TITLE', _config.displayName ?? _config.appName!);
-    mainFileContent = mainFileContent.replaceAll(
+    htmlFileContent = htmlFileContent.replaceAll(
         'APP_NAME', _config.displayName ?? _config.appName!);
-    mainFileContent =
-        mainFileContent.replaceAll('APP_VERSION', _config.msixVersion!);
-    mainFileContent = mainFileContent.replaceAll(
-        'APP_INSTALLER_LINK', '/${basename(_config.appInstallerPath)}');
-    mainFileContent =
-        mainFileContent.replaceAll('REQUIRED_OS_VERSION', _config.osMinVersion);
-    mainFileContent =
-        mainFileContent.replaceAll('ARCHITECTURE', _config.architecture!);
-    mainFileContent =
-        mainFileContent.replaceAll('PUBLISHER_NAME', _config.publisherName!);
+    htmlFileContent =
+        htmlFileContent.replaceAll('APP_VERSION', _config.msixVersion!);
+    htmlFileContent = htmlFileContent.replaceAll(
+        'APP_INSTALLER_LINK', '${basename(_config.appInstallerPath)}');
+    htmlFileContent =
+        htmlFileContent.replaceAll('REQUIRED_OS_VERSION', _config.osMinVersion);
+    htmlFileContent =
+        htmlFileContent.replaceAll('ARCHITECTURE', _config.architecture!);
+    htmlFileContent =
+        htmlFileContent.replaceAll('PUBLISHER_NAME', _config.publisherName!);
 
-    try {
-      await mainFile.writeAsString(mainFileContent);
+    List<int> imageBytes = await File(_config.logoPath ??
+            '${_config.defaultsIconsFolderPath}/Square44x44Logo.altform-lightunplated_targetsize-256.png')
+        .readAsBytes();
+    String base64Image = base64Encode(imageBytes);
+    htmlFileContent = htmlFileContent.replaceAll('IMAGE_BASE64', base64Image);
 
-      var logoFile = File(_config.logoPath ?? defaultLogoPath);
-
-      await logoFile.copy(webSiteLogoPath);
-      await logoFile.copy(webSiteFaviconPath);
-
-      var buildAppInstallerWebSiteProcess = await Process.run(
-          'flutter', ['build', 'web'],
-          runInShell: true, workingDirectory: _config.appInstallerWebSitePath);
-
-      if (buildAppInstallerWebSiteProcess.exitCode != 0) {
-        _logger.stderr(buildAppInstallerWebSiteProcess.stdout);
-        throw buildAppInstallerWebSiteProcess.stderr;
-      }
-
-      await Directory('${_config.publishFolderPath}/website')
-          .create(recursive: true);
-      await Directory('${_config.appInstallerWebSitePath}/build/web')
-          .copyDirectory(Directory('${_config.publishFolderPath}'));
-    } catch (e) {
-      throw e;
-    } finally {
-      await _restoreAppInstallerWebSiteContent(
-          htmlFileOriginalContent, mainFileOriginalContent);
-      await File(defaultLogoPath).copy(webSiteLogoPath);
-      await File(defaultLogoPath).copy(webSiteFaviconPath);
-    }
-  }
-
-  Future<void> _restoreAppInstallerWebSiteContent(
-      String htmlFileContent, String mainFileContent) async {
-    await htmlFile.writeAsString(htmlFileContent);
-    await mainFile.writeAsString(mainFileContent);
+    await File('${_config.publishFolderPath}/index.html')
+        .writeAsString(htmlFileContent);
   }
 }

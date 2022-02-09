@@ -78,6 +78,12 @@ msix_config:
 | `add_execution_alias`    | `--add-execution-alias`         | Add an alias for running the app, using `pubspec.yaml` `name:` node                                                   | `true`                                        |
 | `debug`                  | `--debug` or `--release`        | Create MSIX from the debug/release build files (`\build\windows\runner\<Debug/Release>`), **release** is the default. | `true`                                        |
 
+</details>
+
+<details>
+
+<summary>Toast Notifications configurations (click to expand)</summary>
+
 ##### [Toast Notifications] configuration example:
 
 ```yaml
@@ -135,15 +141,14 @@ the [Microsoft Store dashboard], as per [this screenshot].
 
 ## :globe_with_meridians: Publishing outside the store
 
-You can use the [App Installer] file to download or update your app from the web, a network share or local file share. App Installer file downloads and updates support https, http and smb protocols.
+You can use the [App Installer] file to enable your users to download or update the app from local file share.
 
-To create a App Installer file, first set the `publish_folder_path` configuration, then run the following command:
+To create a App Installer file, first set the `publish_folder_path` configuration,
+then run the following command:
 
 ```console
 PS c:\src\flutter_project> flutter pub run msix:publish
 ```
-
-TODO: command description here
 
 <details>
 <summary>Available configurations for App Installer (click to expand)</summary>

@@ -3,8 +3,8 @@
 ## 3.0.0-dev.3
 
 - add `publish` command and configurations, for sideloading publish (outside the microsoft store)
-- before publish - the user is asked (cli dialog) if he wants to **increment version number** (if needed)
-- the user is asked (cli dialog) if he wants can install the certificate (done with powershell)
+- user asked (cli dialog) if he want to **increment version number** (if needed)
+- users asked (cli dialog) if he wants can install the certificate (done with powershell)
 - add [toast notifications](https://github.com/YehudaKremer/msix/issues/94) configuration
 - logs are now minimal by default, use the `-v` argument to print extended logs (useful for debugging and bug reporting)
 - code refactoring

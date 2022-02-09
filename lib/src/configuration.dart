@@ -49,12 +49,10 @@ class Configuration {
   String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
   String get vcLibsFolderPath => '$msixAssetsPath/VCLibs';
   String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
-  String get iconsGeneratorPath => '$msixAssetsPath/IconsGenerator';
-  String get appInstallerWebSitePath => '$msixAssetsPath/appInstallerSite';
   String get msixPath =>
       '${outputPath ?? buildFilesFolder}/${outputName ?? appName}.msix';
   String get appInstallerPath =>
-      '$publishFolderPath/${basename(msixPath)}.appinstaller';
+      '$publishFolderPath/${basename(msixPath).replaceAll('.msix', '.appinstaller')}';
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
 
