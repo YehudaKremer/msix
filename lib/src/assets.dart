@@ -68,8 +68,19 @@ class Assets {
               .list(recursive: true, followLinks: false)
               .where((f) => basename(f.path).contains('.msix'))
               .forEach((file) async => await file.deleteIfExists())
-          : Future.value()
+          : Future.value(),
     ]);
+
+    if (clearMsixFiles) {
+      await Future.wait([
+        ...[
+          'installCertificate.ps1',
+          'InstallTestCertificate.exe',
+          'test_certificate.pfx'
+        ].map((fileName) async =>
+            await File('$buildPath/$fileName').deleteIfExists()),
+      ]);
+    }
 
     _vCLibsFiles.forEach((file) async =>
         await File('$buildPath/${basename(file.path)}').deleteIfExists());
