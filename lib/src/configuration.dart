@@ -43,6 +43,7 @@ class Configuration {
   bool forceUpdateFromAnyVersion = false;
   bool store = false;
   bool installCert = true;
+  bool buildWindows = true;
   bool addExecutionAlias = false;
   bool createWithDebugBuildFiles = false;
   Iterable<String>? languages;
@@ -76,6 +77,8 @@ class Configuration {
         yaml['add_execution_alias']?.toLowerCase() == 'true';
     installCert = _args['install-certificate'] != 'false' &&
         yaml['install_certificate'] != 'false';
+    buildWindows = _args['build-windows'] != 'false' &&
+        yaml['build_windows'].toString() != 'false';
     store = _args.wasParsed('store') ||
         yaml['store']?.toString().toLowerCase() == 'true';
     createWithDebugBuildFiles = _args.wasParsed('debug') ||
@@ -265,6 +268,7 @@ class Configuration {
       ..addOption('toast-activator-display-name')
       ..addOption('publish-folder-path')
       ..addOption('hours-between-update-checks')
+      ..addOption('build-windows')
       ..addFlag('store')
       ..addFlag('add-execution-alias')
       ..addFlag('debug')

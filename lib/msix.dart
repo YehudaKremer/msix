@@ -64,7 +64,9 @@ class Msix {
   }
 
   Future<void> _createMsix() async {
-    await WindowsBuild(_config, _logger).build();
+    if (_config.buildWindows) {
+      await WindowsBuild(_config, _logger).build();
+    }
 
     var loggerProgress = _logger.progress('creating msix installer');
 

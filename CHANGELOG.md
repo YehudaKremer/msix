@@ -6,6 +6,7 @@
 - user asked (cli dialog) if he want to **increment version number** (if needed)
 - users asked (cli dialog) if he wants can install the certificate (done with powershell)
 - add [toast notifications](https://github.com/YehudaKremer/msix/issues/94) configuration
+- `msix:create` is includes the `flutter build windows` command, unless use the argument: `--build-windows false`
 - logs are now minimal by default, use the `-v` argument to print extended logs (useful for debugging and bug reporting)
 - code refactoring
 
