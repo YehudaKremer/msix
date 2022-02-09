@@ -90,6 +90,10 @@ class Msix {
     if (!_config.store) {
       if (_config.installCert) await _signTool.installCertificate();
       await _signTool.sign();
+
+      if (_config.withTestCertificateInstaller) {
+        await _assets.addTestCertificateInstaller();
+      }
     }
 
     loggerProgress.finish(showTiming: true);

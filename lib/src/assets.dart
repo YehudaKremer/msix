@@ -312,6 +312,11 @@ class Assets {
       File(path).copySync('${_config.buildFilesFolder}/$newPath');
     }
   }
+
+  Future<void> addTestCertificateInstaller() async {
+    await Directory('${_config.msixAssetsPath}/testCertificateInstaller')
+        .copyDirectory(Directory(_config.buildFilesFolder));
+  }
 }
 
 class Size {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0-dev.5
+
+- add `--with-test-certificate-installer` flag that copy test-certificate installer program (.exe), see configuration table
+
 ## 3.0.0-dev.4
 
 - add `publish` command and configurations, for sideloading publish (outside the microsoft store)

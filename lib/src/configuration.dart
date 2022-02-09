@@ -46,6 +46,7 @@ class Configuration {
   bool buildWindows = true;
   bool addExecutionAlias = false;
   bool createWithDebugBuildFiles = false;
+  bool withTestCertificateInstaller = false;
   Iterable<String>? languages;
   String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
   String get vcLibsFolderPath => '$msixAssetsPath/VCLibs';
@@ -83,6 +84,8 @@ class Configuration {
         yaml['store']?.toString().toLowerCase() == 'true';
     createWithDebugBuildFiles = _args.wasParsed('debug') ||
         yaml['debug']?.toString().toLowerCase() == 'true';
+    withTestCertificateInstaller =
+        _args.wasParsed('with-test-certificate-installer');
     if (createWithDebugBuildFiles)
       buildFilesFolder = buildFilesFolder.replaceFirst('Release', 'Debug');
     displayName = _args['display-name'] ?? yaml['display_name'];
@@ -276,7 +279,8 @@ class Configuration {
       ..addFlag('automatic-background-task')
       ..addFlag('update-blocks-activation')
       ..addFlag('show-prompt')
-      ..addFlag('force-update-from-any-version');
+      ..addFlag('force-update-from-any-version')
+      ..addFlag('with-test-certificate-installer');
 
     /// exclude -v (verbose) from the arguments
     _args = parser.parse(args.where((arg) => arg != '-v'));
