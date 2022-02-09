@@ -89,7 +89,7 @@ class SignTool {
         var importCertificate = await Process.run('powershell.exe', [
           '-NoProfile',
           '-NonInteractive',
-          'Start-Process powershell -ArgumentList \"$installCertificateScriptPath" -Wait -Verb runAs -WindowStyle Hidden'
+          'Start-Process powershell -ArgumentList \"$installCertificateScriptPath\" -Wait -Verb runAs -WindowStyle Hidden'
         ]);
 
         await File(installCertificateScriptPath).deleteIfExists();
