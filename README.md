@@ -145,6 +145,8 @@ the [Microsoft Store dashboard], as per [this screenshot].
 
 You can use the [App Installer] file to enable your users to download or update the app from local file share.
 
+Note: installing from the web `ms-appinstaller:` is [disabled] for now.
+
 To create a App Installer file, first set the `publish_folder_path` configuration,
 then run the following command:
 
@@ -202,3 +204,4 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [microsoft store dashboard]: https://partner.microsoft.com/dashboard
 [this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png
 [toast notifications]: https://docs.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast-desktop-cpp-wrl#msixsparse-package
+[disabled]: https://docs.microsoft.com/en-us/windows/msix/app-installer/installing-windows10-apps-web
