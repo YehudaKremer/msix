@@ -132,13 +132,16 @@ class Configuration {
         '0');
     if (hoursBetweenUpdateChecks < 0) hoursBetweenUpdateChecks = 0;
     automaticBackgroundTask = _args.wasParsed('automatic-background-task') ||
-        installerYaml['automatic_background_task']?.toString().toLowerCase() ==
+        installerYaml['automatic_background_task'] == null ||
+        installerYaml['automatic_background_task'].toString().toLowerCase() ==
             'true';
     updateBlocksActivation = _args.wasParsed('update-blocks-activation') ||
-        installerYaml['update_blocks_activation']?.toString().toLowerCase() ==
+        installerYaml['update_blocks_activation'] == null ||
+        installerYaml['update_blocks_activation'].toString().toLowerCase() ==
             'true';
     showPrompt = _args.wasParsed('show-prompt') ||
-        installerYaml['show_prompt']?.toString().toLowerCase() == 'true';
+        installerYaml['show_prompt'] == null ||
+        installerYaml['show_prompt'].toString().toLowerCase() == 'true';
     forceUpdateFromAnyVersion =
         _args.wasParsed('force-update-from-any-version') ||
             installerYaml['force_update_from_any_version']
