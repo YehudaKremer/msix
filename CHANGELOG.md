@@ -1,16 +1,13 @@
 # Changelog
 
-## 3.0.0-dev.5
-
-- add `--with-test-certificate-installer` flag that copy test-certificate installer program (.exe), see configuration table
-
-## 3.0.0-dev.4
+## 3.0.0-beta.1
 
 - add `publish` command and configurations, for sideloading publish (outside the microsoft store)
 - user asked (cli dialog) if he want to **increment version number** (if needed)
-- users asked (cli dialog) if he wants can install the certificate (done with powershell)
+- user asked (cli dialog) if he want to install the test certificate
 - add [toast notifications](https://github.com/YehudaKremer/msix/issues/94) configuration
 - `msix:create` is includes the `flutter build windows` command, unless use the argument: `--build-windows false`
+- add `--with-test-certificate-installer` flag that copy test-certificate installer program (.exe), see configuration table
 - logs are now minimal by default, use the `-v` argument to print extended logs (useful for debugging and bug reporting)
 - code refactoring
 
