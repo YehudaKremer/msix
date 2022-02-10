@@ -90,6 +90,9 @@ class AppInstaller {
     </UpdateSettings>
   </AppInstaller>''';
 
+    //clear empty rows
+    appInstallerContent = appInstallerContent.replaceAll('    \n', '');
+
     await File(_config.appInstallerPath).writeAsString(appInstallerContent);
   }
 
