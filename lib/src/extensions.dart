@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:convert' show HtmlEscape;
 import 'package:cli_util/cli_logging.dart' show Ansi;
 import 'package:path/path.dart' as path;
-import 'package:args/args.dart' show ArgResults;
 
 extension StringValidations on String? {
   bool get isNull => this == null;
@@ -19,10 +18,6 @@ extension StringExtensions on String {
 
 extension StringConversions on String? {
   String? toHtmlEscape() => this != null ? HtmlEscape().convert(this!) : null;
-}
-
-extension ArgResultsReader on ArgResults {
-  String? read(String key) => this.wasParsed(key) ? this[key] : null;
 }
 
 extension FileSystemEntityExtensions on FileSystemEntity {

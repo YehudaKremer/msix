@@ -13,9 +13,9 @@ class AppInstaller {
   Configuration _config;
   Logger _logger;
 
-  String get versionsFolderPath => '${_config.publishFolderPath}/versions';
-  String get msixVersionPath =>
-      '$versionsFolderPath/${_config.appName}_${_config.msixVersion}.msix';
+  String get _versionsFolderPath => '${_config.publishFolderPath}/versions';
+  String get _msixVersionPath =>
+      '$_versionsFolderPath/${_config.appName}_${_config.msixVersion}.msix';
 
   AppInstaller(this._config, this._logger);
 
@@ -67,8 +67,8 @@ class AppInstaller {
   Future<void> copyMsixToVersionsFolder() async {
     _logger.trace('copy msix to versions folder');
 
-    await Directory(versionsFolderPath).create(recursive: true);
-    await File(_config.msixPath).copy(msixVersionPath);
+    await Directory(_versionsFolderPath).create(recursive: true);
+    await File(_config.msixPath).copy(_msixVersionPath);
   }
 
   /// Generate the .appinstaller file into the publish folder ("publish_folder_path")
@@ -80,7 +80,7 @@ class AppInstaller {
     Uri="${_config.appInstallerPath}" Version="${_config.msixVersion}">
     <MainPackage Name="${_config.identityName}" Version="${_config.msixVersion}"
       Publisher="${HtmlEscape().convert(_config.publisher!.replaceAll(' = ', '='))}"
-      Uri="$msixVersionPath"
+      Uri="$_msixVersionPath"
       ProcessorArchitecture="${_config.architecture}" />
     <UpdateSettings>
       <OnLaunch HoursBetweenUpdateChecks="${_config.hoursBetweenUpdateChecks}" 

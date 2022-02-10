@@ -49,8 +49,6 @@ class Configuration {
   bool withTestCertificateInstaller = false;
   Iterable<String>? languages;
   String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
-  String get msixIconsFolderPath => '$buildFilesFolder/Images';
-  String get vcLibsFolderPath => '$msixAssetsPath/VCLibs';
   String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
   String get msixPath =>
       '${outputPath ?? buildFilesFolder}/${outputName ?? appName}.msix';
