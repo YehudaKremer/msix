@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:io';
 import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';

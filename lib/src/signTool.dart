@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'package:cli_dialog/cli_dialog.dart';
-import 'package:msix/src/extensions.dart';
+import 'extensions.dart';
 import 'package:path/path.dart';
 import 'configuration.dart';
 import 'package:cli_util/cli_logging.dart';
-import 'extensions.dart';
 
 var _publisherRegex = RegExp(
     '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');

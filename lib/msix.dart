@@ -1,5 +1,5 @@
-import 'package:msix/src/appInstaller.dart';
-import 'package:msix/src/windowsBuild.dart';
+import 'src/appInstaller.dart';
+import 'src/windowsBuild.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'src/configuration.dart';
 import 'src/assets.dart';

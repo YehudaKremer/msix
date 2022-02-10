@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:cli_util/cli_logging.dart';
 
 import 'configuration.dart';
-import 'package:msix/src/extensions.dart';
 
 const runnerRcPath = 'windows/runner/Runner.rc';
 
