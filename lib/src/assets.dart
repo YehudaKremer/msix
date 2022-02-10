@@ -20,7 +20,6 @@ class Assets {
   late Image image;
   Logger _logger;
   String get _msixIconsFolderPath => '${_config.buildFilesFolder}/Images';
-  String get _vcLibsFolderPath => '${_config.buildFilesFolder}/VCLibs';
 
   Assets(this._config, this._logger);
 
@@ -47,7 +46,7 @@ class Assets {
   Future<void> copyVCLibsFiles() async {
     _logger.trace('copying VC libraries');
 
-    await Directory('$_vcLibsFolderPath/${_config.architecture}')
+    await Directory('${_config.msixAssetsPath}/VCLibs/${_config.architecture}')
         .copyDirectory(Directory(_config.buildFilesFolder));
   }
 
