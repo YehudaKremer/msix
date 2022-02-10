@@ -17,6 +17,10 @@ This package offers a command line tool for creating MSIX installers from your
 Flutter app, making it easy to [publish your app to the Microsoft Store] or host
 it on a website.
 
+## 🌟 🆕 Version [3.0](https://pub.dev/packages/msix/versions/3.0.0-dev.7) Beta
+
+[App Installer](https://docs.microsoft.com/en-us/windows/msix/app-installer/app-installer-file-overview) and [auto updates](https://docs.microsoft.com/en-us/windows/msix/app-installer/update-settings) are now available in version 3.0 🎉<br />Help us push 3.0v to production by using version `msix: ^3.0.0-dev.7`, thank you 👍
+
 ## :clipboard: Installation
 
 In your `pubspec.yaml`, add the `msix` package as a new [dev dependency] with
