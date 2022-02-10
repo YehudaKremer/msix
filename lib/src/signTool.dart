@@ -1,19 +1,21 @@
 import 'dart:io';
-import 'package:cli_dialog/cli_dialog.dart';
+import 'package:cli_dialog/cli_dialog.dart' show CLI_Dialog;
+import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:path/path.dart' show extension, basename;
 import 'extensions.dart';
-import 'package:path/path.dart';
 import 'configuration.dart';
-import 'package:cli_util/cli_logging.dart';
 
 var _publisherRegex = RegExp(
     '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
 
+/// Handles the certificate sign functionality
 class SignTool {
   Configuration _config;
   Logger _logger;
 
   SignTool(this._config, this._logger);
 
+  /// Use Powershell script to get the Publisher ("Subject") of the certificate
   Future<void> getCertificatePublisher() async {
     _logger.trace('getting certificate publisher');
 
@@ -39,6 +41,8 @@ class SignTool {
         .trim();
   }
 
+  /// Use Powershell to install the test certificate
+  /// if needed and if the user want to.
   Future<void> installCertificate() async {
     var getInstalledCertificate = await Process.run('powershell.exe', [
       '-NoProfile',
@@ -78,6 +82,7 @@ class SignTool {
       final wantToInstallCertificate = dialog.ask()['install'];
 
       if (wantToInstallCertificate) {
+        // create installCertificate.ps1 file
         var installCertificateScript =
             'Import-PfxCertificate -FilePath \"${_config.certificatePath}\" -Password (ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force) -CertStoreLocation Cert:\\LocalMachine\\Root';
         var installCertificateScriptPath =
@@ -85,6 +90,7 @@ class SignTool {
         await File(installCertificateScriptPath)
             .writeAsString(installCertificateScript);
 
+        // then execute it with admin privileges
         var importCertificate = await Process.run('powershell.exe', [
           '-NoProfile',
           '-NonInteractive',
@@ -109,6 +115,7 @@ class SignTool {
     }
   }
 
+  /// Sign the MSIX file with the certificate
   Future<void> sign() async {
     _logger.trace('signing');
 

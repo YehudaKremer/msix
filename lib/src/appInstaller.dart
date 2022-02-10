@@ -1,13 +1,14 @@
 import 'dart:io';
 import 'dart:convert' show HtmlEscape, base64Encode;
-import 'package:cli_dialog/cli_dialog.dart';
-import 'package:image/image.dart';
-import 'package:path/path.dart';
-import 'package:pub_semver/pub_semver.dart';
-import 'package:cli_util/cli_logging.dart';
+import 'package:cli_dialog/cli_dialog.dart' show CLI_Dialog;
+import 'package:image/image.dart'
+    show Image, copyResize, decodeImage, encodePng, trim;
+import 'package:path/path.dart' show basename;
+import 'package:pub_semver/pub_semver.dart' show Version;
+import 'package:cli_util/cli_logging.dart' show Logger;
 import 'configuration.dart';
 
-/// Handles the creation of the manifest file
+/// Handles the creation of .appinstaller file and msix versions
 class AppInstaller {
   Configuration _config;
   Logger _logger;
@@ -18,6 +19,8 @@ class AppInstaller {
 
   AppInstaller(this._config, this._logger);
 
+  /// Ask the user if he want to increment the version
+  /// if the current publish version is the same or lower than the last published version.
   Future<void> validatePublishVersion() async {
     _logger.trace('validate publish version');
 
@@ -60,16 +63,15 @@ class AppInstaller {
     }
   }
 
-  Future<void> _createVersionFolder() async =>
-      await Directory(versionsFolderPath).create(recursive: true);
-
+  /// Copy the .appinstaller file to the publish folder ("publish_folder_path")
   Future<void> copyMsixToVersionsFolder() async {
     _logger.trace('copy msix to versions folder');
 
-    await _createVersionFolder();
+    await Directory(versionsFolderPath).create(recursive: true);
     await File(_config.msixPath).copy(msixVersionPath);
   }
 
+  /// Generate the .appinstaller file into the publish folder ("publish_folder_path")
   Future<void> generateAppInstaller() async {
     _logger.trace('generate app installer');
 
@@ -91,6 +93,8 @@ class AppInstaller {
     await File(_config.appInstallerPath).writeAsString(appInstallerContent);
   }
 
+  /// Create index.html file that enable the users to download the .appinstaller file,
+  /// and save it into the publish folder ("publish_folder_path").
   Future<void> generateAppInstallerWebSite() async {
     _logger.trace('generate app installer web site');
 

@@ -1,49 +1,52 @@
 import 'dart:io';
-import 'package:image/image.dart';
-import 'package:path/path.dart';
+import 'dart:isolate';
+import 'package:image/image.dart'
+    show
+        Image,
+        Interpolation,
+        copyResize,
+        decodeImage,
+        drawImage,
+        encodePng,
+        trim;
+import 'package:path/path.dart' show basename;
+import 'package:cli_util/cli_logging.dart' show Logger;
 import 'configuration.dart';
 import 'extensions.dart';
-import 'package:cli_util/cli_logging.dart';
 
 /// Handles all the msix and user assets files
 class Assets {
   Configuration _config;
-  List<File> _vCLibsFiles = [];
   late Image image;
   Logger _logger;
 
   Assets(this._config, this._logger);
 
-  ///  Create icons folder in the msix package
-  Future<void> createIconsFolder() async {
-    _logger.trace('creating app icons folder');
+  /// Generate new app icons or copy default app icons
+  Future<void> createIcons() async {
+    _logger.trace('create app icons');
 
-    var iconsFolderPath = '${_config.buildFilesFolder}/Images';
-    await Directory(iconsFolderPath).create();
+    await Directory(_config.msixIconsFolderPath).create();
+
+    final port = ReceivePort();
+    await Isolate.spawn(
+        _config.logoPath != null ? _generateAssetsIcons : _copyDefaultsIcons,
+        port.sendPort);
+    await port.first;
   }
 
-  /// Copy default or generate app icons to icons folder in the msix package
-  Future<void> copyIcons() async {
-    _logger.trace('copying app icons');
-
-    if (_config.logoPath != null) {
-      await _generateAssetsIcons();
-    } else {
-      _copyGeneratedIcons(_config.defaultsIconsFolderPath);
-    }
+  Future<void> _copyDefaultsIcons(SendPort port) async {
+    await Directory(_config.defaultsIconsFolderPath)
+        .copyDirectory(Directory(_config.msixIconsFolderPath));
+    Isolate.exit(port);
   }
 
-  /// Copy the vc libs files (msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll) to the msix package
+  /// Copy the VC libs files (msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll)
   Future<void> copyVCLibsFiles() async {
     _logger.trace('copying VC libraries');
 
-    _vCLibsFiles = _getAllDirectoryFiles(
-        '${_config.vcLibsFolderPath}/${_config.architecture}');
-
-    for (File file in _vCLibsFiles) {
-      await File(file.path)
-          .copy('${_config.buildFilesFolder}/${basename(file.path)}');
-    }
+    await Directory('${_config.vcLibsFolderPath}/${_config.architecture}')
+        .copyDirectory(Directory(_config.buildFilesFolder));
   }
 
   /// Clear the build folder from temporary files
@@ -59,7 +62,10 @@ class Assets {
         'resources.scale-125.pri',
         'resources.scale-150.pri',
         'resources.scale-200.pri',
-        'resources.scale-400.pri'
+        'resources.scale-400.pri',
+        'msvcp140.dll',
+        'vcruntime140_1.dll',
+        'vcruntime140.dll'
       ].map((fileName) async =>
           await File('$buildPath/$fileName').deleteIfExists()),
       Directory('$buildPath/Images').deleteIfExists(recursive: true),
@@ -81,15 +87,7 @@ class Assets {
             await File('$buildPath/$fileName').deleteIfExists()),
       ]);
     }
-
-    _vCLibsFiles.forEach((file) async =>
-        await File('$buildPath/${basename(file.path)}').deleteIfExists());
   }
-
-  List<File> _getAllDirectoryFiles(String directory) => Directory(directory)
-      .listSync(recursive: true, followLinks: false)
-      .map((e) => File(e.path))
-      .toList();
 
   /// Generate icon with specified size, padding and scale
   Future<void> _generateIcon(String name, Size size,
@@ -148,7 +146,7 @@ class Assets {
   }
 
   /// Generate optimized msix icons from the user logo
-  Future<void> _generateAssetsIcons() async {
+  Future<void> _generateAssetsIcons(SendPort port) async {
     _logger.trace('generating icons');
 
     if (!(await File(_config.logoPath!).exists())) {
@@ -314,16 +312,11 @@ class Assets {
       _generateIcon('StoreLogo', Size(50, 50), scale: 2),
       _generateIcon('StoreLogo', Size(50, 50), scale: 4),
     ]);
+
+    Isolate.exit(port);
   }
 
-  /// Copy generated icons to icons folder in the msix package
-  void _copyGeneratedIcons(String iconsFolderPath) async {
-    for (File file in _getAllDirectoryFiles(iconsFolderPath)) {
-      final path = file.path, newPath = 'Images/${basename(path)}';
-      File(path).copySync('${_config.buildFilesFolder}/$newPath');
-    }
-  }
-
+  /// Copy an .exe test-certificate installer to the build folder
   Future<void> addTestCertificateInstaller() async {
     await Directory('${_config.msixAssetsPath}/testCertificateInstaller')
         .copyDirectory(Directory(_config.buildFilesFolder));

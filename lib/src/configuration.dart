@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'package:args/args.dart';
-import 'package:cli_util/cli_logging.dart';
-import 'package:package_config/package_config.dart';
-import 'package:path/path.dart';
-import 'package:yaml/yaml.dart';
+import 'package:args/args.dart' show ArgParser, ArgResults;
+import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:package_config/package_config.dart' show findPackageConfig;
+import 'package:path/path.dart' show extension, basename;
+import 'package:yaml/yaml.dart' show YamlMap, loadYaml;
 import 'extensions.dart';
 
+/// Handles loading and validating the configuration values
 class Configuration {
   List<String> _arguments;
   Logger _logger;
@@ -48,6 +49,7 @@ class Configuration {
   bool withTestCertificateInstaller = false;
   Iterable<String>? languages;
   String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
+  String get msixIconsFolderPath => '$buildFilesFolder/Images';
   String get vcLibsFolderPath => '$msixAssetsPath/VCLibs';
   String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
   String get msixPath =>
@@ -59,7 +61,7 @@ class Configuration {
 
   Configuration(this._arguments, this._logger);
 
-  /// Gets the configuration values from pubspec.yaml file and from [_arguments]
+  /// Gets the configuration values from from [_arguments] or pubspec.yaml file
   Future<void> getConfigValues() async {
     _parseCliArguments(_arguments);
     await _getMsixAssetsFolderPath();
@@ -155,14 +157,15 @@ class Configuration {
       throw 'App name is empty, check the general \'name:\' property at pubspec.yaml';
     }
     if (appDescription.isNull) appDescription = appName;
-    if (displayName.isNull) displayName = _cleanAppName();
+    var cleanAppName = appName!.replaceAll('_', '');
+    if (displayName.isNull) displayName = cleanAppName;
     if (identityName.isNull) {
       if (store) {
         _logger.stderr(
             'identity name is empty, check "msix_config: identity_name" at pubspec.yaml');
         throw 'you can find your store "identity_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Name';
       } else {
-        identityName = 'com.flutter.${_cleanAppName()}';
+        identityName = 'com.flutter.$cleanAppName';
       }
     } else {
       if (!RegExp(r'^[a-zA-Z0-9.-]{3,50}$').hasMatch(identityName!)) {
@@ -213,7 +216,7 @@ class Configuration {
         }
       }
     } else {
-      /// If no certificate was chosen then use test certificate
+      // if no certificate was chosen then use test certificate
       certificatePath = '$msixAssetsPath/test_certificate.pfx';
       certificatePassword = '1234';
     }
@@ -223,6 +226,7 @@ class Configuration {
     }
   }
 
+  /// Validate "flutter build windows" output files
   Future<void> validateBuildFiles() async {
     _logger.trace('validating build files');
 
@@ -235,15 +239,13 @@ class Configuration {
 
     executableFileName = await Directory(buildFilesFolder)
         .list()
-        .firstWhere(
-            (file) =>
-                file.path.endsWith('.exe') &&
-                !file.path.contains('PSFLauncher64.exe'),
-            orElse: () => Directory(buildFilesFolder).listSync().first)
+        .firstWhere((file) =>
+            file.path.endsWith('.exe') &&
+            !file.path.contains('PSFLauncher64.exe'))
         .then((file) => basename(file.path));
   }
 
-  /// parse the cli arguments
+  /// Declare and parse the cli arguments
   void _parseCliArguments(List<String> args) {
     _logger.trace('parsing cli arguments');
 
@@ -281,7 +283,7 @@ class Configuration {
       ..addFlag('force-update-from-any-version')
       ..addFlag('with-test-certificate-installer');
 
-    /// exclude -v (verbose) from the arguments
+    // exclude -v (verbose) from the arguments
     _args = parser.parse(args.where((arg) => arg != '-v'));
   }
 
@@ -322,11 +324,10 @@ class Configuration {
     return pubspec;
   }
 
+  /// Get the languages list
   Iterable<String>? _getLanguages(dynamic config) =>
       ((_args['languages'] ?? config['languages']) as String?)
           ?.split(',')
           .map((e) => e.trim())
           .where((element) => element.length > 0);
-
-  String _cleanAppName() => appName!.replaceAll('_', '');
 }

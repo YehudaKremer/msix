@@ -41,18 +41,11 @@ void main() {
       await Future.delayed(Duration(milliseconds: 150));
     }
   });
-
-  test('create icons folder', () async {
-    await Assets(config..msixAssetsPath = tempFolderPath, log)
-        .createIconsFolder();
-    expect(await Directory('$tempFolderPath/Images').exists(), true);
-  });
-
   test('copy defaults icons', () async {
     await File('$tempFolderPath/icons/test1.png').create(recursive: true);
     await File('$tempFolderPath/icons/test2.png').create(recursive: true);
     await Directory('$tempFolderPath/Images').create(recursive: true);
-    await Assets(config..msixAssetsPath = tempFolderPath, log).copyIcons();
+    await Assets(config..msixAssetsPath = tempFolderPath, log).createIcons();
     expect(await File('$tempFolderPath/Images/test1.png').exists(), true);
     expect(await File('$tempFolderPath/Images/test2.png').exists(), true);
   });
@@ -64,7 +57,7 @@ void main() {
     await Directory('$tempFolderPath/Images').create(recursive: true);
     await Future.delayed(Duration(milliseconds: 200));
     await Assets(config..logoPath = '$tempFolderPath/test.png', log)
-        .copyIcons();
+        .createIcons();
     await Future.delayed(Duration(milliseconds: 100));
     expect(
         (await Directory('$tempFolderPath/Images').list().toList()).length, 82);

@@ -1,8 +1,8 @@
 import 'dart:io';
+import 'package:cli_util/cli_logging.dart' show Logger;
 import 'capabilities.dart';
 import 'configuration.dart';
 import 'extensions.dart';
-import 'package:cli_util/cli_logging.dart';
 
 /// Handles the creation of the manifest file
 class AppxManifest {
@@ -97,6 +97,7 @@ class AppxManifest {
     }
   }
 
+  /// Add extension section for [_config.executableFileName]
   String _getAppExecutionAliasExtension() {
     return '''  <uap3:Extension Category="windows.appExecutionAlias" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
             <uap3:AppExecutionAlias>
@@ -105,6 +106,7 @@ class AppxManifest {
           </uap3:Extension>''';
   }
 
+  /// Add extension section for [_config.protocolActivation]
   String _getProtocolActivationExtension() {
     return '''  <uap:Extension Category="windows.protocol">
             <uap:Protocol Name="${_config.protocolActivation.toHtmlEscape()}">
@@ -113,6 +115,7 @@ class AppxManifest {
         </uap:Extension>''';
   }
 
+  /// Add extension section for [_config.fileExtension]
   String _getFileAssociationsExtension() {
     return '''  <uap:Extension Category="windows.fileTypeAssociation">
             <uap:FileTypeAssociation Name="fileassociations">
@@ -125,6 +128,7 @@ class AppxManifest {
           </uap:Extension>''';
   }
 
+  /// Add extension section for "toast_activator" configurations
   String _getToastNotificationActivationExtension() {
     return '''  <com:Extension Category="windows.comServer">
           <com:ComServer>
@@ -144,6 +148,7 @@ class AppxManifest {
     return firstLetter + capability.substring(1);
   }
 
+  /// Add capabilities section
   String _getCapabilities() {
     var capabilities = _config.capabilities!.split(',');
     capabilities.add('runFullTrust');

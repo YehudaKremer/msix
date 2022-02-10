@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:cli_util/cli_logging.dart' show Logger;
 import 'configuration.dart';
-import 'package:cli_util/cli_logging.dart';
 
 /// Use the makeappx.exe tool to generate manifest file
 class MakeAppx {

@@ -1,14 +1,15 @@
 import 'dart:io';
 import 'dart:convert' show HtmlEscape;
-import 'package:cli_util/cli_logging.dart';
+import 'package:cli_util/cli_logging.dart' show Ansi;
 import 'package:path/path.dart' as path;
-import 'package:args/args.dart';
+import 'package:args/args.dart' show ArgResults;
 
 extension StringValidations on String? {
   bool get isNull => this == null;
   bool get isNullOrEmpty => this == null || this!.isEmpty;
 }
 
+/// Used for colored logs
 extension StringExtensions on String {
   String get emphasized => '${Ansi(true).bold}${this}${Ansi(true).none}';
   String get green => '${Ansi(true).green}${this}${Ansi(true).none}';
@@ -29,6 +30,7 @@ extension FileSystemEntityExtensions on FileSystemEntity {
       await this.exists() ? this.delete(recursive: recursive) : Future.value();
 }
 
+/// Copy directory content asynchronously
 extension DirectoryExtensions on Directory {
   Future<void> copyDirectory(Directory destination) async {
     await for (var entity in this.list(recursive: false)) {

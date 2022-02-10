@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:cli_util/cli_logging.dart';
+import 'package:cli_util/cli_logging.dart' show Logger;
 
 import 'configuration.dart';
 
 const runnerRcPath = 'windows/runner/Runner.rc';
 
-/// Handles windows (pre-)build steps.
+/// Handles windows files build steps
 class WindowsBuild {
   Configuration _config;
   Logger _logger;
@@ -45,6 +45,7 @@ class WindowsBuild {
   }
 
   /// Update the company name 'com.example' in the Runner.rc file
+  /// with the [_config.identityName] value.
   Future<void> _updateRunnerCompanyName() async {
     _logger
         .trace('updating Runner.rc "CompanyName" to "${_config.identityName}"');

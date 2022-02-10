@@ -1,6 +1,6 @@
+import 'package:cli_util/cli_logging.dart' show Logger, Ansi;
 import 'src/appInstaller.dart';
 import 'src/windowsBuild.dart';
-import 'package:cli_util/cli_logging.dart';
 import 'src/configuration.dart';
 import 'src/assets.dart';
 import 'src/makePri.dart';
@@ -9,9 +9,9 @@ import 'src/makeAppx.dart';
 import 'src/signTool.dart';
 import 'src/extensions.dart';
 
+/// Handles all the msix package functionality
 class Msix {
   late Logger _logger;
-
   late Configuration _config;
 
   Msix(List<String> arguments) {
@@ -27,6 +27,7 @@ class Msix {
         '-----> "MSIX" package needs to be under development dependencies (dev_dependencies) <-----');
   }
 
+  /// Execute when use the msix:create command
   Future<void> create() async {
     await _initConfig();
     await _createMsix();
@@ -39,6 +40,7 @@ class Msix {
         .replaceAll('/', r'\'));
   }
 
+  /// Execute when use the msix:publish command
   Future<void> publish() async {
     await _initConfig();
     await _config.validateAppInstallerConfigValues();
@@ -65,19 +67,20 @@ class Msix {
 
   Future<void> _createMsix() async {
     if (_config.buildWindows) {
+      // run the "flutter build windows" command
       await WindowsBuild(_config, _logger).build();
     }
 
     var loggerProgress = _logger.progress('creating msix installer');
 
+    // validate the "flutter build windows" output files
     await _config.validateBuildFiles();
 
     final _assets = Assets(_config, _logger);
     final _signTool = SignTool(_config, _logger);
 
     await _assets.cleanTemporaryFiles(clearMsixFiles: true);
-    await _assets.createIconsFolder();
-    await _assets.copyIcons();
+    await _assets.createIcons();
     await _assets.copyVCLibsFiles();
     if (!_config.store) {
       await _signTool.getCertificatePublisher();
