@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert' show HtmlEscape, base64Encode;
 import 'package:cli_dialog/cli_dialog.dart';
+import 'package:image/image.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:cli_util/cli_logging.dart';
@@ -118,11 +119,23 @@ class AppInstaller {
     htmlFileContent =
         htmlFileContent.replaceAll('PUBLISHER_NAME', _config.publisherName!);
 
-    List<int> imageBytes = await File(_config.logoPath ??
+    var logoImage = decodeImage(await File(_config.logoPath ??
             '${_config.defaultsIconsFolderPath}/Square44x44Logo.altform-lightunplated_targetsize-256.png')
-        .readAsBytes();
-    String base64Image = base64Encode(imageBytes);
-    htmlFileContent = htmlFileContent.replaceAll('IMAGE_BASE64', base64Image);
+        .readAsBytes())!;
+
+    try {
+      logoImage = trim(logoImage);
+    } catch (e) {}
+
+    Image siteLogo = copyResize(logoImage, width: 192);
+    Image favicon = copyResize(logoImage, width: 16, height: 16);
+
+    String base64Logo = base64Encode(encodePng(siteLogo));
+    String base64favicon = base64Encode(encodePng(favicon));
+
+    htmlFileContent = htmlFileContent.replaceAll('IMAGE_BASE64', base64Logo);
+    htmlFileContent =
+        htmlFileContent.replaceAll('FAVICON_BASE64', base64favicon);
 
     await File('${_config.publishFolderPath}/index.html')
         .writeAsString(htmlFileContent);
