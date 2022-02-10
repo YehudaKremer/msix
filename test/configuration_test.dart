@@ -42,12 +42,20 @@ msix_config:
 
     test('with out app name', () async {
       await File(yamlTestPath).writeAsString('name:');
-      expect(() async => await config.getConfigValues(), throwsException);
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate(
+              (String error) => error.contains('App name is empty'))));
     });
 
     test('with out app name property', () async {
       await File(yamlTestPath).writeAsString('description:');
-      expect(() async => await config.getConfigValues(), throwsException);
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate(
+              (String error) => error.contains('App name is empty'))));
     });
   });
 
@@ -69,13 +77,21 @@ msix_config:
     test('invalid version letter in yaml', () async {
       await File(yamlTestPath)
           .writeAsString(yamlContent + 'msix_version: 1.s.3.4');
-      expect(() async => await config.getConfigValues(), throwsException);
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate((String error) =>
+              error.contains('msix version can be only in this format'))));
     });
 
     test('invalid version space in yaml', () async {
       await File(yamlTestPath)
           .writeAsString(yamlContent + 'msix_version: 1.s. 3.4');
-      expect(() async => await config.getConfigValues(), throwsException);
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate((String error) =>
+              error.contains('msix version can be only in this format'))));
     });
 
     test('valid version in long argument', () async {
@@ -84,7 +100,7 @@ msix_config:
         ..pubspecYamlPath = yamlTestPath
         ..buildFilesFolder = tempFolderPath;
       await customConfig.getConfigValues();
-      expect(config.msixVersion, '1.2.3.4');
+      expect(customConfig.msixVersion, '1.2.3.4');
     });
 
     test('invalid version letter in long argument', () async {
@@ -92,16 +108,20 @@ msix_config:
       var customConfig = Configuration(['--version', '1.s.3.4'], log)
         ..pubspecYamlPath = yamlTestPath
         ..buildFilesFolder = tempFolderPath;
-      expect(() async => await customConfig.getConfigValues(), throwsException);
+      await customConfig.getConfigValues();
+      await expectLater(
+          customConfig.validateConfigValues,
+          throwsA(predicate((String error) =>
+              error.contains('msix version can be only in this format'))));
     });
 
-    test('valid version in short argument', () async {
+    test('setting version with old -v options', () async {
       await File(yamlTestPath).writeAsString(yamlContent);
       var customConfig = Configuration(['-v', '1.2.3.4'], log)
         ..pubspecYamlPath = yamlTestPath
         ..buildFilesFolder = tempFolderPath;
       await customConfig.getConfigValues();
-      expect(config.msixVersion, '1.2.3.4');
+      expect(config.msixVersion, isNull);
     });
   });
 
@@ -119,7 +139,11 @@ msix_config:
     test('invalid certificate path', () async {
       await File(yamlTestPath).writeAsString(
           yamlContent + 'certificate_path: $tempFolderPath/test123.pfx');
-      expect(() async => await config.getConfigValues(), throwsException);
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate((String error) =>
+              error.contains('The file certificate not found in'))));
     });
 
     test('certificate without password', () async {
@@ -127,7 +151,11 @@ msix_config:
       await File(pfxTestPath).create();
       await File(yamlTestPath)
           .writeAsString(yamlContent + 'certificate_path: $pfxTestPath');
-      expect(() async => await config.getConfigValues(), throwsException);
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate((String error) =>
+              error.contains('Certificate password is empty'))));
     });
   });
 }
