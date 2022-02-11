@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:cli_dialog/cli_dialog.dart' show CLI_Dialog;
 import 'package:cli_util/cli_logging.dart' show Logger;
@@ -64,17 +65,6 @@ class SignTool {
 
     if (isCertificateNotInstalled) {
       _logger.trace('installing certificate');
-
-      var isRunningAsAdmin = await Process.run('powershell.exe', [
-        '-NoProfile',
-        '-NonInteractive',
-        '([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)'
-      ]);
-
-      if (isRunningAsAdmin.exitCode != 0) {
-        _logger.stderr(isRunningAsAdmin.stdout);
-        throw isRunningAsAdmin.stderr;
-      }
 
       _logger.stdout('');
       final dialog = CLI_Dialog(booleanQuestions: [
