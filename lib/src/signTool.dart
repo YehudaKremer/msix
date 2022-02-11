@@ -19,11 +19,15 @@ class SignTool {
   Future<void> getCertificatePublisher() async {
     _logger.trace('getting certificate publisher');
 
-    var certificateDetailsProcess = await Process.run('powershell.exe', [
-      '-NoProfile',
-      '-NonInteractive',
-      "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject"
-    ]);
+    var certificateDetailsProcess = await Process.run(
+        'powershell.exe',
+        [
+          '-NoProfile',
+          '-NonInteractive',
+          "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject"
+        ],
+        stdoutEncoding: utf8,
+        stderrEncoding: utf8);
 
     if (certificateDetailsProcess.exitCode != 0) {
       _logger.stderr(certificateDetailsProcess.stdout);
