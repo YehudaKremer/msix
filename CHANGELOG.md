@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.0-dev.7
+## 3.0.0-dev.8
 
 - add `publish` command and configurations, for sideloading publish (outside the microsoft store)
 - user asked (cli dialog) if he want to **increment version number** (if needed)
