@@ -33,8 +33,10 @@ class Msix {
     await _createMsix();
 
     _logger.write('msix created: '.green.emphasized);
-    _logger.stdout(_config.msixPath
-        .substring(_config.msixPath.indexOf('build/windows'))
+    _logger.stdout((_config.msixPath.contains('build/windows')
+            ? _config.msixPath
+                .substring(_config.msixPath.indexOf('build/windows'))
+            : _config.msixPath)
         .blue
         .emphasized
         .replaceAll('/', r'\'));
