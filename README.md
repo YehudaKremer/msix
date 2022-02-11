@@ -113,7 +113,7 @@ Published MSIX installers should be [signed with a certificate], to help ensure
 that app installs and updates come from trustworthy sources.
 
 - For development purposes, this package is configured by default to
-  automatically sign your app with a **test certificate**, which makes it easy
+  automatically sign your app with a [self signed] **test certificate**, which makes it easy
   to test your install prior to release.
 - If you publish your app to the **Microsoft Store**, the installation package
   will be signed automatically by the store.
@@ -205,3 +205,4 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png
 [toast notifications]: https://docs.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast-desktop-cpp-wrl#msixsparse-package
 [disabled]: https://docs.microsoft.com/en-us/windows/msix/app-installer/installing-windows10-apps-web
+[self signed]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing#create-a-self-signed-certificate
