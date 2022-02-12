@@ -1,25 +1,24 @@
-import 'package:ansicolor/ansicolor.dart' show ansiColorDisabled;
+import 'package:cli_util/cli_logging.dart' show Logger, Ansi;
+import 'src/appInstaller.dart';
+import 'src/windowsBuild.dart';
 import 'src/configuration.dart';
 import 'src/assets.dart';
 import 'src/makePri.dart';
 import 'src/appxManifest.dart';
 import 'src/makeAppx.dart';
 import 'src/signTool.dart';
-import 'src/log.dart';
+import 'src/extensions.dart';
 
-/// Execute all the steps to prepare an msix package
+/// Handles all the msix package functionality
 class Msix {
-  /// Log instance for all sub classes instances
-  Log _log = Log();
-
-  /// Configuration instance for all sub classes instances
+  late Logger _logger;
   late Configuration _config;
 
-  Msix() {
-    // To enable colored logs
-    ansiColorDisabled = false;
-
-    _config = Configuration(_log);
+  Msix(List<String> arguments) {
+    _logger = arguments.contains('-v')
+        ? Logger.verbose()
+        : Logger.standard(ansi: Ansi(true));
+    _config = Configuration(arguments, _logger);
   }
 
   /// Print if msix is under dependencies instead of dev_dependencies
@@ -28,40 +27,80 @@ class Msix {
         '-----> "MSIX" package needs to be under development dependencies (dev_dependencies) <-----');
   }
 
-  /// User executes this with optional arguments:
-  /// flutter pub run msix:create [cliArguments]
-  Future<void> createMsix(List<String> cliArguments) async {
-    await _config.getConfigValues(cliArguments);
+  /// Execute when use the msix:create command
+  Future<void> create() async {
+    await _initConfig();
+    await _createMsix();
 
-    final _assets = Assets(_config, _log);
-    final _signTool = SignTool(_config, _log);
+    _logger.write('msix created: '.green.emphasized);
+    _logger.stdout((_config.msixPath.contains('build/windows')
+            ? _config.msixPath
+                .substring(_config.msixPath.indexOf('build/windows'))
+            : _config.msixPath)
+        .blue
+        .emphasized
+        .replaceAll('/', r'\'));
+  }
+
+  /// Execute when use the msix:publish command
+  Future<void> publish() async {
+    await _initConfig();
+    await _config.validateAppInstallerConfigValues();
+    var appInstaller = AppInstaller(_config, _logger);
+    await appInstaller.validatePublishVersion();
+
+    await _createMsix();
+
+    var loggerProgress = _logger.progress('publish');
+    await appInstaller.copyMsixToVersionsFolder();
+    await appInstaller.generateAppInstaller();
+    await appInstaller.generateAppInstallerWebSite();
+    loggerProgress.finish(showTiming: true);
+
+    _logger.write('appinstaller created: '.green.emphasized);
+    _logger
+        .stdout(_config.appInstallerPath.blue.emphasized.replaceAll('/', r'\'));
+  }
+
+  Future<void> _initConfig() async {
+    await _config.getConfigValues();
+    await _config.validateConfigValues();
+  }
+
+  Future<void> _createMsix() async {
+    if (_config.buildWindows) {
+      // run the "flutter build windows" command
+      await WindowsBuild(_config, _logger).build();
+    }
+
+    var loggerProgress = _logger.progress('creating msix installer');
+
+    // validate the "flutter build windows" output files
+    await _config.validateBuildFiles();
+
+    final _assets = Assets(_config, _logger);
+    final _signTool = SignTool(_config, _logger);
 
     await _assets.cleanTemporaryFiles(clearMsixFiles: true);
-    await _assets.createIconsFolder();
-    await _assets.copyIcons();
+    await _assets.createIcons();
     await _assets.copyVCLibsFiles();
     if (!_config.store) {
-      await _signTool.getCertificatePublisher(false);
+      await _signTool.getCertificatePublisher();
     }
-    await AppxManifest(_config, _log).generateAppxManifest();
-    await MakePri(_config, _log).generatePRI();
-    await MakeAppx(_config, _log).pack();
+    await AppxManifest(_config, _logger).generateAppxManifest();
+    await MakePri(_config, _logger).generatePRI();
+    await MakeAppx(_config, _logger).pack();
     await _assets.cleanTemporaryFiles();
 
-    // If the package is intended for store publish
-    // then don't install cert or sign the package
     if (!_config.store) {
-      if (!_config.dontInstallCert) {
-        await _signTool.installCertificate();
-      }
+      if (_config.installCert) await _signTool.installCertificate();
       await _signTool.sign();
+
+      if (_config.withTestCertificateInstaller) {
+        await _assets.addTestCertificateInstaller();
+      }
     }
 
-    _log.success('Msix Installer Created:');
-
-    // Print the created msix installer path
-    _log.link(
-        '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix'
-            .replaceAll('/', r'\'));
+    loggerProgress.finish(showTiming: true);
   }
 }

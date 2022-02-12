@@ -1,14 +1,16 @@
 import 'dart:io';
-import 'package:args/args.dart';
-import 'package:package_config/package_config.dart';
-import 'package:path/path.dart';
-import 'package:yaml/yaml.dart';
+import 'package:args/args.dart' show ArgParser, ArgResults;
+import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:package_config/package_config.dart' show findPackageConfig;
+import 'package:path/path.dart' show extension, basename;
+import 'package:yaml/yaml.dart' show YamlMap, loadYaml;
 import 'extensions.dart';
-import 'log.dart';
 
+/// Handles loading and validating the configuration values
 class Configuration {
-  Log _log;
-  late ArgResults argResults;
+  List<String> _arguments;
+  Logger _logger;
+  late ArgResults _args;
   String msixAssetsPath = '';
   String? appName;
   String? publisherName;
@@ -28,133 +30,162 @@ class Configuration {
   List<String>? signToolOptions;
   String? protocolActivation;
   String? fileExtension;
+  String? toastActivatorCLSID;
+  String? toastActivatorArguments;
+  String? toastActivatorDisplayName;
   String? outputPath;
   String? outputName;
-  bool debugSigning = false;
+  String? publishFolderPath;
+  int hoursBetweenUpdateChecks = 0;
+  bool automaticBackgroundTask = true;
+  bool updateBlocksActivation = true;
+  bool showPrompt = true;
+  bool forceUpdateFromAnyVersion = false;
   bool store = false;
-  bool dontInstallCert = false;
+  bool installCert = true;
+  bool buildWindows = true;
   bool addExecutionAlias = false;
   bool createWithDebugBuildFiles = false;
+  bool withTestCertificateInstaller = false;
   Iterable<String>? languages;
-  String defaultsIconsFolderPath() => '$msixAssetsPath/icons';
-  String vcLibsFolderPath() => '$msixAssetsPath/VCLibs';
-  String msixToolkitPath() => '$msixAssetsPath/MSIX-Toolkit';
-  String iconsGeneratorPath() => '$msixAssetsPath/IconsGenerator';
+  String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
+  String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
+  String get msixPath =>
+      '${outputPath ?? buildFilesFolder}/${outputName ?? appName}.msix';
+  String get appInstallerPath =>
+      '$publishFolderPath/${basename(msixPath).replaceAll('.msix', '.appinstaller')}';
   String pubspecYamlPath = "pubspec.yaml";
+  String osMinVersion = '10.0.17763.0';
 
-  Configuration(this._log);
+  Configuration(this._arguments, this._logger);
 
-  /// Gets the configuration values from pubspec.yaml file and from [arguments]
-  Future<void> getConfigValues(List<String> arguments) async {
-    _parseCliArguments(arguments);
+  /// Gets the configuration values from from [_arguments] or pubspec.yaml file
+  Future<void> getConfigValues() async {
+    _parseCliArguments(_arguments);
     await _getMsixAssetsFolderPath();
     var pubspec = await _getPubspec();
-    appName = pubspec['name']?.toString();
-    appDescription = pubspec['description']?.toString();
-    var config = pubspec['msix_config'];
-    msixVersion =
-        argResults.read('version') ?? config?['msix_version']?.toString();
-    certificatePath = argResults.read('certificate-path') ??
-        config?['certificate_path']?.toString();
-    certificatePassword = argResults.read('certificate-password') ??
-        config?['certificate_password']?.toString();
-    outputPath =
-        argResults.read('output-path') ?? config?['output_path']?.toString();
-    outputName =
-        argResults.read('output-name') ?? config?['output_name']?.toString();
-    debugSigning = argResults.wasParsed('debug-signing');
-    addExecutionAlias = argResults.wasParsed('add-execution-alias') ||
-        config?['add_execution_alias']?.toString().toLowerCase() == 'true';
-    dontInstallCert = argResults.wasParsed('dont-install-certificate') ||
-        config?['dont_install_cert']?.toString().toLowerCase() == 'true';
-    if (dontInstallCert) numberOfAllTasks--;
-    store = argResults.wasParsed('store') ||
-        config?['store']?.toString().toLowerCase() == 'true';
-    if (store) numberOfAllTasks -= 2;
-    createWithDebugBuildFiles = argResults.wasParsed('debug') ||
-        config?['debug']?.toString().toLowerCase() == 'true';
+    appName = pubspec['name'];
+    appDescription = pubspec['description'];
+    var yaml = pubspec['msix_config'] ?? YamlMap();
+    msixVersion = _args['version'] ?? yaml['msix_version'];
+    certificatePath = _args['certificate-path'] ?? yaml['certificate_path'];
+    certificatePassword = _args['certificate-password'] ??
+        yaml['certificate_password']?.toString();
+    outputPath = _args['output-path'] ?? yaml['output_path'];
+    outputName = _args['output-name'] ?? yaml['output_name'];
+    addExecutionAlias = _args.wasParsed('add-execution-alias') ||
+        yaml['add_execution_alias']?.toLowerCase() == 'true';
+    installCert = _args['install-certificate'] != 'false' &&
+        yaml['install_certificate'] != 'false';
+    buildWindows = _args['build-windows'] != 'false' &&
+        yaml['build_windows'].toString() != 'false';
+    store = _args.wasParsed('store') ||
+        yaml['store']?.toString().toLowerCase() == 'true';
+    createWithDebugBuildFiles = _args.wasParsed('debug') ||
+        yaml['debug']?.toString().toLowerCase() == 'true';
+    withTestCertificateInstaller =
+        _args.wasParsed('with-test-certificate-installer');
     if (createWithDebugBuildFiles)
       buildFilesFolder = buildFilesFolder.replaceFirst('Release', 'Debug');
-    displayName =
-        argResults.read('display-name') ?? config?['display_name']?.toString();
-    publisherName = argResults.read('publisher-display-name') ??
-        config?['publisher_display_name']?.toString();
-    publisher =
-        argResults.read('publisher') ?? config?['publisher']?.toString();
-    identityName = argResults.read('identity-name') ??
-        config?['identity_name']?.toString();
-    logoPath = argResults.read('logo-path') ?? config?['logo_path']?.toString();
-    if (logoPath.isNull) numberOfAllTasks--;
-    signToolOptions =
-        (argResults.read('signtool-options') ?? config?['signtool_options'])
-            ?.toString()
-            .split(' ')
-            .where((o) => o.trim().length > 0)
-            .toList();
-    protocolActivation = (argResults.read('protocol-activation') ??
-            config?['protocol_activation'])
+    displayName = _args['display-name'] ?? yaml['display_name'];
+    publisherName =
+        _args['publisher-display-name'] ?? yaml['publisher_display_name'];
+    publisher = _args['publisher'] ?? yaml['publisher'];
+    identityName = _args['identity-name'] ?? yaml['identity_name'];
+    logoPath = _args['logo-path'] ?? yaml['logo_path'];
+    signToolOptions = (_args['signtool-options'] ?? yaml['signtool_options'])
         ?.toString()
-        .replaceAll(':', '');
-    fileExtension = argResults.read('file-extension') ??
-        config?['file_extension']?.toString();
+        .split(' ')
+        .where((o) => o.trim().length > 0)
+        .toList();
+    protocolActivation =
+        (_args['protocol-activation'] ?? yaml['protocol_activation'])
+            ?.toString()
+            .replaceAll(':', '');
+    fileExtension = _args['file-extension'] ?? yaml['file_extension'];
     if (fileExtension != null && !fileExtension!.startsWith('.')) {
       fileExtension = '.$fileExtension';
     }
-    architecture =
-        argResults.read('architecture') ?? config?['architecture']?.toString();
-    capabilities =
-        argResults.read('capabilities') ?? config?['capabilities']?.toString();
-    languages = _getLanguages(config);
+    architecture = _args['architecture'] ?? yaml['architecture'];
+    capabilities = _args['capabilities'] ?? yaml['capabilities'];
+    languages = _getLanguages(yaml);
 
-// After got the configuration values, time to validate them
-    await validateConfigValues();
+    // toast activator configurations
+    var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
+
+    toastActivatorCLSID = _args['toast-activator-clsid'] ??
+        toastActivatorYaml['clsid']?.toString();
+    toastActivatorArguments = _args['toast-activator-arguments'] ??
+        toastActivatorYaml['arguments']?.toString() ??
+        '----AppNotificationActivationServer';
+    toastActivatorDisplayName = _args['toast-activator-display-name'] ??
+        toastActivatorYaml['display_name']?.toString() ??
+        'Toast activator';
+
+    // app installer configurations
+    var installerYaml = yaml['app_installer'] ?? YamlMap();
+
+    publishFolderPath =
+        _args['publish-folder-path'] ?? installerYaml['publish_folder_path'];
+    hoursBetweenUpdateChecks = int.parse(_args['hours-between-update-checks'] ??
+        installerYaml['hours_between_update_checks']?.toString() ??
+        '0');
+    if (hoursBetweenUpdateChecks < 0) hoursBetweenUpdateChecks = 0;
+    automaticBackgroundTask = _args.wasParsed('automatic-background-task') ||
+        installerYaml['automatic_background_task'] == null ||
+        installerYaml['automatic_background_task'].toString().toLowerCase() ==
+            'true';
+    updateBlocksActivation = _args.wasParsed('update-blocks-activation') ||
+        installerYaml['update_blocks_activation'] == null ||
+        installerYaml['update_blocks_activation'].toString().toLowerCase() ==
+            'true';
+    showPrompt = _args.wasParsed('show-prompt') ||
+        installerYaml['show_prompt'] == null ||
+        installerYaml['show_prompt'].toString().toLowerCase() == 'true';
+    forceUpdateFromAnyVersion =
+        _args.wasParsed('force-update-from-any-version') ||
+            installerYaml['force_update_from_any_version']
+                    ?.toString()
+                    .toLowerCase() ==
+                'true';
   }
 
   /// Validate the configuration values and set default values
   Future<void> validateConfigValues() async {
-    const taskName = 'validating config values';
-    _log.startingTask(taskName);
+    _logger.trace('validating config values');
 
     if (appName.isNull) {
-      _log.errorAndExit(AppNameException(
-          'App name is empty, check the general \'name:\' property at pubspec.yaml'));
+      throw 'App name is empty, check the general \'name:\' property at pubspec.yaml';
     }
     if (appDescription.isNull) appDescription = appName;
-    if (displayName.isNull) displayName = _cleanAppName();
+    var cleanAppName = appName!.replaceAll('_', '');
+    if (displayName.isNull) displayName = cleanAppName;
     if (identityName.isNull) {
       if (store) {
-        _log.error(
+        _logger.stderr(
             'identity name is empty, check "msix_config: identity_name" at pubspec.yaml');
-        _log.warn(
-            'you can find your store "identity_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Name');
-        exit(-1);
+        throw 'you can find your store "identity_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Identity/Name';
       } else {
-        identityName = 'com.flutter.${_cleanAppName()}';
+        identityName = 'com.flutter.$cleanAppName';
       }
     } else {
       if (!RegExp(r'^[a-zA-Z0-9.-]{3,50}$').hasMatch(identityName!)) {
-        _log.error(
-            'invalid identity name ("identity_name"): "$identityName". need to be a string between 3 and 50 characters in length that consists of alpha-numeric, period, and dash characters.');
-        exit(-1);
+        throw 'invalid identity name ("identity_name"): "$identityName". need to be a string between 3 and 50 characters in length that consists of alpha-numeric, period, and dash characters.';
       }
     }
     if (publisherName.isNull) {
       if (store) {
-        _log.error(
+        _logger.stderr(
             'publisher display name is empty, check "msix_config: publisher_display_name" at pubspec.yaml');
-        _log.warn(
-            'you can find your store "publisher_display_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/PublisherDisplayName');
-        exit(-1);
+        throw 'you can find your store "publisher_display_name" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/PublisherDisplayName';
       } else {
         publisherName = identityName;
       }
     }
     if (store && publisher.isNullOrEmpty) {
-      _log.error(
+      _logger.stderr(
           'publisher is empty, check "msix_config: publisher" at pubspec.yaml');
-      _log.warn(
-          'you can find your store "publisher" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/Publisher');
-      exit(-1);
+      throw 'you can find your store "publisher" in https://partner.microsoft.com/en-us/dashboard > Product > Product identity > Package/Properties/Publisher';
     }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
@@ -162,23 +193,8 @@ class Configuration {
       capabilities = 'internetClient,location,microphone,webcam';
     if (languages == null) languages = ['en-us'];
 
-    if (!(await Directory(buildFilesFolder).exists())) {
-      _log.errorAndExit(BuildFilesException(
-          'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again'));
-    }
-
-    executableFileName = await Directory(buildFilesFolder)
-        .list()
-        .firstWhere(
-            (file) =>
-                file.path.endsWith('.exe') &&
-                !file.path.contains('PSFLauncher64.exe'),
-            orElse: () => Directory(buildFilesFolder).listSync().first)
-        .then((file) => basename(file.path));
-
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {
-      _log.errorAndExit(VersionException(
-          'Msix version can be only in this format: "1.0.0.0"'));
+      throw 'msix version can be only in this format: "1.0.0.0"';
     }
 
     if (displayName != null && displayName!.length > 256) {
@@ -192,41 +208,52 @@ class Configuration {
     if (!certificatePath.isNull || signToolOptions != null || store) {
       if (!certificatePath.isNull) {
         if (!(await File(certificatePath!).exists())) {
-          _log.errorAndExit(CertificateException(
-              'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml'));
+          throw 'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml';
         }
 
         if (extension(certificatePath!) == '.pfx' &&
             certificatePassword.isNull) {
-          _log.errorAndExit(CertificatePasswordException(
-              'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml'));
+          throw 'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml';
         }
       }
     } else {
-      /// If no certificate was chosen then use test certificate
+      // if no certificate was chosen then use test certificate
       certificatePath = '$msixAssetsPath/test_certificate.pfx';
       certificatePassword = '1234';
     }
 
     if (!['x86', 'x64'].contains(architecture)) {
-      _log.errorAndExit(ArchitectureException(
-          'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml'));
+      throw 'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml';
     }
-
-    _log.taskCompleted(taskName);
   }
 
-  bool haveLogoPath() => !logoPath.isNull;
+  /// Validate "flutter build windows" output files
+  Future<void> validateBuildFiles() async {
+    _logger.trace('validating build files');
 
-  /// parse the cli arguments
+    if (!await Directory(buildFilesFolder).exists() ||
+        !await Directory(buildFilesFolder)
+            .list()
+            .any((file) => file.path.endsWith('.exe'))) {
+      throw 'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again';
+    }
+
+    executableFileName = await Directory(buildFilesFolder)
+        .list()
+        .firstWhere((file) =>
+            file.path.endsWith('.exe') &&
+            !file.path.contains('PSFLauncher64.exe'))
+        .then((file) => basename(file.path));
+  }
+
+  /// Declare and parse the cli arguments
   void _parseCliArguments(List<String> args) {
-    const taskName = 'parsing cli arguments';
-    _log.startingTask(taskName);
+    _logger.trace('parsing cli arguments');
 
     var parser = ArgParser()
       ..addOption('certificate-password', abbr: 'p')
       ..addOption('certificate-path', abbr: 'c')
-      ..addOption('version', abbr: 'v')
+      ..addOption('version')
       ..addOption('display-name', abbr: 'd')
       ..addOption('publisher-display-name', abbr: 'u')
       ..addOption('identity-name', abbr: 'i')
@@ -240,20 +267,39 @@ class Configuration {
       ..addOption('architecture', abbr: 'h')
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
+      ..addOption('install-certificate')
+      ..addOption('toast-activator-clsid')
+      ..addOption('toast-activator-arguments')
+      ..addOption('toast-activator-display-name')
+      ..addOption('publish-folder-path')
+      ..addOption('hours-between-update-checks')
+      ..addOption('build-windows')
       ..addFlag('store')
-      ..addFlag('debug-signing')
       ..addFlag('add-execution-alias')
-      ..addFlag('dont-install-certificate')
       ..addFlag('debug')
-      ..addFlag('release');
+      ..addFlag('release')
+      ..addFlag('automatic-background-task')
+      ..addFlag('update-blocks-activation')
+      ..addFlag('show-prompt')
+      ..addFlag('force-update-from-any-version')
+      ..addFlag('with-test-certificate-installer');
 
-    try {
-      argResults = parser.parse(args);
-    } catch (e) {
-      _log.errorAndExit(ArgumentsException('invalid cli arguments: $e'));
+    // exclude -v (verbose) from the arguments
+    _args = parser.parse(args.where((arg) => arg != '-v'));
+  }
+
+  Future<void> validateAppInstallerConfigValues() async {
+    _logger.trace('validating app installer config values');
+
+    if (publishFolderPath.isNullOrEmpty ||
+        !await Directory(publishFolderPath!).exists()) {
+      _logger.stderr(
+          'publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml'
+              .red);
+      exit(-1);
+    } else {
+      publishFolderPath = Uri.decodeFull(publishFolderPath!);
     }
-
-    _log.taskCompleted(taskName);
   }
 
   /// Get the assets folder path from the .packages file
@@ -279,52 +325,10 @@ class Configuration {
     return pubspec;
   }
 
-  Iterable<String>? _getLanguages(dynamic config) {
-    var languagesConfig =
-        argResults.read('languages') ?? config?['languages']?.toString();
-    if (languagesConfig != null) {
-      var languages = languagesConfig
-          .split(',')
+  /// Get the languages list
+  Iterable<String>? _getLanguages(dynamic config) =>
+      ((_args['languages'] ?? config['languages']) as String?)
+          ?.split(',')
           .map((e) => e.trim())
           .where((element) => element.length > 0);
-
-      if (languages.length > 0) return languages;
-    }
-
-    return null;
-  }
-
-  String _cleanAppName() => appName!.replaceAll('_', '');
-}
-
-class VersionException extends GeneralException {
-  VersionException(String message) : super(message);
-}
-
-class AppNameException extends GeneralException {
-  AppNameException(String message) : super(message);
-}
-
-class BuildFilesException extends GeneralException {
-  BuildFilesException(String message) : super(message);
-}
-
-class AssetsFolderException extends GeneralException {
-  AssetsFolderException(String message) : super(message);
-}
-
-class CertificateException extends GeneralException {
-  CertificateException(String message) : super(message);
-}
-
-class CertificatePasswordException extends GeneralException {
-  CertificatePasswordException(String message) : super(message);
-}
-
-class ArchitectureException extends GeneralException {
-  ArchitectureException(String message) : super(message);
-}
-
-class ArgumentsException extends GeneralException {
-  ArgumentsException(String message) : super(message);
 }

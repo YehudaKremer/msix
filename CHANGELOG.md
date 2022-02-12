@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.0.0
+
+- add `publish` command and configurations, for sideloading publish (outside the microsoft store)
+- user asked (cli dialog) if he want to **increment version number** (if needed)
+- user asked (cli dialog) if he want to install the test certificate
+- add [toast notifications](https://github.com/YehudaKremer/msix/issues/94) configuration
+- `msix:create` is includes the `flutter build windows` command, unless use the argument: `--build-windows false`
+- add `--with-test-certificate-installer` flag that copy test-certificate installer program (.exe), see configuration table
+- logs are now minimal by default, use the `-v` argument to print extended logs (useful for debugging and bug reporting)
+- code refactoring
+
+### Breaking Changes
+
+- remove `debug-signing` (not printing useful info)
+- change `dont-install-certificate` to `install-certificate` with default of true
+- setting msix-version via Command-line argument is allow only with `--version 1.0.0.1` and not with `-v` (use now for extended logs)
+
 ## 2.8.18
 
 - fix [#91](https://github.com/YehudaKremer/msix/issues/91)

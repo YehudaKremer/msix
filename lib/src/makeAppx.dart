@@ -1,32 +1,33 @@
 import 'dart:io';
+import 'package:cli_util/cli_logging.dart' show Logger;
 import 'configuration.dart';
-import 'log.dart';
 
 /// Use the makeappx.exe tool to generate manifest file
 class MakeAppx {
   Configuration _config;
-  Log _log;
+  Logger _logger;
 
-  MakeAppx(this._config, this._log);
+  MakeAppx(this._config, this._logger);
 
   Future<void> pack() async {
-    const taskName = 'packing';
-    _log.startingTask(taskName);
+    _logger.trace('packing');
 
-    var msixPath =
-        '${_config.outputPath ?? _config.buildFilesFolder}/${_config.outputName ?? _config.appName}.msix';
     var makeAppxPath =
-        '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makeappx.exe';
+        '${_config.msixToolkitPath}/Redist.${_config.architecture}/makeappx.exe';
 
-    var result = await Process.run(makeAppxPath,
-        ['pack', '/v', '/o', '/d', _config.buildFilesFolder, '/p', msixPath]);
+    var makeAppxProcess = await Process.run(makeAppxPath, [
+      'pack',
+      '/v',
+      '/o',
+      '/d',
+      _config.buildFilesFolder,
+      '/p',
+      _config.msixPath
+    ]);
 
-    if (result.stderr.toString().length > 0) {
-      _log.error(result.stdout);
-      _log.errorAndExit(GeneralException(result.stderr));
-    } else if (result.exitCode != 0) {
-      _log.errorAndExit(GeneralException(result.stdout));
+    if (makeAppxProcess.exitCode != 0) {
+      _logger.stderr(makeAppxProcess.stdout);
+      throw makeAppxProcess.stderr;
     }
-    _log.taskCompleted(taskName);
   }
 }

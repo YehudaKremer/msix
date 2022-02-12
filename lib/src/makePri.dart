@@ -1,23 +1,23 @@
 import 'dart:io';
+import 'package:cli_util/cli_logging.dart' show Logger;
 import 'configuration.dart';
-import 'log.dart';
+import 'extensions.dart';
 
 /// Use the makepri.exe tool to generate package resource indexing files
 class MakePri {
   Configuration _config;
-  Log _log;
+  Logger _logger;
 
-  MakePri(this._config, this._log);
+  MakePri(this._config, this._logger);
 
   Future<void> generatePRI() async {
-    const taskName = 'generate package resource indexing files';
-    _log.startingTask(taskName);
+    _logger.trace('generate package resource indexing files');
 
     final buildPath = _config.buildFilesFolder;
     var makePriPath =
-        '${_config.msixToolkitPath()}/Redist.${_config.architecture}/makepri.exe';
+        '${_config.msixToolkitPath}/Redist.${_config.architecture}/makepri.exe';
 
-    var result = await Process.run(makePriPath, [
+    var makePriConfigProcess = await Process.run(makePriPath, [
       'createconfig',
       '/cf',
       '$buildPath\\priconfig.xml',
@@ -26,14 +26,12 @@ class MakePri {
       '/o'
     ]);
 
-    if (result.stderr.toString().length > 0) {
-      _log.error(result.stdout);
-      _log.errorAndExit(GeneralException(result.stderr));
-    } else if (result.exitCode != 0) {
-      _log.errorAndExit(GeneralException(result.stdout));
+    if (makePriConfigProcess.exitCode != 0) {
+      _logger.stderr(makePriConfigProcess.stdout);
+      throw makePriConfigProcess.stderr;
     }
 
-    result = await Process.run(makePriPath, [
+    var makePriProcess = await Process.run(makePriPath, [
       'new',
       '/cf',
       '$buildPath\\priconfig.xml',
@@ -46,16 +44,11 @@ class MakePri {
       '/o',
     ]);
 
-    var priconfig = File('$buildPath/priconfig.xml');
-    if (await priconfig.exists()) await priconfig.delete();
+    await File('$buildPath/priconfig.xml').deleteIfExists();
 
-    if (result.stderr.toString().length > 0) {
-      _log.error(result.stdout);
-      _log.errorAndExit(GeneralException(result.stderr));
-    } else if (result.exitCode != 0) {
-      _log.errorAndExit(GeneralException(result.stdout));
+    if (makePriProcess.exitCode != 0) {
+      _logger.stderr(makePriProcess.stdout);
+      throw makePriProcess.stderr;
     }
-
-    _log.taskCompleted(taskName);
   }
 }

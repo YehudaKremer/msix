@@ -1,13 +1,13 @@
 import 'dart:io';
+import 'package:cli_util/cli_logging.dart';
 import 'package:msix/src/configuration.dart';
-import 'package:msix/src/log.dart';
 import 'package:test/test.dart';
 
 const tempFolderPath = 'test/configuration_temp';
 const yamlTestPath = '$tempFolderPath/test.yaml';
 
 void main() {
-  var log = Log();
+  var log = Logger.verbose();
   late Configuration config;
   const yamlContent = '''
 
@@ -17,7 +17,7 @@ msix_config:
   ''';
 
   setUp(() async {
-    config = Configuration(log)
+    config = Configuration([], log)
       ..pubspecYamlPath = yamlTestPath
       ..buildFilesFolder = tempFolderPath;
 
@@ -36,27 +36,33 @@ msix_config:
   group('app name:', () {
     test('valid app name', () async {
       await File(yamlTestPath).writeAsString('name: testAppName123');
-      await config.getConfigValues([]);
+      await config.getConfigValues();
       expect(config.appName, 'testAppName123');
     });
 
     test('with out app name', () async {
       await File(yamlTestPath).writeAsString('name:');
-      expect(() async => await config.getConfigValues([]),
-          throwsA(isA<AppNameException>()));
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate(
+              (String error) => error.contains('App name is empty'))));
     });
 
     test('with out app name property', () async {
       await File(yamlTestPath).writeAsString('description:');
-      expect(() async => await config.getConfigValues([]),
-          throwsA(isA<AppNameException>()));
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate(
+              (String error) => error.contains('App name is empty'))));
     });
   });
 
   test('valid description', () async {
     await File(yamlTestPath)
         .writeAsString('description: description123' + yamlContent);
-    await config.getConfigValues([]);
+    await config.getConfigValues();
     expect(config.appDescription, 'description123');
   });
 
@@ -64,40 +70,58 @@ msix_config:
     test('valid version in yaml', () async {
       await File(yamlTestPath)
           .writeAsString(yamlContent + 'msix_version: 1.2.3.4');
-      await config.getConfigValues([]);
+      await config.getConfigValues();
       expect(config.msixVersion, '1.2.3.4');
     });
 
     test('invalid version letter in yaml', () async {
       await File(yamlTestPath)
           .writeAsString(yamlContent + 'msix_version: 1.s.3.4');
-      expect(() async => await config.getConfigValues([]),
-          throwsA(isA<VersionException>()));
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate((String error) =>
+              error.contains('msix version can be only in this format'))));
     });
 
     test('invalid version space in yaml', () async {
       await File(yamlTestPath)
           .writeAsString(yamlContent + 'msix_version: 1.s. 3.4');
-      expect(() async => await config.getConfigValues([]),
-          throwsA(isA<VersionException>()));
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate((String error) =>
+              error.contains('msix version can be only in this format'))));
     });
 
     test('valid version in long argument', () async {
       await File(yamlTestPath).writeAsString(yamlContent);
-      await config.getConfigValues(['--version', '1.2.3.4']);
-      expect(config.msixVersion, '1.2.3.4');
+      var customConfig = Configuration(['--version', '1.2.3.4'], log)
+        ..pubspecYamlPath = yamlTestPath
+        ..buildFilesFolder = tempFolderPath;
+      await customConfig.getConfigValues();
+      expect(customConfig.msixVersion, '1.2.3.4');
     });
 
     test('invalid version letter in long argument', () async {
       await File(yamlTestPath).writeAsString(yamlContent);
-      expect(() async => await config.getConfigValues(['--version', '1.s.3.4']),
-          throwsA(isA<VersionException>()));
+      var customConfig = Configuration(['--version', '1.s.3.4'], log)
+        ..pubspecYamlPath = yamlTestPath
+        ..buildFilesFolder = tempFolderPath;
+      await customConfig.getConfigValues();
+      await expectLater(
+          customConfig.validateConfigValues,
+          throwsA(predicate((String error) =>
+              error.contains('msix version can be only in this format'))));
     });
 
-    test('valid version in short argument', () async {
+    test('setting version with old -v options', () async {
       await File(yamlTestPath).writeAsString(yamlContent);
-      await config.getConfigValues(['-v', '1.2.3.4']);
-      expect(config.msixVersion, '1.2.3.4');
+      var customConfig = Configuration(['-v', '1.2.3.4'], log)
+        ..pubspecYamlPath = yamlTestPath
+        ..buildFilesFolder = tempFolderPath;
+      await customConfig.getConfigValues();
+      expect(config.msixVersion, isNull);
     });
   });
 
@@ -108,15 +132,18 @@ msix_config:
       await File(yamlTestPath).writeAsString(yamlContent +
           '''certificate_path: $pfxTestPath  
   certificate_password: 1234''');
-      await config.getConfigValues([]);
+      await config.getConfigValues();
       expect(config.certificatePath, pfxTestPath);
     });
 
     test('invalid certificate path', () async {
       await File(yamlTestPath).writeAsString(
           yamlContent + 'certificate_path: $tempFolderPath/test123.pfx');
-      expect(() async => await config.getConfigValues([]),
-          throwsA(isA<CertificateException>()));
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate((String error) =>
+              error.contains('The file certificate not found in'))));
     });
 
     test('certificate without password', () async {
@@ -124,8 +151,11 @@ msix_config:
       await File(pfxTestPath).create();
       await File(yamlTestPath)
           .writeAsString(yamlContent + 'certificate_path: $pfxTestPath');
-      expect(() async => await config.getConfigValues([]),
-          throwsA(isA<CertificatePasswordException>()));
+      await config.getConfigValues();
+      await expectLater(
+          config.validateConfigValues,
+          throwsA(predicate((String error) =>
+              error.contains('Certificate password is empty'))));
     });
   });
 }

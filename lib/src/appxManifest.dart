@@ -1,20 +1,19 @@
 import 'dart:io';
+import 'package:cli_util/cli_logging.dart' show Logger;
 import 'capabilities.dart';
 import 'configuration.dart';
 import 'extensions.dart';
-import 'log.dart';
 
 /// Handles the creation of the manifest file
 class AppxManifest {
   Configuration _config;
-  Log _log;
+  Logger _logger;
 
-  AppxManifest(this._config, this._log);
+  AppxManifest(this._config, this._logger);
 
   /// Generates the manifest file according to the user configuration values
   Future<void> generateAppxManifest() async {
-    const taskName = 'generate appx manifest';
-    _log.startingTask(taskName);
+    _logger.trace('generate appx manifest');
 
     var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
   <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
@@ -49,7 +48,7 @@ class AppxManifest {
       ${_config.languages!.map((language) => '<Resource Language="$language" />').join('')}
     </Resources>
     <Dependencies>
-      <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19042.630" />
+      <TargetDeviceFamily Name="Windows.Desktop" MinVersion="${_config.osMinVersion}" MaxVersionTested="10.0.22000.1" />
     </Dependencies>
     <Capabilities>
       ${_getCapabilities()}
@@ -79,30 +78,26 @@ class AppxManifest {
     manifestContent = manifestContent.replaceAll('    \n', '');
 
     var appxManifestPath = '${_config.buildFilesFolder}/AppxManifest.xml';
-    try {
-      await File(appxManifestPath).create();
-      await File(appxManifestPath).writeAsString(manifestContent);
-    } catch (e) {
-      _log.errorAndExit(GeneralException('fail to create manifest file: $e'));
-    }
-
-    _log.taskCompleted(taskName);
+    await File(appxManifestPath).writeAsString(manifestContent);
   }
 
   String _getExtensions() {
     if (_config.addExecutionAlias ||
         !_config.protocolActivation.isNull ||
-        !_config.fileExtension.isNull) {
+        !_config.fileExtension.isNull ||
+        !_config.toastActivatorCLSID.isNull) {
       return '''<Extensions>
       ${_config.addExecutionAlias ? _getAppExecutionAliasExtension() : ''}
       ${!_config.protocolActivation.isNull ? _getProtocolActivationExtension() : ''}
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
+      ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
         </Extensions>''';
     } else {
       return '';
     }
   }
 
+  /// Add extension section for [_config.executableFileName]
   String _getAppExecutionAliasExtension() {
     return '''  <uap3:Extension Category="windows.appExecutionAlias" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
             <uap3:AppExecutionAlias>
@@ -111,6 +106,7 @@ class AppxManifest {
           </uap3:Extension>''';
   }
 
+  /// Add extension section for [_config.protocolActivation]
   String _getProtocolActivationExtension() {
     return '''  <uap:Extension Category="windows.protocol">
             <uap:Protocol Name="${_config.protocolActivation.toHtmlEscape()}">
@@ -119,6 +115,7 @@ class AppxManifest {
         </uap:Extension>''';
   }
 
+  /// Add extension section for [_config.fileExtension]
   String _getFileAssociationsExtension() {
     return '''  <uap:Extension Category="windows.fileTypeAssociation">
             <uap:FileTypeAssociation Name="fileassociations">
@@ -131,12 +128,27 @@ class AppxManifest {
           </uap:Extension>''';
   }
 
+  /// Add extension section for "toast_activator" configurations
+  String _getToastNotificationActivationExtension() {
+    return '''  <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="${_config.executableFileName.toHtmlEscape()}" Arguments="${_config.toastActivatorArguments.toHtmlEscape()}" DisplayName="${_config.toastActivatorDisplayName.toHtmlEscape()}">
+              <com:Class Id="${_config.toastActivatorCLSID.toHtmlEscape()}"/>
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+        <desktop:Extension Category="windows.toastNotificationActivation">
+          <desktop:ToastNotificationActivation ToastActivatorCLSID="${_config.toastActivatorCLSID.toHtmlEscape()}"/>
+        </desktop:Extension>''';
+  }
+
   String _normalizeCapability(String capability) {
     capability = capability.trim();
     var firstLetter = capability.substring(0, 1).toLowerCase();
     return firstLetter + capability.substring(1);
   }
 
+  /// Add capabilities section
   String _getCapabilities() {
     var capabilities = _config.capabilities!.split(',');
     capabilities.add('runFullTrust');

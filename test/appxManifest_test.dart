@@ -1,18 +1,18 @@
 import 'dart:io';
 
+import 'package:cli_util/cli_logging.dart';
 import 'package:msix/src/appxManifest.dart';
 import 'package:msix/src/configuration.dart';
-import 'package:msix/src/log.dart';
 import 'package:test/test.dart';
 
 const tempFolderPath = 'test/appx_manifest_temp';
 
 void main() {
-  var log = Log();
+  var log = Logger.verbose();
   late Configuration config;
 
   setUp(() async {
-    config = Configuration(log)
+    config = Configuration([], log)
       ..identityName = 'identityName_test'
       ..publisher = 'publisher_test'
       ..publisherName = 'publisherName_test'
@@ -26,7 +26,9 @@ void main() {
       ..fileExtension = 'fileExtension_test'
       ..buildFilesFolder = tempFolderPath
       ..capabilities = 'location,microphone'
-      ..languages = ['en-us'];
+      ..languages = ['en-us']
+      ..toastActivatorArguments = '----AppNotificationActivationServer'
+      ..toastActivatorDisplayName = 'Toast activator';
 
     await Directory('$tempFolderPath/').create(recursive: true);
     await Future.delayed(Duration(milliseconds: 150));
@@ -216,5 +218,22 @@ void main() {
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(manifestContent.contains('<Resource Language="en-us" />'), true);
     expect(manifestContent.contains('<Resource Language="he-il" />'), true);
+  });
+
+  test('toast-activator-clsid is valid', () async {
+    var testValue = 'c569ad1a-8a98-4512-a92c-e46fb56cf3e3';
+    await AppxManifest(config..toastActivatorCLSID = testValue, log)
+        .generateAppxManifest();
+    var manifestContent =
+        await File('$tempFolderPath/AppxManifest.xml').readAsString();
+    expect(
+        manifestContent.contains(
+            '<com:ExeServer Executable="executableFileName_test" Arguments="----AppNotificationActivationServer" DisplayName="Toast activator">'),
+        true);
+    expect(
+        manifestContent.contains(
+            '<desktop:ToastNotificationActivation ToastActivatorCLSID="$testValue"/>'),
+        true);
+    expect(manifestContent.contains('<com:Class Id="$testValue"/>'), true);
   });
 }

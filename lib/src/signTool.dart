@@ -1,69 +1,53 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:msix/src/extensions.dart';
-import 'package:path/path.dart';
-import 'configuration.dart';
-import 'log.dart';
+import 'package:cli_dialog/cli_dialog.dart' show CLI_Dialog;
+import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:path/path.dart' show extension, basename;
 import 'extensions.dart';
+import 'configuration.dart';
 
 var _publisherRegex = RegExp(
     '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
 
-/// Handles signing operations
+/// Handles the certificate sign functionality
 class SignTool {
   Configuration _config;
-  Log _log;
+  Logger _logger;
 
-  SignTool(this._config, this._log);
+  SignTool(this._config, this._logger);
 
-  /// Use the certutil.exe tool to detect the certificate publisher name (Subject)
-  Future<void> getCertificatePublisher(bool withLogs) async {
-    const taskName = 'getting certificate publisher';
-    _log.startingTask(taskName);
+  /// Use Powershell script to get the Publisher ("Subject") of the certificate
+  Future<void> getCertificatePublisher() async {
+    _logger.trace('getting certificate publisher');
 
-    var certificateDetails = await Process.run('powershell.exe', [
-      '-NoProfile',
-      '-NonInteractive',
-      "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject"
-    ]);
+    var certificateDetailsProcess = await Process.run(
+        'powershell.exe',
+        [
+          '-NoProfile',
+          '-NonInteractive',
+          "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject"
+        ],
+        stdoutEncoding: utf8,
+        stderrEncoding: utf8);
 
-    if (certificateDetails.exitCode != 0) {
-      throw certificateDetails.stderr;
+    if (certificateDetailsProcess.exitCode != 0) {
+      _logger.stderr(certificateDetailsProcess.stdout);
+      throw certificateDetailsProcess.stderr;
     }
 
-    var subjectRow = certificateDetails.stdout.toString();
+    var subjectRow = certificateDetailsProcess.stdout.toString();
 
     if (!_publisherRegex.hasMatch(subjectRow)) {
-      throw 'Invalid certificate subject: $subjectRow';
+      throw 'invalid certificate subject: $subjectRow';
     }
 
-    if (withLogs)
-      _log.info('Certificate Details: ${certificateDetails.stdout}');
-
-    try {
-      if (withLogs) _log.info('subjectRow: $subjectRow');
-      _config.publisher = subjectRow
-          .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
-          .trim();
-
-      if (withLogs) _log.info('config.publisher: ${_config.publisher}');
-    } catch (err, stackTrace) {
-      if (!withLogs) await getCertificatePublisher(true);
-      _log.error(err.toString());
-      if (withLogs)
-        _log.warn(
-            'This error happen when this package tried to read the certificate details,');
-      if (withLogs)
-        _log.warn(
-            'please report it by pasting all this output (after deleting sensitive info) to:');
-      if (withLogs) _log.link('https://github.com/YehudaKremer/msix/issues');
-      _log.errorAndExit(GeneralException(stackTrace.toString()));
-    }
-
-    _log.taskCompleted(taskName);
+    _config.publisher = subjectRow
+        .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
+        .trim();
   }
 
-  /// Use the certutil.exe tool to install the certificate on the local machine
-  /// this helps to avoid the need to install the certificate by hand
+  /// Use Powershell to install the test certificate
+  /// if needed and if the user want to.
   Future<void> installCertificate() async {
     var getInstalledCertificate = await Process.run('powershell.exe', [
       '-NoProfile',
@@ -72,6 +56,7 @@ class SignTool {
     ]);
 
     if (getInstalledCertificate.exitCode != 0) {
+      _logger.stderr(getInstalledCertificate.stdout);
       throw getInstalledCertificate.stderr;
     }
 
@@ -79,45 +64,58 @@ class SignTool {
         getInstalledCertificate.stdout.toString().isNullOrEmpty;
 
     if (isCertificateNotInstalled) {
-      const taskName = 'installing certificate';
-      _log.startingTask(taskName);
+      _logger.trace('installing certificate');
 
-      var isAdminCheck = await Process.run('net', ['session']);
-
-      if (isAdminCheck.stderr.toString().contains('Access is denied')) {
-        _log.errorAndExit(GeneralException(
-            'To install the test certificate run the command "flutter pub run msix:create" as administrator'));
-      }
-
-      var result = await Process.run('certutil', [
-        '-f',
-        '-enterprise',
-        '-p',
-        _config.certificatePassword!,
-        '-importpfx',
-        'root',
-        _config.certificatePath!
+      _logger.stdout('');
+      final dialog = CLI_Dialog(booleanQuestions: [
+        [
+          'Do you want to install the certificate: "${basename(File(_config.certificatePath!).path)}" ?',
+          'install'
+        ]
       ]);
+      final wantToInstallCertificate = dialog.ask()['install'];
 
-      if (result.stderr.toString().length > 0) {
-        _log.error(result.stdout);
-        _log.errorAndExit(GeneralException(result.stderr));
-      } else if (result.exitCode != 0) {
-        _log.errorAndExit(GeneralException(result.stdout));
+      if (wantToInstallCertificate) {
+        // create installCertificate.ps1 file
+        var installCertificateScript =
+            'Import-PfxCertificate -FilePath \"${_config.certificatePath}\" -Password (ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force) -CertStoreLocation Cert:\\LocalMachine\\Root';
+        var installCertificateScriptPath =
+            '${_config.msixAssetsPath}/installCertificate.ps1';
+        await File(installCertificateScriptPath)
+            .writeAsString(installCertificateScript);
+
+        // then execute it with admin privileges
+        var importCertificate = await Process.run('powershell.exe', [
+          '-NoProfile',
+          '-NonInteractive',
+          'Start-Process powershell -ArgumentList \"$installCertificateScriptPath\" -Wait -Verb runAs -WindowStyle Hidden'
+        ]);
+
+        await File(installCertificateScriptPath).deleteIfExists();
+
+        if (importCertificate.exitCode != 0) {
+          var error = importCertificate.stderr.toString();
+          if (error.contains('was canceled by the user')) {
+            _logger.stderr(
+                'the certificate installation was canceled'.red.emphasized);
+          } else {
+            throw error;
+          }
+        } else {
+          _logger.stdout(
+              'the certificate installed successfully '.green.emphasized);
+        }
       }
-
-      _log.taskCompleted(taskName);
     }
   }
 
-  /// Sign the created msix installer with the certificate
+  /// Sign the MSIX file with the certificate
   Future<void> sign() async {
-    const taskName = 'signing';
-    _log.startingTask(taskName);
+    _logger.trace('signing');
 
     if (!_config.certificatePath.isNull || _config.signToolOptions != null) {
       var signtoolPath =
-          '${_config.msixToolkitPath()}/Redist.${_config.architecture}/signtool.exe';
+          '${_config.msixToolkitPath}/Redist.${_config.architecture}/signtool.exe';
 
       List<String> signtoolOptions = [];
 
@@ -139,42 +137,16 @@ class SignTool {
         ];
       }
 
-      if (!signtoolOptions.contains('/fd')) {
-        _log.error(
-            'signtool need "/fb" (file digest algorithm) option, for example: "/fd SHA256", more details:');
-        _log.link(
-            'https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe#sign-command-options');
-        exit(-1);
-      }
-
-      ProcessResult signResults = await Process.run(signtoolPath, [
+      ProcessResult signProcess = await Process.run(signtoolPath, [
         'sign',
         ...signtoolOptions,
-        if (_config.debugSigning) '/debug',
-        '${_config.outputPath ?? _config.buildFilesFolder}\\${_config.outputName ?? _config.appName}.msix',
+        _config.msixPath,
       ]);
 
-      if (_config.debugSigning) _log.info(signResults.stdout.toString());
-
-      if (!signResults.stdout
-              .toString()
-              .contains('Number of files successfully Signed: 1') &&
-          signResults.stderr.toString().length > 0) {
-        _log.error(signResults.stdout);
-        _log.error(signResults.stderr);
-
-        if (_config.signToolOptions == null &&
-            signResults.stdout
-                .toString()
-                .contains('Error: SignerSign() failed.') &&
-            !_config.publisher.isNull) {
-          _log.errorAndExit(GeneralException('signing error'));
-        }
-
-        exit(-1);
+      if (signProcess.exitCode != 0) {
+        _logger.stderr(signProcess.stdout);
+        throw signProcess.stderr;
       }
     }
-
-    _log.taskCompleted(taskName);
   }
 }
