@@ -101,30 +101,26 @@ class AppInstaller {
   Future<void> generateAppInstallerWebSite() async {
     _logger.trace('generate app installer web site');
 
-    var htmlFileContent =
-        await File('${_config.msixAssetsPath}/appInstallerSite.html')
-            .readAsString();
-
-    htmlFileContent = htmlFileContent.replaceAll(
+    webInstallerSite = webInstallerSite.replaceAll(
         'PAGE_TITLE', _config.displayName ?? _config.appName!);
-    htmlFileContent = htmlFileContent.replaceAll(
+    webInstallerSite = webInstallerSite.replaceAll(
         'PAGE_DESCRIPTION',
         _config.appDescription ??
             '${_config.displayName ?? _config.appName!} installer');
-    htmlFileContent = htmlFileContent.replaceAll(
+    webInstallerSite = webInstallerSite.replaceAll(
         'PAGE_TITLE', _config.displayName ?? _config.appName!);
-    htmlFileContent = htmlFileContent.replaceAll(
+    webInstallerSite = webInstallerSite.replaceAll(
         'APP_NAME', _config.displayName ?? _config.appName!);
-    htmlFileContent =
-        htmlFileContent.replaceAll('APP_VERSION', _config.msixVersion!);
-    htmlFileContent = htmlFileContent.replaceAll(
+    webInstallerSite =
+        webInstallerSite.replaceAll('APP_VERSION', _config.msixVersion!);
+    webInstallerSite = webInstallerSite.replaceAll(
         'APP_INSTALLER_LINK', '${basename(_config.appInstallerPath)}');
-    htmlFileContent =
-        htmlFileContent.replaceAll('REQUIRED_OS_VERSION', _config.osMinVersion);
-    htmlFileContent =
-        htmlFileContent.replaceAll('ARCHITECTURE', _config.architecture!);
-    htmlFileContent =
-        htmlFileContent.replaceAll('PUBLISHER_NAME', _config.publisherName!);
+    webInstallerSite = webInstallerSite.replaceAll(
+        'REQUIRED_OS_VERSION', _config.osMinVersion);
+    webInstallerSite =
+        webInstallerSite.replaceAll('ARCHITECTURE', _config.architecture!);
+    webInstallerSite =
+        webInstallerSite.replaceAll('PUBLISHER_NAME', _config.publisherName!);
 
     var logoImage = decodeImage(await File(_config.logoPath ??
             '${_config.defaultsIconsFolderPath}/Square44x44Logo.altform-lightunplated_targetsize-256.png')
@@ -140,11 +136,71 @@ class AppInstaller {
     String base64Logo = base64Encode(encodePng(siteLogo));
     String base64favicon = base64Encode(encodePng(favicon));
 
-    htmlFileContent = htmlFileContent.replaceAll('IMAGE_BASE64', base64Logo);
-    htmlFileContent =
-        htmlFileContent.replaceAll('FAVICON_BASE64', base64favicon);
+    webInstallerSite = webInstallerSite.replaceAll('IMAGE_BASE64', base64Logo);
+    webInstallerSite =
+        webInstallerSite.replaceAll('FAVICON_BASE64', base64favicon);
 
     await File('${_config.publishFolderPath}/index.html')
-        .writeAsString(htmlFileContent);
+        .writeAsString(webInstallerSite);
   }
 }
+
+var webInstallerSite = '''
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="data:image/png;base64, FAVICON_BASE64" />
+    <meta name="description" content="PAGE_DESCRIPTION">
+    <title>PAGE_TITLE</title>
+</head>
+
+<body>
+
+    <div class="flex m-14">
+        <div class="mr-5">
+            <img class="w-48" src="data:image/png;base64, IMAGE_BASE64" alt="logo">
+        </div>
+        <div>
+            <h1 class="text-3xl text-sky-500 mb-5">APP_NAME</h1>
+            <h3 class="text-xl text-gray-600  mb-8">Version APP_VERSION</h3>
+            <button class="bg-sky-500 hover:bg-sky-400 transition-colors rounded-md text-white px-8 py-1  mb-3"
+                onclick="download()">Install</button>
+            <a href="https://go.microsoft.com/fwlink/?linkid=870616" target="_blank">
+                <p class="text-sky-500  mb-5">Troubleshoot installation</p>
+            </a>
+            <h3 class="text-xl text-gray-600 mb-4">Application Information</h3>
+
+            <div class="flex text-gray-500">
+                <div class="font-bold mr-14">
+                    <div class="mb-4">Version</div>
+                    <div class="mb-4">Required Operating System</div>
+                    <div class="mb-4">Architectures</div>
+                    <div class="mb-4">Publisher</div>
+                </div>
+                <div>
+                    <div class="mb-4">APP_VERSION</div>
+                    <div class="mb-4">REQUIRED_OS_VERSION</div>
+                    <div class="mb-4">ARCHITECTURE</div>
+                    <div class="mb-4">PUBLISHER_NAME</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function download() {
+            var a = document.createElement("a");
+            a.href = '/APP_INSTALLER_LINK';
+            a.setAttribute("download", 'APP_INSTALLER_LINK');
+            a.click();
+        }
+    </script>
+</body>
+
+</html>
+''';
