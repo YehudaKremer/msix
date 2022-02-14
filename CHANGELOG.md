@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.1
+
+- removed powershell file
+
 ## 3.0.0
 
 - add `publish` command and configurations, for sideloading publish (outside the microsoft store)
