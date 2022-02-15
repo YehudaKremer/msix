@@ -37,9 +37,9 @@ class Configuration {
   String? outputName;
   String? publishFolderPath;
   int hoursBetweenUpdateChecks = 0;
-  bool automaticBackgroundTask = true;
-  bool updateBlocksActivation = true;
-  bool showPrompt = true;
+  bool automaticBackgroundTask = false;
+  bool updateBlocksActivation = false;
+  bool showPrompt = false;
   bool forceUpdateFromAnyVersion = false;
   bool store = false;
   bool installCert = true;
@@ -74,11 +74,15 @@ class Configuration {
     outputPath = _args['output-path'] ?? yaml['output_path'];
     outputName = _args['output-name'] ?? yaml['output_name'];
     addExecutionAlias = _args.wasParsed('add-execution-alias') ||
-        yaml['add_execution_alias']?.toLowerCase() == 'true';
-    installCert = _args['install-certificate'] != 'false' ||
-        yaml['install_certificate'] != 'false';
-    buildWindows = _args['build-windows'] != 'false' &&
-        yaml['build_windows'].toString() != 'false';
+        yaml['add_execution_alias']?.toString().toLowerCase() == 'true';
+    if (_args['install-certificate'].toString() == 'false' ||
+        yaml['install_certificate']?.toString().toLowerCase() == 'false') {
+      installCert = false;
+    }
+    if (_args['build-windows'].toString() == 'false' ||
+        yaml['build_windows']?.toString().toLowerCase() == 'false') {
+      buildWindows = false;
+    }
     store = _args.wasParsed('store') ||
         yaml['store']?.toString().toLowerCase() == 'true';
     createWithDebugBuildFiles = _args.wasParsed('debug') ||
@@ -132,16 +136,13 @@ class Configuration {
         '0');
     if (hoursBetweenUpdateChecks < 0) hoursBetweenUpdateChecks = 0;
     automaticBackgroundTask = _args.wasParsed('automatic-background-task') ||
-        installerYaml['automatic_background_task'] == null ||
-        installerYaml['automatic_background_task'].toString().toLowerCase() ==
+        installerYaml['automatic_background_task']?.toString().toLowerCase() ==
             'true';
     updateBlocksActivation = _args.wasParsed('update-blocks-activation') ||
-        installerYaml['update_blocks_activation'] == null ||
-        installerYaml['update_blocks_activation'].toString().toLowerCase() ==
+        installerYaml['update_blocks_activation']?.toString().toLowerCase() ==
             'true';
     showPrompt = _args.wasParsed('show-prompt') ||
-        installerYaml['show_prompt'] == null ||
-        installerYaml['show_prompt'].toString().toLowerCase() == 'true';
+        installerYaml['show_prompt']?.toString().toLowerCase() == 'true';
     forceUpdateFromAnyVersion =
         _args.wasParsed('force-update-from-any-version') ||
             installerYaml['force_update_from_any_version']

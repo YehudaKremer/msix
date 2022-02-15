@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.1.0
+
+- fix bugs related to [PR](https://github.com/YehudaKremer/msix/pull/101)
+
+### Breaking Changes
+
+- app installer configurations: `automatic_background_task`,`update_blocks_activation` and `show_prompt` are now `false` by default
+
 ## 3.0.1
 
 - removed powershell file
