@@ -75,7 +75,7 @@ class Configuration {
     outputName = _args['output-name'] ?? yaml['output_name'];
     addExecutionAlias = _args.wasParsed('add-execution-alias') ||
         yaml['add_execution_alias']?.toLowerCase() == 'true';
-    installCert = _args['install-certificate'] != 'false' &&
+    installCert = _args['install-certificate'] != 'false' ||
         yaml['install_certificate'] != 'false';
     buildWindows = _args['build-windows'] != 'false' &&
         yaml['build_windows'].toString() != 'false';
