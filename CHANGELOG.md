@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.1.1
+## 3.1.2
 
 - add `trim-logo` configuration option
 
