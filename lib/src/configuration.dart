@@ -44,6 +44,7 @@ class Configuration {
   bool store = false;
   bool installCert = true;
   bool buildWindows = true;
+  bool trimLogo = true;
   bool addExecutionAlias = false;
   bool createWithDebugBuildFiles = false;
   bool withTestCertificateInstaller = false;
@@ -82,6 +83,10 @@ class Configuration {
     if (_args['build-windows'].toString() == 'false' ||
         yaml['build_windows']?.toString().toLowerCase() == 'false') {
       buildWindows = false;
+    }
+    if (_args['trim-logo'].toString() == 'false' ||
+        yaml['trim_logo']?.toString().toLowerCase() == 'false') {
+      trimLogo = false;
     }
     store = _args.wasParsed('store') ||
         yaml['store']?.toString().toLowerCase() == 'true';
@@ -269,6 +274,7 @@ class Configuration {
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
       ..addOption('install-certificate')
+      ..addOption('trim-logo')
       ..addOption('toast-activator-clsid')
       ..addOption('toast-activator-arguments')
       ..addOption('toast-activator-display-name')

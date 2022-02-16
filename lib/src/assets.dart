@@ -106,9 +106,11 @@ class Assets {
             ? Interpolation.average
             : Interpolation.cubic;
 
-    try {
-      image = trim(image);
-    } catch (e) {}
+    if (_config.trimLogo) {
+      try {
+        image = trim(image);
+      } catch (e) {}
+    }
 
     Image resizedImage;
     if (widthLessPaddingWidth > heightLessPaddingHeight) {

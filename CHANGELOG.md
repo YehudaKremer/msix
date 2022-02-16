@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.1
+
+- add `trim-logo` configuration option
+
 ## 3.1.0
 
 - fix bugs related to [PR](https://github.com/YehudaKremer/msix/pull/101)
