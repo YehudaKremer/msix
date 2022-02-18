@@ -92,7 +92,7 @@ class Msix {
     await MakeAppx(_config, _logger).pack();
     await _assets.cleanTemporaryFiles();
 
-    if (!_config.store) {
+    if (_config.signMsix && !_config.store) {
       if (_config.installCert) await _signTool.installCertificate();
       await _signTool.sign();
 

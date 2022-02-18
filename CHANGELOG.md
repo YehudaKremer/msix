@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.4
+
+- add `sign_msix` configuration see: [#105](https://github.com/YehudaKremer/msix/issues/105)
+
 ## 3.1.3
 
 - fix bug [#104](https://github.com/YehudaKremer/msix/issues/104)

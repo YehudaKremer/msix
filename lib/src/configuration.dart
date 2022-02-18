@@ -42,6 +42,7 @@ class Configuration {
   bool showPrompt = false;
   bool forceUpdateFromAnyVersion = false;
   bool store = false;
+  bool signMsix = true;
   bool installCert = true;
   bool buildWindows = true;
   bool trimLogo = true;
@@ -76,6 +77,10 @@ class Configuration {
     outputName = _args['output-name'] ?? yaml['output_name'];
     addExecutionAlias = _args.wasParsed('add-execution-alias') ||
         yaml['add_execution_alias']?.toString().toLowerCase() == 'true';
+    if (_args['sign-msix'].toString() == 'false' ||
+        yaml['sign_msix']?.toString().toLowerCase() == 'false') {
+      signMsix = false;
+    }
     if (_args['install-certificate'].toString() == 'false' ||
         yaml['install_certificate']?.toString().toLowerCase() == 'false') {
       installCert = false;
@@ -273,6 +278,7 @@ class Configuration {
       ..addOption('architecture', abbr: 'h')
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
+      ..addOption('sign-msix')
       ..addOption('install-certificate')
       ..addOption('trim-logo')
       ..addOption('toast-activator-clsid')
