@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.3
+
+- fix bug [#104](https://github.com/YehudaKremer/msix/issues/104)
+
 ## 3.1.2
 
 - add `trim-logo` configuration option

@@ -20,12 +20,15 @@ class SignTool {
   Future<void> getCertificatePublisher() async {
     _logger.trace('getting certificate publisher');
 
+    var powershellSubjectOutputFilePath =
+        "${_config.msixAssetsPath}/subject.txt";
+
     var certificateDetailsProcess = await Process.run(
         'powershell.exe',
         [
           '-NoProfile',
           '-NonInteractive',
-          "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject"
+          "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject | Out-File -NoNewLine -Width 8192 -Encoding UTF8 -FilePath $powershellSubjectOutputFilePath"
         ],
         stdoutEncoding: utf8,
         stderrEncoding: utf8);
@@ -35,7 +38,14 @@ class SignTool {
       throw certificateDetailsProcess.stderr;
     }
 
-    var subjectRow = certificateDetailsProcess.stdout.toString();
+    var powershellSubjectOutputFile = File(powershellSubjectOutputFilePath);
+
+    if (!await powershellSubjectOutputFile.exists()) {
+      throw 'cannot get certificate subject'.red;
+    }
+
+    var subjectRow = await powershellSubjectOutputFile.readAsString();
+    await powershellSubjectOutputFile.deleteIfExists();
 
     if (!_publisherRegex.hasMatch(subjectRow)) {
       throw 'invalid certificate subject: $subjectRow';
