@@ -318,16 +318,6 @@ class Assets {
 
     Isolate.exit(port);
   }
-
-  /// Copy an .exe test-certificate file to the build folder
-  Future<void> addTestCertificateInstaller() async {
-    String certificateName = 'test_certificate.pfx',
-        certificateInstallerName = 'InstallTestCertificate.exe';
-    await File('${_config.msixAssetsPath}/$certificateName')
-        .copy('${_config.buildFilesFolder}/$certificateName');
-    await File('${_config.msixAssetsPath}/$certificateInstallerName')
-        .copy('${_config.buildFilesFolder}/$certificateInstallerName');
-  }
 }
 
 class _Size {

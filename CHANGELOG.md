@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.5
+
+### Breaking Changes
+
+- remove `with-test-certificate-installer` cli flag
+
 ## 3.1.4
 
 - add `sign_msix` configuration see: [#105](https://github.com/YehudaKremer/msix/issues/105)
