@@ -144,7 +144,7 @@ the [Microsoft Store dashboard], as per [this screenshot].
 
 ## :globe_with_meridians: Publishing outside the store
 
-You can use the [App Installer] file to enable your users to download or update the app from local file share.
+You can use the [App Installer] file to enable your users to install and update the app from local file share.
 
 Note: installing from the web `ms-appinstaller:` is [disabled] for now.
 
