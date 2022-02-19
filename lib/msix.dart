@@ -84,7 +84,7 @@ class Msix {
     await _assets.cleanTemporaryFiles(clearMsixFiles: true);
     await _assets.createIcons();
     await _assets.copyVCLibsFiles();
-    if (!_config.store) {
+    if (_config.signMsix && !_config.store) {
       await _signTool.getCertificatePublisher();
     }
     await AppxManifest(_config, _logger).generateAppxManifest();
