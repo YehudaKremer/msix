@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.1.5
+## 3.1.6
 
 ### Breaking Changes
 

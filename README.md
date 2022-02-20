@@ -44,55 +44,73 @@ installer by adding declarations to an `msix_config:` node in your
 
 ```yaml
 msix_config:
-  display_name: MyAppName
-  publisher_display_name: MyName
-  identity_name: MyCompany.MySuite.MyApp
+  display_name: Flutter App
+  publisher_display_name: Company Name
+  identity_name: company.suite.flutterapp
   msix_version: 1.0.0.0
-  logo_path: C:\<PathToIcon>\<Logo.png>
-  capabilities: "internetClient,location,microphone,webcam"
+  logo_path: C:\path\to\logo.png
+  capabilities: internetClient, location, microphone, webcam
 ```
 
+### Available Configurations
+
 <details>
-<summary>Full list of available configurations (click to expand)</summary>
+
+<summary>MSIX configuration (click to expand)</summary>
 
 | YAML name                | Command-line argument                | Description (from Microsoft [Package manifest schema reference])                                                                                      | Example                                                                                         |
 | ------------------------ | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `display_name`           | `--display-name` `-d`                | A friendly app name that can be displayed to users.                                                                                                   | `Flutter Gallery`                                                                               |
-| `logo_path`              | `--logo-path` `-l`                   | Path to an [image file] for use as the app icon (at least 400x400px).                                                                                 | `C:\images\gallery.png`                                                                         |
+| `display_name`           | `--display-name` `-d`                | A friendly app name that can be displayed to users.                                                                                                   | `Flutter App`                                                                               |
+| `publisher_display_name` | `--publisher-display-name` `-u`      | A friendly name for the publisher that can be displayed to users.                                                                                     | `Company Name`                                                                                        |
+| `identity_name`          | `--identity-name` `-i`               | Defines the unique identifier for the app.                                                                                                            | `company.suite.flutterapp`                                                                           |
 | `msix_version`           | `--version`                          | The version number of the package, in `a.b.c.d` format.                                                                                               | `1.0.0.0`                                                                                       |
-| `store`                  | `--store`                            | Generate a MSIX file for publishing to the Microsoft Store.                                                                                           | `false`                                                                                         |
-| `publisher_display_name` | `--publisher-display-name` `-u`      | A friendly name for the publisher that can be displayed to users.                                                                                     | `MyName`                                                                                        |
-| `identity_name`          | `--identity-name` `-i`               | Defines the unique identifier for the app.                                                                                                            | `dev.flutter.Gallery`                                                                           |
-| `publisher`              | `--publisher` `-b`                   | The `Subject` value in the certificate.                                                                                                               | `CN=BF212345-5644-46DF-8668-014044C1B138` or `CN=Contoso Software, O=Contoso Corporation, C=US` |
-| `output_path`            | `--output-path` `-o`                 | The directory where the output MSIX file should be stored.                                                                                            | `C:\src\myapp\msix`                                                                             |
-| `output_name`            | `--output-name` `-n`                 | The filename that should be given to the created MSIX file.                                                                                           | `myApp_dev`                                                                                     |
-| `languages`              | `--languages`                        | Declares the language resources contained in the package.                                                                                             | `en-us, ja-jp`                                                                                  |
+| `logo_path`              | `--logo-path` `-l`                   | Path to an [image file] for use as the app icon (size recommended at least 400x400px).                                                                                 | `C:\images\logo.png`                                                                         |
+| `trim_logo`              | `--trim-logo <true/false>`           | If `false`, don't trim the logo image, default is `true`.                                                                                             | `true`                                                                                          |
 | `capabilities`           | `--capabilities` `-e`                | List of the [capabilities][windows capabilities] the app requires.                                                                                    | `internetClient,location,microphone,webcam`                                                     |
-| `architecture`           | `--architecture` `-h`                | Describes the architecture of the code in the package.                                                                                                | `x64`                                                                                           |
+| `languages`              | `--languages`                        | Declares the language resources contained in the package.                                                                                             | `en-us, ja-jp`                                                                                  |
+| `file_extension`         | `--file-extension` `-f`              | File extensions that the app may be registered to open.                                                                                               | `.picture, .image`                                                                              |
+| `protocol_activation`    | `--protocol-activation`              | [Protocol activation] that will open the app.                                                                                                         | `flutterapp`                                                                                         |
+| `add_execution_alias`    | `--add-execution-alias`              | Add an alias to active the app, use the `pubspec.yaml` `name:` value, so if your app calls 'Flutter_App', user can activate the app using `flutterapp` command. | `true`                                                                                          |
+| `store`                  | `--store`                            | Generate a MSIX file for publishing to the Microsoft Store.                                                                                           | `false`                                                                                         |
+
+</details>
+
+<details>
+<summary>Build configuration (click to expand)</summary>
+
+| YAML name                | Command-line argument                | Description                                                                                      | Example                                                                                         |
+| ------------------------ | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `debug`                  | `--debug` or `--release`             | Create MSIX from the **debug** or **release** build files (`\build\windows\runner\<Debug/Release>`), **release** is the default.                                 | `true`                                                                                          |
+| `output_path`            | `--output-path` `-o`                 | The directory where the output MSIX file should be stored.                                                                                            | `C:\src\some\folder`                                                                             |
+| `output_name`            | `--output-name` `-n`                 | The filename that should be given to the created MSIX file.                                                                                           | `flutterApp_dev`                                                                                     |
+| `architecture`           | `--architecture` `-h`                | Describes the architecture of the code in the package, `x64` or `x86`, `x64` is default.                                                                                               | `x64`                                                                                           |
+| `build_windows`          | `--build-windows <true/false>`       | If `false`, don't run the build command `flutter build windows`, default is `true`.                                                                   | `true`                                                                                          |
+
+</details>
+
+<details>
+<summary>Sign configuration (click to expand)</summary>
+
+| YAML name                | Command-line argument                | Description                                                                                      | Example                                                                                         |
+| ------------------------ | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `certificate_path`       | `--certificate-path` `-c`            | Path to the certificate content to place in the store.                                                                                                | `C:\certs\signcert.pfx`                                                                         |
 | `certificate_password`   | `--certificate-password` `-p`        | Password for the certificate.                                                                                                                         | `1234`                                                                                          |
+| `publisher`              | `--publisher` `-b`                   | The `Subject` value in the certificate.                                                                                                               | `CN=BF212345-5644-46DF-8668-014043C1B138` or `CN=Contoso Software, O=Contoso Corporation, C=US` |
 | `signtool_options`       | `--signtool-options`                 | Options to be provided to the `signtool` for app signing (see below.)                                                                                 | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer`                                                   |
-| `install_certificate`    | `--install-certificate <true/false>` | If `false`, don't install the certificate, default is `true`.                                                                                         | `true`                                                                                          |
 | `sign_msix`    | `--sign-msix <true/false>` | If `false`, don't sign the msix file, default is `true`.                                                                                         | `true`                                                                                          |
-| `build_windows`          | `--build-windows <true/false>`       | If `false`, don't run the build command `flutter build windows`, default is `true`.                                                                   | `true`                                                                                          |
-| `file_extension`         | `--file-extension` `-f`              | File extensions that the app may be registered to open.                                                                                               | `.picture, .image`                                                                              |
-| `protocol_activation`    | `--protocol-activation`              | [Protocol activation] that will open the app.                                                                                                         | `myapp`                                                                                         |
-| `trim_logo`              | `--trim-logo <true/false>`           | If `false`, don't trim the logo image, default is `true`.                                                                                             | `true`                                                                                          |
-| `add_execution_alias`    | `--add-execution-alias`              | Add an alias to active the app, use the `pubspec.yaml` `name:` value, so if your app calls 'My_App', user can activate the app using `myapp` command. | `true`                                                                                          |
-| `debug`                  | `--debug` or `--release`             | Create MSIX from the debug/release build files (`\build\windows\runner\<Debug/Release>`), **release** is the default.                                 | `true`                                                                                          |
+| `install_certificate`    | `--install-certificate <true/false>` | If `false`, don't try to install the certificate, default is `true`.                                                                                         | `true`                                                                                          |
 
 </details>
 
 <details>
 
-<summary>Toast Notifications configurations (click to expand)</summary>
+<summary>Toast Notifications configuration (click to expand)</summary>
 
 ##### [Toast Notifications] configuration example:
 
 ```yaml
 msix_config:
-  display_name: MyApp
-  publisher_display_name: MyApp
+  display_name: Flutter App
   toast_activator: #<-- toast notifications configuration
     clsid: A1232234-1234-1234-1234-123412341234
     arguments: "1,2,3"
@@ -107,6 +125,8 @@ msix_config:
 | `display_name` | `--toast-activator-display-name` `-d` | Display name for the toast notifications. | `Toast activator`                      |
 
 </details>
+
+See also [Configurations Examples And Use Cases].
 
 ## :black_nib: Signing options
 
@@ -162,8 +182,7 @@ PS c:\src\flutter_project> flutter pub run msix:publish
 
 ```yaml
 msix_config:
-  display_name: MyApp
-  publisher_display_name: MyApp
+  display_name: Flutter App
   app_installer: #<-- app installer configuration
     publish_folder_path: c:\path\to\myPublishFolder
     hours_between_update_checks: 0
@@ -207,3 +226,5 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [toast notifications]: https://docs.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast-desktop-cpp-wrl#msixsparse-package
 [disabled]: https://docs.microsoft.com/en-us/windows/msix/app-installer/installing-windows10-apps-web
 [self signed]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing#create-a-self-signed-certificate
+[Configurations Examples And Use Cases]: https://pub.dev/packages/msix/example
+
