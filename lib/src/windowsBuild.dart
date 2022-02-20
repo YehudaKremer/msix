@@ -4,6 +4,7 @@ import 'package:cli_util/cli_logging.dart' show Logger;
 import 'configuration.dart';
 
 const runnerRcPath = 'windows/runner/Runner.rc';
+const mainCppPath = 'windows/runner/main.cpp';
 
 /// Handles windows files build steps
 class WindowsBuild {
@@ -15,7 +16,8 @@ class WindowsBuild {
   /// Run "flutter build windows" command
   Future<void> build() async {
     var originalRunnerRcContent = await _getRunnerRcContent();
-    _updateRunnerCompanyName();
+    await _updateRunnerCompanyName();
+    await _updateWindowTitle();
 
     var buildWindowsArguments = ['build', 'windows'];
     if (_config.createWithDebugBuildFiles) buildWindowsArguments.add('--debug');
@@ -66,5 +68,25 @@ class WindowsBuild {
     }
 
     await File(runnerRcPath).writeAsString(updatedRunnerRcContent);
+  }
+
+  /// Update the app window title in the main.cpp file
+  /// with the [_config.displayName] value.
+  Future<void> _updateWindowTitle() async {
+    _logger.trace('updating main.cpp window title to "${_config.displayName}"');
+
+    var mainCppContentLines = await File(mainCppPath).readAsLines();
+    var updatedMainCppContent = '';
+
+    for (var line in mainCppContentLines) {
+      if (line.contains('window.CreateAndShow')) {
+        line =
+            'if (!window.CreateAndShow(L"${_config.displayName}", origin, size)) {';
+      }
+
+      updatedMainCppContent += '$line\n';
+    }
+
+    await File(mainCppPath).writeAsString(updatedMainCppContent);
   }
 }
