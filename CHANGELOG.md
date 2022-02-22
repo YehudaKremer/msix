@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.0
+
+- Automatically use the Pubspec `version` tag by default. To use auto-versioning, remove any `msix_version` fields or command line options.
+
 ## 3.1.6
 
 ### Breaking Changes

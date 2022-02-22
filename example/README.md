@@ -34,11 +34,16 @@ msix_config:
 ###### For CI/CD:
 
 ```yaml
+name: flutter_app
+version: 1.3.2
+
+# ...
+
 msix_config:
   display_name: Flutter App
-  msix_version: 1.0.1.0
   install_certificate: false
 ```
+Note: The main app version will be used as a basis for the MSIX version (`1.3.2` to `1.3.2.0`)
 
 ###### With Metadata:
 

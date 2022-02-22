@@ -51,6 +51,7 @@ msix_config:
   logo_path: C:\path\to\logo.png
   capabilities: internetClient, location, microphone, webcam
 ```
+See [Configurations Examples And Use Cases].
 
 ### Available Configurations
 
@@ -126,7 +127,27 @@ msix_config:
 
 </details>
 
-See also [Configurations Examples And Use Cases].
+### Msix Version
+
+The MSIX installer version number is used to determine updates to the app and consists of 4 numbers (`1.0.0.0`).
+
+<details>
+
+<summary>See more details on how to set the msix version (click to expand)</summary>
+
+#### The version is determined by the first available option:
+
+1. Command line `--version` flag
+2. In `pubspec.yaml`, under the `msix_config` node, the `msix_version` value
+3. Using the `version` field in `pubspec.yaml`.
+   - The Pubspec version uses [semver], which is of the form `major.minor.patch-prerelease+build`
+   - `msix` will use the `major.minor.patch` and append a `0` for the MSIX version
+   - All prerelease and build info is discarded
+4. Fallback to `1.0.0.0`
+
+By default, if you have a valid `version` in your `pubspec.yaml` file, that will form the basis for your MSIX installer version.
+
+</details>
 
 ## :black_nib: Signing options
 
@@ -227,4 +248,4 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [disabled]: https://docs.microsoft.com/en-us/windows/msix/app-installer/installing-windows10-apps-web
 [self signed]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing#create-a-self-signed-certificate
 [Configurations Examples And Use Cases]: https://pub.dev/packages/msix/example
-
+[semver]: https://semver.org/

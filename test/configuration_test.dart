@@ -123,6 +123,41 @@ msix_config:
       await customConfig.getConfigValues();
       expect(config.msixVersion, isNull);
     });
+
+    test('fallback to pubspec version', () async {
+      await File(yamlTestPath).writeAsString(
+        'name: testAppWithVersion\n'
+        'version: 1.1.3',
+      );
+      await config.getConfigValues();
+      expect(config.msixVersion, equals('1.1.3.0'));
+    });
+
+    test('ignores extra semver info in pubspec version', () async {
+      await File(yamlTestPath).writeAsString(
+        'name: testAppWithVersion\n'
+        'version: 0.8.13-alpha.1+2000-01-01',
+      );
+      await config.getConfigValues();
+      expect(config.msixVersion, equals('0.8.13.0'));
+    });
+
+    test('puts version null on invalid semver', () async {
+      await File(yamlTestPath).writeAsString(
+        'name: invalidSemverApp\n'
+        'version: 0.8.13a',
+      );
+      await config.getConfigValues();
+      expect(config.msixVersion, isNull);
+    });
+
+    test('no version provided - null then maps to 1.0.0.0', () async {
+      await File(yamlTestPath).writeAsString(yamlContent);
+      await config.getConfigValues();
+      expect(config.msixVersion, isNull);
+      await config.validateConfigValues();
+      expect(config.msixVersion, equals('1.0.0.0'));
+    });
   });
 
   group('certificate:', () {
