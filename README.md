@@ -51,6 +51,7 @@ msix_config:
   logo_path: C:\path\to\logo.png
   capabilities: internetClient, location, microphone, webcam
 ```
+See [Configurations Examples And Use Cases].
 
 ### Available Configurations
 
@@ -126,11 +127,15 @@ msix_config:
 
 </details>
 
-See also [Configurations Examples And Use Cases].
+### Msix Version
 
-### Version Configuration
+The MSIX installer version number is used to determine updates to the app and consists of 4 numbers (`1.0.0.0`).
 
-The MSIX installer version number is used to determine updates to the app and consists of 4 numbers (`1.0.0.0`). The version is determined by the first available option:
+<details>
+
+<summary>See more details on how to set the msix version (click to expand)</summary>
+
+#### The version is determined by the first available option:
 
 1. Command line `--version` flag
 2. In `pubspec.yaml`, under the `msix_config` node, the `msix_version` value
@@ -141,6 +146,8 @@ The MSIX installer version number is used to determine updates to the app and co
 4. Fallback to `1.0.0.0`
 
 By default, if you have a valid `version` in your `pubspec.yaml` file, that will form the basis for your MSIX installer version.
+
+</details>
 
 ## :black_nib: Signing options
 
