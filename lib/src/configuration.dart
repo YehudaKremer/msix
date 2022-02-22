@@ -3,6 +3,7 @@ import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:cli_util/cli_logging.dart' show Logger;
 import 'package:package_config/package_config.dart' show findPackageConfig;
 import 'package:path/path.dart' show extension, basename;
+import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart' show YamlMap, loadYaml;
 import 'extensions.dart';
 
@@ -68,7 +69,8 @@ class Configuration {
     appName = pubspec['name'];
     appDescription = pubspec['description'];
     var yaml = pubspec['msix_config'] ?? YamlMap();
-    msixVersion = _args['version'] ?? yaml['msix_version'];
+    msixVersion =
+        _args['version'] ?? yaml['msix_version'] ?? _getPubspecVersion(pubspec);
     certificatePath = _args['certificate-path'] ?? yaml['certificate_path'];
     certificatePassword = _args['certificate-password'] ??
         yaml['certificate_password']?.toString();
@@ -332,6 +334,25 @@ class Configuration {
     var pubspecString = await File(pubspecYamlPath).readAsString();
     var pubspec = loadYaml(pubspecString);
     return pubspec;
+  }
+
+  String? _getPubspecVersion(dynamic yaml) {
+    // Existing behavior is to put null if no version, so matching
+    if (yaml['version'] == null) return null;
+    try {
+      final pubspecVersion = Version.parse(yaml['version']);
+      return [
+        pubspecVersion.major,
+        pubspecVersion.minor,
+        pubspecVersion.patch,
+        0
+      ].join('.');
+    } on FormatException {
+      _logger.stderr(
+        'Warning: Could not parse Pubspec version. No version provided.',
+      );
+      return null;
+    }
   }
 
   /// Get the languages list
