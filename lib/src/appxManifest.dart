@@ -86,13 +86,13 @@ class AppxManifest {
         !_config.protocolActivation.isNull ||
         !_config.fileExtension.isNull ||
         !_config.toastActivatorCLSID.isNull ||
-        !_config.enableAtStartup) {
+        _config.enableAtStartup) {
       return '''<Extensions>
       ${_config.addExecutionAlias ? _getAppExecutionAliasExtension() : ''}
       ${!_config.protocolActivation.isNull ? _getProtocolActivationExtension() : ''}
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
-      ${!_config.enableAtStartup ? _getStartupTaskExtension() : ''}
+      ${_config.enableAtStartup ? _getStartupTaskExtension() : ''}
         </Extensions>''';
     } else {
       return '';
