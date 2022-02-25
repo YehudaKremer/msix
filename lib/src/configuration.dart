@@ -49,6 +49,7 @@ class Configuration {
   bool trimLogo = true;
   bool addExecutionAlias = false;
   bool createWithDebugBuildFiles = false;
+  bool enableAtStartup = false;
   Iterable<String>? languages;
   String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
   String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
@@ -122,6 +123,9 @@ class Configuration {
     architecture = _args['architecture'] ?? yaml['architecture'];
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
+
+    enableAtStartup =
+        _args['enable-at-startup'] ?? yaml['enable_at_startup'] ?? false;
 
     // toast activator configurations
     var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
@@ -276,6 +280,7 @@ class Configuration {
       ..addOption('file-extension', abbr: 'f')
       ..addOption('architecture', abbr: 'h')
       ..addOption('capabilities', abbr: 'e')
+      ..addOption('enable-at-startup')
       ..addOption('languages')
       ..addOption('sign-msix')
       ..addOption('install-certificate')
