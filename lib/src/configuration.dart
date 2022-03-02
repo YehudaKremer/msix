@@ -123,10 +123,10 @@ class Configuration {
     architecture = _args['architecture'] ?? yaml['architecture'];
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
+    enableAtStartup = _args.wasParsed('enable-at-startup') ||
+        yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
 
-    enableAtStartup =
-        _args['enable-at-startup'] ?? yaml['enable_at_startup'] ?? false;
-
+    print('enableAtStartup: $enableAtStartup');
     // toast activator configurations
     var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
 
@@ -280,7 +280,6 @@ class Configuration {
       ..addOption('file-extension', abbr: 'f')
       ..addOption('architecture', abbr: 'h')
       ..addOption('capabilities', abbr: 'e')
-      ..addOption('enable-at-startup')
       ..addOption('languages')
       ..addOption('sign-msix')
       ..addOption('install-certificate')
@@ -293,6 +292,7 @@ class Configuration {
       ..addOption('build-windows')
       ..addFlag('store')
       ..addFlag('add-execution-alias')
+      ..addFlag('enable-at-startup')
       ..addFlag('debug')
       ..addFlag('release')
       ..addFlag('automatic-background-task')
