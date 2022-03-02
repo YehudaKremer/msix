@@ -15,9 +15,9 @@ class WindowsBuild {
 
   /// Run "flutter build windows" command
   Future<void> build() async {
-    var originalRunnerRcContent = await _getRunnerRcContent();
-    await _updateRunnerCompanyName();
-    await _updateWindowTitle();
+    //var originalRunnerRcContent = await _getRunnerRcContent();
+    //await _updateRunnerCompanyName();
+    //await _updateWindowTitle();
 
     var buildWindowsArguments = ['build', 'windows'];
     if (_config.createWithDebugBuildFiles) buildWindowsArguments.add('--debug');
@@ -35,58 +35,58 @@ class WindowsBuild {
 
     loggerProgress.finish(showTiming: true);
 
-    await _restoreRunnerRcContent(originalRunnerRcContent);
+    //await _restoreRunnerRcContent(originalRunnerRcContent);
   }
 
-  Future<String> _getRunnerRcContent() async =>
-      await File(runnerRcPath).readAsString();
+  // Future<String> _getRunnerRcContent() async =>
+  //     await File(runnerRcPath).readAsString();
 
-  Future<File> _restoreRunnerRcContent(String content) async {
-    _logger.trace('restore Runner.rc content');
-    return await File(runnerRcPath).writeAsString(content);
-  }
+  // Future<File> _restoreRunnerRcContent(String content) async {
+  //   _logger.trace('restore Runner.rc content');
+  //   return await File(runnerRcPath).writeAsString(content);
+  // }
 
   /// Update the company name 'com.example' in the Runner.rc file
   /// with the [_config.identityName] value.
-  Future<void> _updateRunnerCompanyName() async {
-    _logger
-        .trace('updating Runner.rc "CompanyName" to "${_config.identityName}"');
+  // Future<void> _updateRunnerCompanyName() async {
+  //   _logger
+  //       .trace('updating Runner.rc "CompanyName" to "${_config.identityName}"');
 
-    var runnerRcContentLines = await File(runnerRcPath).readAsLines();
-    var updatedRunnerRcContent = '';
+  //   var runnerRcContentLines = await File(runnerRcPath).readAsLines();
+  //   var updatedRunnerRcContent = '';
 
-    for (var line in runnerRcContentLines) {
-      if (line.contains('VALUE "CompanyName"')) {
-        line =
-            '            VALUE "CompanyName", "${_config.identityName}" "\\0"';
-      } else if (line.contains('VALUE "LegalCopyright"')) {
-        line =
-            '            VALUE "LegalCopyright", "Copyright (C) ${DateTime.now().year} ${_config.identityName}. All rights reserved." "\\0"';
-      }
+  //   for (var line in runnerRcContentLines) {
+  //     if (line.contains('VALUE "CompanyName"')) {
+  //       line =
+  //           '            VALUE "CompanyName", "${_config.identityName}" "\\0"';
+  //     } else if (line.contains('VALUE "LegalCopyright"')) {
+  //       line =
+  //           '            VALUE "LegalCopyright", "Copyright (C) ${DateTime.now().year} ${_config.identityName}. All rights reserved." "\\0"';
+  //     }
 
-      updatedRunnerRcContent += '$line\n';
-    }
+  //     updatedRunnerRcContent += '$line\n';
+  //   }
 
-    await File(runnerRcPath).writeAsString(updatedRunnerRcContent);
-  }
+  //   await File(runnerRcPath).writeAsString(updatedRunnerRcContent);
+  // }
 
   /// Update the app window title in the main.cpp file
   /// with the [_config.displayName] value.
-  Future<void> _updateWindowTitle() async {
-    _logger.trace('updating main.cpp window title to "${_config.displayName}"');
+  // Future<void> _updateWindowTitle() async {
+  //   _logger.trace('updating main.cpp window title to "${_config.displayName}"');
 
-    var mainCppContentLines = await File(mainCppPath).readAsLines();
-    var updatedMainCppContent = '';
+  //   var mainCppContentLines = await File(mainCppPath).readAsLines();
+  //   var updatedMainCppContent = '';
 
-    for (var line in mainCppContentLines) {
-      if (line.contains('window.CreateAndShow')) {
-        line =
-            'if (!window.CreateAndShow(L"${_config.displayName}", origin, size)) {';
-      }
+  //   for (var line in mainCppContentLines) {
+  //     if (line.contains('window.CreateAndShow')) {
+  //       line =
+  //           'if (!window.CreateAndShow(L"${_config.displayName}", origin, size)) {';
+  //     }
 
-      updatedMainCppContent += '$line\n';
-    }
+  //     updatedMainCppContent += '$line\n';
+  //   }
 
-    await File(mainCppPath).writeAsString(updatedMainCppContent);
-  }
+  //   await File(mainCppPath).writeAsString(updatedMainCppContent);
+  // }
 }

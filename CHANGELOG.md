@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.1
+
+- no longer update the window title and company name in the main.cpp file, to avoid errors when the user has already updated it.
+
 ## 3.3.0
 
 - Add `enable-at-startup` configuration and flag, see [Configure your app to start at log-in](https://blogs.windows.com/windowsdeveloper/2017/08/01/configure-app-start-log/).
