@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.0
+
+- Add `enable-at-startup` configuration and flag, see [Configure your app to start at log-in](https://blogs.windows.com/windowsdeveloper/2017/08/01/configure-app-start-log/).
+
 ## 3.2.0
 
 - Automatically use the Pubspec `version` tag by default. To use auto-versioning, remove any `msix_version` fields or command line options.

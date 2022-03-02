@@ -72,6 +72,7 @@ See [Configurations Examples And Use Cases].
 | `file_extension`         | `--file-extension` `-f`              | File extensions that the app may be registered to open.                                                                                               | `.picture, .image`                                                                              |
 | `protocol_activation`    | `--protocol-activation`              | [Protocol activation] that will open the app.                                                                                                         | `flutterapp`                                                                                         |
 | `add_execution_alias`    | `--add-execution-alias`              | Add an alias to active the app, use the `pubspec.yaml` `name:` value, so if your app calls 'Flutter_App', user can activate the app using `flutterapp` command. | `true`                                                                                          |
+| `enable_at_startup`    | `--enable-at-startup`              | App start at startup or user log-in. | `true`                                                                                          |
 | `store`                  | `--store`                            | Generate a MSIX file for publishing to the Microsoft Store.                                                                                           | `false`                                                                                         |
 
 </details>

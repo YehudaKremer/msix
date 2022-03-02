@@ -126,7 +126,6 @@ class Configuration {
     enableAtStartup = _args.wasParsed('enable-at-startup') ||
         yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
 
-    print('enableAtStartup: $enableAtStartup');
     // toast activator configurations
     var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
 
