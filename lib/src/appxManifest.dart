@@ -85,12 +85,14 @@ class AppxManifest {
     if (_config.addExecutionAlias ||
         !_config.protocolActivation.isNull ||
         !_config.fileExtension.isNull ||
-        !_config.toastActivatorCLSID.isNull) {
+        !_config.toastActivatorCLSID.isNull ||
+        _config.enableAtStartup) {
       return '''<Extensions>
       ${_config.addExecutionAlias ? _getAppExecutionAliasExtension() : ''}
       ${!_config.protocolActivation.isNull ? _getProtocolActivationExtension() : ''}
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
+      ${_config.enableAtStartup ? _getStartupTaskExtension() : ''}
         </Extensions>''';
     } else {
       return '';
@@ -140,6 +142,12 @@ class AppxManifest {
         <desktop:Extension Category="windows.toastNotificationActivation">
           <desktop:ToastNotificationActivation ToastActivatorCLSID="${_config.toastActivatorCLSID.toHtmlEscape()}"/>
         </desktop:Extension>''';
+  }
+
+  String _getStartupTaskExtension() {
+    return '''<desktop:Extension Category="windows.startupTask" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
+      <desktop:StartupTask TaskId="${_config.appName!.replaceAll('_', '')}" Enabled="true" DisplayName="${_config.displayName.toHtmlEscape()}"/>
+      </desktop:Extension>''';
   }
 
   String _normalizeCapability(String capability) {

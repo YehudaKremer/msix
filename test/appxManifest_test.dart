@@ -196,6 +196,25 @@ void main() {
         true);
   });
 
+  test('executableFileName with enableAtStartup is valid', () async {
+    var testValue = 'executableFileName_test123';
+    await AppxManifest(
+            config
+              ..executableFileName = testValue
+              ..enableAtStartup = true,
+            log)
+        .generateAppxManifest();
+
+    expect(
+        (await File('$tempFolderPath/AppxManifest.xml').readAsLines())
+            .where((line) => line.contains('Executable="$testValue"'))
+            .length,
+        2);
+    expect(
+        (await File('$tempFolderPath/AppxManifest.xml').readAsString()).contains(
+            '<desktop:Extension Category="windows.startupTask" Executable="$testValue"'),
+        true);
+  });
   test('capabilities is valid', () async {
     var testValue = 'videosLibrary,microphone,  documentsLibrary';
     await AppxManifest(config..capabilities = testValue, log)

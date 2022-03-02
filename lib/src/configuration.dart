@@ -49,6 +49,7 @@ class Configuration {
   bool trimLogo = true;
   bool addExecutionAlias = false;
   bool createWithDebugBuildFiles = false;
+  bool enableAtStartup = false;
   Iterable<String>? languages;
   String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
   String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
@@ -122,7 +123,10 @@ class Configuration {
     architecture = _args['architecture'] ?? yaml['architecture'];
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
+    enableAtStartup = _args.wasParsed('enable-at-startup') ||
+        yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
 
+    print('enableAtStartup: $enableAtStartup');
     // toast activator configurations
     var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
 
@@ -288,6 +292,7 @@ class Configuration {
       ..addOption('build-windows')
       ..addFlag('store')
       ..addFlag('add-execution-alias')
+      ..addFlag('enable-at-startup')
       ..addFlag('debug')
       ..addFlag('release')
       ..addFlag('automatic-background-task')
