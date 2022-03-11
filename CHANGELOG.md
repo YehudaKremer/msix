@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.2
+
+- fix default capabilities
+
 ## 3.3.1
 
 - no longer update the window title and company name in the main.cpp file, to avoid errors when the user has already updated it.
