@@ -202,8 +202,6 @@ class Configuration {
     }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
-    if (capabilities.isNull)
-      capabilities = 'internetClient,location,microphone,webcam';
     if (languages == null) languages = ['en-us'];
 
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {

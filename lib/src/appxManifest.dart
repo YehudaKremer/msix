@@ -158,7 +158,7 @@ class AppxManifest {
 
   /// Add capabilities section
   String _getCapabilities() {
-    var capabilities = _config.capabilities!.split(',');
+    var capabilities = _config.capabilities?.split(',') ?? [];
     capabilities.add('runFullTrust');
     capabilities = capabilities.toSet().toList();
     String capabilitiesString = '';
