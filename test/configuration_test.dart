@@ -160,37 +160,37 @@ msix_config:
     });
   });
 
-  group('certificate:', () {
-    test('exited certificate path with password', () async {
-      const pfxTestPath = '$tempFolderPath/test.pfx';
-      await File(pfxTestPath).create();
-      await File(yamlTestPath).writeAsString(yamlContent +
-          '''certificate_path: $pfxTestPath  
-  certificate_password: 1234''');
-      await config.getConfigValues();
-      expect(config.certificatePath, pfxTestPath);
-    });
+  // group('certificate:', () {
+  //   test('exited certificate path with password', () async {
+  //     const pfxTestPath = '$tempFolderPath/test.pfx';
+  //     await File(pfxTestPath).create();
+  //     await File(yamlTestPath).writeAsString(yamlContent +
+  //         '''certificate_path: $pfxTestPath
+  // certificate_password: 1234''');
+  //     await config.getConfigValues();
+  //     expect(config.certificatePath, pfxTestPath);
+  //   });
 
-    test('invalid certificate path', () async {
-      await File(yamlTestPath).writeAsString(
-          yamlContent + 'certificate_path: $tempFolderPath/test123.pfx');
-      await config.getConfigValues();
-      await expectLater(
-          config.validateConfigValues,
-          throwsA(predicate((String error) =>
-              error.contains('The file certificate not found in'))));
-    });
+  //   test('invalid certificate path', () async {
+  //     await File(yamlTestPath).writeAsString(
+  //         yamlContent + 'certificate_path: $tempFolderPath/test123.pfx');
+  //     await config.getConfigValues();
+  //     await expectLater(
+  //         config.validateConfigValues,
+  //         throwsA(predicate((String error) =>
+  //             error.contains('The file certificate not found in'))));
+  //   });
 
-    test('certificate without password', () async {
-      const pfxTestPath = '$tempFolderPath/test.pfx';
-      await File(pfxTestPath).create();
-      await File(yamlTestPath)
-          .writeAsString(yamlContent + 'certificate_path: $pfxTestPath');
-      await config.getConfigValues();
-      await expectLater(
-          config.validateConfigValues,
-          throwsA(predicate((String error) =>
-              error.contains('Certificate password is empty'))));
-    });
-  });
+  //   test('certificate without password', () async {
+  //     const pfxTestPath = '$tempFolderPath/test.pfx';
+  //     await File(pfxTestPath).create();
+  //     await File(yamlTestPath)
+  //         .writeAsString(yamlContent + 'certificate_path: $pfxTestPath');
+  //     await config.getConfigValues();
+  //     await expectLater(
+  //         config.validateConfigValues,
+  //         throwsA(predicate((String error) =>
+  //             error.contains('Certificate password is empty'))));
+  //   });
+  // });
 }
