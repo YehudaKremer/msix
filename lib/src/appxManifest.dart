@@ -82,13 +82,13 @@ class AppxManifest {
   }
 
   String _getExtensions() {
-    if (_config.addExecutionAlias ||
+    if (!_config.executionAlias.isNull ||
         _config.protocolActivation.isNotEmpty ||
         !_config.fileExtension.isNull ||
         !_config.toastActivatorCLSID.isNull ||
         _config.enableAtStartup) {
       return '''<Extensions>
-      ${_config.addExecutionAlias ? _getAppExecutionAliasExtension() : ''}
+      ${!_config.executionAlias.isNull ? _getExecutionAliasExtension() : ''}
       ${_config.protocolActivation.isNotEmpty ? _getProtocolActivationExtension() : ''}
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
@@ -99,11 +99,11 @@ class AppxManifest {
     }
   }
 
-  /// Add extension section for [_config.executableFileName]
-  String _getAppExecutionAliasExtension() {
+  /// Add extension section for [_config.executionAlias]
+  String _getExecutionAliasExtension() {
     return '''  <uap3:Extension Category="windows.appExecutionAlias" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
             <uap3:AppExecutionAlias>
-              <desktop:ExecutionAlias Alias="${_config.executableFileName.toHtmlEscape()}" />
+              <desktop:ExecutionAlias Alias="${_config.executionAlias!.trim().toLowerCase().toHtmlEscape()}.exe" />
               </uap3:AppExecutionAlias>
           </uap3:Extension>''';
   }
