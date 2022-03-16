@@ -29,7 +29,7 @@ class Configuration {
   String? logoPath;
   String? executableFileName;
   List<String>? signToolOptions;
-  String? protocolActivation;
+  late Iterable<String> protocolActivation;
   String? fileExtension;
   String? toastActivatorCLSID;
   String? toastActivatorArguments;
@@ -112,10 +112,7 @@ class Configuration {
         .split(' ')
         .where((o) => o.trim().length > 0)
         .toList();
-    protocolActivation =
-        (_args['protocol-activation'] ?? yaml['protocol_activation'])
-            ?.toString()
-            .replaceAll(':', '');
+    protocolActivation = _getProtocolsActivation(yaml);
     fileExtension = _args['file-extension'] ?? yaml['file_extension'];
     if (fileExtension != null && !fileExtension!.startsWith('.')) {
       fileExtension = '.$fileExtension';
@@ -363,4 +360,18 @@ class Configuration {
           ?.split(',')
           .map((e) => e.trim())
           .where((element) => element.length > 0);
+
+  /// Get the protocol activation list
+  Iterable<String> _getProtocolsActivation(dynamic config) =>
+      ((_args['protocol-activation'] ?? config['protocol_activation'])
+              as String?)
+          ?.split(',')
+          .map((protocol) => protocol
+              .trim()
+              .toLowerCase()
+              .replaceAll('://', '')
+              .replaceAll(':/', '')
+              .replaceAll(':', ''))
+          .where((protocol) => protocol.length > 0) ??
+      [];
 }

@@ -83,13 +83,13 @@ class AppxManifest {
 
   String _getExtensions() {
     if (_config.addExecutionAlias ||
-        !_config.protocolActivation.isNull ||
+        _config.protocolActivation.isNotEmpty ||
         !_config.fileExtension.isNull ||
         !_config.toastActivatorCLSID.isNull ||
         _config.enableAtStartup) {
       return '''<Extensions>
       ${_config.addExecutionAlias ? _getAppExecutionAliasExtension() : ''}
-      ${!_config.protocolActivation.isNull ? _getProtocolActivationExtension() : ''}
+      ${_config.protocolActivation.isNotEmpty ? _getProtocolActivationExtension() : ''}
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
       ${_config.enableAtStartup ? _getStartupTaskExtension() : ''}
@@ -110,11 +110,16 @@ class AppxManifest {
 
   /// Add extension section for [_config.protocolActivation]
   String _getProtocolActivationExtension() {
-    return '''  <uap:Extension Category="windows.protocol">
-            <uap:Protocol Name="${_config.protocolActivation.toHtmlEscape()}">
-                <uap:DisplayName>${_config.protocolActivation.toHtmlEscape()} URI Scheme</uap:DisplayName>
+    var protocolsActivation = '';
+    _config.protocolActivation.forEach((protocol) {
+      protocolsActivation += '''
+  <uap:Extension Category="windows.protocol">
+            <uap:Protocol Name="${protocol.toHtmlEscape()}">
+                <uap:DisplayName>${protocol.toHtmlEscape()} URI Scheme</uap:DisplayName>
             </uap:Protocol>
         </uap:Extension>''';
+    });
+    return protocolsActivation;
   }
 
   /// Add extension section for [_config.fileExtension]
