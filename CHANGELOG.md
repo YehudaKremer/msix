@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.4.0
+
+- enable multiple protocols activision in `protocol_activation` [#114](https://github.com/YehudaKremer/msix/issues/114)
+
+### Breaking Changes
+
+- `add_execution_alias` is change to `execution_alias` and its value is string (instead of boolean) [116#issuecomment-1067802660](https://github.com/YehudaKremer/msix/issues/116#issuecomment-1067802660)
+
+## 3.3.2
+
+- fix default capabilities
+
 ## 3.3.1
 
 - no longer update the window title and company name in the main.cpp file, to avoid errors when the user has already updated it.

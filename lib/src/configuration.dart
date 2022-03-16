@@ -29,7 +29,8 @@ class Configuration {
   String? logoPath;
   String? executableFileName;
   List<String>? signToolOptions;
-  String? protocolActivation;
+  late Iterable<String> protocolActivation;
+  String? executionAlias;
   String? fileExtension;
   String? toastActivatorCLSID;
   String? toastActivatorArguments;
@@ -47,7 +48,6 @@ class Configuration {
   bool installCert = true;
   bool buildWindows = true;
   bool trimLogo = true;
-  bool addExecutionAlias = false;
   bool createWithDebugBuildFiles = false;
   bool enableAtStartup = false;
   Iterable<String>? languages;
@@ -77,8 +77,7 @@ class Configuration {
         yaml['certificate_password']?.toString();
     outputPath = _args['output-path'] ?? yaml['output_path'];
     outputName = _args['output-name'] ?? yaml['output_name'];
-    addExecutionAlias = _args.wasParsed('add-execution-alias') ||
-        yaml['add_execution_alias']?.toString().toLowerCase() == 'true';
+    executionAlias = _args['execution-alias'] ?? yaml['execution_alias'];
     if (_args['sign-msix'].toString() == 'false' ||
         yaml['sign_msix']?.toString().toLowerCase() == 'false') {
       signMsix = false;
@@ -112,10 +111,7 @@ class Configuration {
         .split(' ')
         .where((o) => o.trim().length > 0)
         .toList();
-    protocolActivation =
-        (_args['protocol-activation'] ?? yaml['protocol_activation'])
-            ?.toString()
-            .replaceAll(':', '');
+    protocolActivation = _getProtocolsActivation(yaml);
     fileExtension = _args['file-extension'] ?? yaml['file_extension'];
     if (fileExtension != null && !fileExtension!.startsWith('.')) {
       fileExtension = '.$fileExtension';
@@ -202,8 +198,6 @@ class Configuration {
     }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
-    if (capabilities.isNull)
-      capabilities = 'internetClient,location,microphone,webcam';
     if (languages == null) languages = ['en-us'];
 
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {
@@ -276,6 +270,7 @@ class Configuration {
       ..addOption('output-name', abbr: 'n')
       ..addOption('signtool-options')
       ..addOption('protocol-activation')
+      ..addOption('execution-alias')
       ..addOption('file-extension', abbr: 'f')
       ..addOption('architecture', abbr: 'h')
       ..addOption('capabilities', abbr: 'e')
@@ -290,7 +285,6 @@ class Configuration {
       ..addOption('hours-between-update-checks')
       ..addOption('build-windows')
       ..addFlag('store')
-      ..addFlag('add-execution-alias')
       ..addFlag('enable-at-startup')
       ..addFlag('debug')
       ..addFlag('release')
@@ -365,4 +359,18 @@ class Configuration {
           ?.split(',')
           .map((e) => e.trim())
           .where((element) => element.length > 0);
+
+  /// Get the protocol activation list
+  Iterable<String> _getProtocolsActivation(dynamic config) =>
+      ((_args['protocol-activation'] ?? config['protocol_activation'])
+              as String?)
+          ?.split(',')
+          .map((protocol) => protocol
+              .trim()
+              .toLowerCase()
+              .replaceAll('://', '')
+              .replaceAll(':/', '')
+              .replaceAll(':', ''))
+          .where((protocol) => protocol.length > 0) ??
+      [];
 }

@@ -22,7 +22,8 @@ void main() {
       ..displayName = 'displayName_test'
       ..architecture = 'x64'
       ..executableFileName = 'executableFileName_test'
-      ..protocolActivation = 'protocolActivation_test'
+      ..protocolActivation = ['protocolActivation_test']
+      ..executionAlias = 'protocolActivation_test'
       ..fileExtension = 'fileExtension_test'
       ..buildFilesFolder = tempFolderPath
       ..capabilities = 'location,microphone'
@@ -135,36 +136,27 @@ void main() {
     var testValue = 'executableFileName_test123';
     await AppxManifest(config..executableFileName = testValue, log)
         .generateAppxManifest();
-    expect(
-        (await File('$tempFolderPath/AppxManifest.xml').readAsLines())
-            .where((line) => line.contains('Executable="$testValue"'))
-            .length,
-        1);
+    var manifestContent =
+        await File('$tempFolderPath/AppxManifest.xml').readAsString();
+    expect(manifestContent.contains('Executable="$testValue'), true);
   });
 
   test('executableFileName with addExecutionAlias is valid', () async {
     var testValue = 'executableFileName_test123';
-    await AppxManifest(
-            config
-              ..executableFileName = testValue
-              ..addExecutionAlias = true,
-            log)
+    await AppxManifest(config..executionAlias = testValue, log)
         .generateAppxManifest();
 
+    var manifestContent =
+        await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(
-        (await File('$tempFolderPath/AppxManifest.xml').readAsLines())
-            .where((line) => line.contains('Executable="$testValue"'))
-            .length,
-        2);
-    expect(
-        (await File('$tempFolderPath/AppxManifest.xml').readAsString())
+        manifestContent
             .contains('<desktop:ExecutionAlias Alias="$testValue" />'),
         true);
   });
 
   test('protocolActivation is valid', () async {
-    var testValue = 'protocolActivation_test123';
-    await AppxManifest(config..protocolActivation = testValue, log)
+    var testValue = 'http';
+    await AppxManifest(config..protocolActivation = [testValue], log)
         .generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
@@ -205,14 +197,12 @@ void main() {
             log)
         .generateAppxManifest();
 
+    var manifestContent =
+        await File('$tempFolderPath/AppxManifest.xml').readAsString();
+    expect(manifestContent.contains('Executable="$testValue'), true);
     expect(
-        (await File('$tempFolderPath/AppxManifest.xml').readAsLines())
-            .where((line) => line.contains('Executable="$testValue"'))
-            .length,
-        2);
-    expect(
-        (await File('$tempFolderPath/AppxManifest.xml').readAsString()).contains(
-            '<desktop:Extension Category="windows.startupTask" Executable="$testValue"'),
+        manifestContent.contains(
+            '<desktop:Extension Category="windows.startupTask" Executable="$testValue'),
         true);
   });
   test('capabilities is valid', () async {

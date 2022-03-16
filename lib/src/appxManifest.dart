@@ -82,14 +82,14 @@ class AppxManifest {
   }
 
   String _getExtensions() {
-    if (_config.addExecutionAlias ||
-        !_config.protocolActivation.isNull ||
+    if (!_config.executionAlias.isNull ||
+        _config.protocolActivation.isNotEmpty ||
         !_config.fileExtension.isNull ||
         !_config.toastActivatorCLSID.isNull ||
         _config.enableAtStartup) {
       return '''<Extensions>
-      ${_config.addExecutionAlias ? _getAppExecutionAliasExtension() : ''}
-      ${!_config.protocolActivation.isNull ? _getProtocolActivationExtension() : ''}
+      ${!_config.executionAlias.isNull ? _getExecutionAliasExtension() : ''}
+      ${_config.protocolActivation.isNotEmpty ? _getProtocolActivationExtension() : ''}
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
       ${_config.enableAtStartup ? _getStartupTaskExtension() : ''}
@@ -99,22 +99,27 @@ class AppxManifest {
     }
   }
 
-  /// Add extension section for [_config.executableFileName]
-  String _getAppExecutionAliasExtension() {
+  /// Add extension section for [_config.executionAlias]
+  String _getExecutionAliasExtension() {
     return '''  <uap3:Extension Category="windows.appExecutionAlias" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
             <uap3:AppExecutionAlias>
-              <desktop:ExecutionAlias Alias="${_config.executableFileName.toHtmlEscape()}" />
+              <desktop:ExecutionAlias Alias="${_config.executionAlias!.trim().toLowerCase().replaceAll('.exe', '').toHtmlEscape()}.exe" />
               </uap3:AppExecutionAlias>
           </uap3:Extension>''';
   }
 
   /// Add extension section for [_config.protocolActivation]
   String _getProtocolActivationExtension() {
-    return '''  <uap:Extension Category="windows.protocol">
-            <uap:Protocol Name="${_config.protocolActivation.toHtmlEscape()}">
-                <uap:DisplayName>${_config.protocolActivation.toHtmlEscape()} URI Scheme</uap:DisplayName>
+    var protocolsActivation = '';
+    _config.protocolActivation.forEach((protocol) {
+      protocolsActivation += '''
+  <uap:Extension Category="windows.protocol">
+            <uap:Protocol Name="${protocol.toHtmlEscape()}">
+                <uap:DisplayName>${protocol.toHtmlEscape()} URI Scheme</uap:DisplayName>
             </uap:Protocol>
         </uap:Extension>''';
+    });
+    return protocolsActivation;
   }
 
   /// Add extension section for [_config.fileExtension]
@@ -158,7 +163,7 @@ class AppxManifest {
 
   /// Add capabilities section
   String _getCapabilities() {
-    var capabilities = _config.capabilities!.split(',');
+    var capabilities = _config.capabilities?.split(',') ?? [];
     capabilities.add('runFullTrust');
     capabilities = capabilities.toSet().toList();
     String capabilitiesString = '';

@@ -23,7 +23,7 @@ void main() {
       ..displayName = 'displayName_test'
       ..architecture = 'x64'
       ..executableFileName = 'executableFileName_test'
-      ..protocolActivation = 'protocolActivation_test'
+      ..protocolActivation = ['protocolActivation_test']
       ..fileExtension = 'fileExtension_test'
       ..buildFilesFolder = tempFolderPath
       ..capabilities = 'location,microphone'
