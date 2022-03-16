@@ -22,7 +22,7 @@ void main() {
       ..displayName = 'displayName_test'
       ..architecture = 'x64'
       ..executableFileName = 'executableFileName_test'
-      ..protocolActivation = 'protocolActivation_test'
+      ..protocolActivation = ['protocolActivation_test']
       ..fileExtension = 'fileExtension_test'
       ..buildFilesFolder = tempFolderPath
       ..capabilities = 'location,microphone'
@@ -147,7 +147,7 @@ void main() {
     await AppxManifest(
             config
               ..executableFileName = testValue
-              ..addExecutionAlias = true,
+              ..executionAlias = true,
             log)
         .generateAppxManifest();
 
@@ -163,7 +163,7 @@ void main() {
   });
 
   test('protocolActivation is valid', () async {
-    var testValue = 'protocolActivation_test123';
+    var testValue = ['protocolActivation_test123'];
     await AppxManifest(config..protocolActivation = testValue, log)
         .generateAppxManifest();
     var manifestContent =
