@@ -149,8 +149,8 @@ void main() {
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(
-        manifestContent
-            .contains('<desktop:ExecutionAlias Alias="$testValue" />'),
+        manifestContent.contains(
+            '<desktop:ExecutionAlias Alias="${testValue.toLowerCase()}.exe" />'),
         true);
   });
 
