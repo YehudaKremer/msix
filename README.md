@@ -70,8 +70,8 @@ See [Configurations Examples And Use Cases].
 | `capabilities`           | `--capabilities` `-e`                | List of the [capabilities][windows capabilities] the app requires.                                                                                    | `internetClient,location,microphone,webcam`                                                     |
 | `languages`              | `--languages`                        | Declares the language resources contained in the package.                                                                                             | `en-us, ja-jp`                                                                                  |
 | `file_extension`         | `--file-extension` `-f`              | File extensions that the app may be registered to open.                                                                                               | `.picture, .image`                                                                              |
-| `protocol_activation`    | `--protocol-activation`              | [Protocols activation] that will open the app.                                                                                                         | `http,https`                                                                                         |
-| `add_execution_alias`    | `--add-execution-alias`              | Add an alias to active the app, use the `pubspec.yaml` `name:` value, so if your app calls 'Flutter_App', user can activate the app using `flutterapp` command. | `true`                                                                                          |
+| `protocol_activation`    | `--protocol-activation`              | [Protocols activation] that will activate the app.                                                                                                         | `http,https`                                                                                         |
+| `execution_alias`    | `--execution-alias`              | [Execution alias] command (cmd) that will activate the app. | `myapp`                                                                                          |
 | `enable_at_startup`    | `--enable-at-startup`              | App start at startup or user log-in. | `true`                                                                                          |
 | `store`                  | `--store`                            | Generate a MSIX file for publishing to the Microsoft Store.                                                                                           | `false`                                                                                         |
 
@@ -239,6 +239,7 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [app installer]: https://docs.microsoft.com/en-us/windows/msix/app-installer/app-installer-file-overview
 [image file]: https://github.com/brendan-duncan/image#supported-image-formats
 [protocols activation]: https://docs.microsoft.com/en-us/windows/uwp/launch-resume/handle-uri-activation
+[execution alias]: https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-uap5-executionalias
 [signed with a certificate]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing
 [signtool documentation]: https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
 [microsoft store icon]: https://user-images.githubusercontent.com/946652/152312614-1e86b108-98af-4bcf-8a75-d7a4449078b2.png

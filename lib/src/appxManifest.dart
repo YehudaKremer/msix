@@ -103,7 +103,7 @@ class AppxManifest {
   String _getExecutionAliasExtension() {
     return '''  <uap3:Extension Category="windows.appExecutionAlias" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
             <uap3:AppExecutionAlias>
-              <desktop:ExecutionAlias Alias="${_config.executionAlias!.trim().toLowerCase().toHtmlEscape()}.exe" />
+              <desktop:ExecutionAlias Alias="${_config.executionAlias!.trim().toLowerCase().replaceAll('.exe', '').toHtmlEscape()}.exe" />
               </uap3:AppExecutionAlias>
           </uap3:Extension>''';
   }
