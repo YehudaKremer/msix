@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.4.1
+
+- fix [#119](https://github.com/YehudaKremer/msix/issues/119)
+
 ## 3.4.0
 
 - enable multiple protocols activision in `protocol_activation` [#114](https://github.com/YehudaKremer/msix/issues/114)
