@@ -4,8 +4,8 @@ import 'configuration.dart';
 
 /// Use the makeappx.exe tool to generate manifest file
 class MakeAppx {
-  Configuration _config;
-  Logger _logger;
+  final Configuration _config;
+  final Logger _logger;
 
   MakeAppx(this._config, this._logger);
 

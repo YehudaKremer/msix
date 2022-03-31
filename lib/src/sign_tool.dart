@@ -7,12 +7,12 @@ import 'extensions.dart';
 import 'configuration.dart';
 
 var _publisherRegex = RegExp(
-    '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
+    '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID.(0|[1-9][0-9]*)(.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID.(0|[1-9][0-9]*)(.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
 
 /// Handles the certificate sign functionality
 class SignTool {
-  Configuration _config;
-  Logger _logger;
+  final Configuration _config;
+  final Logger _logger;
 
   SignTool(this._config, this._logger);
 
@@ -88,7 +88,7 @@ class SignTool {
       if (wantToInstallCertificate) {
         // create installCertificate.ps1 file
         var installCertificateScript =
-            'Import-PfxCertificate -FilePath \"${_config.certificatePath}\" -Password (ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force) -CertStoreLocation Cert:\\LocalMachine\\Root';
+            'Import-PfxCertificate -FilePath "${_config.certificatePath}" -Password (ConvertTo-SecureString -String "${_config.certificatePassword}" -AsPlainText -Force) -CertStoreLocation Cert:\\LocalMachine\\Root';
         var installCertificateScriptPath =
             '${_config.msixAssetsPath}/installCertificate.ps1';
         await File(installCertificateScriptPath)
@@ -98,7 +98,7 @@ class SignTool {
         var importCertificate = await Process.run('powershell.exe', [
           '-NoProfile',
           '-NonInteractive',
-          'Start-Process powershell -ArgumentList \"$installCertificateScriptPath\" -Wait -Verb runAs -WindowStyle Hidden'
+          'Start-Process powershell -ArgumentList "$installCertificateScriptPath" -Wait -Verb runAs -WindowStyle Hidden'
         ]);
 
         await File(installCertificateScriptPath).deleteIfExists();

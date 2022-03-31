@@ -22,14 +22,14 @@ msix_config:
       ..buildFilesFolder = tempFolderPath;
 
     await Directory('$tempFolderPath/').create(recursive: true);
-    await Future.delayed(Duration(milliseconds: 150));
+    await Future.delayed(const Duration(milliseconds: 150));
   });
 
   tearDown(() async {
     if (await Directory('$tempFolderPath/').exists()) {
-      await Future.delayed(Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
       await Directory('$tempFolderPath/').delete(recursive: true);
-      await Future.delayed(Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
     }
   });
 

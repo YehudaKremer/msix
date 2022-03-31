@@ -17,18 +17,19 @@ extension StringExtensions on String {
 }
 
 extension StringConversions on String? {
-  String? toHtmlEscape() => this != null ? HtmlEscape().convert(this!) : null;
+  String? toHtmlEscape() =>
+      this != null ? const HtmlEscape().convert(this!) : null;
 }
 
 extension FileSystemEntityExtensions on FileSystemEntity {
   Future<FileSystemEntity?> deleteIfExists({bool recursive = false}) async =>
-      await this.exists() ? this.delete(recursive: recursive) : Future.value();
+      await exists() ? delete(recursive: recursive) : Future.value();
 }
 
 /// Copy directory content asynchronously
 extension DirectoryExtensions on Directory {
   Future<void> copyDirectory(Directory destination) async {
-    await for (var entity in this.list(recursive: false)) {
+    await for (var entity in list(recursive: false)) {
       if (entity is Directory) {
         var newDirectory = Directory(
             path.join(destination.absolute.path, path.basename(entity.path)));

@@ -30,15 +30,15 @@ void main() {
       ..languages = ['en-us'];
 
     await Directory('$tempFolderPath/').create(recursive: true);
-    await Future.delayed(Duration(milliseconds: 150));
+    await Future.delayed(const Duration(milliseconds: 150));
   });
 
   tearDown(() async {
     if (await Directory('$tempFolderPath/').exists()) {
-      await Future.delayed(Duration(milliseconds: 150));
-      await Future.delayed(Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
       await Directory('$tempFolderPath/').delete(recursive: true);
-      await Future.delayed(Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
     }
   });
   test('copy defaults icons', () async {
@@ -55,13 +55,13 @@ void main() {
     fill(image, getColor(0, 0, 255));
     await File('$tempFolderPath/test.png').writeAsBytes(encodePng(image));
     await Directory('$tempFolderPath/Images').create(recursive: true);
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 200));
     await Assets(config..logoPath = '$tempFolderPath/test.png', log)
         .createIcons();
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
     expect(
         (await Directory('$tempFolderPath/Images').list().toList()).length, 82);
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
   });
 
   test('copy vclibs files', () async {
@@ -69,14 +69,14 @@ void main() {
     await File('$vclibsFolderPath/msvcp140.dll').create(recursive: true);
     await File('$vclibsFolderPath/vcruntime140_1.dll').create(recursive: true);
     await File('$vclibsFolderPath/vcruntime140.dll').create(recursive: true);
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
     await Assets(
             config
               ..msixAssetsPath = tempFolderPath
               ..architecture = 'x86',
             log)
         .copyVCLibsFiles();
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
     expect(await File('$vclibsFolderPath/msvcp140.dll').exists(), true);
     expect(await File('$vclibsFolderPath/vcruntime140_1.dll').exists(), true);
     expect(await File('$vclibsFolderPath/vcruntime140.dll').exists(), true);
@@ -87,21 +87,21 @@ void main() {
     await File('$tempFolderPath/test.msix').create();
     await Directory('$tempFolderPath/Images').create();
     await Directory('$tempFolderPath/VCLibs/x64/').create(recursive: true);
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
     await Assets(
             config
               ..msixAssetsPath = tempFolderPath
               ..architecture = 'x64',
             log)
         .cleanTemporaryFiles(clearMsixFiles: false);
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
     expect(
         await File('$tempFolderPath/resources.scale-125.pri').exists(), false);
     expect(await File('$tempFolderPath/test.msix').exists(), true);
     expect(await Directory('$tempFolderPath/Images').exists(), false);
 
     await Assets(config, log).cleanTemporaryFiles(clearMsixFiles: true);
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
     expect(await File('$tempFolderPath/test.msix').exists(), false);
   });
 }

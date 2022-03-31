@@ -10,8 +10,8 @@ import 'configuration.dart';
 
 /// Handles the creation of .appinstaller file and msix versions
 class AppInstaller {
-  Configuration _config;
-  Logger _logger;
+  final Configuration _config;
+  final Logger _logger;
 
   String get _versionsFolderPath => '${_config.publishFolderPath}/versions';
   String get _msixVersionPath =>
@@ -79,7 +79,7 @@ class AppInstaller {
   <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2021"
     Uri="${_config.appInstallerPath}" Version="${_config.msixVersion}">
     <MainPackage Name="${_config.identityName}" Version="${_config.msixVersion}"
-      Publisher="${HtmlEscape().convert(_config.publisher!.replaceAll(' = ', '='))}"
+      Publisher="${const HtmlEscape().convert(_config.publisher!.replaceAll(' = ', '='))}"
       Uri="$_msixVersionPath"
       ProcessorArchitecture="${_config.architecture}" />
     <UpdateSettings>
@@ -114,7 +114,7 @@ class AppInstaller {
     webInstallerSite =
         webInstallerSite.replaceAll('APP_VERSION', _config.msixVersion!);
     webInstallerSite = webInstallerSite.replaceAll(
-        'APP_INSTALLER_LINK', '${basename(_config.appInstallerPath)}');
+        'APP_INSTALLER_LINK', basename(_config.appInstallerPath));
     webInstallerSite = webInstallerSite.replaceAll(
         'REQUIRED_OS_VERSION', _config.osMinVersion);
     webInstallerSite =
@@ -128,7 +128,7 @@ class AppInstaller {
 
     try {
       logoImage = trim(logoImage);
-    } catch (e) {}
+    } catch (_) {}
 
     Image siteLogo = copyResize(logoImage, width: 192);
     Image favicon = copyResize(logoImage, width: 16, height: 16);

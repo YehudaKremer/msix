@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cli_util/cli_logging.dart';
-import 'package:msix/src/appxManifest.dart';
+import 'package:msix/src/appx_manifest.dart';
 import 'package:msix/src/configuration.dart';
 import 'package:test/test.dart';
 
@@ -32,14 +32,14 @@ void main() {
       ..toastActivatorDisplayName = 'Toast activator';
 
     await Directory('$tempFolderPath/').create(recursive: true);
-    await Future.delayed(Duration(milliseconds: 150));
+    await Future.delayed(const Duration(milliseconds: 150));
   });
 
   tearDown(() async {
     if (await Directory('$tempFolderPath/').exists()) {
-      await Future.delayed(Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
       await Directory('$tempFolderPath/').delete(recursive: true);
-      await Future.delayed(Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
     }
   });
 

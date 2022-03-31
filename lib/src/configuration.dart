@@ -9,8 +9,8 @@ import 'extensions.dart';
 
 /// Handles loading and validating the configuration values
 class Configuration {
-  List<String> _arguments;
-  Logger _logger;
+  final List<String> _arguments;
+  final Logger _logger;
   late ArgResults _args;
   String msixAssetsPath = '';
   String? appName;
@@ -98,8 +98,9 @@ class Configuration {
         yaml['store']?.toString().toLowerCase() == 'true';
     createWithDebugBuildFiles = _args.wasParsed('debug') ||
         yaml['debug']?.toString().toLowerCase() == 'true';
-    if (createWithDebugBuildFiles)
+    if (createWithDebugBuildFiles) {
       buildFilesFolder = buildFilesFolder.replaceFirst('Release', 'Debug');
+    }
     displayName = _args['display-name'] ?? yaml['display_name'];
     publisherName =
         _args['publisher-display-name'] ?? yaml['publisher_display_name'];
@@ -109,7 +110,7 @@ class Configuration {
     signToolOptions = (_args['signtool-options'] ?? yaml['signtool_options'])
         ?.toString()
         .split(' ')
-        .where((o) => o.trim().length > 0)
+        .where((o) => o.trim().isNotEmpty)
         .toList();
     protocolActivation = _getProtocolsActivation(yaml);
     fileExtension = _args['file-extension'] ?? yaml['file_extension'];
@@ -198,7 +199,7 @@ class Configuration {
     }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
-    if (languages == null) languages = ['en-us'];
+    languages ??= ['en-us'];
 
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {
       throw 'msix version can be only in this format: "1.0.0.0"';
@@ -358,7 +359,7 @@ class Configuration {
       ((_args['languages'] ?? config['languages']) as String?)
           ?.split(',')
           .map((e) => e.trim())
-          .where((element) => element.length > 0);
+          .where((element) => element.isNotEmpty);
 
   /// Get the protocol activation list
   Iterable<String> _getProtocolsActivation(dynamic config) =>
@@ -371,6 +372,6 @@ class Configuration {
               .replaceAll('://', '')
               .replaceAll(':/', '')
               .replaceAll(':', ''))
-          .where((protocol) => protocol.length > 0) ??
+          .where((protocol) => protocol.isNotEmpty) ??
       [];
 }

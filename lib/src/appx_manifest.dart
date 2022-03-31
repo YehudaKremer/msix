@@ -6,8 +6,8 @@ import 'extensions.dart';
 
 /// Handles the creation of the manifest file
 class AppxManifest {
-  Configuration _config;
-  Logger _logger;
+  final Configuration _config;
+  final Logger _logger;
 
   AppxManifest(this._config, this._logger);
 
@@ -111,14 +111,14 @@ class AppxManifest {
   /// Add extension section for [_config.protocolActivation]
   String _getProtocolActivationExtension() {
     var protocolsActivation = '';
-    _config.protocolActivation.forEach((protocol) {
+    for (var protocol in _config.protocolActivation) {
       protocolsActivation += '''
   <uap:Extension Category="windows.protocol">
             <uap:Protocol Name="${protocol.toHtmlEscape()}">
                 <uap:DisplayName>${protocol.toHtmlEscape()} URI Scheme</uap:DisplayName>
             </uap:Protocol>
         </uap:Extension>''';
-    });
+    }
     return protocolsActivation;
   }
 

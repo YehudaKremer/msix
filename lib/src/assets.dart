@@ -16,9 +16,9 @@ import 'extensions.dart';
 
 /// Handles all the msix and user assets files
 class Assets {
-  Configuration _config;
+  final Configuration _config;
   late Image image;
-  Logger _logger;
+  final Logger _logger;
   String get _msixIconsFolderPath => '${_config.buildFilesFolder}/Images';
 
   Assets(this._config, this._logger);
@@ -109,7 +109,7 @@ class Assets {
     if (_config.trimLogo) {
       try {
         image = trim(image);
-      } catch (e) {}
+      } catch (_) {}
     }
 
     Image resizedImage;
@@ -164,156 +164,156 @@ class Assets {
 
     await Future.wait([
       // SmallTile
-      _generateIcon('SmallTile', _Size(71, 71),
+      _generateIcon('SmallTile', const _Size(71, 71),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),
-      _generateIcon('SmallTile', _Size(71, 71),
+      _generateIcon('SmallTile', const _Size(71, 71),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.34, scale: 1.25),
-      _generateIcon('SmallTile', _Size(71, 71),
+      _generateIcon('SmallTile', const _Size(71, 71),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.34, scale: 1.5),
-      _generateIcon('SmallTile', _Size(71, 71),
+      _generateIcon('SmallTile', const _Size(71, 71),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.34, scale: 2),
-      _generateIcon('SmallTile', _Size(71, 71),
+      _generateIcon('SmallTile', const _Size(71, 71),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.34, scale: 4),
       // Square150x150Logo (Medium tile)
-      _generateIcon('Square150x150Logo', _Size(150, 150),
+      _generateIcon('Square150x150Logo', const _Size(150, 150),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),
-      _generateIcon('Square150x150Logo', _Size(150, 150),
+      _generateIcon('Square150x150Logo', const _Size(150, 150),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.25),
-      _generateIcon('Square150x150Logo', _Size(150, 150),
+      _generateIcon('Square150x150Logo', const _Size(150, 150),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.5),
-      _generateIcon('Square150x150Logo', _Size(150, 150),
+      _generateIcon('Square150x150Logo', const _Size(150, 150),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 2),
-      _generateIcon('Square150x150Logo', _Size(150, 150),
+      _generateIcon('Square150x150Logo', const _Size(150, 150),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 4),
       // Wide310x150Logo (Wide tile)
-      _generateIcon('Wide310x150Logo', _Size(310, 150),
+      _generateIcon('Wide310x150Logo', const _Size(310, 150),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),
-      _generateIcon('Wide310x150Logo', _Size(310, 150),
+      _generateIcon('Wide310x150Logo', const _Size(310, 150),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.25),
-      _generateIcon('Wide310x150Logo', _Size(310, 150),
+      _generateIcon('Wide310x150Logo', const _Size(310, 150),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.5),
-      _generateIcon('Wide310x150Logo', _Size(310, 150),
+      _generateIcon('Wide310x150Logo', const _Size(310, 150),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 2),
-      _generateIcon('Wide310x150Logo', _Size(310, 150),
+      _generateIcon('Wide310x150Logo', const _Size(310, 150),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 4),
       // LargeTile
-      _generateIcon('LargeTile', _Size(310, 310),
+      _generateIcon('LargeTile', const _Size(310, 310),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),
-      _generateIcon('LargeTile', _Size(310, 310),
+      _generateIcon('LargeTile', const _Size(310, 310),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.25),
-      _generateIcon('LargeTile', _Size(310, 310),
+      _generateIcon('LargeTile', const _Size(310, 310),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.5),
-      _generateIcon('LargeTile', _Size(310, 310),
+      _generateIcon('LargeTile', const _Size(310, 310),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 2),
-      _generateIcon('LargeTile', _Size(310, 310),
+      _generateIcon('LargeTile', const _Size(310, 310),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 4),
       // Square44x44Logo (App icon)
-      _generateIcon('Square44x44Logo', _Size(44, 44),
+      _generateIcon('Square44x44Logo', const _Size(44, 44),
           paddingWidthPercent: 0.16, paddingHeightPercent: 0.16),
-      _generateIcon('Square44x44Logo', _Size(44, 44),
+      _generateIcon('Square44x44Logo', const _Size(44, 44),
           paddingWidthPercent: 0.16, paddingHeightPercent: 0.16, scale: 1.25),
-      _generateIcon('Square44x44Logo', _Size(44, 44),
+      _generateIcon('Square44x44Logo', const _Size(44, 44),
           paddingWidthPercent: 0.16, paddingHeightPercent: 0.16, scale: 1.5),
-      _generateIcon('Square44x44Logo', _Size(44, 44),
+      _generateIcon('Square44x44Logo', const _Size(44, 44),
           paddingWidthPercent: 0.16, paddingHeightPercent: 0.16, scale: 2),
-      _generateIcon('Square44x44Logo', _Size(44, 44),
+      _generateIcon('Square44x44Logo', const _Size(44, 44),
           paddingWidthPercent: 0.16, paddingHeightPercent: 0.16, scale: 4),
       // targetsize
-      _generateIcon('Square44x44Logo.targetsize-16', _Size(16, 16)),
-      _generateIcon('Square44x44Logo.targetsize-24', _Size(24, 24)),
-      _generateIcon('Square44x44Logo.targetsize-32', _Size(32, 32)),
-      _generateIcon('Square44x44Logo.targetsize-48', _Size(48, 48)),
-      _generateIcon('Square44x44Logo.targetsize-256', _Size(256, 256)),
-      _generateIcon('Square44x44Logo.targetsize-20', _Size(20, 20)),
-      _generateIcon('Square44x44Logo.targetsize-30', _Size(30, 30)),
-      _generateIcon('Square44x44Logo.targetsize-36', _Size(36, 36)),
-      _generateIcon('Square44x44Logo.targetsize-40', _Size(40, 40)),
-      _generateIcon('Square44x44Logo.targetsize-60', _Size(60, 60)),
-      _generateIcon('Square44x44Logo.targetsize-64', _Size(64, 64)),
-      _generateIcon('Square44x44Logo.targetsize-72', _Size(72, 72)),
-      _generateIcon('Square44x44Logo.targetsize-80', _Size(80, 80)),
-      _generateIcon('Square44x44Logo.targetsize-96', _Size(96, 96)),
+      _generateIcon('Square44x44Logo.targetsize-16', const _Size(16, 16)),
+      _generateIcon('Square44x44Logo.targetsize-24', const _Size(24, 24)),
+      _generateIcon('Square44x44Logo.targetsize-32', const _Size(32, 32)),
+      _generateIcon('Square44x44Logo.targetsize-48', const _Size(48, 48)),
+      _generateIcon('Square44x44Logo.targetsize-256', const _Size(256, 256)),
+      _generateIcon('Square44x44Logo.targetsize-20', const _Size(20, 20)),
+      _generateIcon('Square44x44Logo.targetsize-30', const _Size(30, 30)),
+      _generateIcon('Square44x44Logo.targetsize-36', const _Size(36, 36)),
+      _generateIcon('Square44x44Logo.targetsize-40', const _Size(40, 40)),
+      _generateIcon('Square44x44Logo.targetsize-60', const _Size(60, 60)),
+      _generateIcon('Square44x44Logo.targetsize-64', const _Size(64, 64)),
+      _generateIcon('Square44x44Logo.targetsize-72', const _Size(72, 72)),
+      _generateIcon('Square44x44Logo.targetsize-80', const _Size(80, 80)),
+      _generateIcon('Square44x44Logo.targetsize-96', const _Size(96, 96)),
       // unplated targetsize
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-16', _Size(16, 16)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-24', _Size(24, 24)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-32', _Size(32, 32)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-48', _Size(48, 48)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-256', _Size(256, 256)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-20', _Size(20, 20)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-30', _Size(30, 30)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-36', _Size(36, 36)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-40', _Size(40, 40)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-60', _Size(60, 60)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-64', _Size(64, 64)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-72', _Size(72, 72)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-80', _Size(80, 80)),
-      _generateIcon(
-          'Square44x44Logo.altform-unplated_targetsize-96', _Size(96, 96)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-16',
+          const _Size(16, 16)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-24',
+          const _Size(24, 24)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-32',
+          const _Size(32, 32)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-48',
+          const _Size(48, 48)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-256',
+          const _Size(256, 256)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-20',
+          const _Size(20, 20)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-30',
+          const _Size(30, 30)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-36',
+          const _Size(36, 36)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-40',
+          const _Size(40, 40)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-60',
+          const _Size(60, 60)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-64',
+          const _Size(64, 64)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-72',
+          const _Size(72, 72)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-80',
+          const _Size(80, 80)),
+      _generateIcon('Square44x44Logo.altform-unplated_targetsize-96',
+          const _Size(96, 96)),
       // light unplated targetsize
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-16', _Size(16, 16)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-24', _Size(24, 24)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-32', _Size(32, 32)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-48', _Size(48, 48)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-16',
+          const _Size(16, 16)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-24',
+          const _Size(24, 24)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-32',
+          const _Size(32, 32)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-48',
+          const _Size(48, 48)),
       _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-256',
-          _Size(256, 256)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-20', _Size(20, 20)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-30', _Size(30, 30)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-36', _Size(36, 36)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-40', _Size(40, 40)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-60', _Size(60, 60)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-64', _Size(64, 64)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-72', _Size(72, 72)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-80', _Size(80, 80)),
-      _generateIcon(
-          'Square44x44Logo.altform-lightunplated_targetsize-96', _Size(96, 96)),
+          const _Size(256, 256)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-20',
+          const _Size(20, 20)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-30',
+          const _Size(30, 30)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-36',
+          const _Size(36, 36)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-40',
+          const _Size(40, 40)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-60',
+          const _Size(60, 60)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-64',
+          const _Size(64, 64)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-72',
+          const _Size(72, 72)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-80',
+          const _Size(80, 80)),
+      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-96',
+          const _Size(96, 96)),
       // SplashScreen
-      _generateIcon('SplashScreen', _Size(620, 300),
+      _generateIcon('SplashScreen', const _Size(620, 300),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),
-      _generateIcon('SplashScreen', _Size(620, 300),
+      _generateIcon('SplashScreen', const _Size(620, 300),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.25),
-      _generateIcon('SplashScreen', _Size(620, 300),
+      _generateIcon('SplashScreen', const _Size(620, 300),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.5),
-      _generateIcon('SplashScreen', _Size(620, 300),
+      _generateIcon('SplashScreen', const _Size(620, 300),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 2),
-      _generateIcon('SplashScreen', _Size(620, 300),
+      _generateIcon('SplashScreen', const _Size(620, 300),
           paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 4),
       // BadgeLogo
-      _generateIcon('BadgeLogo', _Size(24, 24)),
-      _generateIcon('BadgeLogo', _Size(24, 24), scale: 1.25),
-      _generateIcon('BadgeLogo', _Size(24, 24), scale: 1.5),
-      _generateIcon('BadgeLogo', _Size(24, 24), scale: 2),
-      _generateIcon('BadgeLogo', _Size(24, 24), scale: 4),
+      _generateIcon('BadgeLogo', const _Size(24, 24)),
+      _generateIcon('BadgeLogo', const _Size(24, 24), scale: 1.25),
+      _generateIcon('BadgeLogo', const _Size(24, 24), scale: 1.5),
+      _generateIcon('BadgeLogo', const _Size(24, 24), scale: 2),
+      _generateIcon('BadgeLogo', const _Size(24, 24), scale: 4),
       // StoreLogo
-      _generateIcon('StoreLogo', _Size(50, 50)),
-      _generateIcon('StoreLogo', _Size(50, 50), scale: 1.25),
-      _generateIcon('StoreLogo', _Size(50, 50), scale: 1.5),
-      _generateIcon('StoreLogo', _Size(50, 50), scale: 2),
-      _generateIcon('StoreLogo', _Size(50, 50), scale: 4),
+      _generateIcon('StoreLogo', const _Size(50, 50)),
+      _generateIcon('StoreLogo', const _Size(50, 50), scale: 1.25),
+      _generateIcon('StoreLogo', const _Size(50, 50), scale: 1.5),
+      _generateIcon('StoreLogo', const _Size(50, 50), scale: 2),
+      _generateIcon('StoreLogo', const _Size(50, 50), scale: 4),
     ]);
 
     Isolate.exit(port);

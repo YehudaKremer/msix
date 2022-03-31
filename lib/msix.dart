@@ -1,12 +1,12 @@
 import 'package:cli_util/cli_logging.dart' show Logger, Ansi;
-import 'src/appInstaller.dart';
-import 'src/windowsBuild.dart';
+import 'src/app_installer.dart';
+import 'src/windows_build.dart';
 import 'src/configuration.dart';
 import 'src/assets.dart';
-import 'src/makePri.dart';
-import 'src/appxManifest.dart';
-import 'src/makeAppx.dart';
-import 'src/signTool.dart';
+import 'src/makepri.dart';
+import 'src/appx_manifest.dart';
+import 'src/makeappx.dart';
+import 'src/sign_tool.dart';
 import 'src/extensions.dart';
 
 /// Handles all the msix package functionality
@@ -21,11 +21,7 @@ class Msix {
     _config = Configuration(arguments, _logger);
   }
 
-  /// Print if msix is under dependencies instead of dev_dependencies
-  static void registerWith() {
-    print(
-        '-----> "MSIX" package needs to be under development dependencies (dev_dependencies) <-----');
-  }
+  static void registerWith() {}
 
   /// Execute when use the msix:create command
   Future<void> create() async {

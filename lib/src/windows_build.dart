@@ -8,8 +8,8 @@ const mainCppPath = 'windows/runner/main.cpp';
 
 /// Handles windows files build steps
 class WindowsBuild {
-  Configuration _config;
-  Logger _logger;
+  final Configuration _config;
+  final Logger _logger;
 
   WindowsBuild(this._config, this._logger);
 
