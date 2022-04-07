@@ -17,7 +17,7 @@ This package offers a command line tool for creating MSIX installers from your
 Flutter app, making it easy to [publish your app to the Microsoft Store] or host
 it on a website.
 
-## :clipboard: Installation
+## 📋 Installation
 
 In your `pubspec.yaml`, add the `msix` package as a new [dev dependency] with
 the following command:
@@ -26,7 +26,7 @@ the following command:
 PS c:\src\flutter_project> flutter pub add --dev msix
 ```
 
-## :package: Creating an MSIX installer
+## 📦 Creating an MSIX installer
 
 To create a MSIX installer, run the following command:
 
@@ -34,7 +34,7 @@ To create a MSIX installer, run the following command:
 PS c:\src\flutter_project> flutter pub run msix:create
 ```
 
-## ![github settings icon][] Configuring your installer
+## ⚙️ Configuring your installer
 
 You will almost certainly want to customize various settings in the MSIX
 installer, such as the application title, the default icon, and which [Windows
@@ -104,22 +104,6 @@ See [Configurations Examples And Use Cases].
 
 </details>
 
-<details>
-
-<summary>Toast Notifications configuration (click to expand)</summary>
-
-##### [Toast Notifications] configuration example:
-
-```yaml
-msix_config:
-  display_name: Flutter App
-  toast_activator: #<-- toast notifications configuration
-    clsid: A1232234-1234-1234-1234-123412341234
-    arguments: "1,2,3"
-    display_name: "TEST"
-  msix_version: 1.0.3.0
-```
-
 | YAML name      | Command-line argument                 | Description                               | Example                                |
 | -------------- | ------------------------------------- | ----------------------------------------- | -------------------------------------- |
 | `clsid`        | `--toast-activator-clsid` `-d`        | The UUID CLSID.                           | `replaced-with-your-guid-C173E6ADF0C3` |
@@ -128,29 +112,7 @@ msix_config:
 
 </details>
 
-### Msix Version
-
-The MSIX installer version number is used to determine updates to the app and consists of 4 numbers (`1.0.0.0`).
-
-<details>
-
-<summary>See more details on how to set the msix version (click to expand)</summary>
-
-#### The version is determined by the first available option:
-
-1. Command line `--version` flag
-2. In `pubspec.yaml`, under the `msix_config` node, the `msix_version` value
-3. Using the `version` field in `pubspec.yaml`.
-   - The Pubspec version uses [semver], which is of the form `major.minor.patch-prerelease+build`
-   - `msix` will use the `major.minor.patch` and append a `0` for the MSIX version
-   - All prerelease and build info is discarded
-4. Fallback to `1.0.0.0`
-
-By default, if you have a valid `version` in your `pubspec.yaml` file, that will form the basis for your MSIX installer version.
-
-</details>
-
-## :black_nib: Signing options
+## ✒️ Signing options
 
 Published MSIX installers should be [signed with a certificate], to help ensure
 that app installs and updates come from trustworthy sources.
@@ -184,7 +146,7 @@ To generate an MSIX file for publishing to the Microsoft Store, use the
 all be configured and should match the registered publisher and app name from
 the [Microsoft Store dashboard], as per [this screenshot].
 
-## :globe_with_meridians: Publishing outside the store
+## 🌐 Publishing outside the store
 
 You can use the [App Installer] file to enable your users to install and update the app from local file share.
 
@@ -226,7 +188,7 @@ msix_config:
 
 </details>
 
-## :heavy_exclamation_mark: Unsupported Features
+## ⚠️ Unsupported Features
 
 We added the most common features of Msix in this package, however, if you need to add or edit a feature that is not supported yet, you can do this manually.
 
@@ -258,10 +220,9 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [signed with a certificate]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing
 [signtool documentation]: https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
 [microsoft store icon]: https://user-images.githubusercontent.com/946652/152312614-1e86b108-98af-4bcf-8a75-d7a4449078b2.png
-[github settings icon]: https://user-images.githubusercontent.com/946652/152312495-173eb794-337c-4630-a149-2167810614ae.png
 [microsoft store dashboard]: https://partner.microsoft.com/dashboard
 [this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png
-[toast notifications]: https://docs.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast-desktop-cpp-wrl#msixsparse-package
+send-local-toast-desktop-cpp-wrl#msixsparse-package
 [disabled]: https://docs.microsoft.com/en-us/windows/msix/app-installer/installing-windows10-apps-web
 [self signed]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing#create-a-self-signed-certificate
 [Configurations Examples And Use Cases]: https://pub.dev/packages/msix/example
