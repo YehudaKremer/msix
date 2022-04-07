@@ -236,7 +236,7 @@ class Configuration {
   }
 
   /// Validate "flutter build windows" output files
-  Future<void> validateBuildFiles() async {
+  Future<void> validateWindowsBuildFiles() async {
     _logger.trace('validating build files');
 
     if (!await Directory(buildFilesFolder).exists() ||

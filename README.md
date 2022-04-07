@@ -226,6 +226,19 @@ msix_config:
 
 </details>
 
+## :heavy_exclamation_mark: Unsupported Features
+
+We added the most common features of Msix in this package, however, if you need to add or edit a feature that is not supported yet, you can do this manually.
+
+First, create the unpackaged msix files with the following command, then edit the files that were created in the build folder
+```console
+PS c:\src\flutter_project> flutter pub run msix:build
+```
+After that create a msix installer file from those files with the following command
+```console
+PS c:\src\flutter_project> flutter pub run msix:pack
+```
+
 ---
 
 Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `windows installer` `windows packaging` `appx` `AppxManifest` `SignTool` `MakeAppx`
