@@ -64,7 +64,7 @@ See [Configurations Examples And Use Cases].
 | `display_name`           | `--display-name` `-d`                | A friendly app name that can be displayed to users.                                                                                                   | `Flutter App`                                                                               |
 | `publisher_display_name` | `--publisher-display-name` `-u`      | A friendly name for the publisher that can be displayed to users.                                                                                     | `Company Name`                                                                                        |
 | `identity_name`          | `--identity-name` `-i`               | Defines the unique identifier for the app.                                                                                                            | `company.suite.flutterapp`                                                                           |
-| `msix_version`           | `--version`                          | The version number of the package, in `a.b.c.d` format.                                                                                               | `1.0.0.0`                                                                                       |
+| `msix_version`           | `--version`                          | The version number of the package, in `a.b.c.d` format. [see how the msix version is determined].                                                                                              | `1.0.0.0`                                                                                       |
 | `logo_path`              | `--logo-path` `-l`                   | Path to an [image file] for use as the app icon (size recommended at least 400x400px).                                                                                 | `C:\images\logo.png`                                                                         |
 | `trim_logo`              | `--trim-logo <true/false>`           | If `false`, don't trim the logo image, default is `true`.                                                                                             | `true`                                                                                          |
 | `capabilities`           | `--capabilities` `-e`                | List of the [capabilities][windows capabilities] the app requires.                                                                                    | `internetClient,location,microphone,webcam`                                                     |
@@ -74,6 +74,7 @@ See [Configurations Examples And Use Cases].
 | `execution_alias`    | `--execution-alias`              | [Execution alias] command (cmd) that will activate the app. | `myapp`                                                                                          |
 | `enable_at_startup`    | `--enable-at-startup`              | App start at startup or user log-in. | `true`                                                                                          |
 | `store`                  | `--store`                            | Generate a MSIX file for publishing to the Microsoft Store.                                                                                           | `false`                                                                                         |
+| [Toast Notifications configuration] | | |                                                                                   |
 
 </details>
 
@@ -101,14 +102,6 @@ See [Configurations Examples And Use Cases].
 | `signtool_options`       | `--signtool-options`                 | Options to be provided to the `signtool` for app signing (see below.)                                                                                 | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer`                                                   |
 | `sign_msix`    | `--sign-msix <true/false>` | If `false`, don't sign the msix file, default is `true`.                                                                                         | `true`                                                                                          |
 | `install_certificate`    | `--install-certificate <true/false>` | If `false`, don't try to install the certificate, default is `true`.                                                                                         | `true`                                                                                          |
-
-</details>
-
-| YAML name      | Command-line argument                 | Description                               | Example                                |
-| -------------- | ------------------------------------- | ----------------------------------------- | -------------------------------------- |
-| `clsid`        | `--toast-activator-clsid` `-d`        | The UUID CLSID.                           | `replaced-with-your-guid-C173E6ADF0C3` |
-| `arguments`    | `--toast-activator-arguments`         | Arguments for the toast notifications.    | `----AppNotificationActivationServer`  |
-| `display_name` | `--toast-activator-display-name` `-d` | Display name for the toast notifications. | `Toast activator`                      |
 
 </details>
 
@@ -222,8 +215,8 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [microsoft store icon]: https://user-images.githubusercontent.com/946652/152312614-1e86b108-98af-4bcf-8a75-d7a4449078b2.png
 [microsoft store dashboard]: https://partner.microsoft.com/dashboard
 [this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png
-send-local-toast-desktop-cpp-wrl#msixsparse-package
 [disabled]: https://docs.microsoft.com/en-us/windows/msix/app-installer/installing-windows10-apps-web
 [self signed]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing#create-a-self-signed-certificate
 [Configurations Examples And Use Cases]: https://pub.dev/packages/msix/example
-[semver]: https://semver.org/
+[see how the msix version is determined]: https://github.com/YehudaKremer/msix/blob/main/doc/msix_version.md
+[Toast Notifications configuration]: https://github.com/YehudaKremer/msix/blob/main/doc/toast_notifications_configuration.md

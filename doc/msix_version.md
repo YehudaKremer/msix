@@ -13,3 +13,5 @@ The MSIX installer version number is used to determine updates to the app and co
 4. Fallback to `1.0.0.0`
 
 By default, if you have a valid `version` in your `pubspec.yaml` file, that will form the basis for your MSIX installer version.
+
+[semver]: https://semver.org/
