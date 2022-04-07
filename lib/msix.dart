@@ -12,37 +12,24 @@ import 'src/makeappx.dart';
 import 'src/sign_tool.dart';
 import 'src/extensions.dart';
 
-/// Handles all the msix package functionality
+/// Main class that handles all the msix package functionality
 class Msix {
   late Logger _logger;
   late Configuration _config;
 
-  Msix(List<String> arguments) {
-    /// register singleton [Logger] service
-    GetIt.I.registerSingleton<Logger>(arguments.contains('-v')
-        ? Logger.verbose()
-        : Logger.standard(ansi: Ansi(true)));
-
-    /// register singleton [Configuration] service
-    GetIt.I.registerSingleton<Configuration>(Configuration(arguments));
-
+  Msix(List<String> args) {
+    _setupSingletonServices(args);
     _logger = GetIt.I<Logger>();
     _config = GetIt.I<Configuration>();
   }
-
-  static void registerWith() {}
 
   /// Execute with the `msix:build` command
   Future<void> build() async {
     await _initConfig();
     await _buildMsixFiles();
-
-    final msixPath = _config.msixPath.contains('build/windows')
-        ? _config.msixPath.substring(_config.msixPath.indexOf('build/windows'))
-        : _config.msixPath;
-    _logger.write('unpackaged msix files created in: '.green);
-    _logger.stdout(
-        File(msixPath).parent.path.blue.emphasized.replaceAll('/', r'\'));
+    final msixStyledPath = File(_msixOutputPath).parent.path.blue.emphasized;
+    _logger
+        .write('${'unpackaged msix files created in: '.green}$msixStyledPath');
   }
 
   /// Execute with the `msix:pack` command
@@ -86,11 +73,23 @@ class Msix {
     await appInstaller.generateAppInstaller();
     await appInstaller.generateAppInstallerWebSite();
     loggerProgress.finish(showTiming: true);
-
-    _logger.write('appinstaller created: '.green);
-    _logger
-        .stdout(_config.appInstallerPath.blue.emphasized.replaceAll('/', r'\'));
+    _logger.write(
+        '${'appinstaller created: '.green}${_config.appInstallerPath.blue.emphasized}');
   }
+
+  /// Register [Logger] and [Configuration] as singleton services
+  _setupSingletonServices(List<String> args) {
+    GetIt.I.registerSingleton<Logger>(args.contains('-v')
+        ? Logger.verbose()
+        : Logger.standard(ansi: Ansi(true)));
+
+    GetIt.I.registerSingleton<Configuration>(Configuration(args));
+  }
+
+  String get _msixOutputPath => _config.msixPath
+          .contains(Directory.current.path)
+      ? _config.msixPath.substring(_config.msixPath.indexOf('build/windows'))
+      : _config.msixPath;
 
   Future<void> _initConfig() async {
     await _config.getConfigValues();
@@ -103,9 +102,7 @@ class Msix {
   }
 
   Future<void> _buildMsixFiles() async {
-    if (_config.buildWindows) {
-      await WindowsBuild().build();
-    }
+    if (_config.buildWindows) await WindowsBuild().build();
 
     var loggerProgress = _logger.progress('building msix files');
 
@@ -140,14 +137,8 @@ class Msix {
   }
 
   /// print the location of the created msix file
-  void _printMsixOutputLocation() {
-    _logger.write('msix created: '.green);
-    _logger.stdout((_config.msixPath.contains('build/windows')
-            ? _config.msixPath
-                .substring(_config.msixPath.indexOf('build/windows'))
-            : _config.msixPath)
-        .blue
-        .emphasized
-        .replaceAll('/', r'\'));
-  }
+  void _printMsixOutputLocation() => _logger
+      .write('${'msix created: '.green}${_msixOutputPath.blue.emphasized}');
+
+  static void registerWith() {}
 }
