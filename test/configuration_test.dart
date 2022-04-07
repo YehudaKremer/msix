@@ -8,7 +8,6 @@ const tempFolderPath = 'test/configuration_temp';
 const yamlTestPath = '$tempFolderPath/test.yaml';
 
 void main() {
-  var log = Logger.verbose();
   late Configuration config;
   const yamlContent = '''
 
@@ -18,7 +17,7 @@ msix_config:
   ''';
 
   setUp(() async {
-    GetIt.I.registerSingleton<Logger>(Logger.standard(ansi: Ansi(true)));
+    GetIt.I.registerSingleton<Logger>(Logger.verbose());
 
     config = Configuration([])
       ..pubspecYamlPath = yamlTestPath

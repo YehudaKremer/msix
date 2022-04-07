@@ -9,11 +9,10 @@ import 'package:test/test.dart';
 const tempFolderPath = 'test/appx_manifest_temp';
 
 void main() {
-  var log = Logger.verbose();
   late Configuration config;
 
   setUp(() async {
-    GetIt.I.registerSingleton<Logger>(Logger.standard(ansi: Ansi(true)));
+    GetIt.I.registerSingleton<Logger>(Logger.verbose());
 
     config = Configuration([])
       ..identityName = 'identityName_test'
