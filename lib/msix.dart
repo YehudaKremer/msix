@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cli_util/cli_logging.dart' show Logger, Ansi;
+import 'package:get_it/get_it.dart';
 import 'src/app_installer.dart';
 import 'src/windows_build.dart';
 import 'src/configuration.dart';
@@ -17,10 +18,16 @@ class Msix {
   late Configuration _config;
 
   Msix(List<String> arguments) {
-    _logger = arguments.contains('-v')
+    /// register singleton [Logger] service
+    GetIt.I.registerSingleton<Logger>(arguments.contains('-v')
         ? Logger.verbose()
-        : Logger.standard(ansi: Ansi(true));
-    _config = Configuration(arguments, _logger);
+        : Logger.standard(ansi: Ansi(true)));
+
+    /// register singleton [Configuration] service
+    GetIt.I.registerSingleton<Configuration>(Configuration(arguments));
+
+    _logger = GetIt.I<Logger>();
+    _config = GetIt.I<Configuration>();
   }
 
   static void registerWith() {}
@@ -28,15 +35,12 @@ class Msix {
   /// Execute with the `msix:build` command
   Future<void> build() async {
     await _initConfig();
-
-    var loggerProgress = _logger.progress('building msix files');
     await _buildMsixFiles();
-    loggerProgress.finish(showTiming: true);
 
     final msixPath = _config.msixPath.contains('build/windows')
         ? _config.msixPath.substring(_config.msixPath.indexOf('build/windows'))
         : _config.msixPath;
-    _logger.write('unpackaged msix files created in: ');
+    _logger.write('unpackaged msix files created in: '.green);
     _logger.stdout(
         File(msixPath).parent.path.blue.emphasized.replaceAll('/', r'\'));
   }
@@ -53,12 +57,10 @@ class Msix {
       exit(-1);
     }
 
-    var loggerProgress = _logger.progress('packing msix files');
     if (_config.signMsix && !_config.store) {
-      await SignTool(_config, _logger).getCertificatePublisher();
+      await SignTool().getCertificatePublisher();
     }
     await _packMsixFiles();
-    loggerProgress.finish(showTiming: true);
 
     _printMsixOutputLocation();
   }
@@ -74,7 +76,7 @@ class Msix {
   Future<void> publish() async {
     await _initConfig();
     await _config.validateAppInstallerConfigValues();
-    var appInstaller = AppInstaller(_config, _logger);
+    var appInstaller = AppInstaller();
     await appInstaller.validatePublishVersion();
 
     await _createMsix();
@@ -85,7 +87,7 @@ class Msix {
     await appInstaller.generateAppInstallerWebSite();
     loggerProgress.finish(showTiming: true);
 
-    _logger.write('appinstaller created: '.green.emphasized);
+    _logger.write('appinstaller created: '.green);
     _logger
         .stdout(_config.appInstallerPath.blue.emphasized.replaceAll('/', r'\'));
   }
@@ -96,44 +98,50 @@ class Msix {
   }
 
   Future<void> _createMsix() async {
-    var loggerProgress = _logger.progress('creating msix installer');
     await _buildMsixFiles();
     await _packMsixFiles();
-    loggerProgress.finish(showTiming: true);
   }
 
   Future<void> _buildMsixFiles() async {
     if (_config.buildWindows) {
-      await WindowsBuild(_config, _logger).build();
+      await WindowsBuild().build();
     }
 
+    var loggerProgress = _logger.progress('building msix files');
+
     await _config.validateWindowsBuildFiles();
-    final assets = Assets(_config, _logger);
+    final assets = Assets();
     await assets.cleanTemporaryFiles(clearMsixFiles: true);
     await assets.createIcons();
     await assets.copyVCLibsFiles();
 
     if (_config.signMsix && !_config.store) {
-      await SignTool(_config, _logger).getCertificatePublisher();
+      await SignTool().getCertificatePublisher();
     }
-    await AppxManifest(_config, _logger).generateAppxManifest();
-    await MakePri(_config, _logger).generatePRI();
+    await AppxManifest().generateAppxManifest();
+    await MakePri().generatePRI();
+
+    loggerProgress.finish(showTiming: true);
   }
 
   Future<void> _packMsixFiles() async {
-    await MakeAppx(_config, _logger).pack();
-    await Assets(_config, _logger).cleanTemporaryFiles();
+    var loggerProgress = _logger.progress('packing msix files');
+
+    await MakeAppx().pack();
+    await Assets().cleanTemporaryFiles();
 
     if (_config.signMsix && !_config.store) {
-      final signTool = SignTool(_config, _logger);
+      final signTool = SignTool();
       if (_config.installCert) await signTool.installCertificate();
       await signTool.sign();
     }
+
+    loggerProgress.finish(showTiming: true);
   }
 
   /// print the location of the created msix file
   void _printMsixOutputLocation() {
-    _logger.write('msix created: '.green.emphasized);
+    _logger.write('msix created: '.green);
     _logger.stdout((_config.msixPath.contains('build/windows')
             ? _config.msixPath
                 .substring(_config.msixPath.indexOf('build/windows'))

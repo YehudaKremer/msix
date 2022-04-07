@@ -1,15 +1,14 @@
 import 'dart:io';
 import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:get_it/get_it.dart';
 import 'capabilities.dart';
 import 'configuration.dart';
 import 'extensions.dart';
 
 /// Handles the creation of the manifest file
 class AppxManifest {
-  final Configuration _config;
-  final Logger _logger;
-
-  AppxManifest(this._config, this._logger);
+  final Logger _logger = GetIt.I<Logger>();
+  final Configuration _config = GetIt.I<Configuration>();
 
   /// Generates the manifest file according to the user configuration values
   Future<void> generateAppxManifest() async {

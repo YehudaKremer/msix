@@ -1,14 +1,13 @@
 import 'dart:io';
 import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:get_it/get_it.dart';
 import 'configuration.dart';
 import 'extensions.dart';
 
 /// Use the makepri.exe tool to generate package resource indexing files
 class MakePri {
-  final Configuration _config;
-  final Logger _logger;
-
-  MakePri(this._config, this._logger);
+  final Logger _logger = GetIt.I<Logger>();
+  final Configuration _config = GetIt.I<Configuration>();
 
   Future<void> generatePRI() async {
     _logger.trace('generate package resource indexing files');

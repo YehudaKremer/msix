@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cli_util/cli_logging.dart';
+import 'package:get_it/get_it.dart';
 import 'package:msix/src/appx_manifest.dart';
 import 'package:msix/src/configuration.dart';
 import 'package:test/test.dart';
@@ -12,7 +13,9 @@ void main() {
   late Configuration config;
 
   setUp(() async {
-    config = Configuration([], log)
+    GetIt.I.registerSingleton<Logger>(Logger.standard(ansi: Ansi(true)));
+
+    config = Configuration([])
       ..identityName = 'identityName_test'
       ..publisher = 'publisher_test'
       ..publisherName = 'publisherName_test'
@@ -31,11 +34,15 @@ void main() {
       ..toastActivatorArguments = '----AppNotificationActivationServer'
       ..toastActivatorDisplayName = 'Toast activator';
 
+    GetIt.I.registerSingleton<Configuration>(config);
+
     await Directory('$tempFolderPath/').create(recursive: true);
     await Future.delayed(const Duration(milliseconds: 150));
   });
 
   tearDown(() async {
+    GetIt.I.reset();
+
     if (await Directory('$tempFolderPath/').exists()) {
       await Future.delayed(const Duration(milliseconds: 150));
       await Directory('$tempFolderPath/').delete(recursive: true);
@@ -44,14 +51,14 @@ void main() {
   });
 
   test('manifest created', () async {
-    await AppxManifest(config, log).generateAppxManifest();
+    await AppxManifest().generateAppxManifest();
     expect(await File('$tempFolderPath/AppxManifest.xml').exists(), true);
   });
 
   test('identityName is valid', () async {
     var testValue = 'identityName_test123';
-    await AppxManifest(config..identityName = testValue, log)
-        .generateAppxManifest();
+    config.identityName = testValue;
+    await AppxManifest().generateAppxManifest();
     expect(
         (await File('$tempFolderPath/AppxManifest.xml').readAsString())
             .contains('<Identity Name="$testValue"'),
@@ -60,8 +67,8 @@ void main() {
 
   test('publisher is valid', () async {
     var testValue = 'publisher_test123';
-    await AppxManifest(config..publisher = testValue, log)
-        .generateAppxManifest();
+    config.publisher = testValue;
+    await AppxManifest().generateAppxManifest();
     expect(
         (await File('$tempFolderPath/AppxManifest.xml').readAsString())
             .contains('Publisher="$testValue"'),
@@ -70,8 +77,8 @@ void main() {
 
   test('publisherName is valid', () async {
     var testValue = 'publisherName_test123';
-    await AppxManifest(config..publisherName = testValue, log)
-        .generateAppxManifest();
+    config.publisherName = testValue;
+    await AppxManifest().generateAppxManifest();
     expect(
         (await File('$tempFolderPath/AppxManifest.xml').readAsString())
             .contains(
@@ -81,8 +88,8 @@ void main() {
 
   test('msixVersion is valid', () async {
     var testValue = '3.4.5.8';
-    await AppxManifest(config..msixVersion = testValue, log)
-        .generateAppxManifest();
+    config.msixVersion = testValue;
+    await AppxManifest().generateAppxManifest();
     expect(
         (await File('$tempFolderPath/AppxManifest.xml').readAsString())
             .contains('Version="$testValue"'),
@@ -91,7 +98,8 @@ void main() {
 
   test('appName is valid', () async {
     var testValue = 'appName_test123';
-    await AppxManifest(config..appName = testValue, log).generateAppxManifest();
+    config.appName = testValue;
+    await AppxManifest().generateAppxManifest();
     expect(
         (await File('$tempFolderPath/AppxManifest.xml').readAsString())
             .contains('Id="${testValue.replaceAll('_', '')}"'),
@@ -100,8 +108,8 @@ void main() {
 
   test('appDescription is valid', () async {
     var testValue = 'appDescription_test123';
-    await AppxManifest(config..appDescription = testValue, log)
-        .generateAppxManifest();
+    config.appDescription = testValue;
+    await AppxManifest().generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(manifestContent.contains('<Description>$testValue</Description>'),
@@ -111,8 +119,8 @@ void main() {
 
   test('displayName is valid', () async {
     var testValue = 'displayName_test123';
-    await AppxManifest(config..displayName = testValue, log)
-        .generateAppxManifest();
+    config.displayName = testValue;
+    await AppxManifest().generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(manifestContent.contains('<DisplayName>$testValue</DisplayName>'),
@@ -124,8 +132,8 @@ void main() {
 
   test('architecture is valid', () async {
     var testValue = 'architecture_test123';
-    await AppxManifest(config..architecture = testValue, log)
-        .generateAppxManifest();
+    config.architecture = testValue;
+    await AppxManifest().generateAppxManifest();
     expect(
         (await File('$tempFolderPath/AppxManifest.xml').readAsString())
             .contains('ProcessorArchitecture="$testValue"'),
@@ -134,8 +142,8 @@ void main() {
 
   test('executableFileName is valid', () async {
     var testValue = 'executableFileName_test123';
-    await AppxManifest(config..executableFileName = testValue, log)
-        .generateAppxManifest();
+    config.executableFileName = testValue;
+    await AppxManifest().generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(manifestContent.contains('Executable="$testValue'), true);
@@ -143,8 +151,8 @@ void main() {
 
   test('executableFileName with addExecutionAlias is valid', () async {
     var testValue = 'executableFileName_test123';
-    await AppxManifest(config..executionAlias = testValue, log)
-        .generateAppxManifest();
+    config.executionAlias = testValue;
+    await AppxManifest().generateAppxManifest();
 
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
@@ -156,8 +164,8 @@ void main() {
 
   test('protocolActivation is valid', () async {
     var testValue = 'http';
-    await AppxManifest(config..protocolActivation = [testValue], log)
-        .generateAppxManifest();
+    config.protocolActivation = [testValue];
+    await AppxManifest().generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(manifestContent.contains('<uap:Protocol Name="$testValue">'), true);
@@ -170,8 +178,8 @@ void main() {
   test('fileExtension is valid', () async {
     var testValue =
         'fileExtension_test1,.fileExtension_test2,  fileExtension_test3';
-    await AppxManifest(config..fileExtension = testValue, log)
-        .generateAppxManifest();
+    config.fileExtension = testValue;
+    await AppxManifest().generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(
@@ -190,12 +198,10 @@ void main() {
 
   test('executableFileName with enableAtStartup is valid', () async {
     var testValue = 'executableFileName_test123';
-    await AppxManifest(
-            config
-              ..executableFileName = testValue
-              ..enableAtStartup = true,
-            log)
-        .generateAppxManifest();
+    config
+      ..executableFileName = testValue
+      ..enableAtStartup = true;
+    await AppxManifest().generateAppxManifest();
 
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
@@ -207,8 +213,8 @@ void main() {
   });
   test('capabilities is valid', () async {
     var testValue = 'videosLibrary,microphone,  documentsLibrary';
-    await AppxManifest(config..capabilities = testValue, log)
-        .generateAppxManifest();
+    config.capabilities = testValue;
+    await AppxManifest().generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(manifestContent.contains('<uap:Capability Name="videosLibrary" />'),
@@ -221,8 +227,8 @@ void main() {
   });
 
   test('languages is valid', () async {
-    await AppxManifest(config..languages = ['en-us', 'he-il'], log)
-        .generateAppxManifest();
+    config.languages = ['en-us', 'he-il'];
+    await AppxManifest().generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(manifestContent.contains('<Resource Language="en-us" />'), true);
@@ -231,8 +237,8 @@ void main() {
 
   test('toast-activator-clsid is valid', () async {
     var testValue = 'c569ad1a-8a98-4512-a92c-e46fb56cf3e3';
-    await AppxManifest(config..toastActivatorCLSID = testValue, log)
-        .generateAppxManifest();
+    config.toastActivatorCLSID = testValue;
+    await AppxManifest().generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
     expect(

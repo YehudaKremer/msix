@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cli_dialog/cli_dialog.dart' show CLI_Dialog;
 import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' show extension, basename;
 import 'extensions.dart';
 import 'configuration.dart';
@@ -11,10 +12,8 @@ var _publisherRegex = RegExp(
 
 /// Handles the certificate sign functionality
 class SignTool {
-  final Configuration _config;
-  final Logger _logger;
-
-  SignTool(this._config, this._logger);
+  final Logger _logger = GetIt.I<Logger>();
+  final Configuration _config = GetIt.I<Configuration>();
 
   /// Use Powershell script to get the Publisher ("Subject") of the certificate
   Future<void> getCertificatePublisher() async {
@@ -106,14 +105,12 @@ class SignTool {
         if (importCertificate.exitCode != 0) {
           var error = importCertificate.stderr.toString();
           if (error.contains('was canceled by the user')) {
-            _logger.stderr(
-                'the certificate installation was canceled'.red.emphasized);
+            _logger.stderr('the certificate installation was canceled'.red);
           } else {
             throw error;
           }
         } else {
-          _logger.stdout(
-              'the certificate installed successfully '.green.emphasized);
+          _logger.stdout('the certificate installed successfully '.green);
         }
       }
     }

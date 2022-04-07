@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert' show HtmlEscape, base64Encode;
 import 'package:cli_dialog/cli_dialog.dart' show CLI_Dialog;
+import 'package:get_it/get_it.dart';
 import 'package:image/image.dart'
     show Image, copyResize, decodeImage, encodePng, trim;
 import 'package:path/path.dart' show basename;
@@ -10,14 +11,12 @@ import 'configuration.dart';
 
 /// Handles the creation of .appinstaller file and msix versions
 class AppInstaller {
-  final Configuration _config;
-  final Logger _logger;
+  final Logger _logger = GetIt.I<Logger>();
+  final Configuration _config = GetIt.I<Configuration>();
 
   String get _versionsFolderPath => '${_config.publishFolderPath}/versions';
   String get _msixVersionPath =>
       '$_versionsFolderPath/${_config.appName}_${_config.msixVersion}.msix';
-
-  AppInstaller(this._config, this._logger);
 
   /// Ask the user if he want to increment the version
   /// if the current publish version is the same or lower than the last published version.

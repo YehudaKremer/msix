@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:isolate';
+import 'package:get_it/get_it.dart';
 import 'package:image/image.dart'
     show
         Image,
@@ -16,12 +17,10 @@ import 'extensions.dart';
 
 /// Handles all the msix and user assets files
 class Assets {
-  final Configuration _config;
+  final Logger _logger = GetIt.I<Logger>();
+  final Configuration _config = GetIt.I<Configuration>();
   late Image image;
-  final Logger _logger;
   String get _msixIconsFolderPath => '${_config.buildFilesFolder}/Images';
-
-  Assets(this._config, this._logger);
 
   /// Generate new app icons or copy default app icons
   Future<void> createIcons() async {

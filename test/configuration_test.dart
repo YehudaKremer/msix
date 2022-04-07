@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cli_util/cli_logging.dart';
+import 'package:get_it/get_it.dart';
 import 'package:msix/src/configuration.dart';
 import 'package:test/test.dart';
 
@@ -17,15 +18,21 @@ msix_config:
   ''';
 
   setUp(() async {
-    config = Configuration([], log)
+    GetIt.I.registerSingleton<Logger>(Logger.standard(ansi: Ansi(true)));
+
+    config = Configuration([])
       ..pubspecYamlPath = yamlTestPath
       ..buildFilesFolder = tempFolderPath;
+
+    GetIt.I.registerSingleton<Configuration>(config);
 
     await Directory('$tempFolderPath/').create(recursive: true);
     await Future.delayed(const Duration(milliseconds: 150));
   });
 
   tearDown(() async {
+    GetIt.I.reset();
+
     if (await Directory('$tempFolderPath/').exists()) {
       await Future.delayed(const Duration(milliseconds: 150));
       await Directory('$tempFolderPath/').delete(recursive: true);
@@ -96,7 +103,7 @@ msix_config:
 
     test('valid version in long argument', () async {
       await File(yamlTestPath).writeAsString(yamlContent);
-      var customConfig = Configuration(['--version', '1.2.3.4'], log)
+      var customConfig = Configuration(['--version', '1.2.3.4'])
         ..pubspecYamlPath = yamlTestPath
         ..buildFilesFolder = tempFolderPath;
       await customConfig.getConfigValues();
@@ -105,7 +112,7 @@ msix_config:
 
     test('invalid version letter in long argument', () async {
       await File(yamlTestPath).writeAsString(yamlContent);
-      var customConfig = Configuration(['--version', '1.s.3.4'], log)
+      var customConfig = Configuration(['--version', '1.s.3.4'])
         ..pubspecYamlPath = yamlTestPath
         ..buildFilesFolder = tempFolderPath;
       await customConfig.getConfigValues();
@@ -117,7 +124,7 @@ msix_config:
 
     test('setting version with old -v options', () async {
       await File(yamlTestPath).writeAsString(yamlContent);
-      var customConfig = Configuration(['-v', '1.2.3.4'], log)
+      var customConfig = Configuration(['-v', '1.2.3.4'])
         ..pubspecYamlPath = yamlTestPath
         ..buildFilesFolder = tempFolderPath;
       await customConfig.getConfigValues();

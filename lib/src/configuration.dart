@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:get_it/get_it.dart';
 import 'package:package_config/package_config.dart' show findPackageConfig;
 import 'package:path/path.dart' show extension, basename;
 import 'package:pub_semver/pub_semver.dart';
@@ -10,7 +11,7 @@ import 'extensions.dart';
 /// Handles loading and validating the configuration values
 class Configuration {
   final List<String> _arguments;
-  final Logger _logger;
+  final Logger _logger = GetIt.I<Logger>();
   late ArgResults _args;
   String msixAssetsPath = '';
   String? appName;
@@ -60,7 +61,7 @@ class Configuration {
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
 
-  Configuration(this._arguments, this._logger);
+  Configuration(this._arguments);
 
   /// Gets the configuration values from from [_arguments] or pubspec.yaml file
   Future<void> getConfigValues() async {

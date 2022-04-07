@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cli_util/cli_logging.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image/image.dart';
 import 'package:msix/src/assets.dart';
 import 'package:msix/src/configuration.dart';
@@ -13,7 +14,9 @@ void main() {
   late Configuration config;
 
   setUp(() async {
-    config = Configuration([], log)
+    GetIt.I.registerSingleton<Logger>(Logger.standard(ansi: Ansi(true)));
+
+    config = Configuration([])
       ..identityName = 'identityName_test'
       ..publisher = 'publisher_test'
       ..publisherName = 'publisherName_test'
@@ -29,11 +32,15 @@ void main() {
       ..capabilities = 'location,microphone'
       ..languages = ['en-us'];
 
+    GetIt.I.registerSingleton<Configuration>(config);
+
     await Directory('$tempFolderPath/').create(recursive: true);
     await Future.delayed(const Duration(milliseconds: 150));
   });
 
   tearDown(() async {
+    GetIt.I.reset();
+
     if (await Directory('$tempFolderPath/').exists()) {
       await Future.delayed(const Duration(milliseconds: 150));
       await Future.delayed(const Duration(milliseconds: 150));
@@ -45,7 +52,8 @@ void main() {
     await File('$tempFolderPath/icons/test1.png').create(recursive: true);
     await File('$tempFolderPath/icons/test2.png').create(recursive: true);
     await Directory('$tempFolderPath/Images').create(recursive: true);
-    await Assets(config..msixAssetsPath = tempFolderPath, log).createIcons();
+    config.msixAssetsPath = tempFolderPath;
+    await Assets().createIcons();
     expect(await File('$tempFolderPath/Images/test1.png').exists(), true);
     expect(await File('$tempFolderPath/Images/test2.png').exists(), true);
   });
@@ -56,8 +64,8 @@ void main() {
     await File('$tempFolderPath/test.png').writeAsBytes(encodePng(image));
     await Directory('$tempFolderPath/Images').create(recursive: true);
     await Future.delayed(const Duration(milliseconds: 200));
-    await Assets(config..logoPath = '$tempFolderPath/test.png', log)
-        .createIcons();
+    config.logoPath = '$tempFolderPath/test.png';
+    await Assets().createIcons();
     await Future.delayed(const Duration(milliseconds: 100));
     expect(
         (await Directory('$tempFolderPath/Images').list().toList()).length, 82);
@@ -70,12 +78,10 @@ void main() {
     await File('$vclibsFolderPath/vcruntime140_1.dll').create(recursive: true);
     await File('$vclibsFolderPath/vcruntime140.dll').create(recursive: true);
     await Future.delayed(const Duration(milliseconds: 100));
-    await Assets(
-            config
-              ..msixAssetsPath = tempFolderPath
-              ..architecture = 'x86',
-            log)
-        .copyVCLibsFiles();
+    config
+      ..msixAssetsPath = tempFolderPath
+      ..architecture = 'x86';
+    await Assets().copyVCLibsFiles();
     await Future.delayed(const Duration(milliseconds: 100));
     expect(await File('$vclibsFolderPath/msvcp140.dll').exists(), true);
     expect(await File('$vclibsFolderPath/vcruntime140_1.dll').exists(), true);
@@ -88,19 +94,17 @@ void main() {
     await Directory('$tempFolderPath/Images').create();
     await Directory('$tempFolderPath/VCLibs/x64/').create(recursive: true);
     await Future.delayed(const Duration(milliseconds: 100));
-    await Assets(
-            config
-              ..msixAssetsPath = tempFolderPath
-              ..architecture = 'x64',
-            log)
-        .cleanTemporaryFiles(clearMsixFiles: false);
+    config
+      ..msixAssetsPath = tempFolderPath
+      ..architecture = 'x64';
+    await Assets().cleanTemporaryFiles(clearMsixFiles: false);
     await Future.delayed(const Duration(milliseconds: 100));
     expect(
         await File('$tempFolderPath/resources.scale-125.pri').exists(), false);
     expect(await File('$tempFolderPath/test.msix').exists(), true);
     expect(await Directory('$tempFolderPath/Images').exists(), false);
 
-    await Assets(config, log).cleanTemporaryFiles(clearMsixFiles: true);
+    await Assets().cleanTemporaryFiles(clearMsixFiles: true);
     await Future.delayed(const Duration(milliseconds: 100));
     expect(await File('$tempFolderPath/test.msix').exists(), false);
   });

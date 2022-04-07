@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.0
+
+- added two new command `msix:build` and `msix:pack` for [unsupported features](https://github.com/YehudaKremer/msix#heavy_exclamation_mark-unsupported-features) ([#120](https://github.com/YehudaKremer/msix/issues/120))
+- logs change: from single log `creating msix installer...` we have now two logs: `building msix files...` and `packing msix files...`
+
 ## 3.4.1
 
 - fix [#119](https://github.com/YehudaKremer/msix/issues/119)
