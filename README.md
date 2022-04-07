@@ -230,10 +230,12 @@ msix_config:
 
 We added the most common features of Msix in this package, however, if you need to add or edit a feature that is not supported yet, you can do this manually.
 
-First, create the unpackaged msix files with the following command, then edit the files that were created in the build folder
+First, create the unpackaged msix files with the following command
 ```console
 PS c:\src\flutter_project> flutter pub run msix:build
 ```
+Then edit the files that were created in the build folder.
+
 After that create a msix installer file from those files with the following command
 ```console
 PS c:\src\flutter_project> flutter pub run msix:pack
