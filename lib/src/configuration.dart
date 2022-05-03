@@ -51,6 +51,7 @@ class Configuration {
   bool trimLogo = true;
   bool createWithDebugBuildFiles = false;
   bool enableAtStartup = false;
+  String? appUriHandlerHost;
   Iterable<String>? languages;
   String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
   String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
@@ -123,6 +124,7 @@ class Configuration {
     languages = _getLanguages(yaml);
     enableAtStartup = _args.wasParsed('enable-at-startup') ||
         yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
+    appUriHandlerHost = _args['app-uri-handler-host'] ?? yaml['app_uri_handler_host'];
 
     // toast activator configurations
     var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();

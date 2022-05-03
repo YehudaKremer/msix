@@ -92,6 +92,7 @@ class AppxManifest {
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
       ${_config.enableAtStartup ? _getStartupTaskExtension() : ''}
+      ${!_config.appUriHandlerHost.isNull ? _getAppUriHandlerHostExtension() : ''}
         </Extensions>''';
     } else {
       return '';
@@ -152,6 +153,14 @@ class AppxManifest {
     return '''<desktop:Extension Category="windows.startupTask" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
       <desktop:StartupTask TaskId="${_config.appName!.replaceAll('_', '')}" Enabled="true" DisplayName="${_config.displayName.toHtmlEscape()}"/>
       </desktop:Extension>''';
+  }
+
+  String _getAppUriHandlerHostExtension() {
+    return '''  <uap3:Extension Category="windows.appUriHandler">
+            <uap3:AppUriHandler>
+            <uap3:Host Name="${_config.appUriHandlerHost}" />
+          </uap3:AppUriHandler>
+          </uap3:Extension>''';
   }
 
   String _normalizeCapability(String capability) {
