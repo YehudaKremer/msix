@@ -124,7 +124,8 @@ class Configuration {
     languages = _getLanguages(yaml);
     enableAtStartup = _args.wasParsed('enable-at-startup') ||
         yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
-    appUriHandlerHost = _args['app-uri-handler-host'] ?? yaml['app_uri_handler_host'];
+    appUriHandlerHost =
+        _args['app-uri-handler-host'] ?? yaml['app_uri_handler_host'];
 
     // toast activator configurations
     var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
@@ -288,6 +289,7 @@ class Configuration {
       ..addOption('publish-folder-path')
       ..addOption('hours-between-update-checks')
       ..addOption('build-windows')
+      ..addOption('app-uri-handler-host')
       ..addFlag('store')
       ..addFlag('enable-at-startup')
       ..addFlag('debug')
