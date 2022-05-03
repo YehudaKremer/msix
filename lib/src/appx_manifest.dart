@@ -85,6 +85,7 @@ class AppxManifest {
         _config.protocolActivation.isNotEmpty ||
         !_config.fileExtension.isNull ||
         !_config.toastActivatorCLSID.isNull ||
+        !_config.appUriHandlerHost.isNull ||
         _config.enableAtStartup) {
       return '''<Extensions>
       ${!_config.executionAlias.isNull ? _getExecutionAliasExtension() : ''}
