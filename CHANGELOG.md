@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.6.0
+
+- added [apps for websites](https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking) ([#125](https://github.com/YehudaKremer/msix/pull/125))
+
 ## 3.5.1
 
 - added two new command `msix:build` and `msix:pack` for [unsupported features](https://github.com/YehudaKremer/msix#heavy_exclamation_mark-unsupported-features) ([#120](https://github.com/YehudaKremer/msix/issues/120))

@@ -85,7 +85,8 @@ class AppxManifest {
         _config.protocolActivation.isNotEmpty ||
         !_config.fileExtension.isNull ||
         !_config.toastActivatorCLSID.isNull ||
-        !_config.appUriHandlerHost.isNull ||
+        (_config.appUriHandlerHosts != null &&
+            _config.appUriHandlerHosts!.isNotEmpty) ||
         _config.enableAtStartup) {
       return '''<Extensions>
       ${!_config.executionAlias.isNull ? _getExecutionAliasExtension() : ''}
@@ -93,7 +94,7 @@ class AppxManifest {
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
       ${_config.enableAtStartup ? _getStartupTaskExtension() : ''}
-      ${!_config.appUriHandlerHost.isNull ? _getAppUriHandlerHostExtension() : ''}
+      ${_config.appUriHandlerHosts != null && _config.appUriHandlerHosts!.isNotEmpty ? _getAppUriHandlerHostExtension() : ''}
         </Extensions>''';
     } else {
       return '';
@@ -159,7 +160,9 @@ class AppxManifest {
   String _getAppUriHandlerHostExtension() {
     return '''  <uap3:Extension Category="windows.appUriHandler">
             <uap3:AppUriHandler>
-            <uap3:Host Name="${_config.appUriHandlerHost}" />
+              ${_config.appUriHandlerHosts!.map((hostName) {
+              return '<uap3:Host Name="$hostName" />';
+            }).toList().join('\n                ')}
           </uap3:AppUriHandler>
           </uap3:Extension>''';
   }
