@@ -85,6 +85,8 @@ class AppxManifest {
         _config.protocolActivation.isNotEmpty ||
         !_config.fileExtension.isNull ||
         !_config.toastActivatorCLSID.isNull ||
+        (_config.appUriHandlerHosts != null &&
+            _config.appUriHandlerHosts!.isNotEmpty) ||
         _config.enableAtStartup) {
       return '''<Extensions>
       ${!_config.executionAlias.isNull ? _getExecutionAliasExtension() : ''}
@@ -92,6 +94,7 @@ class AppxManifest {
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
       ${_config.enableAtStartup ? _getStartupTaskExtension() : ''}
+      ${_config.appUriHandlerHosts != null && _config.appUriHandlerHosts!.isNotEmpty ? _getAppUriHandlerHostExtension() : ''}
         </Extensions>''';
     } else {
       return '';
@@ -152,6 +155,16 @@ class AppxManifest {
     return '''<desktop:Extension Category="windows.startupTask" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
       <desktop:StartupTask TaskId="${_config.appName!.replaceAll('_', '')}" Enabled="true" DisplayName="${_config.displayName.toHtmlEscape()}"/>
       </desktop:Extension>''';
+  }
+
+  String _getAppUriHandlerHostExtension() {
+    return '''  <uap3:Extension Category="windows.appUriHandler">
+            <uap3:AppUriHandler>
+              ${_config.appUriHandlerHosts!.map((hostName) {
+              return '<uap3:Host Name="$hostName" />';
+            }).toList().join('\n                ')}
+          </uap3:AppUriHandler>
+          </uap3:Extension>''';
   }
 
   String _normalizeCapability(String capability) {

@@ -51,6 +51,7 @@ class Configuration {
   bool trimLogo = true;
   bool createWithDebugBuildFiles = false;
   bool enableAtStartup = false;
+  Iterable<String>? appUriHandlerHosts;
   Iterable<String>? languages;
   String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
   String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
@@ -121,6 +122,7 @@ class Configuration {
     architecture = _args['architecture'] ?? yaml['architecture'];
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
+    appUriHandlerHosts = _getAppUriHandlerHosts(yaml);
     enableAtStartup = _args.wasParsed('enable-at-startup') ||
         yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
 
@@ -286,6 +288,7 @@ class Configuration {
       ..addOption('publish-folder-path')
       ..addOption('hours-between-update-checks')
       ..addOption('build-windows')
+      ..addOption('app-uri-handler-hosts')
       ..addFlag('store')
       ..addFlag('enable-at-startup')
       ..addFlag('debug')
@@ -358,6 +361,14 @@ class Configuration {
   /// Get the languages list
   Iterable<String>? _getLanguages(dynamic config) =>
       ((_args['languages'] ?? config['languages']) as String?)
+          ?.split(',')
+          .map((e) => e.trim())
+          .where((element) => element.isNotEmpty);
+
+  /// Get the app uri handler hosts list
+  Iterable<String>? _getAppUriHandlerHosts(dynamic config) =>
+      ((_args['app-uri-handler-hosts'] ?? config['app_uri_handler_hosts'])
+              as String?)
           ?.split(',')
           .map((e) => e.trim())
           .where((element) => element.isNotEmpty);
