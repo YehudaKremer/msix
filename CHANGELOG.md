@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.6.1
+
+- added validation on field `publisher` that required when settings `sign_msix: false` ([#126](https://github.com/YehudaKremer/msix/issues/126))
+
 ## 3.6.0
 
 - added [apps for websites](https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking) ([#125](https://github.com/YehudaKremer/msix/pull/125))

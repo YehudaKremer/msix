@@ -45,6 +45,14 @@ msix_config:
 ```
 Note: The main app version will be used as a basis for the MSIX version (`1.3.2` to `1.3.2.0`)
 
+###### Without signing
+
+```yaml
+msix_config:
+  publisher: CN=PublisherName, O=Msix Testing... # required
+  sign_msix: false
+```
+
 ###### With Metadata:
 
 ```yaml

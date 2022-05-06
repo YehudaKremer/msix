@@ -195,6 +195,11 @@ class Configuration {
         publisherName = identityName;
       }
     }
+    if (signMsix == false && publisher.isNullOrEmpty) {
+      _logger.stderr(
+          'when sign_msix is false, you must provide the publisher value at "msix_config: publisher" in the pubspec.yaml file');
+      exit(-1);
+    }
     if (store && publisher.isNullOrEmpty) {
       _logger.stderr(
           'publisher is empty, check "msix_config: publisher" at pubspec.yaml');
