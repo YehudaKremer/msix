@@ -39,6 +39,7 @@ class Configuration {
   String? outputPath;
   String? outputName;
   String? publishFolderPath;
+  String? appInstallerSchemeVersion;
   int hoursBetweenUpdateChecks = 0;
   bool automaticBackgroundTask = false;
   bool updateBlocksActivation = false;
@@ -143,6 +144,7 @@ class Configuration {
 
     publishFolderPath =
         _args['publish-folder-path'] ?? installerYaml['publish_folder_path'];
+    appInstallerSchemeVersion = installerYaml['scheme_ver'] ?? "2021";
     hoursBetweenUpdateChecks = int.parse(_args['hours-between-update-checks'] ??
         installerYaml['hours_between_update_checks']?.toString() ??
         '0');
