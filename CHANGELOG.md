@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.6.2
+
+- fix [#129](https://github.com/YehudaKremer/msix/issues/129)
+
 ## 3.6.1
 
 - added validation on field `publisher` that required when settings `sign_msix: false` ([#126](https://github.com/YehudaKremer/msix/issues/126))

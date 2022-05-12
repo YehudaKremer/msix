@@ -86,8 +86,7 @@ class Msix {
     GetIt.I.registerSingleton<Configuration>(Configuration(args));
   }
 
-  String get _msixOutputPath => _config.msixPath
-          .contains(Directory.current.path)
+  String get _msixOutputPath => _config.msixPath.contains('build/windows')
       ? _config.msixPath.substring(_config.msixPath.indexOf('build/windows'))
       : _config.msixPath;
 
