@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.6.3
+
+- fix [#134](https://github.com/YehudaKremer/msix/issues/134)
+
 ## 3.6.2
 
 - fix [#129](https://github.com/YehudaKremer/msix/issues/129)

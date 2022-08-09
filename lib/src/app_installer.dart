@@ -75,7 +75,7 @@ class AppInstaller {
     _logger.trace('generate app installer');
 
     var appInstallerContent = '''<?xml version="1.0" encoding="utf-8"?>
-  <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2021"
+  <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2018"
     Uri="${_config.appInstallerPath}" Version="${_config.msixVersion}">
     <MainPackage Name="${_config.identityName}" Version="${_config.msixVersion}"
       Publisher="${const HtmlEscape().convert(_config.publisher!.replaceAll(' = ', '='))}"
