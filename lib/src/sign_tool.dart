@@ -77,7 +77,7 @@ class SignTool {
       _logger.stdout('');
 
       var installCertificate = await readInput(
-          'Do you want to install the certificate: "test_certificate.pfx" ?'
+          'Do you want to install the certificate: "${basename(File(_config.certificatePath!).path)}" ?'
                   .emphasized +
               ' (y/N) '.gray);
 
