@@ -14,6 +14,7 @@ extension StringExtensions on String {
   String get green => '${Ansi(true).green}${this}${Ansi(true).none}';
   String get blue => '${Ansi(true).blue}${this}${Ansi(true).none}';
   String get red => '${Ansi(true).red}${this}${Ansi(true).none}';
+  String get gray => '${Ansi(true).gray}${this}${Ansi(true).none}';
 }
 
 extension StringConversions on String? {

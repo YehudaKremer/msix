@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'dart:convert' show HtmlEscape, base64Encode;
-import 'package:cli_dialog/cli_dialog.dart' show CLI_Dialog;
+import 'package:console/console.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image/image.dart'
     show Image, copyResize, decodeImage, encodePng, trim;
+import 'package:msix/src/extensions.dart';
 import 'package:path/path.dart' show basename;
 import 'package:pub_semver/pub_semver.dart' show Version;
 import 'package:cli_util/cli_logging.dart' show Logger;
@@ -48,14 +49,12 @@ class AppInstaller {
             'You publishing older version ($msixVersion) then last publish version ($lastPublishVersion)');
       }
 
-      final dialog = CLI_Dialog(booleanQuestions: [
-        [
-          'Do you want to increment it to version ${lastPublishVersion.nextPatch} ?',
-          'increment'
-        ]
-      ]);
-      final wantToIncrement = dialog.ask()['increment'];
-      if (wantToIncrement) {
+      var installCertificate = await readInput(
+          'Do you want to increment it to version ${lastPublishVersion.nextPatch} ?'
+                  .emphasized +
+              ' (y/N) '.gray);
+
+      if (installCertificate.toLowerCase().trim() == 'y') {
         _config.msixVersion =
             '${lastPublishVersion.nextPatch}$msixVersionRevision';
       }
