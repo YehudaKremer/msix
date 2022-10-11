@@ -7,7 +7,9 @@
   align="right">
 </a>
 
-[![pub package](https://img.shields.io/pub/v/msix.svg?color=blue)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix)](https://github.com/YehudaKremer/msix/issues) [![Codemagic build status](https://api.codemagic.io/apps/61fc249977f79ce332414c45/61fc249977f79ce332414c44/status_badge.svg)](https://codemagic.io/apps/61fc249977f79ce332414c45/61fc249977f79ce332414c44/latest_build)
+[![pub package](https://img.shields.io/pub/v/msix.svg?color=blue)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix)](https://github.com/YehudaKremer/msix/issues)
+
+<!-- [![Codemagic build status](https://api.codemagic.io/apps/61fc249977f79ce332414c45/61fc249977f79ce332414c44/status_badge.svg)](https://codemagic.io/apps/61fc249977f79ce332414c45/61fc249977f79ce332414c44/latest_build) -->
 
 [MSIX] is a Windows app packaging format from Microsoft that combines the best
 features of MSI, .appx, App-V, and ClickOnce to provide a modern and reliable
@@ -51,6 +53,7 @@ msix_config:
   logo_path: C:\path\to\logo.png
   capabilities: internetClient, location, microphone, webcam
 ```
+
 See [Configurations Examples And Use Cases].
 
 ### Available Configurations
@@ -59,50 +62,50 @@ See [Configurations Examples And Use Cases].
 
 <summary>MSIX configuration (click to expand)</summary>
 
-| YAML name                | Command-line argument                | Description (from Microsoft [Package manifest schema reference])                                                                                      | Example                                                                                         |
-| ------------------------ | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `display_name`           | `--display-name` `-d`                | A friendly app name that can be displayed to users.                                                                                                   | `Flutter App`                                                                               |
-| `publisher_display_name` | `--publisher-display-name` `-u`      | A friendly name for the publisher that can be displayed to users.                                                                                     | `Company Name`                                                                                        |
-| `identity_name`          | `--identity-name` `-i`               | Defines the unique identifier for the app.                                                                                                            | `company.suite.flutterapp`                                                                           |
-| `msix_version`           | `--version`                          | The version number of the package, in `a.b.c.d` format. [see how the msix version is determined].                                                                                              | `1.0.0.0`                                                                                       |
-| `logo_path`              | `--logo-path` `-l`                   | Path to an [image file] for use as the app icon (size recommended at least 400x400px).                                                                                 | `C:\images\logo.png`                                                                         |
-| `trim_logo`              | `--trim-logo <true/false>`           | If `false`, don't trim the logo image, default is `true`.                                                                                             | `true`                                                                                          |
-| `capabilities`           | `--capabilities` `-e`                | List of the [capabilities][windows capabilities] the app requires.                                                                                    | `internetClient,location,microphone,webcam`                                                     |
-| `languages`              | `--languages`                        | Declares the language resources contained in the package.                                                                                             | `en-us, ja-jp`                                                                                  |
-| `file_extension`         | `--file-extension` `-f`              | File extensions that the app may be registered to open.                                                                                               | `.picture, .image`                                                                              |
-| `protocol_activation`    | `--protocol-activation`              | [Protocols activation] that will activate the app.                                                                                                         | `http,https`                                                                                         |
-| `app_uri_handler_hosts`    | `--app-uri-handler-hosts`              | Enable [apps for websites] using app URI handlers app.                                                                                                         | `test.com, test2.info`                                                                                         |
-| `execution_alias`    | `--execution-alias`              | [Execution alias] command (cmd) that will activate the app. | `myapp`                                                                                          |
-| `enable_at_startup`    | `--enable-at-startup`              | App start at startup or user log-in. | `true`                                                                                          |
-| `store`                  | `--store`                            | Generate a MSIX file for publishing to the Microsoft Store.                                                                                           | `false`                                                                                         |
-| [Toast Notifications configuration] | | |                                                                                   |
+| YAML name                           | Command-line argument           | Description (from Microsoft [Package manifest schema reference])                                  | Example                                     |
+| ----------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `display_name`                      | `--display-name` `-d`           | A friendly app name that can be displayed to users.                                               | `Flutter App`                               |
+| `publisher_display_name`            | `--publisher-display-name` `-u` | A friendly name for the publisher that can be displayed to users.                                 | `Company Name`                              |
+| `identity_name`                     | `--identity-name` `-i`          | Defines the unique identifier for the app.                                                        | `company.suite.flutterapp`                  |
+| `msix_version`                      | `--version`                     | The version number of the package, in `a.b.c.d` format. [see how the msix version is determined]. | `1.0.0.0`                                   |
+| `logo_path`                         | `--logo-path` `-l`              | Path to an [image file] for use as the app icon (size recommended at least 400x400px).            | `C:\images\logo.png`                        |
+| `trim_logo`                         | `--trim-logo <true/false>`      | If `false`, don't trim the logo image, default is `true`.                                         | `true`                                      |
+| `capabilities`                      | `--capabilities` `-e`           | List of the [capabilities][windows capabilities] the app requires.                                | `internetClient,location,microphone,webcam` |
+| `languages`                         | `--languages`                   | Declares the language resources contained in the package.                                         | `en-us, ja-jp`                              |
+| `file_extension`                    | `--file-extension` `-f`         | File extensions that the app may be registered to open.                                           | `.picture, .image`                          |
+| `protocol_activation`               | `--protocol-activation`         | [Protocols activation] that will activate the app.                                                | `http,https`                                |
+| `app_uri_handler_hosts`             | `--app-uri-handler-hosts`       | Enable [apps for websites] using app URI handlers app.                                            | `test.com, test2.info`                      |
+| `execution_alias`                   | `--execution-alias`             | [Execution alias] command (cmd) that will activate the app.                                       | `myapp`                                     |
+| `enable_at_startup`                 | `--enable-at-startup`           | App start at startup or user log-in.                                                              | `true`                                      |
+| `store`                             | `--store`                       | Generate a MSIX file for publishing to the Microsoft Store.                                       | `false`                                     |
+| [Toast Notifications configuration] |                                 |                                                                                                   |                                             |
 
 </details>
 
 <details>
 <summary>Build configuration (click to expand)</summary>
 
-| YAML name                | Command-line argument                | Description                                                                                      | Example                                                                                         |
-| ------------------------ | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `debug`                  | `--debug` or `--release`             | Create MSIX from the **debug** or **release** build files (`\build\windows\runner\<Debug/Release>`), **release** is the default.                                 | `true`                                                                                          |
-| `output_path`            | `--output-path` `-o`                 | The directory where the output MSIX file should be stored.                                                                                            | `C:\src\some\folder`                                                                             |
-| `output_name`            | `--output-name` `-n`                 | The filename that should be given to the created MSIX file.                                                                                           | `flutterApp_dev`                                                                                     |
-| `architecture`           | `--architecture` `-h`                | Describes the architecture of the code in the package, `x64` or `x86`, `x64` is default.                                                                                               | `x64`                                                                                           |
-| `build_windows`          | `--build-windows <true/false>`       | If `false`, don't run the build command `flutter build windows`, default is `true`.                                                                   | `true`                                                                                          |
+| YAML name       | Command-line argument          | Description                                                                                                                      | Example              |
+| --------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| `debug`         | `--debug` or `--release`       | Create MSIX from the **debug** or **release** build files (`\build\windows\runner\<Debug/Release>`), **release** is the default. | `true`               |
+| `output_path`   | `--output-path` `-o`           | The directory where the output MSIX file should be stored.                                                                       | `C:\src\some\folder` |
+| `output_name`   | `--output-name` `-n`           | The filename that should be given to the created MSIX file.                                                                      | `flutterApp_dev`     |
+| `architecture`  | `--architecture` `-h`          | Describes the architecture of the code in the package, `x64` or `x86`, `x64` is default.                                         | `x64`                |
+| `build_windows` | `--build-windows <true/false>` | If `false`, don't run the build command `flutter build windows`, default is `true`.                                              | `true`               |
 
 </details>
 
 <details>
 <summary>Sign configuration (click to expand)</summary>
 
-| YAML name                | Command-line argument                | Description                                                                                      | Example                                                                                         |
-| ------------------------ | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `certificate_path`       | `--certificate-path` `-c`            | Path to the certificate content to place in the store.                                                                                                | `C:\certs\signcert.pfx`                                                                         |
-| `certificate_password`   | `--certificate-password` `-p`        | Password for the certificate.                                                                                                                         | `1234`                                                                                          |
-| `publisher`              | `--publisher` `-b`                   | The `Subject` value in the certificate.                                                                                                               | `CN=BF212345-5644-46DF-8668-014043C1B138` or `CN=Contoso Software, O=Contoso Corporation, C=US` |
-| `signtool_options`       | `--signtool-options`                 | Options to be provided to the `signtool` for app signing (see below.)                                                                                 | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer`                                                   |
-| `sign_msix`    | `--sign-msix <true/false>` | If `false`, don't sign the msix file, default is `true`.<br />Note: when **false**, `publisher` is Required.                                                                                         | `true`                                                                                          |
-| `install_certificate`    | `--install-certificate <true/false>` | If `false`, don't try to install the certificate, default is `true`.                                                                                         | `true`                                                                                          |
+| YAML name              | Command-line argument                | Description                                                                                                  | Example                                                                                         |
+| ---------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `certificate_path`     | `--certificate-path` `-c`            | Path to the certificate content to place in the store.                                                       | `C:\certs\signcert.pfx`                                                                         |
+| `certificate_password` | `--certificate-password` `-p`        | Password for the certificate.                                                                                | `1234`                                                                                          |
+| `publisher`            | `--publisher` `-b`                   | The `Subject` value in the certificate.                                                                      | `CN=BF212345-5644-46DF-8668-014043C1B138` or `CN=Contoso Software, O=Contoso Corporation, C=US` |
+| `signtool_options`     | `--signtool-options`                 | Options to be provided to the `signtool` for app signing (see below.)                                        | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer`                                                   |
+| `sign_msix`            | `--sign-msix <true/false>`           | If `false`, don't sign the msix file, default is `true`.<br />Note: when **false**, `publisher` is Required. | `true`                                                                                          |
+| `install_certificate`  | `--install-certificate <true/false>` | If `false`, don't try to install the certificate, default is `true`.                                         | `true`                                                                                          |
 
 </details>
 
@@ -187,12 +190,15 @@ msix_config:
 We added the most common features of Msix in this package, however, if you need to add or edit a feature that is not supported yet, you can do this manually.
 
 First, create the unpackaged msix files with the following command
+
 ```console
 PS c:\src\flutter_project> flutter pub run msix:build
 ```
+
 Then edit the files that were created in the build folder.
 
 After that create a msix installer file from those files with the following command
+
 ```console
 PS c:\src\flutter_project> flutter pub run msix:pack
 ```
@@ -218,7 +224,7 @@ Tags: `msi` `windows` `win10` `win11` `windows10` `windows11` `windows store` `w
 [this screenshot]: https://user-images.githubusercontent.com/946652/138753431-fa7dee7d-99b6-419c-94bf-4514c761abba.png
 [disabled]: https://docs.microsoft.com/en-us/windows/msix/app-installer/installing-windows10-apps-web
 [self signed]: https://docs.microsoft.com/en-us/windows/msix/package/create-certificate-package-signing#create-a-self-signed-certificate
-[Configurations Examples And Use Cases]: https://pub.dev/packages/msix/example
+[configurations examples and use cases]: https://pub.dev/packages/msix/example
 [see how the msix version is determined]: https://github.com/YehudaKremer/msix/blob/main/doc/msix_version.md
-[Toast Notifications configuration]: https://github.com/YehudaKremer/msix/blob/main/doc/toast_notifications_configuration.md
+[toast notifications configuration]: https://github.com/YehudaKremer/msix/blob/main/doc/toast_notifications_configuration.md
 [apps for websites]: https://docs.microsoft.com/en-us/windows/uwp/launch-resume/web-to-app-linking
