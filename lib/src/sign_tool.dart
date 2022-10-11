@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:cli_dialog/cli_dialog.dart' show CLI_Dialog;
 import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:console/console.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' show extension, basename;
 import 'extensions.dart';
@@ -74,17 +74,14 @@ class SignTool {
 
     if (isCertificateNotInstalled) {
       _logger.trace('installing certificate');
-
       _logger.stdout('');
-      final dialog = CLI_Dialog(booleanQuestions: [
-        [
-          'Do you want to install the certificate: "${basename(File(_config.certificatePath!).path)}" ?',
-          'install'
-        ]
-      ]);
-      final wantToInstallCertificate = dialog.ask()['install'];
 
-      if (wantToInstallCertificate) {
+      var installCertificate = await readInput(
+          'Do you want to install the certificate: "test_certificate.pfx" ?'
+                  .emphasized +
+              ' (y/N) '.gray);
+
+      if (installCertificate.toLowerCase().trim() == 'y') {
         // create installCertificate.ps1 file
         var installCertificateScript =
             'Import-PfxCertificate -FilePath "${_config.certificatePath}" -Password (ConvertTo-SecureString -String "${_config.certificatePassword}" -AsPlainText -Force) -CertStoreLocation Cert:\\LocalMachine\\Root';

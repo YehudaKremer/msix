@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.6.4
+
+- replacing cli_dialog package with console package to solve transitive dependencies [https://github.com/timsneath/dart_console/issues/54](https://github.com/timsneath/dart_console/issues/54)
+
 ## 3.6.3
 
 - fix [#134](https://github.com/YehudaKremer/msix/issues/134)
