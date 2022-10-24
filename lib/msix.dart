@@ -44,7 +44,7 @@ class Msix {
       exit(-1);
     }
 
-    if (_config.signMsix && !_config.store) {
+    if (_config.signMsix && !_config.store && _config.publisher.isNullOrEmpty) {
       await SignTool().getCertificatePublisher();
     }
     await _packMsixFiles();
@@ -111,7 +111,7 @@ class Msix {
     await assets.createIcons();
     await assets.copyVCLibsFiles();
 
-    if (_config.signMsix && !_config.store) {
+    if (_config.signMsix && !_config.store && _config.publisher.isNullOrEmpty) {
       await SignTool().getCertificatePublisher();
     }
     await AppxManifest().generateAppxManifest();
