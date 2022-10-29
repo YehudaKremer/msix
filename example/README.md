@@ -70,8 +70,6 @@ msix_config:
 
 #### Signing With Installed Certificate Using SignTool
 
-<br />
-
 ###### By Subject:
 
 ```yaml
