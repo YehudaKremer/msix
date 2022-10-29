@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cli_util/cli_logging.dart' show Logger;
 import 'package:get_it/get_it.dart';
+import 'package:msix/src/extensions.dart';
 
 import 'configuration.dart';
 
@@ -23,10 +24,7 @@ class WindowsBuild {
     var windowsBuildProcess =
         await Process.run('flutter', buildWindowsArguments, runInShell: true);
 
-    if (windowsBuildProcess.exitCode != 0) {
-      _logger.stderr(windowsBuildProcess.stdout);
-      throw windowsBuildProcess.stderr;
-    }
+    windowsBuildProcess.exitOnError();
 
     loggerProgress.finish(showTiming: true);
   }

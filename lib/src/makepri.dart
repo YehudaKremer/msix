@@ -25,10 +25,7 @@ class MakePri {
       '/o'
     ]);
 
-    if (makePriConfigProcess.exitCode != 0) {
-      _logger.stderr(makePriConfigProcess.stdout);
-      throw makePriConfigProcess.stderr;
-    }
+    makePriConfigProcess.exitOnError();
 
     var makePriProcess = await Process.run(makePriPath, [
       'new',
@@ -45,9 +42,6 @@ class MakePri {
 
     await File('$buildPath/priconfig.xml').deleteIfExists();
 
-    if (makePriProcess.exitCode != 0) {
-      _logger.stderr(makePriProcess.stdout);
-      throw makePriProcess.stderr;
-    }
+    makePriProcess.exitOnError();
   }
 }

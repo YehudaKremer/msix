@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert' show HtmlEscape;
-import 'package:cli_util/cli_logging.dart' show Ansi;
+import 'package:cli_util/cli_logging.dart' show Ansi, Logger;
+import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' as path;
 
 extension StringValidations on String? {
@@ -15,6 +16,13 @@ extension StringExtensions on String {
   String get blue => '${Ansi(true).blue}${this}${Ansi(true).none}';
   String get red => '${Ansi(true).red}${this}${Ansi(true).none}';
   String get gray => '${Ansi(true).gray}${this}${Ansi(true).none}';
+}
+
+extension StringListExtensions on List<String> {
+  bool containsArgument(String arg) =>
+      any((item) => item.toLowerCase().trim() == arg);
+  bool containsArguments(List<String> args) =>
+      any((item) => args.contains(item.toLowerCase().trim()));
 }
 
 extension StringConversions on String? {
@@ -40,6 +48,15 @@ extension DirectoryExtensions on Directory {
         await entity
             .copy(path.join(destination.path, path.basename(entity.path)));
       }
+    }
+  }
+}
+
+extension ProcessResultExtensions on ProcessResult {
+  void exitOnError() {
+    if (this.exitCode != 0) {
+      GetIt.I<Logger>().stderr(this.stdout);
+      throw this.stderr;
     }
   }
 }

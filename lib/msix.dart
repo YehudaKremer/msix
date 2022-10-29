@@ -128,7 +128,13 @@ class Msix {
 
     if (_config.signMsix && !_config.store) {
       final signTool = SignTool();
-      if (_config.installCert) await signTool.installCertificate();
+
+      if (_config.installCert &&
+          (_config.signToolOptions == null ||
+              _config.signToolOptions!.isEmpty)) {
+        await signTool.installCertificate();
+      }
+
       await signTool.sign();
     }
 

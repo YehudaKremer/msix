@@ -6,6 +6,7 @@ import 'package:package_config/package_config.dart' show findPackageConfig;
 import 'package:path/path.dart' show extension, basename;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart' show YamlMap, loadYaml;
+import 'command_line_converter.dart';
 import 'extensions.dart';
 
 /// Handles loading and validating the configuration values
@@ -109,11 +110,14 @@ class Configuration {
     publisher = _args['publisher'] ?? yaml['publisher'];
     identityName = _args['identity-name'] ?? yaml['identity_name'];
     logoPath = _args['logo-path'] ?? yaml['logo_path'];
-    signToolOptions = (_args['signtool-options'] ?? yaml['signtool_options'])
-        ?.toString()
-        .split(' ')
-        .where((o) => o.trim().isNotEmpty)
-        .toList();
+    final signToolOptionsConfig =
+        (_args['signtool-options'] ?? yaml['signtool_options'])?.toString();
+    if (signToolOptionsConfig != null && signToolOptionsConfig.isNotEmpty) {
+      var commandLineConverter = CommandLineConverter();
+      signToolOptions = commandLineConverter.convert(signToolOptionsConfig);
+    }
+
+    //CommandLineConverter
     protocolActivation = _getProtocolsActivation(yaml);
     fileExtension = _args['file-extension'] ?? yaml['file_extension'];
     if (fileExtension != null && !fileExtension!.startsWith('.')) {
@@ -227,7 +231,7 @@ class Configuration {
           throw 'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml';
         }
 
-        if (extension(certificatePath!) == '.pfx' &&
+        if (extension(certificatePath!).toLowerCase() == '.pfx' &&
             certificatePassword.isNull) {
           throw 'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml';
         }

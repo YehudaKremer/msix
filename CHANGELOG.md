@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.7.0
+
+- add full support for [SignTool](https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe) usage (addressing [#155](https://github.com/YehudaKremer/msix/pull/155#issue-1421291620)), see [examples page](https://github.com/YehudaKremer/msix/tree/main/example)
+
 ## 3.6.6
 
 - replacing cli_dialog package with console package to solve transitive dependencies [https://github.com/timsneath/dart_console/issues/54](https://github.com/timsneath/dart_console/issues/54)
@@ -85,7 +89,7 @@
 
 ## 3.0.0
 
-- add `publish` command and configurations, for sideloading publish (outside the microsoft store)
+- add `publish` command and configurations, for side loading publish (outside the microsoft store)
 - user asked (cli dialog) if he want to **increment version number** (if needed)
 - user asked (cli dialog) if he want to install the test certificate
 - add [toast notifications](https://github.com/YehudaKremer/msix/issues/94) configuration
