@@ -56,7 +56,7 @@ class SignTool {
         'the Publisher is the certificate "Subject" in this exact format: "CN=Contoso Software, O=Contoso Corporation, C=US"');
     _logger.stdout('see where you can found your certificate Subject:');
     _logger.stdout(
-        'https://drive.google.com/file/d/1oAsnrp2Kf-jZ_kaRjyF5llQ0YZy1IwNe/view?usp=sharing'
+        'https://user-images.githubusercontent.com/946652/198945956-ec2ca7f2-36e9-4dfc-959b-48bcd191d82d.png'
             .blue);
     exit(-1);
   }
