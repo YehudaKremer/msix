@@ -115,9 +115,9 @@ class SignTool {
   Future<String> _getCertificateSubjectByIssuer() async {
     _logger.trace('getting certificate "Subject" by certificate Issuer');
 
-    String subjectValue = _getSignToolOptionsArgumentValue('/i');
+    String issuerValue = _getSignToolOptionsArgumentValue('/i');
     String subject = await _getInstalledCertificateSubject(
-        "\$_.Issuer -like \"*$subjectValue*\"");
+        "\$_.Issuer -like \"*$issuerValue*\"");
 
     return subject;
   }
