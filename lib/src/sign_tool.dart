@@ -109,7 +109,7 @@ class SignTool {
 
     String subjectValue = _getSignToolOptionsArgumentValue('/n');
     String subject = await _getInstalledCertificateSubject(
-        "\$_.Subject –like \"*$subjectValue*\"");
+        "\$_.Subject -like \"*$subjectValue*\"");
 
     return subject;
   }
@@ -119,7 +119,7 @@ class SignTool {
 
     String subjectValue = _getSignToolOptionsArgumentValue('/i');
     String subject = await _getInstalledCertificateSubject(
-        "\$_.Issuer –like \"*$subjectValue*\"");
+        "\$_.Issuer -like \"*$subjectValue*\"");
 
     return subject;
   }
