@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:args/args.dart' show ArgParser, ArgResults;
-import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:args/args.dart';
+import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:package_config/package_config.dart';
-import 'package:path/path.dart' show extension, basename;
+import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:yaml/yaml.dart' show YamlMap, loadYaml;
+import 'package:yaml/yaml.dart';
 import 'command_line_converter.dart';
 import 'extensions.dart';
 

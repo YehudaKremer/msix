@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:cli_util/cli_logging.dart';
 import 'package:console/console.dart';
 import 'package:get_it/get_it.dart';
-import 'package:path/path.dart' show extension, basename;
+import 'package:path/path.dart';
 import 'extensions.dart';
 import 'configuration.dart';
 

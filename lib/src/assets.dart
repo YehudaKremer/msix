@@ -10,8 +10,8 @@ import 'package:image/image.dart'
         drawImage,
         encodePng,
         trim;
-import 'package:path/path.dart' show basename;
-import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:path/path.dart';
+import 'package:cli_util/cli_logging.dart';
 import 'configuration.dart';
 import 'extensions.dart';
 

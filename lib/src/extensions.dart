@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'dart:convert' show HtmlEscape;
-import 'package:cli_util/cli_logging.dart' show Ansi, Logger;
+import 'dart:convert';
+import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' as path;
 
