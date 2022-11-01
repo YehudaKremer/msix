@@ -12,7 +12,7 @@ class MakePri {
   Future<void> generatePRI() async {
     _logger.trace('generate package resource indexing files');
 
-    final buildPath = _config.buildFilesFolder;
+    final String buildPath = _config.buildFilesFolder;
     String makePriPath =
         '${_config.msixToolkitPath}/Redist.${_config.architecture}/makepri.exe';
 

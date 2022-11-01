@@ -128,7 +128,7 @@ class SignTool {
     String filePathValue = fromSignToolOptions
         ? _getSignToolOptionsArgumentValue('/f')
         : _config.certificatePath!;
-    var passwordValue = _config.certificatePassword ?? '';
+    String passwordValue = _config.certificatePassword ?? '';
     if (fromSignToolOptions &&
         _config.signToolOptions!.containsArgument('/p')) {
       passwordValue = _getSignToolOptionsArgumentValue('/p');

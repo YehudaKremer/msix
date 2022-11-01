@@ -110,7 +110,7 @@ class Configuration {
     publisher = _args['publisher'] ?? yaml['publisher'];
     identityName = _args['identity-name'] ?? yaml['identity_name'];
     logoPath = _args['logo-path'] ?? yaml['logo_path'];
-    final signToolOptionsConfig =
+    final String? signToolOptionsConfig =
         (_args['signtool-options'] ?? yaml['signtool_options'])?.toString();
     if (signToolOptionsConfig != null && signToolOptionsConfig.isNotEmpty) {
       CommandLineConverter commandLineConverter = CommandLineConverter();
@@ -352,7 +352,7 @@ class Configuration {
     // Existing behavior is to put null if no version, so matching
     if (yaml['version'] == null) return null;
     try {
-      final pubspecVersion = Version.parse(yaml['version']);
+      final Version pubspecVersion = Version.parse(yaml['version']);
       return [
         pubspecVersion.major,
         pubspecVersion.minor,

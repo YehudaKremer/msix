@@ -19,7 +19,7 @@ class CommandLineConverter extends Converter<String, List<String>> {
     bool lastTokenHasBeenQuoted = false;
 
     for (int index = 0; index < input.length; index++) {
-      final token = input[index];
+      final String token = input[index];
 
       if (inQuote != null) {
         if (token == inQuote) {

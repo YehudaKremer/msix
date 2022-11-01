@@ -26,7 +26,7 @@ class Msix {
   Future<void> build() async {
     await _initConfig();
     await _buildMsixFiles();
-    final msixStyledPath = File(_msixOutputPath).parent.path.blue.emphasized;
+    String msixStyledPath = File(_msixOutputPath).parent.path.blue.emphasized;
     _logger
         .write('${'unpackaged msix files created in: '.green}$msixStyledPath');
   }
@@ -105,7 +105,7 @@ class Msix {
     Progress loggerProgress = _logger.progress('building msix files');
 
     await _config.validateWindowsBuildFiles();
-    final assets = Assets();
+    Assets assets = Assets();
     await assets.cleanTemporaryFiles(clearMsixFiles: true);
     await assets.createIcons();
     await assets.copyVCLibsFiles();
@@ -126,7 +126,7 @@ class Msix {
     await Assets().cleanTemporaryFiles();
 
     if (_config.signMsix && !_config.store) {
-      final signTool = SignTool();
+      SignTool signTool = SignTool();
 
       if (_config.installCert &&
           (_config.signToolOptions == null ||

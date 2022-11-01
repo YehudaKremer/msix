@@ -39,7 +39,7 @@ class Assets {
         _generateAssetsIconsPart3,
       ];
 
-      var isolatesFutures = [
+      Iterable<Future> isolatesFutures = [
         ReceivePort(),
         ReceivePort(),
         ReceivePort(),
