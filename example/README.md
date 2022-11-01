@@ -96,3 +96,21 @@ msix_config:
   msix_version: 1.0.0.0
   signtool_options: /fd sha256 /sha1 028bc9922d198ee83d776aa19cb8e82897691e0c /tr http://timestamp.digicert.com
 ```
+
+###### By .crt File:
+
+```yaml
+msix_config:
+  display_name: Flutter App
+  msix_version: 1.0.0.0
+  signtool_options: /fd SHA256 /f "<path_to>\test_certificate.crt"
+```
+
+###### By .pfx File:
+
+```yaml
+msix_config:
+  display_name: Flutter App
+  msix_version: 1.0.0.0
+  signtool_options: /fd SHA256 /f "<path_to>\test_certificate.pfx" /p 1234
+```
