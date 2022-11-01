@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
-import 'package:msix/src/extensions.dart';
+import 'method_extensions.dart';
 import 'configuration.dart';
 
 /// Use the makeappx.exe tool to generate manifest file
@@ -15,7 +15,8 @@ class MakeAppx {
     String makeAppxPath =
         '${_config.msixToolkitPath}/Redist.${_config.architecture}/makeappx.exe';
 
-    ProcessResult makeAppxProcess = await Process.run(makeAppxPath, [
+    // ignore: avoid_single_cascade_in_expression_statements
+    await Process.run(makeAppxPath, [
       'pack',
       '/v',
       '/o',
@@ -23,8 +24,7 @@ class MakeAppx {
       _config.buildFilesFolder,
       '/p',
       _config.msixPath
-    ]);
-
-    makeAppxProcess.exitOnError();
+    ])
+      ..exitOnError();
   }
 }

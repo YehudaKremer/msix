@@ -3,7 +3,7 @@ import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'capabilities.dart';
 import 'configuration.dart';
-import 'extensions.dart';
+import 'method_extensions.dart';
 
 /// Handles the creation of the manifest file
 class AppxManifest {

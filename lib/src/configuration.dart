@@ -7,7 +7,7 @@ import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
 import 'command_line_converter.dart';
-import 'extensions.dart';
+import 'method_extensions.dart';
 
 /// Handles loading and validating the configuration values
 class Configuration {

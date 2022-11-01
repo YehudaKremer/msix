@@ -1,19 +1,11 @@
 import 'dart:io';
 import 'dart:isolate';
 import 'package:get_it/get_it.dart';
-import 'package:image/image.dart'
-    show
-        Image,
-        Interpolation,
-        copyResize,
-        decodeImage,
-        drawImage,
-        encodePng,
-        trim;
+import 'package:image/image.dart';
 import 'package:path/path.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'configuration.dart';
-import 'extensions.dart';
+import 'method_extensions.dart';
 
 /// Handles all the msix and user assets files
 class Assets {

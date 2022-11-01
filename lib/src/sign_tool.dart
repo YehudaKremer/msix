@@ -4,7 +4,7 @@ import 'package:cli_util/cli_logging.dart';
 import 'package:console/console.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path/path.dart';
-import 'extensions.dart';
+import 'method_extensions.dart';
 import 'configuration.dart';
 
 RegExp _publisherRegex = RegExp(
@@ -75,15 +75,11 @@ class SignTool {
     }
   }
 
-  Future<ProcessResult> _executePowershellCommand(String command) async {
-    ProcessResult processResult = await Process.run(
-        'powershell.exe', ['-NoProfile', '-NonInteractive', command],
-        stdoutEncoding: utf8, stderrEncoding: utf8);
-
-    processResult.exitOnError();
-
-    return processResult;
-  }
+  Future<ProcessResult> _executePowershellCommand(String command) async =>
+      await Process.run(
+          'powershell.exe', ['-NoProfile', '-NonInteractive', command],
+          stdoutEncoding: utf8, stderrEncoding: utf8)
+        ..exitOnError();
 
   Future<String> _getInstalledCertificateSubject(String searchCondition) async {
     ProcessResult certificateDetailsProcess = await _executePowershellCommand(
@@ -144,9 +140,8 @@ class SignTool {
       '-NoProfile',
       '-NonInteractive',
       "dir Cert:\\CurrentUser\\Root | Where-Object { \$_.Subject -eq  '${_config.publisher}'}"
-    ]);
-
-    getInstalledCertificate.exitOnError();
+    ])
+          ..exitOnError();
 
     bool isCertificateNotInstalled =
         getInstalledCertificate.stdout.toString().isNullOrEmpty;
@@ -231,13 +226,13 @@ class SignTool {
     bool isFullSigntoolCommand =
         signtoolOptions[0].toLowerCase().contains('signtool');
 
-    ProcessResult signProcess = await Process.run(
+    // ignore: avoid_single_cascade_in_expression_statements
+    await Process.run(
         isFullSigntoolCommand ? signtoolOptions[0] : signtoolPath, [
       if (!isFullSigntoolCommand) 'sign',
       ...signtoolOptions.skip(isFullSigntoolCommand ? 1 : 0),
       _config.msixPath,
-    ]);
-
-    signProcess.exitOnError();
+    ])
+      ..exitOnError();
   }
 }

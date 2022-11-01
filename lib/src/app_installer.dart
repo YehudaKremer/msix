@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:console/console.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image/image.dart';
-import 'package:msix/src/extensions.dart';
+import 'method_extensions.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:cli_util/cli_logging.dart';
@@ -98,26 +98,19 @@ class AppInstaller {
   Future<void> generateAppInstallerWebSite() async {
     _logger.trace('generate app installer web site');
 
-    webInstallerSite = webInstallerSite.replaceAll(
-        'PAGE_TITLE', _config.displayName ?? _config.appName!);
-    webInstallerSite = webInstallerSite.replaceAll(
-        'PAGE_DESCRIPTION',
-        _config.appDescription ??
-            '${_config.displayName ?? _config.appName!} installer');
-    webInstallerSite = webInstallerSite.replaceAll(
-        'PAGE_TITLE', _config.displayName ?? _config.appName!);
-    webInstallerSite = webInstallerSite.replaceAll(
-        'APP_NAME', _config.displayName ?? _config.appName!);
-    webInstallerSite =
-        webInstallerSite.replaceAll('APP_VERSION', _config.msixVersion!);
-    webInstallerSite = webInstallerSite.replaceAll(
-        'APP_INSTALLER_LINK', basename(_config.appInstallerPath));
-    webInstallerSite = webInstallerSite.replaceAll(
-        'REQUIRED_OS_VERSION', _config.osMinVersion);
-    webInstallerSite =
-        webInstallerSite.replaceAll('ARCHITECTURE', _config.architecture!);
-    webInstallerSite =
-        webInstallerSite.replaceAll('PUBLISHER_NAME', _config.publisherName!);
+    webInstallerSite = webInstallerSite
+        .replaceAll('PAGE_TITLE', _config.displayName ?? _config.appName!)
+        .replaceAll(
+            'PAGE_DESCRIPTION',
+            _config.appDescription ??
+                '${_config.displayName ?? _config.appName!} installer')
+        .replaceAll('PAGE_TITLE', _config.displayName ?? _config.appName!)
+        .replaceAll('APP_NAME', _config.displayName ?? _config.appName!)
+        .replaceAll('APP_VERSION', _config.msixVersion!)
+        .replaceAll('APP_INSTALLER_LINK', basename(_config.appInstallerPath))
+        .replaceAll('REQUIRED_OS_VERSION', _config.osMinVersion)
+        .replaceAll('ARCHITECTURE', _config.architecture!)
+        .replaceAll('PUBLISHER_NAME', _config.publisherName!);
 
     Image logoImage = decodeImage(await File(_config.logoPath ??
             '${_config.defaultsIconsFolderPath}/Square44x44Logo.altform-lightunplated_targetsize-256.png')
@@ -133,9 +126,9 @@ class AppInstaller {
     String base64Logo = base64Encode(encodePng(siteLogo));
     String base64favicon = base64Encode(encodePng(favicon));
 
-    webInstallerSite = webInstallerSite.replaceAll('IMAGE_BASE64', base64Logo);
-    webInstallerSite =
-        webInstallerSite.replaceAll('FAVICON_BASE64', base64favicon);
+    webInstallerSite = webInstallerSite
+        .replaceAll('IMAGE_BASE64', base64Logo)
+        .replaceAll('FAVICON_BASE64', base64favicon);
 
     await File('${_config.publishFolderPath}/index.html')
         .writeAsString(webInstallerSite);

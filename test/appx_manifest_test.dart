@@ -36,16 +36,13 @@ void main() {
     GetIt.I.registerSingleton<Configuration>(config);
 
     await Directory('$tempFolderPath/').create(recursive: true);
-    await Future.delayed(const Duration(milliseconds: 150));
   });
 
   tearDown(() async {
     GetIt.I.reset();
 
     if (await Directory('$tempFolderPath/').exists()) {
-      await Future.delayed(const Duration(milliseconds: 150));
       await Directory('$tempFolderPath/').delete(recursive: true);
-      await Future.delayed(const Duration(milliseconds: 150));
     }
   });
 
