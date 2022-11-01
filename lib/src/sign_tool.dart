@@ -76,16 +76,18 @@ class SignTool {
   }
 
   Future<ProcessResult> _executePowershellCommand(String command) async {
-    return await Process.run(
+    var processResult = await Process.run(
         'powershell.exe', ['-NoProfile', '-NonInteractive', command],
         stdoutEncoding: utf8, stderrEncoding: utf8);
+
+    processResult.exitOnError();
+
+    return processResult;
   }
 
   Future<String> _getInstalledCertificateSubject(String searchCondition) async {
     var certificateDetailsProcess = await _executePowershellCommand(
         "dir -Recurse cert: | where {$searchCondition} | select -expandproperty Subject -First 1");
-
-    certificateDetailsProcess.exitOnError();
 
     var subject = (certificateDetailsProcess.stdout as String).trim();
 
@@ -125,26 +127,11 @@ class SignTool {
   Future<String> _getPfxCertificateSubject() async {
     _logger.trace('getting pfx certificate Subject');
 
-    var powershellSubjectOutputFilePath =
-        "${_config.msixAssetsPath}/subject.txt";
-
     var certificateDetailsProcess = await _executePowershellCommand(
-        "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject | Out-File -NoNewLine -Width 8192 -Encoding UTF8 -FilePath \"$powershellSubjectOutputFilePath\"");
+        """new-object System.Security.Cryptography.X509Certificates.X509Certificate2("${_config.certificatePath}",
+        "${_config.certificatePassword}") | select -expandproperty Subject -First 1""");
 
-    certificateDetailsProcess.exitOnError();
-
-    var powershellSubjectOutputFile = File(powershellSubjectOutputFilePath);
-
-    if (!await powershellSubjectOutputFile.exists()) {
-      throw 'cannot get PFX certificate subject'.red;
-    }
-
-    var subjectRow = await powershellSubjectOutputFile.readAsString();
-    await powershellSubjectOutputFile.deleteIfExists();
-
-    String subject = subjectRow
-        .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
-        .trim();
+    var subject = (certificateDetailsProcess.stdout as String).trim();
 
     return subject;
   }
