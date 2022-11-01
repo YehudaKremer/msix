@@ -20,18 +20,47 @@ class Assets {
 
     await Directory(_msixIconsFolderPath).create();
 
-    final port = ReceivePort();
-    await Isolate.spawn(
-        _config.logoPath != null ? _generateAssetsIcons : _copyDefaultsIcons,
-        port.sendPort);
-    await port.first;
+    if (_config.logoPath != null) {
+      _logger.trace('generating icons');
+
+      if (!(await File(_config.logoPath!).exists())) {
+        throw 'Logo file not found at ${_config.logoPath}';
+      }
+
+      try {
+        image = decodeImage(await File(_config.logoPath!).readAsBytes())!;
+      } catch (e) {
+        throw 'Error reading logo file: ${_config.logoPath!}';
+      }
+
+      var generateAssetsIconsParts = [
+        _generateAssetsIconsPart1,
+        _generateAssetsIconsPart2,
+        _generateAssetsIconsPart3,
+      ];
+
+      var isolatesFutures = [
+        ReceivePort(),
+        ReceivePort(),
+        ReceivePort(),
+      ]
+          .asMap()
+          .map((index, port) => MapEntry(index, [
+                Isolate.spawn(generateAssetsIconsParts[index], port.sendPort),
+                port.first
+              ]))
+          .values
+          .expand((i) => i);
+
+      await Future.wait(isolatesFutures);
+    } else {
+      await _copyDefaultsIcons();
+    }
   }
 
-  Future<void> _copyDefaultsIcons(SendPort port) async {
-    await Directory(_config.defaultsIconsFolderPath)
-        .copyDirectory(Directory(_msixIconsFolderPath));
-    Isolate.exit(port);
-  }
+  Future<void> _copyDefaultsIcons() async =>
+      await Directory(_config.defaultsIconsFolderPath)
+          .copyDirectory(Directory(_msixIconsFolderPath));
 
   /// Copy the VC libs files (msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll)
   Future<void> copyVCLibsFiles() async {
@@ -140,19 +169,7 @@ class Assets {
   }
 
   /// Generate optimized msix icons from the user logo
-  Future<void> _generateAssetsIcons(SendPort port) async {
-    _logger.trace('generating icons');
-
-    if (!(await File(_config.logoPath!).exists())) {
-      throw 'Logo file not found at ${_config.logoPath}';
-    }
-
-    try {
-      image = decodeImage(await File(_config.logoPath!).readAsBytes())!;
-    } catch (e) {
-      throw 'Error reading logo file: ${_config.logoPath!}';
-    }
-
+  Future<void> _generateAssetsIconsPart1(SendPort port) async {
     await Future.wait([
       // SmallTile
       _generateIcon('SmallTile', const _Size(71, 71),
@@ -209,6 +226,13 @@ class Assets {
           paddingWidthPercent: 0.16, paddingHeightPercent: 0.16, scale: 2),
       _generateIcon('Square44x44Logo', const _Size(44, 44),
           paddingWidthPercent: 0.16, paddingHeightPercent: 0.16, scale: 4),
+    ]);
+
+    Isolate.exit(port);
+  }
+
+  Future<void> _generateAssetsIconsPart2(SendPort port) async {
+    await Future.wait([
       // targetsize
       _generateIcon('Square44x44Logo.targetsize-16', const _Size(16, 16)),
       _generateIcon('Square44x44Logo.targetsize-24', const _Size(24, 24)),
@@ -253,6 +277,13 @@ class Assets {
           const _Size(80, 80)),
       _generateIcon('Square44x44Logo.altform-unplated_targetsize-96',
           const _Size(96, 96)),
+    ]);
+
+    Isolate.exit(port);
+  }
+
+  Future<void> _generateAssetsIconsPart3(SendPort port) async {
+    await Future.wait([
       // light unplated targetsize
       _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-16',
           const _Size(16, 16)),
