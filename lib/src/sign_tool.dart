@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:cli_util/cli_logging.dart';
 import 'package:console/console.dart';
 import 'package:get_it/get_it.dart';
-import 'package:path/path.dart' show extension, basename;
-import 'extensions.dart';
+import 'package:path/path.dart';
+import 'method_extensions.dart';
 import 'configuration.dart';
 
-var _publisherRegex = RegExp(
+RegExp _publisherRegex = RegExp(
     '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID.(0|[1-9][0-9]*)(.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID.(0|[1-9][0-9]*)(.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
 
 /// Handles the certificate sign functionality
@@ -15,83 +15,167 @@ class SignTool {
   final Logger _logger = GetIt.I<Logger>();
   final Configuration _config = GetIt.I<Configuration>();
 
-  /// Use Powershell script to get the Publisher ("Subject") of the certificate
+  /// get the certificate "Subject" for the Publisher value
   Future<void> getCertificatePublisher() async {
     _logger.trace('getting certificate publisher');
 
-    var powershellSubjectOutputFilePath =
-        "${_config.msixAssetsPath}/subject.txt";
+    String subject = '';
 
-    var certificateDetailsProcess = await Process.run(
-        'powershell.exe',
-        [
-          '-NoProfile',
-          '-NonInteractive',
-          "(Get-PfxData -FilePath \"${_config.certificatePath}\" -Password \$(ConvertTo-SecureString -String \"${_config.certificatePassword}\" -AsPlainText -Force)).EndEntityCertificates[0] | Format-List -Property Subject | Out-File -NoNewLine -Width 8192 -Encoding UTF8 -FilePath \"$powershellSubjectOutputFilePath\""
-        ],
-        stdoutEncoding: utf8,
-        stderrEncoding: utf8);
-
-    if (certificateDetailsProcess.exitCode != 0) {
-      _logger.stderr(certificateDetailsProcess.stdout);
-      throw certificateDetailsProcess.stderr;
+    if (_config.signToolOptions != null) {
+      if (_config.signToolOptions!.containsArgument('/sha1')) {
+        subject = await _getCertificateSubjectByThumbprint();
+      } else if (_config.signToolOptions!.containsArguments(['/n', '/r'])) {
+        subject = await _getCertificateSubjectBySubject();
+      } else if (_config.signToolOptions!.containsArgument('/i')) {
+        subject = await _getCertificateSubjectByIssuer();
+      } else if (_config.signToolOptions!.containsArgument('/f')) {
+        subject = await _getCertificateSubjectByFile(true);
+      }
+    } else if (_config.certificatePath != null &&
+        _config.certificatePath!.isNotEmpty) {
+      subject = await _getCertificateSubjectByFile(false);
     }
 
-    var powershellSubjectOutputFile = File(powershellSubjectOutputFilePath);
-
-    if (!await powershellSubjectOutputFile.exists()) {
-      throw 'cannot get certificate subject'.red;
+    if (subject.isNotEmpty) {
+      _config.publisher = subject;
     }
 
-    var subjectRow = await powershellSubjectOutputFile.readAsString();
-    await powershellSubjectOutputFile.deleteIfExists();
-
-    if (!_publisherRegex.hasMatch(subjectRow)) {
-      throw 'invalid certificate subject: $subjectRow';
+    if (_config.publisher != null && _config.publisher!.isNotEmpty) {
+      _checkCertificateSubject(_config.publisher!);
+    } else {
+      _failToGetCertificateSubject();
     }
+  }
 
-    _config.publisher = subjectRow
-        .substring(subjectRow.indexOf(':') + 1, subjectRow.length)
-        .trim();
+  /// prints useful information on the Publisher value messing
+  /// and exit the program
+  void _failToGetCertificateSubject() {
+    _logger.stdout('could not find the Publisher value.'.red);
+    _logger.stdout(
+        'you must provide the Publisher value at "msix_config: publisher" in the pubspec.yaml file'
+            .red);
+    _logger.stdout(
+        'the Publisher is the certificate "Subject" in this exact format: "CN=Contoso Software, O=Contoso Corporation, C=US"');
+    _logger.stdout('see where you can found your certificate Subject:');
+    _logger.stdout(
+        'https://user-images.githubusercontent.com/946652/198945956-ec2ca7f2-36e9-4dfc-959b-48bcd191d82d.png'
+            .blue);
+    exit(-1);
+  }
+
+  String _getSignToolOptionsArgumentValue(String searchArgName) {
+    int argumentIndex = _config.signToolOptions!.indexWhere(
+        (argument) => argument.toLowerCase().trim() == searchArgName);
+
+    /// return argument value
+    return _config.signToolOptions![argumentIndex + 1];
+  }
+
+  void _checkCertificateSubject(String subject) {
+    if (subject.isNotEmpty && !_publisherRegex.hasMatch(subject)) {
+      throw 'invalid certificate subject: $subject';
+    }
+  }
+
+  Future<ProcessResult> _executePowershellCommand(String command) async =>
+      await Process.run(
+          'powershell.exe', ['-NoProfile', '-NonInteractive', command],
+          stdoutEncoding: utf8, stderrEncoding: utf8)
+        ..exitOnError();
+
+  Future<String> _getInstalledCertificateSubject(String searchCondition) async {
+    ProcessResult certificateDetailsProcess = await _executePowershellCommand(
+        "dir -Recurse cert: | where {$searchCondition} | select -expandproperty Subject -First 1");
+
+    String subject = (certificateDetailsProcess.stdout as String).trim();
+
+    return subject;
+  }
+
+  Future<String> _getCertificateSubjectByThumbprint() async {
+    _logger.trace('getting certificate "Subject" by certificate thumbprint');
+
+    String thumbprintValue = _getSignToolOptionsArgumentValue('/sha1');
+    String subject = await _getInstalledCertificateSubject(
+        "\$_.Thumbprint -eq \"$thumbprintValue\"");
+
+    return subject;
+  }
+
+  Future<String> _getCertificateSubjectBySubject() async {
+    _logger.trace('getting certificate "Subject" by certificate Subject');
+
+    String subjectValue = _getSignToolOptionsArgumentValue('/n');
+    String subject = await _getInstalledCertificateSubject(
+        "\$_.Subject -like \"*$subjectValue*\"");
+
+    return subject;
+  }
+
+  Future<String> _getCertificateSubjectByIssuer() async {
+    _logger.trace('getting certificate "Subject" by certificate Issuer');
+
+    String issuerValue = _getSignToolOptionsArgumentValue('/i');
+    String subject = await _getInstalledCertificateSubject(
+        "\$_.Issuer -like \"*$issuerValue*\"");
+
+    return subject;
+  }
+
+  Future<String> _getCertificateSubjectByFile(bool fromSignToolOptions) async {
+    _logger.trace('getting certificate "Subject" by file certificate');
+
+    String filePathValue = fromSignToolOptions
+        ? _getSignToolOptionsArgumentValue('/f')
+        : _config.certificatePath!;
+    String passwordValue = _config.certificatePassword ?? '';
+    if (fromSignToolOptions &&
+        _config.signToolOptions!.containsArgument('/p')) {
+      passwordValue = _getSignToolOptionsArgumentValue('/p');
+    }
+    ProcessResult certificateDetailsProcess = await _executePowershellCommand(
+        """new-object System.Security.Cryptography.X509Certificates.X509Certificate2("$filePathValue",
+        "$passwordValue") | select -expandproperty Subject -First 1""");
+
+    String subject = (certificateDetailsProcess.stdout as String).trim();
+
+    return subject;
   }
 
   /// Use Powershell to install the test certificate
   /// if needed and if the user want to.
   Future<void> installCertificate() async {
-    var getInstalledCertificate = await Process.run('powershell.exe', [
+    ProcessResult getInstalledCertificate =
+        await Process.run('powershell.exe', [
       '-NoProfile',
       '-NonInteractive',
       "dir Cert:\\CurrentUser\\Root | Where-Object { \$_.Subject -eq  '${_config.publisher}'}"
-    ]);
+    ])
+          ..exitOnError();
 
-    if (getInstalledCertificate.exitCode != 0) {
-      _logger.stderr(getInstalledCertificate.stdout);
-      throw getInstalledCertificate.stderr;
-    }
-
-    var isCertificateNotInstalled =
+    bool isCertificateNotInstalled =
         getInstalledCertificate.stdout.toString().isNullOrEmpty;
 
     if (isCertificateNotInstalled) {
       _logger.trace('installing certificate');
       _logger.stdout('');
 
-      var installCertificate = await readInput(
+      String installCertificate = await readInput(
           'Do you want to install the certificate: "${basename(File(_config.certificatePath!).path)}" ?'
                   .emphasized +
               ' (y/N) '.gray);
 
       if (installCertificate.toLowerCase().trim() == 'y') {
         // create installCertificate.ps1 file
-        var installCertificateScript =
+        String installCertificateScript =
             'Import-PfxCertificate -FilePath "${_config.certificatePath}" -Password (ConvertTo-SecureString -String "${_config.certificatePassword}" -AsPlainText -Force) -CertStoreLocation Cert:\\LocalMachine\\Root';
-        var installCertificateScriptPath =
+        String installCertificateScriptPath =
             '${_config.msixAssetsPath}/installCertificate.ps1';
         await File(installCertificateScriptPath)
             .writeAsString(installCertificateScript);
 
         // then execute it with admin privileges
-        var importCertificate = await Process.run('powershell.exe', [
+        ProcessResult importCertificate = await Process.run('powershell.exe', [
           '-NoProfile',
           '-NonInteractive',
           'Start-Process powershell -ArgumentList "$installCertificateScriptPath" -Wait -Verb runAs -WindowStyle Hidden'
@@ -100,7 +184,7 @@ class SignTool {
         await File(installCertificateScriptPath).deleteIfExists();
 
         if (importCertificate.exitCode != 0) {
-          var error = importCertificate.stderr.toString();
+          String error = importCertificate.stderr.toString();
           if (error.contains('was canceled by the user')) {
             _logger.stderr('the certificate installation was canceled'.red);
           } else {
@@ -117,40 +201,48 @@ class SignTool {
   Future<void> sign() async {
     _logger.trace('signing');
 
-    if (!_config.certificatePath.isNull || _config.signToolOptions != null) {
-      var signtoolPath =
-          '${_config.msixToolkitPath}/Redist.${_config.architecture}/signtool.exe';
+    String signtoolPath =
+        '${_config.msixToolkitPath}/Redist.${_config.architecture}/signtool.exe';
+    List<String> signtoolOptions = ['/v'];
 
-      List<String> signtoolOptions = [];
-
-      if (_config.signToolOptions != null) {
-        signtoolOptions = _config.signToolOptions!;
-      } else {
-        signtoolOptions = [
-          '/v',
-          '/fd',
-          'SHA256',
-          '/a',
-          '/f',
-          _config.certificatePath!,
-          if (extension(_config.certificatePath!) == '.pfx') '/p',
-          if (extension(_config.certificatePath!) == '.pfx')
-            _config.certificatePassword!,
-          '/tr',
-          'http://timestamp.digicert.com'
-        ];
+    if (_config.signToolOptions != null &&
+        _config.signToolOptions!.isNotEmpty) {
+      signtoolOptions = _config.signToolOptions!;
+    } else if (_config.certificatePath != null) {
+      switch (extension(_config.certificatePath!).toLowerCase()) {
+        case '.pfx':
+          signtoolOptions.addAll([
+            '/fd',
+            'SHA256',
+            '/f',
+            _config.certificatePath!,
+            '/p',
+            _config.certificatePassword!
+          ]);
+          break;
+        default:
+          signtoolOptions.addAll([
+            '/a',
+            '/fd',
+            'SHA256',
+            '/f',
+            _config.certificatePath!,
+          ]);
       }
 
-      ProcessResult signProcess = await Process.run(signtoolPath, [
-        'sign',
-        ...signtoolOptions,
-        _config.msixPath,
-      ]);
-
-      if (signProcess.exitCode != 0) {
-        _logger.stderr(signProcess.stdout);
-        throw signProcess.stderr;
-      }
+      signtoolOptions.addAll(['/tr', 'http://timestamp.digicert.com']);
     }
+
+    bool isFullSigntoolCommand =
+        signtoolOptions[0].toLowerCase().contains('signtool');
+
+    // ignore: avoid_single_cascade_in_expression_statements
+    await Process.run(
+        isFullSigntoolCommand ? signtoolOptions[0] : signtoolPath, [
+      if (!isFullSigntoolCommand) 'sign',
+      ...signtoolOptions.skip(isFullSigntoolCommand ? 1 : 0),
+      _config.msixPath,
+    ])
+      ..exitOnError();
   }
 }

@@ -1,12 +1,13 @@
 import 'dart:io';
-import 'package:args/args.dart' show ArgParser, ArgResults;
-import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:args/args.dart';
+import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
-import 'package:package_config/package_config.dart' show findPackageConfig;
-import 'package:path/path.dart' show extension, basename;
+import 'package:package_config/package_config.dart';
+import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:yaml/yaml.dart' show YamlMap, loadYaml;
-import 'extensions.dart';
+import 'package:yaml/yaml.dart';
+import 'command_line_converter.dart';
+import 'method_extensions.dart';
 
 /// Handles loading and validating the configuration values
 class Configuration {
@@ -68,10 +69,10 @@ class Configuration {
   Future<void> getConfigValues() async {
     _parseCliArguments(_arguments);
     await _getMsixAssetsFolderPath();
-    var pubspec = await _getPubspec();
+    dynamic pubspec = await _getPubspec();
     appName = pubspec['name'];
     appDescription = pubspec['description'];
-    var yaml = pubspec['msix_config'] ?? YamlMap();
+    dynamic yaml = pubspec['msix_config'] ?? YamlMap();
     msixVersion =
         _args['version'] ?? yaml['msix_version'] ?? _getPubspecVersion(pubspec);
     certificatePath = _args['certificate-path'] ?? yaml['certificate_path'];
@@ -109,11 +110,14 @@ class Configuration {
     publisher = _args['publisher'] ?? yaml['publisher'];
     identityName = _args['identity-name'] ?? yaml['identity_name'];
     logoPath = _args['logo-path'] ?? yaml['logo_path'];
-    signToolOptions = (_args['signtool-options'] ?? yaml['signtool_options'])
-        ?.toString()
-        .split(' ')
-        .where((o) => o.trim().isNotEmpty)
-        .toList();
+    final String? signToolOptionsConfig =
+        (_args['signtool-options'] ?? yaml['signtool_options'])?.toString();
+    if (signToolOptionsConfig != null && signToolOptionsConfig.isNotEmpty) {
+      CommandLineConverter commandLineConverter = CommandLineConverter();
+      signToolOptions = commandLineConverter.convert(signToolOptionsConfig);
+    }
+
+    //CommandLineConverter
     protocolActivation = _getProtocolsActivation(yaml);
     fileExtension = _args['file-extension'] ?? yaml['file_extension'];
     if (fileExtension != null && !fileExtension!.startsWith('.')) {
@@ -127,7 +131,7 @@ class Configuration {
         yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
 
     // toast activator configurations
-    var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
+    dynamic toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
 
     toastActivatorCLSID = _args['toast-activator-clsid'] ??
         toastActivatorYaml['clsid']?.toString();
@@ -139,7 +143,7 @@ class Configuration {
         'Toast activator';
 
     // app installer configurations
-    var installerYaml = yaml['app_installer'] ?? YamlMap();
+    dynamic installerYaml = yaml['app_installer'] ?? YamlMap();
 
     publishFolderPath =
         _args['publish-folder-path'] ?? installerYaml['publish_folder_path'];
@@ -171,7 +175,7 @@ class Configuration {
       throw 'App name is empty, check the general \'name:\' property at pubspec.yaml';
     }
     if (appDescription.isNull) appDescription = appName;
-    var cleanAppName = appName!.replaceAll('_', '');
+    String cleanAppName = appName!.replaceAll('_', '');
     if (displayName.isNull) displayName = cleanAppName;
     if (identityName.isNull) {
       if (store) {
@@ -227,7 +231,7 @@ class Configuration {
           throw 'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml';
         }
 
-        if (extension(certificatePath!) == '.pfx' &&
+        if (extension(certificatePath!).toLowerCase() == '.pfx' &&
             certificatePassword.isNull) {
           throw 'Certificate password is empty, check "msix_config: certificate_password" at pubspec.yaml';
         }
@@ -266,7 +270,7 @@ class Configuration {
   void _parseCliArguments(List<String> args) {
     _logger.trace('parsing cli arguments');
 
-    var parser = ArgParser()
+    ArgParser parser = ArgParser()
       ..addOption('certificate-password', abbr: 'p')
       ..addOption('certificate-path', abbr: 'c')
       ..addOption('version')
@@ -323,14 +327,14 @@ class Configuration {
 
   /// Get the assets folder path from the .packages file
   Future<void> _getMsixAssetsFolderPath() async {
-    var packagesConfig = await findPackageConfig(Directory.current);
+    PackageConfig? packagesConfig = await findPackageConfig(Directory.current);
     if (packagesConfig == null) {
       throw 'Failed to locate or read package config.';
     }
 
-    var msixPackage =
+    Package msixPackage =
         packagesConfig.packages.firstWhere((package) => package.name == "msix");
-    var path =
+    String path =
         msixPackage.packageUriRoot.toString().replaceAll('file:///', '') +
             'assets';
 
@@ -339,8 +343,8 @@ class Configuration {
 
   /// Get pubspec.yaml content
   dynamic _getPubspec() async {
-    var pubspecString = await File(pubspecYamlPath).readAsString();
-    var pubspec = loadYaml(pubspecString);
+    String pubspecString = await File(pubspecYamlPath).readAsString();
+    dynamic pubspec = loadYaml(pubspecString);
     return pubspec;
   }
 
@@ -348,7 +352,7 @@ class Configuration {
     // Existing behavior is to put null if no version, so matching
     if (yaml['version'] == null) return null;
     try {
-      final pubspecVersion = Version.parse(yaml['version']);
+      final Version pubspecVersion = Version.parse(yaml['version']);
       return [
         pubspecVersion.major,
         pubspecVersion.minor,

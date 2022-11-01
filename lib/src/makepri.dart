@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'configuration.dart';
-import 'extensions.dart';
+import 'method_extensions.dart';
 
 /// Use the makepri.exe tool to generate package resource indexing files
 class MakePri {
@@ -12,25 +12,22 @@ class MakePri {
   Future<void> generatePRI() async {
     _logger.trace('generate package resource indexing files');
 
-    final buildPath = _config.buildFilesFolder;
-    var makePriPath =
+    final String buildPath = _config.buildFilesFolder;
+    String makePriPath =
         '${_config.msixToolkitPath}/Redist.${_config.architecture}/makepri.exe';
 
-    var makePriConfigProcess = await Process.run(makePriPath, [
+    // ignore: avoid_single_cascade_in_expression_statements
+    await Process.run(makePriPath, [
       'createconfig',
       '/cf',
       '$buildPath\\priconfig.xml',
       '/dq',
       'en-US',
       '/o'
-    ]);
+    ])
+      ..exitOnError();
 
-    if (makePriConfigProcess.exitCode != 0) {
-      _logger.stderr(makePriConfigProcess.stdout);
-      throw makePriConfigProcess.stderr;
-    }
-
-    var makePriProcess = await Process.run(makePriPath, [
+    ProcessResult makePriProcess = await Process.run(makePriPath, [
       'new',
       '/cf',
       '$buildPath\\priconfig.xml',
@@ -45,9 +42,6 @@ class MakePri {
 
     await File('$buildPath/priconfig.xml').deleteIfExists();
 
-    if (makePriProcess.exitCode != 0) {
-      _logger.stderr(makePriProcess.stdout);
-      throw makePriProcess.stderr;
-    }
+    makePriProcess.exitOnError();
   }
 }

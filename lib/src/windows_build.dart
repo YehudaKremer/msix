@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
-
+import 'method_extensions.dart';
 import 'configuration.dart';
 
 const runnerRcPath = 'windows/runner/Runner.rc';
@@ -14,19 +14,15 @@ class WindowsBuild {
 
   /// Run "flutter build windows" command
   Future<void> build() async {
-    var buildWindowsArguments = ['build', 'windows'];
+    List<String> buildWindowsArguments = ['build', 'windows'];
     if (_config.createWithDebugBuildFiles) buildWindowsArguments.add('--debug');
 
-    var loggerProgress = _logger
+    Progress loggerProgress = _logger
         .progress('running "flutter ${buildWindowsArguments.join(' ')}"');
 
-    var windowsBuildProcess =
-        await Process.run('flutter', buildWindowsArguments, runInShell: true);
-
-    if (windowsBuildProcess.exitCode != 0) {
-      _logger.stderr(windowsBuildProcess.stdout);
-      throw windowsBuildProcess.stderr;
-    }
+    // ignore: avoid_single_cascade_in_expression_statements
+    await Process.run('flutter', buildWindowsArguments, runInShell: true)
+      ..exitOnError();
 
     loggerProgress.finish(showTiming: true);
   }

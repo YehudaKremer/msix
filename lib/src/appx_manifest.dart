@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:cli_util/cli_logging.dart' show Logger;
+import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'capabilities.dart';
 import 'configuration.dart';
-import 'extensions.dart';
+import 'method_extensions.dart';
 
 /// Handles the creation of the manifest file
 class AppxManifest {
@@ -14,7 +14,7 @@ class AppxManifest {
   Future<void> generateAppxManifest() async {
     _logger.trace('generate appx manifest');
 
-    var manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
+    String manifestContent = '''<?xml version="1.0" encoding="utf-8"?>
   <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
           xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" 
           xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2" 
@@ -76,7 +76,7 @@ class AppxManifest {
     //clear empty rows
     manifestContent = manifestContent.replaceAll('    \n', '');
 
-    var appxManifestPath = '${_config.buildFilesFolder}/AppxManifest.xml';
+    String appxManifestPath = '${_config.buildFilesFolder}/AppxManifest.xml';
     await File(appxManifestPath).writeAsString(manifestContent);
   }
 
@@ -112,8 +112,8 @@ class AppxManifest {
 
   /// Add extension section for [_config.protocolActivation]
   String _getProtocolActivationExtension() {
-    var protocolsActivation = '';
-    for (var protocol in _config.protocolActivation) {
+    String protocolsActivation = '';
+    for (String protocol in _config.protocolActivation) {
       protocolsActivation += '''
   <uap:Extension Category="windows.protocol">
             <uap:Protocol Name="${protocol.toHtmlEscape()}">
@@ -169,13 +169,13 @@ class AppxManifest {
 
   String _normalizeCapability(String capability) {
     capability = capability.trim();
-    var firstLetter = capability.substring(0, 1).toLowerCase();
+    String firstLetter = capability.substring(0, 1).toLowerCase();
     return firstLetter + capability.substring(1);
   }
 
   /// Add capabilities section
   String _getCapabilities() {
-    var capabilities = _config.capabilities?.split(',') ?? [];
+    List<String> capabilities = _config.capabilities?.split(',') ?? [];
     capabilities.add('runFullTrust');
     capabilities = capabilities.toSet().toList();
     String capabilitiesString = '';
