@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cli_util/cli_logging.dart' show Logger, Ansi;
+import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'src/app_installer.dart';
 import 'src/windows_build.dart';
@@ -37,9 +37,9 @@ class Msix {
     await _initConfig();
 
     /// check if the appx manifest is exist
-    var appxManifestPath = '${_config.buildFilesFolder}/AppxManifest.xml';
+    String appxManifestPath = '${_config.buildFilesFolder}/AppxManifest.xml';
     if (!(await File(appxManifestPath).exists())) {
-      var error = 'run "msix:build" first';
+      String error = 'run "msix:build" first';
       _logger.stderr(error.red);
       exit(-1);
     }
@@ -63,12 +63,12 @@ class Msix {
   Future<void> publish() async {
     await _initConfig();
     await _config.validateAppInstallerConfigValues();
-    var appInstaller = AppInstaller();
+    AppInstaller appInstaller = AppInstaller();
     await appInstaller.validatePublishVersion();
 
     await _createMsix();
 
-    var loggerProgress = _logger.progress('publishing');
+    Progress loggerProgress = _logger.progress('publishing');
     await appInstaller.copyMsixToVersionsFolder();
     await appInstaller.generateAppInstaller();
     await appInstaller.generateAppInstallerWebSite();
@@ -103,7 +103,7 @@ class Msix {
   Future<void> _buildMsixFiles() async {
     if (_config.buildWindows) await WindowsBuild().build();
 
-    var loggerProgress = _logger.progress('building msix files');
+    Progress loggerProgress = _logger.progress('building msix files');
 
     await _config.validateWindowsBuildFiles();
     final assets = Assets();
@@ -121,7 +121,7 @@ class Msix {
   }
 
   Future<void> _packMsixFiles() async {
-    var loggerProgress = _logger.progress('packing msix files');
+    Progress loggerProgress = _logger.progress('packing msix files');
 
     await MakeAppx().pack();
     await Assets().cleanTemporaryFiles();

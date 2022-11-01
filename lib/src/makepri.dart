@@ -13,10 +13,10 @@ class MakePri {
     _logger.trace('generate package resource indexing files');
 
     final buildPath = _config.buildFilesFolder;
-    var makePriPath =
+    String makePriPath =
         '${_config.msixToolkitPath}/Redist.${_config.architecture}/makepri.exe';
 
-    var makePriConfigProcess = await Process.run(makePriPath, [
+    ProcessResult makePriConfigProcess = await Process.run(makePriPath, [
       'createconfig',
       '/cf',
       '$buildPath\\priconfig.xml',
@@ -27,7 +27,7 @@ class MakePri {
 
     makePriConfigProcess.exitOnError();
 
-    var makePriProcess = await Process.run(makePriPath, [
+    ProcessResult makePriProcess = await Process.run(makePriPath, [
       'new',
       '/cf',
       '$buildPath\\priconfig.xml',

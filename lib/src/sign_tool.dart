@@ -7,7 +7,7 @@ import 'package:path/path.dart' show extension, basename;
 import 'extensions.dart';
 import 'configuration.dart';
 
-var _publisherRegex = RegExp(
+RegExp _publisherRegex = RegExp(
     '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID.(0|[1-9][0-9]*)(.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID.(0|[1-9][0-9]*)(.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');
 
 /// Handles the certificate sign functionality
@@ -19,7 +19,7 @@ class SignTool {
   Future<void> getCertificatePublisher() async {
     _logger.trace('getting certificate publisher');
 
-    var subject = '';
+    String subject = '';
 
     if (_config.signToolOptions != null) {
       if (_config.signToolOptions!.containsArgument('/sha1')) {
@@ -62,7 +62,7 @@ class SignTool {
   }
 
   String _getSignToolOptionsArgumentValue(String searchArgName) {
-    var argumentIndex = _config.signToolOptions!.indexWhere(
+    int argumentIndex = _config.signToolOptions!.indexWhere(
         (argument) => argument.toLowerCase().trim() == searchArgName);
 
     /// return argument value
@@ -76,7 +76,7 @@ class SignTool {
   }
 
   Future<ProcessResult> _executePowershellCommand(String command) async {
-    var processResult = await Process.run(
+    ProcessResult processResult = await Process.run(
         'powershell.exe', ['-NoProfile', '-NonInteractive', command],
         stdoutEncoding: utf8, stderrEncoding: utf8);
 
@@ -86,10 +86,10 @@ class SignTool {
   }
 
   Future<String> _getInstalledCertificateSubject(String searchCondition) async {
-    var certificateDetailsProcess = await _executePowershellCommand(
+    ProcessResult certificateDetailsProcess = await _executePowershellCommand(
         "dir -Recurse cert: | where {$searchCondition} | select -expandproperty Subject -First 1");
 
-    var subject = (certificateDetailsProcess.stdout as String).trim();
+    String subject = (certificateDetailsProcess.stdout as String).trim();
 
     return subject;
   }
@@ -97,8 +97,8 @@ class SignTool {
   Future<String> _getCertificateSubjectByThumbprint() async {
     _logger.trace('getting certificate "Subject" by certificate thumbprint');
 
-    var thumbprintValue = _getSignToolOptionsArgumentValue('/sha1');
-    var subject = await _getInstalledCertificateSubject(
+    String thumbprintValue = _getSignToolOptionsArgumentValue('/sha1');
+    String subject = await _getInstalledCertificateSubject(
         "\$_.Thumbprint -eq \"$thumbprintValue\"");
 
     return subject;
@@ -107,8 +107,8 @@ class SignTool {
   Future<String> _getCertificateSubjectBySubject() async {
     _logger.trace('getting certificate "Subject" by certificate Subject');
 
-    var subjectValue = _getSignToolOptionsArgumentValue('/n');
-    var subject = await _getInstalledCertificateSubject(
+    String subjectValue = _getSignToolOptionsArgumentValue('/n');
+    String subject = await _getInstalledCertificateSubject(
         "\$_.Subject –like \"*$subjectValue*\"");
 
     return subject;
@@ -117,8 +117,8 @@ class SignTool {
   Future<String> _getCertificateSubjectByIssuer() async {
     _logger.trace('getting certificate "Subject" by certificate Issuer');
 
-    var subjectValue = _getSignToolOptionsArgumentValue('/i');
-    var subject = await _getInstalledCertificateSubject(
+    String subjectValue = _getSignToolOptionsArgumentValue('/i');
+    String subject = await _getInstalledCertificateSubject(
         "\$_.Issuer –like \"*$subjectValue*\"");
 
     return subject;
@@ -127,11 +127,11 @@ class SignTool {
   Future<String> _getPfxCertificateSubject() async {
     _logger.trace('getting pfx certificate Subject');
 
-    var certificateDetailsProcess = await _executePowershellCommand(
+    ProcessResult certificateDetailsProcess = await _executePowershellCommand(
         """new-object System.Security.Cryptography.X509Certificates.X509Certificate2("${_config.certificatePath}",
         "${_config.certificatePassword}") | select -expandproperty Subject -First 1""");
 
-    var subject = (certificateDetailsProcess.stdout as String).trim();
+    String subject = (certificateDetailsProcess.stdout as String).trim();
 
     return subject;
   }
@@ -139,7 +139,8 @@ class SignTool {
   /// Use Powershell to install the test certificate
   /// if needed and if the user want to.
   Future<void> installCertificate() async {
-    var getInstalledCertificate = await Process.run('powershell.exe', [
+    ProcessResult getInstalledCertificate =
+        await Process.run('powershell.exe', [
       '-NoProfile',
       '-NonInteractive',
       "dir Cert:\\CurrentUser\\Root | Where-Object { \$_.Subject -eq  '${_config.publisher}'}"
@@ -147,29 +148,29 @@ class SignTool {
 
     getInstalledCertificate.exitOnError();
 
-    var isCertificateNotInstalled =
+    bool isCertificateNotInstalled =
         getInstalledCertificate.stdout.toString().isNullOrEmpty;
 
     if (isCertificateNotInstalled) {
       _logger.trace('installing certificate');
       _logger.stdout('');
 
-      var installCertificate = await readInput(
+      String installCertificate = await readInput(
           'Do you want to install the certificate: "${basename(File(_config.certificatePath!).path)}" ?'
                   .emphasized +
               ' (y/N) '.gray);
 
       if (installCertificate.toLowerCase().trim() == 'y') {
         // create installCertificate.ps1 file
-        var installCertificateScript =
+        String installCertificateScript =
             'Import-PfxCertificate -FilePath "${_config.certificatePath}" -Password (ConvertTo-SecureString -String "${_config.certificatePassword}" -AsPlainText -Force) -CertStoreLocation Cert:\\LocalMachine\\Root';
-        var installCertificateScriptPath =
+        String installCertificateScriptPath =
             '${_config.msixAssetsPath}/installCertificate.ps1';
         await File(installCertificateScriptPath)
             .writeAsString(installCertificateScript);
 
         // then execute it with admin privileges
-        var importCertificate = await Process.run('powershell.exe', [
+        ProcessResult importCertificate = await Process.run('powershell.exe', [
           '-NoProfile',
           '-NonInteractive',
           'Start-Process powershell -ArgumentList "$installCertificateScriptPath" -Wait -Verb runAs -WindowStyle Hidden'
@@ -178,7 +179,7 @@ class SignTool {
         await File(installCertificateScriptPath).deleteIfExists();
 
         if (importCertificate.exitCode != 0) {
-          var error = importCertificate.stderr.toString();
+          String error = importCertificate.stderr.toString();
           if (error.contains('was canceled by the user')) {
             _logger.stderr('the certificate installation was canceled'.red);
           } else {
@@ -195,7 +196,7 @@ class SignTool {
   Future<void> sign() async {
     _logger.trace('signing');
 
-    var signtoolPath =
+    String signtoolPath =
         '${_config.msixToolkitPath}/Redist.${_config.architecture}/signtool.exe';
     List<String> signtoolOptions = ['/v'];
 
@@ -227,7 +228,7 @@ class SignTool {
       signtoolOptions.addAll(['/tr', 'http://timestamp.digicert.com']);
     }
 
-    var isFullSigntoolCommand =
+    bool isFullSigntoolCommand =
         signtoolOptions[0].toLowerCase().contains('signtool');
 
     ProcessResult signProcess = await Process.run(

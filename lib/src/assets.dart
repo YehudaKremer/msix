@@ -128,8 +128,8 @@ class Assets {
 
     Image imageCanvas = Image(scaledWidth.ceil(), scaledHeight.ceil());
 
-    var drawX = imageCanvas.width ~/ 2 - resizedImage.width ~/ 2;
-    var drawY = imageCanvas.height ~/ 2 - resizedImage.height ~/ 2;
+    int drawX = imageCanvas.width ~/ 2 - resizedImage.width ~/ 2;
+    int drawY = imageCanvas.height ~/ 2 - resizedImage.height ~/ 2;
     drawImage(
       imageCanvas,
       resizedImage,

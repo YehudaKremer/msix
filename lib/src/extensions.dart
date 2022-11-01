@@ -38,9 +38,9 @@ extension FileSystemEntityExtensions on FileSystemEntity {
 /// Copy directory content asynchronously
 extension DirectoryExtensions on Directory {
   Future<void> copyDirectory(Directory destination) async {
-    await for (var entity in list(recursive: false)) {
+    await for (FileSystemEntity entity in list(recursive: false)) {
       if (entity is Directory) {
-        var newDirectory = Directory(
+        Directory newDirectory = Directory(
             path.join(destination.absolute.path, path.basename(entity.path)));
         await newDirectory.create();
         await entity.absolute.copyDirectory(newDirectory);

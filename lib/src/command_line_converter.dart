@@ -13,7 +13,7 @@ class CommandLineConverter extends Converter<String, List<String>> {
 
     final List<String> result = <String>[];
 
-    var current = "";
+    String current = "";
 
     String? inQuote;
     bool lastTokenHasBeenQuoted = false;

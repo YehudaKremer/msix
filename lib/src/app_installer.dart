@@ -26,18 +26,18 @@ class AppInstaller {
 
     if (!await File(_config.appInstallerPath).exists()) return;
 
-    var appInstallerContent =
+    String appInstallerContent =
         await File(_config.appInstallerPath).readAsString();
-    var appInstallerVersion = appInstallerContent.substring(
+    String appInstallerVersion = appInstallerContent.substring(
         appInstallerContent.indexOf('Version="') + 9,
         appInstallerContent.indexOf(
             '"', appInstallerContent.indexOf('Version="') + 9));
     appInstallerVersion =
         appInstallerVersion.substring(0, appInstallerVersion.lastIndexOf('.'));
-    var lastPublishVersion = Version.parse(appInstallerVersion);
-    var msixVersion = Version.parse(_config.msixVersion!
+    Version lastPublishVersion = Version.parse(appInstallerVersion);
+    Version msixVersion = Version.parse(_config.msixVersion!
         .substring(0, _config.msixVersion!.lastIndexOf('.')));
-    var msixVersionRevision =
+    String msixVersionRevision =
         _config.msixVersion!.substring(_config.msixVersion!.lastIndexOf('.'));
 
     if (lastPublishVersion == msixVersion || lastPublishVersion > msixVersion) {
@@ -49,7 +49,7 @@ class AppInstaller {
             'You publishing older version ($msixVersion) then last publish version ($lastPublishVersion)');
       }
 
-      var installCertificate = await readInput(
+      String installCertificate = await readInput(
           'Do you want to increment it to version ${lastPublishVersion.nextPatch} ?'
                   .emphasized +
               ' (y/N) '.gray);
@@ -73,7 +73,7 @@ class AppInstaller {
   Future<void> generateAppInstaller() async {
     _logger.trace('generate app installer');
 
-    var appInstallerContent = '''<?xml version="1.0" encoding="utf-8"?>
+    String appInstallerContent = '''<?xml version="1.0" encoding="utf-8"?>
   <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2018"
     Uri="${_config.appInstallerPath}" Version="${_config.msixVersion}">
     <MainPackage Name="${_config.identityName}" Version="${_config.msixVersion}"
@@ -120,7 +120,7 @@ class AppInstaller {
     webInstallerSite =
         webInstallerSite.replaceAll('PUBLISHER_NAME', _config.publisherName!);
 
-    var logoImage = decodeImage(await File(_config.logoPath ??
+    Image logoImage = decodeImage(await File(_config.logoPath ??
             '${_config.defaultsIconsFolderPath}/Square44x44Logo.altform-lightunplated_targetsize-256.png')
         .readAsBytes())!;
 
@@ -143,7 +143,7 @@ class AppInstaller {
   }
 }
 
-var webInstallerSite = '''
+String webInstallerSite = '''
 <!DOCTYPE html>
 <html lang="en">
 

@@ -12,10 +12,10 @@ class MakeAppx {
   Future<void> pack() async {
     _logger.trace('packing');
 
-    var makeAppxPath =
+    String makeAppxPath =
         '${_config.msixToolkitPath}/Redist.${_config.architecture}/makeappx.exe';
 
-    var makeAppxProcess = await Process.run(makeAppxPath, [
+    ProcessResult makeAppxProcess = await Process.run(makeAppxPath, [
       'pack',
       '/v',
       '/o',

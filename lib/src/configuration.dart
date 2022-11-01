@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:cli_util/cli_logging.dart' show Logger;
 import 'package:get_it/get_it.dart';
-import 'package:package_config/package_config.dart' show findPackageConfig;
+import 'package:package_config/package_config.dart';
 import 'package:path/path.dart' show extension, basename;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart' show YamlMap, loadYaml;
@@ -69,10 +69,10 @@ class Configuration {
   Future<void> getConfigValues() async {
     _parseCliArguments(_arguments);
     await _getMsixAssetsFolderPath();
-    var pubspec = await _getPubspec();
+    dynamic pubspec = await _getPubspec();
     appName = pubspec['name'];
     appDescription = pubspec['description'];
-    var yaml = pubspec['msix_config'] ?? YamlMap();
+    dynamic yaml = pubspec['msix_config'] ?? YamlMap();
     msixVersion =
         _args['version'] ?? yaml['msix_version'] ?? _getPubspecVersion(pubspec);
     certificatePath = _args['certificate-path'] ?? yaml['certificate_path'];
@@ -113,7 +113,7 @@ class Configuration {
     final signToolOptionsConfig =
         (_args['signtool-options'] ?? yaml['signtool_options'])?.toString();
     if (signToolOptionsConfig != null && signToolOptionsConfig.isNotEmpty) {
-      var commandLineConverter = CommandLineConverter();
+      CommandLineConverter commandLineConverter = CommandLineConverter();
       signToolOptions = commandLineConverter.convert(signToolOptionsConfig);
     }
 
@@ -131,7 +131,7 @@ class Configuration {
         yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
 
     // toast activator configurations
-    var toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
+    dynamic toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
 
     toastActivatorCLSID = _args['toast-activator-clsid'] ??
         toastActivatorYaml['clsid']?.toString();
@@ -143,7 +143,7 @@ class Configuration {
         'Toast activator';
 
     // app installer configurations
-    var installerYaml = yaml['app_installer'] ?? YamlMap();
+    dynamic installerYaml = yaml['app_installer'] ?? YamlMap();
 
     publishFolderPath =
         _args['publish-folder-path'] ?? installerYaml['publish_folder_path'];
@@ -175,7 +175,7 @@ class Configuration {
       throw 'App name is empty, check the general \'name:\' property at pubspec.yaml';
     }
     if (appDescription.isNull) appDescription = appName;
-    var cleanAppName = appName!.replaceAll('_', '');
+    String cleanAppName = appName!.replaceAll('_', '');
     if (displayName.isNull) displayName = cleanAppName;
     if (identityName.isNull) {
       if (store) {
@@ -270,7 +270,7 @@ class Configuration {
   void _parseCliArguments(List<String> args) {
     _logger.trace('parsing cli arguments');
 
-    var parser = ArgParser()
+    ArgParser parser = ArgParser()
       ..addOption('certificate-password', abbr: 'p')
       ..addOption('certificate-path', abbr: 'c')
       ..addOption('version')
@@ -327,14 +327,14 @@ class Configuration {
 
   /// Get the assets folder path from the .packages file
   Future<void> _getMsixAssetsFolderPath() async {
-    var packagesConfig = await findPackageConfig(Directory.current);
+    PackageConfig? packagesConfig = await findPackageConfig(Directory.current);
     if (packagesConfig == null) {
       throw 'Failed to locate or read package config.';
     }
 
-    var msixPackage =
+    Package msixPackage =
         packagesConfig.packages.firstWhere((package) => package.name == "msix");
-    var path =
+    String path =
         msixPackage.packageUriRoot.toString().replaceAll('file:///', '') +
             'assets';
 
@@ -343,8 +343,8 @@ class Configuration {
 
   /// Get pubspec.yaml content
   dynamic _getPubspec() async {
-    var pubspecString = await File(pubspecYamlPath).readAsString();
-    var pubspec = loadYaml(pubspecString);
+    String pubspecString = await File(pubspecYamlPath).readAsString();
+    dynamic pubspec = loadYaml(pubspecString);
     return pubspec;
   }
 
