@@ -28,10 +28,12 @@ class SignTool {
         subject = await _getCertificateSubjectBySubject();
       } else if (_config.signToolOptions!.containsArgument('/i')) {
         subject = await _getCertificateSubjectByIssuer();
+      } else if (_config.signToolOptions!.containsArgument('/f')) {
+        subject = await _getCertificateSubjectByFile(true);
       }
     } else if (_config.certificatePath != null &&
-        extension(_config.certificatePath!).toLowerCase() == '.pfx') {
-      subject = await _getPfxCertificateSubject();
+        _config.certificatePath!.isNotEmpty) {
+      subject = await _getCertificateSubjectByFile(false);
     }
 
     if (subject.isNotEmpty) {
@@ -120,12 +122,20 @@ class SignTool {
     return subject;
   }
 
-  Future<String> _getPfxCertificateSubject() async {
-    _logger.trace('getting pfx certificate Subject');
+  Future<String> _getCertificateSubjectByFile(bool fromSignToolOptions) async {
+    _logger.trace('getting certificate "Subject" by file certificate');
 
+    String filePathValue = fromSignToolOptions
+        ? _getSignToolOptionsArgumentValue('/f')
+        : _config.certificatePath!;
+    var passwordValue = _config.certificatePassword ?? '';
+    if (fromSignToolOptions &&
+        _config.signToolOptions!.containsArgument('/p')) {
+      passwordValue = _getSignToolOptionsArgumentValue('/p');
+    }
     ProcessResult certificateDetailsProcess = await _executePowershellCommand(
-        """new-object System.Security.Cryptography.X509Certificates.X509Certificate2("${_config.certificatePath}",
-        "${_config.certificatePassword}") | select -expandproperty Subject -First 1""");
+        """new-object System.Security.Cryptography.X509Certificates.X509Certificate2("$filePathValue",
+        "$passwordValue") | select -expandproperty Subject -First 1""");
 
     String subject = (certificateDetailsProcess.stdout as String).trim();
 
