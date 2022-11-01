@@ -11,7 +11,6 @@ import 'method_extensions.dart';
 
 /// Handles loading and validating the configuration values
 class Configuration {
-  final List<String> _arguments;
   final Logger _logger = GetIt.I<Logger>();
   late ArgResults _args;
   String msixAssetsPath = '';
@@ -63,11 +62,10 @@ class Configuration {
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
 
-  Configuration(this._arguments);
+  Configuration(this._args);
 
-  /// Gets the configuration values from from [_arguments] or pubspec.yaml file
+  /// Gets the configuration values from [_args] or from pubspec.yaml file
   Future<void> getConfigValues() async {
-    _parseCliArguments(_arguments);
     await _getMsixAssetsFolderPath();
     dynamic pubspec = await _getPubspec();
     appName = pubspec['name'];
@@ -264,51 +262,6 @@ class Configuration {
             file.path.endsWith('.exe') &&
             !file.path.contains('PSFLauncher64.exe'))
         .then((file) => basename(file.path));
-  }
-
-  /// Declare and parse the cli arguments
-  void _parseCliArguments(List<String> args) {
-    _logger.trace('parsing cli arguments');
-
-    ArgParser parser = ArgParser()
-      ..addOption('certificate-password', abbr: 'p')
-      ..addOption('certificate-path', abbr: 'c')
-      ..addOption('version')
-      ..addOption('display-name', abbr: 'd')
-      ..addOption('publisher-display-name', abbr: 'u')
-      ..addOption('identity-name', abbr: 'i')
-      ..addOption('publisher', abbr: 'b')
-      ..addOption('logo-path', abbr: 'l')
-      ..addOption('output-path', abbr: 'o')
-      ..addOption('output-name', abbr: 'n')
-      ..addOption('signtool-options')
-      ..addOption('protocol-activation')
-      ..addOption('execution-alias')
-      ..addOption('file-extension', abbr: 'f')
-      ..addOption('architecture', abbr: 'h')
-      ..addOption('capabilities', abbr: 'e')
-      ..addOption('languages')
-      ..addOption('sign-msix')
-      ..addOption('install-certificate')
-      ..addOption('trim-logo')
-      ..addOption('toast-activator-clsid')
-      ..addOption('toast-activator-arguments')
-      ..addOption('toast-activator-display-name')
-      ..addOption('publish-folder-path')
-      ..addOption('hours-between-update-checks')
-      ..addOption('build-windows')
-      ..addOption('app-uri-handler-hosts')
-      ..addFlag('store')
-      ..addFlag('enable-at-startup')
-      ..addFlag('debug')
-      ..addFlag('release')
-      ..addFlag('automatic-background-task')
-      ..addFlag('update-blocks-activation')
-      ..addFlag('show-prompt')
-      ..addFlag('force-update-from-any-version');
-
-    // exclude -v (verbose) from the arguments
-    _args = parser.parse(args.where((arg) => arg != '-v'));
   }
 
   Future<void> validateAppInstallerConfigValues() async {

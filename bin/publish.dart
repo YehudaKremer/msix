@@ -1,5 +1,7 @@
-import 'package:msix/msix.dart';
+import 'package:msix/main.dart' as msix;
 
+// TODO: delete this file after beta
+@Deprecated("use \"msix publish\" command")
 Future<void> main(List<String> arguments) async {
-  await Msix(arguments).publish();
+  msix.main(['publish', ...arguments]);
 }
