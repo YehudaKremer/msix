@@ -73,10 +73,13 @@ void main(List<String> args) {
         help:
             'Describes the architecture of the code in the package, x64 or x86, x64 is default.',
         valueHelp: 'x64 or x86') // TODO: i deleted "abbr: 'h'"!!!
+
+    ..argParser.addSeparator('Global flags:')
     ..argParser.addOption('capabilities',
         abbr: 'e',
         help: 'List of the capabilities the app requires.',
-        valueHelp: 'internetClient,location,microphone,webcam')
+        valueHelp:
+            'internetClient,location,microphone,webcam') // TODO: try use `addMultiOption()`
     ..argParser.addOption('languages',
         help: 'Declares the language resources contained in the package.',
         valueHelp: 'en-us, ja-jp')
