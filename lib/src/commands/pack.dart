@@ -40,7 +40,7 @@ class PackCommand extends Command {
       exit(-1);
     }
 
-    if (_config.signMsix && !_config.store) {
+    if (!_config.noSignMsix && !_config.store) {
       await _signTool.getCertificatePublisher();
     }
     await _msix.packMsixFiles();

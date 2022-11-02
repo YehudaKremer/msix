@@ -69,7 +69,7 @@ See [Configurations Examples And Use Cases].
 | `identity_name`                     | `--identity-name` `-i`          | Defines the unique identifier for the app.                                                        | `company.suite.flutterapp`                  |
 | `msix_version`                      | `--version`                     | The version number of the package, in `a.b.c.d` format. [see how the msix version is determined]. | `1.0.0.0`                                   |
 | `logo_path`                         | `--logo-path` `-l`              | Path to an [image file] for use as the app icon (size recommended at least 400x400px).            | `C:\images\logo.png`                        |
-| `trim_logo`                         | `--trim-logo <true/false>`      | If `false`, don't trim the logo image, default is `true`.                                         | `true`                                      |
+| `no_trim_logo`                      | `--no-trim-logo`                | If `true`, don't trim the logo image, default is `false`.                                         | `true`                                      |
 | `capabilities`                      | `--capabilities` `-e`           | List of the [capabilities][windows capabilities] the app requires.                                | `internetClient,location,microphone,webcam` |
 | `languages`                         | `--languages`                   | Declares the language resources contained in the package.                                         | `en-us, ja-jp`                              |
 | `file_extension`                    | `--file-extension` `-f`         | File extensions that the app may be registered to open.                                           | `.picture, .image`                          |
@@ -85,27 +85,27 @@ See [Configurations Examples And Use Cases].
 <details>
 <summary>Build configuration (click to expand)</summary>
 
-| YAML name       | Command-line argument          | Description                                                                                                                      | Example              |
-| --------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| `debug`         | `--debug` or `--release`       | Create MSIX from the **debug** or **release** build files (`\build\windows\runner\<Debug/Release>`), **release** is the default. | `true`               |
-| `output_path`   | `--output-path` `-o`           | The directory where the output MSIX file should be stored.                                                                       | `C:\src\some\folder` |
-| `output_name`   | `--output-name` `-n`           | The filename that should be given to the created MSIX file.                                                                      | `flutterApp_dev`     |
-| `architecture`  | `--architecture` `-h`          | Describes the architecture of the code in the package, `x64` or `x86`, `x64` is default.                                         | `x64`                |
-| `build_windows` | `--build-windows <true/false>` | If `false`, don't run the build command `flutter build windows`, default is `true`.                                              | `true`               |
+| YAML name          | Command-line argument    | Description                                                                                                                      | Example              |
+| ------------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| `debug`            | `--debug` or `--release` | Create MSIX from the **debug** or **release** build files (`\build\windows\runner\<Debug/Release>`), **release** is the default. | `true`               |
+| `output_path`      | `--output-path` `-o`     | The directory where the output MSIX file should be stored.                                                                       | `C:\src\some\folder` |
+| `output_name`      | `--output-name` `-n`     | The filename that should be given to the created MSIX file.                                                                      | `flutterApp_name`    |
+| `architecture`     | `--architecture` `-h`    | Describes the architecture of the code in the package, `x64` or `x86`, `x64` is default.                                         | `x64`                |
+| `no_build_windows` | `--no-build-windows`     | If `true`, don't run the build command `flutter build windows`, default is `false`.                                              | `true`               |
 
 </details>
 
 <details>
 <summary>Sign configuration (click to expand)</summary>
 
-| YAML name              | Command-line argument                | Description                                                                                                                                              | Example                                                                                         |
-| ---------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `certificate_path`     | `--certificate-path` `-c`            | Path to the certificate content to place in the store.                                                                                                   | `C:\certs\signcert.pfx` or `C:\certs\signcert.crt`                                              |
-| `certificate_password` | `--certificate-password` `-p`        | Password for the certificate.                                                                                                                            | `1234`                                                                                          |
-| `publisher`            | `--publisher` `-b`                   | The `Subject` value in the certificate.<br /> Required only if publish to the store, or if the `Publisher` will not found automatically by this package. | `CN=BF212345-5644-46DF-8668-014043C1B138` or `CN=Contoso Software, O=Contoso Corporation, C=US` |
-| `signtool_options`     | `--signtool-options`                 | Options to be provided to the `signtool` for app signing (see below.)                                                                                    | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer`                                                   |
-| `sign_msix`            | `--sign-msix <true/false>`           | If `false`, don't sign the msix file, default is `true`.<br />Note: when **false**, `publisher` is Required.                                             | `true`                                                                                          |
-| `install_certificate`  | `--install-certificate <true/false>` | If `false`, don't try to install the certificate, default is `true`.                                                                                     | `true`                                                                                          |
+| YAML name                | Command-line argument         | Description                                                                                                                                              | Example                                                                                         |
+| ------------------------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `certificate_path`       | `--certificate-path` `-c`     | Path to the certificate content to place in the store.                                                                                                   | `C:\certs\signcert.pfx` or `C:\certs\signcert.crt`                                              |
+| `certificate_password`   | `--certificate-password` `-p` | Password for the certificate.                                                                                                                            | `1234`                                                                                          |
+| `publisher`              | `--publisher` `-b`            | The `Subject` value in the certificate.<br /> Required only if publish to the store, or if the `Publisher` will not found automatically by this package. | `CN=BF212345-5644-46DF-8668-014043C1B138` or `CN=Contoso Software, O=Contoso Corporation, C=US` |
+| `signtool_options`       | `--signtool-options`          | Options to be provided to the `signtool` for app signing (see below.)                                                                                    | `/v /fd SHA256 /f C:/Users/me/Desktop/my.cer`                                                   |
+| `no_sign_msix`           | `--no-sign-msix`              | If `true`, don't sign the msix file, default is `false`.<br />Note: when **true**, `publisher` is Required.                                              | `true`                                                                                          |
+| `no_install_certificate` | `--no-install-certificate`    | If `true`, don't try to install the certificate, default is `false`.                                                                                     | `true`                                                                                          |
 
 </details>
 

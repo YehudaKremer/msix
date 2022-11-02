@@ -126,7 +126,7 @@ class Assets {
             ? Interpolation.average
             : Interpolation.cubic;
 
-    if (_config.trimLogo) {
+    if (!_config.noTrimLogo) {
       try {
         image = trim(image);
       } catch (_) {}

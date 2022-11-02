@@ -36,7 +36,7 @@ class Msix {
   }
 
   Future<void> buildMsixFiles() async {
-    if (_config.buildWindows) await WindowsBuild().build();
+    if (!_config.noBuildWindows) await WindowsBuild().build();
 
     Progress loggerProgress = _logger.progress('building msix files');
 
@@ -46,7 +46,7 @@ class Msix {
     await assets.createIcons();
     await assets.copyVCLibsFiles();
 
-    if (_config.signMsix && !_config.store) {
+    if (!_config.noSignMsix && !_config.store) {
       await _signTool.getCertificatePublisher();
     }
     await AppxManifest().generateAppxManifest();
@@ -61,8 +61,8 @@ class Msix {
     await MakeAppx().pack();
     await Assets().cleanTemporaryFiles();
 
-    if (_config.signMsix && !_config.store) {
-      if (_config.installCert &&
+    if (!_config.noSignMsix && !_config.store) {
+      if (!_config.noInstallCert &&
           (_config.signToolOptions == null ||
               _config.signToolOptions!.isEmpty)) {
         await _signTool.installCertificate();

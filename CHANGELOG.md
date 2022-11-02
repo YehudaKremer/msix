@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.0.0
+
+### Breaking Changes
+
+- use the cli command like this: `flutter pub run msix create`, instead of `flutter pub run msix:create` (also in the other command: `build`, `pack` and `publish` )
+- cli options change to flags:
+  - `trim-logo` change to flag: `no-trim-logo`
+  - `build-windows` change to flag: `no-build-windows`
+  - `sign-msix` change to flag: `no-sign-msix`
+  - `install-certificate` change to flag: `no-install-certificate`
+
 ## 3.7.0
 
 - add full support for [SignTool](https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe) usage (addressing [#155](https://github.com/YehudaKremer/msix/pull/155#issue-1421291620)), see [examples page](https://github.com/YehudaKremer/msix/tree/main/example)

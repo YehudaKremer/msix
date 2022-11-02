@@ -45,10 +45,10 @@ class Configuration {
   bool showPrompt = false;
   bool forceUpdateFromAnyVersion = false;
   bool store = false;
-  bool signMsix = true;
-  bool installCert = true;
-  bool buildWindows = true;
-  bool trimLogo = true;
+  bool noSignMsix = false;
+  bool noInstallCert = false;
+  bool noBuildWindows = false;
+  bool noTrimLogo = false;
   bool createWithDebugBuildFiles = false;
   bool enableAtStartup = false;
   Iterable<String>? appUriHandlerHosts;
@@ -79,22 +79,14 @@ class Configuration {
     outputPath = _args['output-path'] ?? yaml['output_path'];
     outputName = _args['output-name'] ?? yaml['output_name'];
     executionAlias = _args['execution-alias'] ?? yaml['execution_alias'];
-    if (_args['sign-msix'].toString() == 'false' ||
-        yaml['sign_msix']?.toString().toLowerCase() == 'false') {
-      signMsix = false;
-    }
-    if (_args['install-certificate'].toString() == 'false' ||
-        yaml['install_certificate']?.toString().toLowerCase() == 'false') {
-      installCert = false;
-    }
-    if (_args['build-windows'].toString() == 'false' ||
-        yaml['build_windows']?.toString().toLowerCase() == 'false') {
-      buildWindows = false;
-    }
-    if (_args['trim-logo'].toString() == 'false' ||
-        yaml['trim_logo']?.toString().toLowerCase() == 'false') {
-      trimLogo = false;
-    }
+    noSignMsix = _args.wasParsed('no-sign-msix') ||
+        yaml['no_sign_msix']?.toString().toLowerCase() == 'true';
+    noInstallCert = _args.wasParsed('no-install-certificate') ||
+        yaml['no_install_certificate']?.toString().toLowerCase() == 'true';
+    noBuildWindows = _args.wasParsed('no-build-windows') ||
+        yaml['no_build_windows']?.toString().toLowerCase() == 'true';
+    noTrimLogo = _args.wasParsed('no-trim-logo') ||
+        yaml['no_trim_logo']?.toString().toLowerCase() == 'true';
     store = _args.wasParsed('store') ||
         yaml['store']?.toString().toLowerCase() == 'true';
     createWithDebugBuildFiles = _args.wasParsed('debug') ||
@@ -197,9 +189,9 @@ class Configuration {
         publisherName = identityName;
       }
     }
-    if (signMsix == false && publisher.isNullOrEmpty) {
+    if (noSignMsix && publisher.isNullOrEmpty) {
       _logger.stderr(
-          'when sign_msix is false, you must provide the publisher value at "msix_config: publisher" in the pubspec.yaml file');
+          'when no_sign_msix is true, you must provide the publisher value at "msix_config: publisher" in the pubspec.yaml file');
       exit(-1);
     }
     if (store && publisher.isNullOrEmpty) {
