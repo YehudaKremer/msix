@@ -44,13 +44,13 @@ var msixCommandRunner = CommandRunner(
       help:
           'Options to be provided to the signtool for app signing (see below.)',
       valueHelp: '/v /fd SHA256 /f C:/Users/me/Desktop/my.cer')
-  ..argParser.addOption('protocol-activation',
+  ..argParser.addMultiOption('protocol-activation',
       help: 'Protocols activation that will activate the app.',
-      valueHelp: 'http,https')
+      valueHelp: 'http, https')
   ..argParser.addOption('execution-alias',
       help: 'Execution alias command (cmd) that will activate the app.',
       valueHelp: 'myapp')
-  ..argParser.addOption('file-extension',
+  ..argParser.addMultiOption('file-extension',
       abbr: 'f',
       help: 'File extensions that the app may be registered to open.',
       valueHelp: '.picture, .image')
@@ -61,12 +61,11 @@ var msixCommandRunner = CommandRunner(
       valueHelp: 'x64 or x86') // TODO: i deleted "abbr: 'h'"!!!
 
   ..argParser.addSeparator('Global flags:')
-  ..argParser.addOption('capabilities',
+  ..argParser.addMultiOption('capabilities',
       abbr: 'e',
       help: 'List of the capabilities the app requires.',
-      valueHelp:
-          'internetClient,location,microphone,webcam') // TODO: try use `addMultiOption()`
-  ..argParser.addOption('languages',
+      valueHelp: 'internetClient,location,microphone,webcam')
+  ..argParser.addMultiOption('languages',
       help: 'Declares the language resources contained in the package.',
       valueHelp: 'en-us, ja-jp')
   ..argParser.addOption('toast-activator-clsid',
@@ -88,7 +87,7 @@ var msixCommandRunner = CommandRunner(
   ..argParser.addFlag('no-build-windows',
       help: 'Don\'t run the build command flutter build windows.',
       negatable: false)
-  ..argParser.addOption('app-uri-handler-hosts',
+  ..argParser.addMultiOption('app-uri-handler-hosts',
       help: 'Enable apps for websites using app URI handlers app.',
       valueHelp: 'test.com, test2.info')
   ..argParser.addFlag('store',

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image/image.dart';
@@ -15,7 +16,7 @@ void main() {
   setUp(() async {
     GetIt.I.registerSingleton<Logger>(Logger.verbose());
 
-    config = Configuration([])
+    config = Configuration(ArgParser().parse([]))
       ..identityName = 'identityName_test'
       ..publisher = 'publisher_test'
       ..publisherName = 'publisherName_test'
@@ -25,10 +26,10 @@ void main() {
       ..displayName = 'displayName_test'
       ..architecture = 'x64'
       ..executableFileName = 'executableFileName_test'
-      ..protocolActivation = ['protocolActivation_test']
-      ..fileExtension = 'fileExtension_test'
+      ..protocolsActivation = ['protocolActivation_test']
+      ..fileExtensions = ['fileExtension_test']
       ..buildFilesFolder = tempFolderPath
-      ..capabilities = 'location,microphone'
+      ..capabilities = ['location', 'microphone']
       ..languages = ['en-us'];
 
     GetIt.I.registerSingleton<Configuration>(config);

@@ -82,19 +82,18 @@ class AppxManifest {
 
   String _getExtensions() {
     if (!_config.executionAlias.isNull ||
-        _config.protocolActivation.isNotEmpty ||
-        !_config.fileExtension.isNull ||
+        _config.protocolsActivation.isNotEmpty ||
+        _config.fileExtensions.isNotEmpty ||
         !_config.toastActivatorCLSID.isNull ||
-        (_config.appUriHandlerHosts != null &&
-            _config.appUriHandlerHosts!.isNotEmpty) ||
+        _config.appUriHandlerHosts.isNotEmpty ||
         _config.enableAtStartup) {
       return '''<Extensions>
       ${!_config.executionAlias.isNull ? _getExecutionAliasExtension() : ''}
-      ${_config.protocolActivation.isNotEmpty ? _getProtocolActivationExtension() : ''}
-      ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
+      ${_config.protocolsActivation.isNotEmpty ? _getProtocolActivationExtension() : ''}
+      ${_config.fileExtensions.isNotEmpty ? _getFileAssociationsExtension() : ''}
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
       ${_config.enableAtStartup ? _getStartupTaskExtension() : ''}
-      ${_config.appUriHandlerHosts != null && _config.appUriHandlerHosts!.isNotEmpty ? _getAppUriHandlerHostExtension() : ''}
+      ${_config.appUriHandlerHosts.isNotEmpty ? _getAppUriHandlerHostExtension() : ''}
         </Extensions>''';
     } else {
       return '';
@@ -110,10 +109,10 @@ class AppxManifest {
           </uap3:Extension>''';
   }
 
-  /// Add extension section for [_config.protocolActivation]
+  /// Add extension section for [_config.protocolsActivation]
   String _getProtocolActivationExtension() {
     String protocolsActivation = '';
-    for (String protocol in _config.protocolActivation) {
+    for (String protocol in _config.protocolsActivation) {
       protocolsActivation += '''
   <uap:Extension Category="windows.protocol">
             <uap:Protocol Name="${protocol.toHtmlEscape()}">
@@ -124,12 +123,12 @@ class AppxManifest {
     return protocolsActivation;
   }
 
-  /// Add extension section for [_config.fileExtension]
+  /// Add extension section for [_config.fileExtensions]
   String _getFileAssociationsExtension() {
     return '''  <uap:Extension Category="windows.fileTypeAssociation">
             <uap:FileTypeAssociation Name="fileassociations">
               <uap:SupportedFileTypes>
-                ${_config.fileExtension!.split(',').map((ext) => ext.trim()).map((ext) {
+                ${_config.fileExtensions.map((ext) {
               return '<uap:FileType>${ext.startsWith('.') ? ext : '.$ext'}</uap:FileType>';
             }).toList().join('\n                ')}
               </uap:SupportedFileTypes>
@@ -160,7 +159,7 @@ class AppxManifest {
   String _getAppUriHandlerHostExtension() {
     return '''  <uap3:Extension Category="windows.appUriHandler">
             <uap3:AppUriHandler>
-              ${_config.appUriHandlerHosts!.map((hostName) {
+              ${_config.appUriHandlerHosts.map((hostName) {
               return '<uap3:Host Name="$hostName" />';
             }).toList().join('\n                ')}
           </uap3:AppUriHandler>
@@ -175,7 +174,7 @@ class AppxManifest {
 
   /// Add capabilities section
   String _getCapabilities() {
-    List<String> capabilities = _config.capabilities?.split(',') ?? [];
+    List<String> capabilities = _config.capabilities;
     capabilities.add('runFullTrust');
     capabilities = capabilities.toSet().toList();
     String capabilitiesString = '';

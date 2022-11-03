@@ -12,7 +12,7 @@ import 'method_extensions.dart';
 /// Handles loading and validating the configuration values
 class Configuration {
   final Logger _logger = GetIt.I<Logger>();
-  late ArgResults _args;
+  late final ArgResults _args;
   String msixAssetsPath = '';
   String? appName;
   String? publisherName;
@@ -26,13 +26,13 @@ class Configuration {
   String? publisher;
   String? displayName;
   String? architecture;
-  String? capabilities;
+  late List<String> capabilities;
   String? logoPath;
   String? executableFileName;
-  List<String>? signToolOptions;
-  late Iterable<String> protocolActivation;
+  late List<String> signToolOptions;
+  late List<String> protocolsActivation;
   String? executionAlias;
-  String? fileExtension;
+  late List<String> fileExtensions;
   String? toastActivatorCLSID;
   String? toastActivatorArguments;
   String? toastActivatorDisplayName;
@@ -51,8 +51,8 @@ class Configuration {
   bool noTrimLogo = false;
   bool createWithDebugBuildFiles = false;
   bool enableAtStartup = false;
-  Iterable<String>? appUriHandlerHosts;
-  Iterable<String>? languages;
+  late List<String> appUriHandlerHosts;
+  late List<String> languages;
   String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
   String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
   String get msixPath =>
@@ -100,23 +100,27 @@ class Configuration {
     publisher = _args['publisher'] ?? yaml['publisher'];
     identityName = _args['identity-name'] ?? yaml['identity_name'];
     logoPath = _args['logo-path'] ?? yaml['logo_path'];
-    final String? signToolOptionsConfig =
-        (_args['signtool-options'] ?? yaml['signtool_options'])?.toString();
-    if (signToolOptionsConfig != null && signToolOptionsConfig.isNotEmpty) {
+    String? signToolOptionsArgs =
+        _args['signtool-options'] ?? yaml['signtool_options']?.toString();
+    if (signToolOptionsArgs != null && signToolOptionsArgs.isNotEmpty) {
       CommandLineConverter commandLineConverter = CommandLineConverter();
-      signToolOptions = commandLineConverter.convert(signToolOptionsConfig);
+      signToolOptions = commandLineConverter.convert(signToolOptionsArgs);
     }
 
-    //CommandLineConverter
-    protocolActivation = _getProtocolsActivation(yaml);
-    fileExtension = _args['file-extension'] ?? yaml['file_extension'];
-    if (fileExtension != null && !fileExtension!.startsWith('.')) {
-      fileExtension = '.$fileExtension';
-    }
+    protocolsActivation = _getProtocolsActivation(yaml);
+    fileExtensions = _args['file-extension'] ??
+        _getMultiConfigValues(yaml, 'file_extension');
+    fileExtensions = fileExtensions
+        .map((fileExtension) =>
+            fileExtension.startsWith('.') ? fileExtension : '.$fileExtension')
+        .toList();
+
     architecture = _args['architecture'] ?? yaml['architecture'];
-    capabilities = _args['capabilities'] ?? yaml['capabilities'];
-    languages = _getLanguages(yaml);
-    appUriHandlerHosts = _getAppUriHandlerHosts(yaml);
+    capabilities =
+        _args['capabilities'] ?? _getMultiConfigValues(yaml, 'capabilities');
+    languages = _args['languages'] ?? _getMultiConfigValues(yaml, 'languages');
+    appUriHandlerHosts = _args['app-uri-handler-hosts'] ??
+        _getMultiConfigValues(yaml, 'app_uri_handler_hosts');
     enableAtStartup = _args.wasParsed('enable-at-startup') ||
         yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
 
@@ -201,7 +205,7 @@ class Configuration {
     }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
-    languages ??= ['en-us'];
+    if (languages.isEmpty) languages.add('en-us');
 
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {
       throw 'msix version can be only in this format: "1.0.0.0"';
@@ -215,7 +219,7 @@ class Configuration {
       throw '"publisher display name" is too long, it should be less than 256 characters';
     }
 
-    if (!certificatePath.isNull || signToolOptions != null || store) {
+    if (!certificatePath.isNull || signToolOptions.isNotEmpty || store) {
       if (!certificatePath.isNull) {
         if (!(await File(certificatePath!).exists())) {
           throw 'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml';
@@ -312,25 +316,20 @@ class Configuration {
     }
   }
 
-  /// Get the languages list
-  Iterable<String>? _getLanguages(dynamic config) =>
-      ((_args['languages'] ?? config['languages']) as String?)
+  /// Get multiple configuration values
+  List<String> _getMultiConfigValues(dynamic config, String configName) =>
+      (config[configName] as String?)
           ?.split(',')
           .map((e) => e.trim())
-          .where((element) => element.isNotEmpty);
-
-  /// Get the app uri handler hosts list
-  Iterable<String>? _getAppUriHandlerHosts(dynamic config) =>
-      ((_args['app-uri-handler-hosts'] ?? config['app_uri_handler_hosts'])
-              as String?)
-          ?.split(',')
-          .map((e) => e.trim())
-          .where((element) => element.isNotEmpty);
+          .where((element) => element.isNotEmpty)
+          .toSet()
+          .toList() ??
+      [];
 
   /// Get the protocol activation list
-  Iterable<String> _getProtocolsActivation(dynamic config) =>
-      ((_args['protocol-activation'] ?? config['protocol_activation'])
-              as String?)
+  List<String> _getProtocolsActivation(dynamic config) =>
+      _args['protocol-activation'] ??
+      (config['protocol_activation'] as String?)
           ?.split(',')
           .map((protocol) => protocol
               .trim()
@@ -338,6 +337,8 @@ class Configuration {
               .replaceAll('://', '')
               .replaceAll(':/', '')
               .replaceAll(':', ''))
-          .where((protocol) => protocol.isNotEmpty) ??
+          .where((protocol) => protocol.isNotEmpty)
+          .toSet()
+          .toList() ??
       [];
 }

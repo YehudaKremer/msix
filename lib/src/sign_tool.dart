@@ -21,14 +21,14 @@ class SignTool {
 
     String subject = '';
 
-    if (_config.signToolOptions != null) {
-      if (_config.signToolOptions!.containsArgument('/sha1')) {
+    if (_config.signToolOptions.isNotEmpty) {
+      if (_config.signToolOptions.containsArgument('/sha1')) {
         subject = await _getCertificateSubjectByThumbprint();
-      } else if (_config.signToolOptions!.containsArguments(['/n', '/r'])) {
+      } else if (_config.signToolOptions.containsArguments(['/n', '/r'])) {
         subject = await _getCertificateSubjectBySubject();
-      } else if (_config.signToolOptions!.containsArgument('/i')) {
+      } else if (_config.signToolOptions.containsArgument('/i')) {
         subject = await _getCertificateSubjectByIssuer();
-      } else if (_config.signToolOptions!.containsArgument('/f')) {
+      } else if (_config.signToolOptions.containsArgument('/f')) {
         subject = await _getCertificateSubjectByFile(true);
       }
     } else if (_config.certificatePath != null &&
@@ -64,11 +64,11 @@ class SignTool {
   }
 
   String _getSignToolOptionsArgumentValue(String searchArgName) {
-    int argumentIndex = _config.signToolOptions!.indexWhere(
+    int argumentIndex = _config.signToolOptions.indexWhere(
         (argument) => argument.toLowerCase().trim() == searchArgName);
 
     /// return argument value
-    return _config.signToolOptions![argumentIndex + 1];
+    return _config.signToolOptions[argumentIndex + 1];
   }
 
   void _checkCertificateSubject(String subject) {
@@ -129,8 +129,7 @@ class SignTool {
         ? _getSignToolOptionsArgumentValue('/f')
         : _config.certificatePath!;
     String passwordValue = _config.certificatePassword ?? '';
-    if (fromSignToolOptions &&
-        _config.signToolOptions!.containsArgument('/p')) {
+    if (fromSignToolOptions && _config.signToolOptions.containsArgument('/p')) {
       passwordValue = _getSignToolOptionsArgumentValue('/p');
     }
     ProcessResult certificateDetailsProcess = await _executePowershellCommand(
@@ -205,9 +204,8 @@ class SignTool {
         '${_config.msixToolkitPath}/Redist.${_config.architecture}/signtool.exe';
     List<String> signtoolOptions = ['/v'];
 
-    if (_config.signToolOptions != null &&
-        _config.signToolOptions!.isNotEmpty) {
-      signtoolOptions = _config.signToolOptions!;
+    if (_config.signToolOptions.isNotEmpty) {
+      signtoolOptions = _config.signToolOptions;
     } else if (_config.certificatePath != null) {
       switch (extension(_config.certificatePath!).toLowerCase()) {
         case '.pfx':

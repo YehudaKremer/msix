@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:msix/src/appx_manifest.dart';
@@ -14,7 +15,7 @@ void main() {
   setUp(() async {
     GetIt.I.registerSingleton<Logger>(Logger.verbose());
 
-    config = Configuration([])
+    config = Configuration(ArgParser().parse([]))
       ..identityName = 'identityName_test'
       ..publisher = 'publisher_test'
       ..publisherName = 'publisherName_test'
@@ -24,11 +25,11 @@ void main() {
       ..displayName = 'displayName_test'
       ..architecture = 'x64'
       ..executableFileName = 'executableFileName_test'
-      ..protocolActivation = ['protocolActivation_test']
+      ..protocolsActivation = ['protocolActivation_test']
       ..executionAlias = 'protocolActivation_test'
-      ..fileExtension = 'fileExtension_test'
+      ..fileExtensions = ['fileExtension_test']
       ..buildFilesFolder = tempFolderPath
-      ..capabilities = 'location,microphone'
+      ..capabilities = ['location', 'microphone']
       ..languages = ['en-us']
       ..toastActivatorArguments = '----AppNotificationActivationServer'
       ..toastActivatorDisplayName = 'Toast activator';
@@ -160,7 +161,7 @@ void main() {
 
   test('protocolActivation is valid', () async {
     var testValue = 'http';
-    config.protocolActivation = [testValue];
+    config.protocolsActivation = [testValue];
     await AppxManifest().generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
@@ -172,9 +173,12 @@ void main() {
   });
 
   test('fileExtension is valid', () async {
-    var testValue =
-        'fileExtension_test1,.fileExtension_test2,  fileExtension_test3';
-    config.fileExtension = testValue;
+    var testValue = [
+      'fileExtension_test1',
+      '.fileExtension_test2',
+      'fileExtension_test3'
+    ];
+    config.fileExtensions = testValue;
     await AppxManifest().generateAppxManifest();
     var manifestContent =
         await File('$tempFolderPath/AppxManifest.xml').readAsString();
@@ -208,7 +212,7 @@ void main() {
         true);
   });
   test('capabilities is valid', () async {
-    var testValue = 'videosLibrary,microphone,  documentsLibrary';
+    var testValue = ['videosLibrary', 'microphone', '  documentsLibrary'];
     config.capabilities = testValue;
     await AppxManifest().generateAppxManifest();
     var manifestContent =

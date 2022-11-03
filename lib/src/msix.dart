@@ -62,9 +62,7 @@ class Msix {
     await Assets().cleanTemporaryFiles();
 
     if (!_config.noSignMsix && !_config.store) {
-      if (!_config.noInstallCert &&
-          (_config.signToolOptions == null ||
-              _config.signToolOptions!.isEmpty)) {
+      if (!_config.noInstallCert && _config.signToolOptions.isEmpty) {
         await _signTool.installCertificate();
       }
 
