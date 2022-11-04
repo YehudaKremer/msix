@@ -64,6 +64,43 @@ class Configuration {
 
   Configuration(this._args);
 
+  final List<String> yamlFields = ['name', 'description', 'version'];
+  final List<String> msixConfigFields = [
+    'msix_version',
+    'certificate_path',
+    'certificate_password',
+    'output_path',
+    'output_name',
+    'execution_alias',
+    'no_sign_msix',
+    'no_install_certificate',
+    'no_build_windows',
+    'no_trim_logo',
+    'store',
+    'debug',
+    'display_name',
+    'publisher_display_name',
+    'publisher',
+    'identity_name',
+    'logo_path',
+    'signtool_options',
+    'protocol_activation',
+    'file_extension',
+    'architecture',
+    'capabilities',
+    'languages',
+    'app_uri_handler_hosts',
+    'enable_at_startup'
+  ];
+  final List<String> appInstallerFields = [
+    'publish_folder_path',
+    'hours_between_update_checks',
+    'automatic_background_task',
+    'update_blocks_activation',
+    'show_prompt',
+    'force_update_from_any_version'
+  ];
+
   /// Gets the configuration values from [_args] or from pubspec.yaml file
   Future<void> getConfigValues() async {
     await _getMsixAssetsFolderPath();
@@ -161,6 +198,7 @@ class Configuration {
                 'true';
   }
 
+//TODO: split to two files
   /// Validate the configuration values and set default values
   Future<void> validateConfigValues() async {
     _logger.trace('validating config values');

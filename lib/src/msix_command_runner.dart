@@ -8,7 +8,7 @@ var msixCommandRunner = CommandRunner(
   ..argParser.addOption('certificate-path',
       abbr: 'c',
       help: 'Path to the certificate content to place in the store.',
-      valueHelp: 'C:\\certs\\signcert.pfx')
+      valueHelp: 'C:\\certs\\cert.pfx')
   ..argParser.addOption('version',
       help: 'The version number of the package, in a.b.c.d format.',
       valueHelp: '1.0.0.0')
@@ -56,9 +56,8 @@ var msixCommandRunner = CommandRunner(
       valueHelp: '.picture, .image')
   // TODO change 'h', getting error: 'Abbreviation "h" is already used by "help"'
   ..argParser.addOption('architecture',
-      help:
-          'Describes the architecture of the code in the package, x64 or x86, x64 is default.',
-      valueHelp: 'x64 or x86') // TODO: i deleted "abbr: 'h'"!!!
+      help: 'Describes the architecture of the code in the package.',
+      allowed: ['x64', 'x86']) // TODO: i deleted "abbr: 'h'"!!!
 
   ..argParser.addSeparator('Global flags:')
   ..argParser.addMultiOption('capabilities',
