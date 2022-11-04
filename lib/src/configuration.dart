@@ -100,6 +100,11 @@ class Configuration {
     'show_prompt',
     'force_update_from_any_version'
   ];
+  final List<String> toastActivatorFields = [
+    'clsid',
+    'arguments',
+    'display_name'
+  ];
 
   /// Gets the configuration values from [_args] or from pubspec.yaml file
   Future<void> getConfigValues() async {
