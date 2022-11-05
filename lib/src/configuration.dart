@@ -66,7 +66,7 @@ class Configuration {
 
   final List<String> yamlFields = ['name', 'description', 'version'];
   final List<String> msixConfigFields = [
-    'msix_version',
+    'version',
     'certificate_path',
     'certificate_password',
     'output_path',
@@ -114,7 +114,7 @@ class Configuration {
     appDescription = pubspec['description'];
     dynamic yaml = pubspec['msix_config'] ?? YamlMap();
     msixVersion =
-        _args['version'] ?? yaml['msix_version'] ?? _getPubspecVersion(pubspec);
+        _args['version'] ?? yaml['version'] ?? _getPubspecVersion(pubspec);
     certificatePath = _args['certificate-path'] ?? yaml['certificate_path'];
     certificatePassword = _args['certificate-password'] ??
         yaml['certificate_password']?.toString();
@@ -175,7 +175,7 @@ class Configuration {
         toastActivatorYaml['arguments']?.toString() ??
         '----AppNotificationActivationServer';
     toastActivatorDisplayName = _args['toast-activator-display-name'] ??
-        toastActivatorYaml['display_name']?.toString() ??
+        toastActivatorYaml['toast_activator_display_name']?.toString() ??
         'Toast activator';
 
     // app installer configurations

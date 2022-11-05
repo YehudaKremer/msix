@@ -5,7 +5,7 @@ The MSIX installer version number is used to determine updates to the app and co
 #### The version is determined by the first available option:
 
 1. Command line `--version` flag
-2. In `pubspec.yaml`, under the `msix_config` node, the `msix_version` value
+2. In `pubspec.yaml`, under the `msix_config` node, the `version` value
 3. Using the `version` field in `pubspec.yaml`.
    - The Pubspec version uses [semver], which is of the form `major.minor.patch-prerelease+build`
    - `msix` will use the `major.minor.patch` and append a `0` for the MSIX version

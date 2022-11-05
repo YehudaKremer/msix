@@ -49,7 +49,7 @@ msix_config:
   display_name: Flutter App
   publisher_display_name: Company Name
   identity_name: company.suite.flutterapp
-  msix_version: 1.0.0.0
+  version: 1.0.0.0
   logo_path: C:\path\to\logo.png
   capabilities: internetClient, location, microphone, webcam
 ```
@@ -67,7 +67,7 @@ See [Configurations Examples And Use Cases].
 | `display_name`                      | `--display-name` `-d`           | A friendly app name that can be displayed to users.                                               | `Flutter App`                               |
 | `publisher_display_name`            | `--publisher-display-name` `-u` | A friendly name for the publisher that can be displayed to users.                                 | `Company Name`                              |
 | `identity_name`                     | `--identity-name` `-i`          | Defines the unique identifier for the app.                                                        | `company.suite.flutterapp`                  |
-| `msix_version`                      | `--version`                     | The version number of the package, in `a.b.c.d` format. [see how the msix version is determined]. | `1.0.0.0`                                   |
+| `version`                           | `--version`                     | The version number of the package, in `a.b.c.d` format. [see how the msix version is determined]. | `1.0.0.0`                                   |
 | `logo_path`                         | `--logo-path` `-l`              | Path to an [image file] for use as the app icon (size recommended at least 400x400px).            | `C:\images\logo.png`                        |
 | `no_trim_logo`                      | `--no-trim-logo`                | If `true`, don't trim the logo image, default is `false`.                                         | `true`                                      |
 | `capabilities`                      | `--capabilities` `-e`           | List of the [capabilities][windows capabilities] the app requires.                                | `internetClient,location,microphone,webcam` |
@@ -139,7 +139,7 @@ To generate an MSIX file for publishing to the Microsoft Store, use the
 `--store` flag, or alternatively add `store: true` to the YAML configuration.
 
 **Note**: For apps published to the Microsoft Store, the configuration values
-`publisher_display_name`, `identity_name`, `msix_version` and `publisher` must
+`publisher_display_name`, `identity_name`, `version` and `publisher` must
 all be configured and should match the registered publisher and app name from
 the [Microsoft Store dashboard], as per [this screenshot].
 
@@ -171,7 +171,7 @@ msix_config:
     update_blocks_activation: true
     show_prompt: true
     force_update_from_any_version: false
-  msix_version: 1.0.3.0
+  version: 1.0.3.0
 ```
 
 | YAML name                       | Command-line argument             | Description (from Microsoft [schema reference])                                                                                                    | Example                      |

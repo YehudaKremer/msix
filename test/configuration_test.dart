@@ -72,15 +72,13 @@ msix_config:
 
   group('msix version:', () {
     test('valid version in yaml', () async {
-      await File(yamlTestPath)
-          .writeAsString(yamlContent + 'msix_version: 1.2.3.4');
+      await File(yamlTestPath).writeAsString(yamlContent + 'version: 1.2.3.4');
       await config.getConfigValues();
       expect(config.msixVersion, '1.2.3.4');
     });
 
     test('invalid version letter in yaml', () async {
-      await File(yamlTestPath)
-          .writeAsString(yamlContent + 'msix_version: 1.s.3.4');
+      await File(yamlTestPath).writeAsString(yamlContent + 'version: 1.s.3.4');
       await config.getConfigValues();
       await expectLater(
           config.validateConfigValues,
@@ -89,8 +87,7 @@ msix_config:
     });
 
     test('invalid version space in yaml', () async {
-      await File(yamlTestPath)
-          .writeAsString(yamlContent + 'msix_version: 1.s. 3.4');
+      await File(yamlTestPath).writeAsString(yamlContent + 'version: 1.s. 3.4');
       await config.getConfigValues();
       await expectLater(
           config.validateConfigValues,

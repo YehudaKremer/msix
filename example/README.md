@@ -5,7 +5,7 @@
 ```yaml
 msix_config:
   display_name: Flutter App
-  msix_version: 1.0.0.0
+  version: 1.0.0.0
   logo_path: C:\path\to\logo.png
 ```
 
@@ -17,7 +17,7 @@ msix_config:
   publisher_display_name: Company Name
   identity_name: 48434MySoftware.MyFlutterApp
   publisher: CN=BF212345-5644-46DF-8668-012044C1B138
-  msix_version: 1.0.1.0
+  version: 1.0.1.0
   store: true
 ```
 
@@ -26,7 +26,7 @@ msix_config:
 ```yaml
 msix_config:
   display_name: Flutter App
-  msix_version: 1.0.0.0
+  version: 1.0.0.0
   certificate_path: C:\path\to\myCertificate.pfx
   certificate_password: 1234
 ```
@@ -63,7 +63,7 @@ msix_config:
   display_name: Flutter App
   publisher_display_name: Company Name
   identity_name: company.suite.flutterapp
-  msix_version: 1.0.0.0
+  version: 1.0.0.0
   languages: en-us, de-de
   capabilities: "internetClient,location,microphone,webcam"
 ```
@@ -75,7 +75,7 @@ msix_config:
 ```yaml
 msix_config:
   display_name: Flutter App
-  msix_version: 1.0.0.0
+  version: 1.0.0.0
   signtool_options: /v /debug /sm /fd sha256 /n "Msix Testing" /tr http://timestamp.digicert.com
 ```
 
@@ -84,7 +84,7 @@ msix_config:
 ```yaml
 msix_config:
   display_name: Flutter App
-  msix_version: 1.0.0.0
+  version: 1.0.0.0
   signtool_options: /fd sha256 /i "Msix Testing" /tr http://timestamp.digicert.com
 ```
 
@@ -93,7 +93,7 @@ msix_config:
 ```yaml
 msix_config:
   display_name: Flutter App
-  msix_version: 1.0.0.0
+  version: 1.0.0.0
   signtool_options: /fd sha256 /sha1 028bc9922d198ee83d776aa19cb8e82897691e0c /tr http://timestamp.digicert.com
 ```
 
@@ -102,7 +102,7 @@ msix_config:
 ```yaml
 msix_config:
   display_name: Flutter App
-  msix_version: 1.0.0.0
+  version: 1.0.0.0
   signtool_options: /fd SHA256 /f "<path_to>\test_certificate.crt"
 ```
 
@@ -111,6 +111,6 @@ msix_config:
 ```yaml
 msix_config:
   display_name: Flutter App
-  msix_version: 1.0.0.0
+  version: 1.0.0.0
   signtool_options: /fd SHA256 /f "<path_to>\test_certificate.pfx" /p 1234
 ```

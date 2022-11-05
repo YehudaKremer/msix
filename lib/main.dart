@@ -12,6 +12,7 @@ import 'src/msix_command_runner.dart';
 import 'src/sign_tool.dart';
 
 void main(List<String> args) {
+  print(args);
   var runner = msixCommandRunner;
 
   // exclude -v (verbose) from the arguments
