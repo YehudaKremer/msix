@@ -2,12 +2,15 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
+import 'package:msix/src/configuration/commands.dart';
+import 'package:msix/src/configuration/config.dart';
 import 'package:package_config/package_config.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
-import 'command_line_converter.dart';
-import 'method_extensions.dart';
+import '../command_line_converter.dart';
+import '../method_extensions.dart';
+import 'configuration_fields.dart';
 
 /// Handles loading and validating the configuration values
 class Configuration {
@@ -64,47 +67,16 @@ class Configuration {
 
   Configuration(this._args);
 
-  final List<String> yamlFields = ['name', 'description', 'version'];
-  final List<String> msixConfigFields = [
-    'version',
-    'certificate_path',
-    'certificate_password',
-    'output_path',
-    'output_name',
-    'execution_alias',
-    'no_sign_msix',
-    'no_install_certificate',
-    'no_build_windows',
-    'no_trim_logo',
-    'store',
-    'debug',
-    'display_name',
-    'publisher_display_name',
-    'publisher',
-    'identity_name',
-    'logo_path',
-    'signtool_options',
-    'protocol_activation',
-    'file_extension',
-    'architecture',
-    'capabilities',
-    'languages',
-    'app_uri_handler_hosts',
-    'enable_at_startup'
-  ];
-  final List<String> appInstallerFields = [
-    'publish_folder_path',
-    'hours_between_update_checks',
-    'automatic_background_task',
-    'update_blocks_activation',
-    'show_prompt',
-    'force_update_from_any_version'
-  ];
-  final List<String> toastActivatorFields = [
-    'clsid',
-    'arguments',
-    'display_name'
-  ];
+  List<Config> getConfigArgs() {
+    List<Config> configs = rootFields
+        .map((field) => Config(name: field, useInCommands: [Commands.global]))
+        .toList();
+
+    configs.addAll(msixFields
+        .map((field) => Config(name: field, useInCommands: [Commands.global])));
+
+    return configs;
+  }
 
   /// Gets the configuration values from [_args] or from pubspec.yaml file
   Future<void> getConfigValues() async {

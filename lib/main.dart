@@ -7,15 +7,17 @@ import 'src/commands/build.dart';
 import 'src/commands/create.dart';
 import 'src/commands/pack.dart';
 import 'src/commands/publish.dart';
-import 'src/configuration.dart';
+import 'src/configuration/configuration.dart';
 import 'src/msix_command_runner.dart';
 import 'src/sign_tool.dart';
 
 void main(List<String> args) {
   print(args);
+
   var runner = msixCommandRunner;
 
   // exclude -v (verbose) from the arguments
+  // TODO: dont exclude, try add '-v' as flag
   var parsedArgs = runner.parse(args.where((arg) => arg != '-v'));
 
   _setupSingletonServices(parsedArgs);

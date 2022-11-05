@@ -75,14 +75,6 @@ var msixCommandRunner = CommandRunner(
       hide: true)
   ..argParser.addOption('toast-activator-display-name',
       help: 'Display name for the toast notifications.', hide: true)
-  ..argParser.addOption('publish-folder-path',
-      help:
-          'A path to publish folder, where the msix versions and the .appinstaller file will be saved.',
-      valueHelp: 'c:\\path\\to\\myPublishFolder')
-  ..argParser.addOption('hours-between-update-checks',
-      help:
-          'Defines the minimal time gap between update checks, when the user open the app. default is 0 (will check for update every time the app opened)',
-      valueHelp: '2')
   ..argParser.addFlag('no-build-windows',
       help: 'Don\'t run the build command flutter build windows.',
       negatable: false)
@@ -104,15 +96,4 @@ var msixCommandRunner = CommandRunner(
   ..argParser.addFlag('no-install-certificate',
       help: 'Don\'t try to install the certificate.', negatable: false)
   ..argParser.addFlag('no-trim-logo',
-      help: 'Don\'t trim the logo image.', negatable: false)
-  ..argParser.addFlag('automatic-background-task',
-      help:
-          'Checks for updates in the background every 8 hours independently of whether the user launched the app.')
-  ..argParser.addFlag('update-blocks-activation',
-      help: 'Defines the experience when an app update is checked for.')
-  ..argParser.addFlag('show-prompt',
-      help:
-          'Defines if a window is displayed when updates are being installed, and when updates are being checked for.')
-  ..argParser.addFlag('force-update-from-any-version',
-      help:
-          'Allows the app to update from version x to version x++ or to downgrade from version x to version x--.');
+      help: 'Don\'t trim the logo image.', negatable: false);

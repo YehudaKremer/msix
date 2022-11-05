@@ -5,7 +5,7 @@ import 'package:console/console.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path/path.dart';
 import 'method_extensions.dart';
-import 'configuration.dart';
+import 'configuration/configuration.dart';
 
 RegExp _publisherRegex = RegExp(
     '(CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID.(0|[1-9][0-9]*)(.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")(, ((CN|L|O|OU|E|C|S|STREET|T|G|I|SN|DC|SERIALNUMBER|(OID.(0|[1-9][0-9]*)(.(0|[1-9][0-9]*))+))=(([^,+="<>#;])+|".*")))*');

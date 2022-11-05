@@ -7,7 +7,7 @@ import 'method_extensions.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:cli_util/cli_logging.dart';
-import 'configuration.dart';
+import 'configuration/configuration.dart';
 
 /// Handles the creation of .appinstaller file and msix versions
 class AppInstaller {
