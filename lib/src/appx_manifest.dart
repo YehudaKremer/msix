@@ -44,7 +44,7 @@ class AppxManifest {
       <Description>${_config.appDescription.toHtmlEscape()}</Description>
     </Properties>
     <Resources>
-      ${_config.languages!.map((language) => '<Resource Language="$language" />').join('')}
+      ${_config.languages.map((language) => '<Resource Language="$language" />').join('')}
     </Resources>
     <Dependencies>
       <TargetDeviceFamily Name="Windows.Desktop" MinVersion="${_config.osMinVersion}" MaxVersionTested="10.0.22000.1" />

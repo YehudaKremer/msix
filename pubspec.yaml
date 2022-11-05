@@ -11,18 +11,16 @@ platforms:
   windows:
 
 dependencies:
-  flutter:
-    sdk: flutter
   args: ^2.3.1
-  yaml: ^3.1.0
-  path: ^1.8.0
-  package_config: ^2.0.2
+  yaml: ^3.1.1
+  package_config: ^2.1.0
+  pub_semver: ^2.1.2
   get_it: ^7.2.0
-  image: ^3.1.0
-  pub_semver: ^2.1.0
-  console: ^4.1.0
   cli_util: ^0.3.5
+  console: ^4.1.0
+  path: ^1.8.2
+  image: ^3.2.2
 
 dev_dependencies:
-  flutter_lints: ^1.0.4
-  test: ^1.20.1
+  flutter_lints: ^2.0.1
+  test: ^1.22.0
