@@ -6,7 +6,6 @@
 
 - use the cli command like this: `flutter pub run msix create`, instead of `flutter pub run msix:create` (also in the other command: `build`, `pack` and `publish` )
 - `msix_version` change to `version`
-- toast activator config: `display_name` is change to `toast_activator_display_name`
 - cli options change to flags:
   - `trim-logo` change to flag: `no-trim-logo`
   - `build-windows` change to flag: `no-build-windows`

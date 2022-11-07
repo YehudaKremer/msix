@@ -69,11 +69,11 @@ class Configuration {
 
   List<Config> getConfigArgs() {
     List<Config> configs = rootFields
-        .map((field) => Config(name: field, useInCommands: [Commands.global]))
+        .map((field) => Config(arg: field, useInCommands: [Commands.global]))
         .toList();
 
     configs.addAll(msixFields
-        .map((field) => Config(name: field, useInCommands: [Commands.global])));
+        .map((field) => Config(arg: field, useInCommands: [Commands.global])));
 
     return configs;
   }
@@ -147,7 +147,7 @@ class Configuration {
         toastActivatorYaml['arguments']?.toString() ??
         '----AppNotificationActivationServer';
     toastActivatorDisplayName = _args['toast-activator-display-name'] ??
-        toastActivatorYaml['toast_activator_display_name']?.toString() ??
+        toastActivatorYaml['display_name']?.toString() ??
         'Toast activator';
 
     // app installer configurations

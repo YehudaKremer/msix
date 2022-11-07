@@ -3,14 +3,19 @@ import 'commands.dart';
 
 //TODO add comments
 class Config {
-  final String name;
+  final String arg;
+  final String? _yaml;
+  String? get yaml => _yaml ?? arg.replaceAll('-', '_');
+
   final List<Commands> useInCommands;
   final String? yamlPath;
   final ArgConfig? argConfig;
 
   const Config(
-      {required this.name,
+      {required this.arg,
+      String? yaml,
       required this.useInCommands,
       this.yamlPath,
-      this.argConfig});
+      this.argConfig})
+      : _yaml = yaml;
 }
