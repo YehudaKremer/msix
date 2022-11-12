@@ -1,17 +1,19 @@
 import 'package:msix/src/configuration/config.dart';
+import 'package:msix/src/configuration/config_type.dart';
 
 import 'arg_config.dart';
 import 'commands.dart';
 import 'yaml_paths.dart';
 
-const List<Config> rootFields = [
-  Config(arg: 'name', useInCommands: [Commands.global]),
-  Config(arg: 'description', useInCommands: [Commands.global]),
-  Config(arg: 'version', useInCommands: [Commands.global])
-];
-const List<Config> msixFields = [
+const List<Config> configFields = [
+  Config(arg: 'name', type: ConfigType.flag, useInCommands: [Commands.global]),
+  Config(
+      arg: 'description',
+      type: ConfigType.option,
+      useInCommands: [Commands.global]),
   Config(
       arg: 'version',
+      type: ConfigType.option,
       useInCommands: [Commands.build, Commands.create, Commands.publish],
       yamlPath: YamlPaths.msixConfig,
       argConfig: ArgConfig(
@@ -20,6 +22,7 @@ const List<Config> msixFields = [
       )),
   Config(
       arg: 'certificate-path',
+      type: ConfigType.option,
       useInCommands: [Commands.build, Commands.create, Commands.publish],
       yamlPath: YamlPaths.msixConfig,
       argConfig: ArgConfig(
@@ -29,6 +32,7 @@ const List<Config> msixFields = [
       )),
   Config(
       arg: 'certificate-password',
+      type: ConfigType.option,
       useInCommands: [Commands.build, Commands.create, Commands.publish],
       yamlPath: YamlPaths.msixConfig,
       argConfig: ArgConfig(
@@ -37,6 +41,7 @@ const List<Config> msixFields = [
       )),
   Config(
     arg: 'output-path',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -46,6 +51,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'output-name',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -55,6 +61,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'execution-alias',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -63,12 +70,14 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'no-sign-msix',
+    type: ConfigType.flag,
     useInCommands: [Commands.pack, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(help: 'Don\'t sign the msix file.', negatable: false),
   ),
   Config(
     arg: 'no-install-certificate',
+    type: ConfigType.flag,
     useInCommands: [Commands.pack, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -76,6 +85,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'no-build-windows',
+    type: ConfigType.flag,
     useInCommands: [Commands.global],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -84,12 +94,14 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'no-trim-logo',
+    type: ConfigType.flag,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(help: 'Don\'t trim the logo image.', negatable: false),
   ),
   Config(
     arg: 'store',
+    type: ConfigType.flag,
     useInCommands: [Commands.build, Commands.pack, Commands.create],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -97,6 +109,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'debug',
+    type: ConfigType.flag,
     useInCommands: [Commands.global],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -105,6 +118,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'display-name',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -114,6 +128,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'publisher-display-name',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -123,6 +138,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'publisher',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -132,6 +148,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'identity-name',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -141,6 +158,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'logo-path',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -151,6 +169,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'signtool-options',
+    type: ConfigType.option,
     useInCommands: [Commands.global],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -160,6 +179,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'protocol-activation',
+    type: ConfigType.multiOption,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -168,6 +188,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'file-extension',
+    type: ConfigType.multiOption,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -177,6 +198,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'architecture',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -185,6 +207,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'capabilities',
+    type: ConfigType.multiOption,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -194,6 +217,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'languages',
+    type: ConfigType.multiOption,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -202,6 +226,7 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'app-uri-handler-hosts',
+    type: ConfigType.multiOption,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(
@@ -210,14 +235,14 @@ const List<Config> msixFields = [
   ),
   Config(
     arg: 'enable-at-startup',
+    type: ConfigType.flag,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.msixConfig,
     argConfig: ArgConfig(help: 'App start at startup or user log-in.'),
   ),
-];
-const List<Config> appInstallerFields = [
   Config(
     arg: 'publish-folder-path',
+    type: ConfigType.option,
     useInCommands: [Commands.publish],
     yamlPath: YamlPaths.appInstaller,
     argConfig: ArgConfig(
@@ -227,6 +252,7 @@ const List<Config> appInstallerFields = [
   ),
   Config(
     arg: 'hours-between-update-checks',
+    type: ConfigType.option,
     useInCommands: [Commands.publish],
     yamlPath: YamlPaths.appInstaller,
     argConfig: ArgConfig(
@@ -236,6 +262,7 @@ const List<Config> appInstallerFields = [
   ),
   Config(
     arg: 'automatic-background-task',
+    type: ConfigType.flag,
     useInCommands: [Commands.publish],
     yamlPath: YamlPaths.appInstaller,
     argConfig: ArgConfig(
@@ -244,6 +271,7 @@ const List<Config> appInstallerFields = [
   ),
   Config(
     arg: 'update-blocks-activation',
+    type: ConfigType.flag,
     useInCommands: [Commands.publish],
     yamlPath: YamlPaths.appInstaller,
     argConfig: ArgConfig(
@@ -251,6 +279,7 @@ const List<Config> appInstallerFields = [
   ),
   Config(
     arg: 'show-prompt',
+    type: ConfigType.flag,
     useInCommands: [Commands.publish],
     yamlPath: YamlPaths.appInstaller,
     argConfig: ArgConfig(
@@ -259,17 +288,17 @@ const List<Config> appInstallerFields = [
   ),
   Config(
     arg: 'force-update-from-any-version',
+    type: ConfigType.flag,
     useInCommands: [Commands.publish],
     yamlPath: YamlPaths.appInstaller,
     argConfig: ArgConfig(
         help:
             'Allows the app to update from version x to version x++ or to downgrade from version x to version x--.'),
   ),
-];
-const List<Config> toastActivatorFields = [
   Config(
     arg: 'toast-activator-clsid',
     yaml: 'clsid',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.toastActivator,
     argConfig:
@@ -278,6 +307,7 @@ const List<Config> toastActivatorFields = [
   Config(
     arg: 'toast-activator-arguments',
     yaml: 'arguments',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.toastActivator,
     argConfig: ArgConfig(
@@ -287,6 +317,7 @@ const List<Config> toastActivatorFields = [
   Config(
     arg: 'toast-activator-display-name',
     yaml: 'display_name',
+    type: ConfigType.option,
     useInCommands: [Commands.build, Commands.create, Commands.publish],
     yamlPath: YamlPaths.toastActivator,
     argConfig: ArgConfig(help: 'Display name for the toast notifications.'),

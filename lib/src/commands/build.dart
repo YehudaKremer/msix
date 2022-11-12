@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:args/command_runner.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:msix/src/method_extensions.dart';
-
+import '../configuration/commands.dart';
+import '../configuration/configuration.dart';
 import '../msix.dart';
 
 /// Execute with the `msix build` command
@@ -21,6 +21,8 @@ class BuildCommand extends Command {
     // TODO do "GetIt.I<Logger>" need to be in the constractor?
     _logger = GetIt.I<Logger>();
     _msix = GetIt.I<Msix>();
+
+    Configuration.addArguments(Commands.build, argParser);
   }
 
   @override

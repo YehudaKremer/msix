@@ -3,13 +3,14 @@ import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:msix/src/configuration/commands.dart';
-import 'package:msix/src/configuration/config.dart';
+import 'package:args/command_runner.dart';
 import 'package:package_config/package_config.dart';
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
 import '../command_line_converter.dart';
 import '../method_extensions.dart';
+import 'config_type.dart';
 import 'configuration_fields.dart';
 
 /// Handles loading and validating the configuration values
@@ -67,15 +68,44 @@ class Configuration {
 
   Configuration(this._args);
 
-  List<Config> getConfigArgs() {
-    List<Config> configs = rootFields
-        .map((field) => Config(arg: field, useInCommands: [Commands.global]))
-        .toList();
-
-    configs.addAll(msixFields
-        .map((field) => Config(arg: field, useInCommands: [Commands.global])));
-
-    return configs;
+  static void addArguments(Commands command, ArgParser argParser) {
+    configFields
+        .where((configField) =>
+            configField.useInCommands.contains(Commands.publish))
+        .forEach((configField) {
+      switch (configField.type) {
+        case ConfigType.option:
+          argParser.addOption(
+            configField.arg,
+            abbr: configField.argConfig?.abbr,
+            help: configField.argConfig?.help,
+            valueHelp: configField.argConfig?.valueHelp,
+            allowed: configField.argConfig?.allowed,
+            hide: configField.argConfig?.hide ?? false,
+          );
+          break;
+        case ConfigType.multiOption:
+          argParser.addMultiOption(
+            configField.arg,
+            abbr: configField.argConfig?.abbr,
+            help: configField.argConfig?.help,
+            valueHelp: configField.argConfig?.valueHelp,
+            allowed: configField.argConfig?.allowed,
+            hide: configField.argConfig?.hide ?? false,
+          );
+          break;
+        case ConfigType.flag:
+          argParser.addFlag(
+            configField.arg,
+            abbr: configField.argConfig?.abbr,
+            help: configField.argConfig?.help,
+            hide: configField.argConfig?.hide ?? false,
+            negatable: configField.argConfig?.hide ?? false,
+          );
+          break;
+        default:
+      }
+    });
   }
 
   /// Gets the configuration values from [_args] or from pubspec.yaml file

@@ -7,6 +7,7 @@ import 'src/commands/build.dart';
 import 'src/commands/create.dart';
 import 'src/commands/pack.dart';
 import 'src/commands/publish.dart';
+import 'src/configuration/commands.dart';
 import 'src/configuration/configuration.dart';
 import 'src/msix_command_runner.dart';
 import 'src/sign_tool.dart';
@@ -15,6 +16,9 @@ void main(List<String> args) {
   print(args);
 
   var runner = msixCommandRunner;
+
+//TODO: Invalid argument(s): Duplicate option or alias "version".
+  Configuration.addArguments(Commands.global, runner.argParser);
 
   // exclude -v (verbose) from the arguments
   // TODO: dont exclude, try add '-v' as flag

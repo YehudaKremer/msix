@@ -1,6 +1,7 @@
 import 'package:args/command_runner.dart';
 import 'package:get_it/get_it.dart';
-
+import '../configuration/commands.dart';
+import '../configuration/configuration.dart';
 import '../msix.dart';
 
 /// Execute with the `msix create` command
@@ -14,6 +15,8 @@ class CreateCommand extends Command {
 
   CreateCommand() {
     _msix = GetIt.I<Msix>();
+
+    Configuration.addArguments(Commands.create, argParser);
   }
 
   @override
