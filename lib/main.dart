@@ -17,7 +17,7 @@ void main(List<String> args) {
 
   var runner = msixCommandRunner;
 
-//TODO: Invalid argument(s): Duplicate option or alias "version".
+  //TODO: Invalid argument(s): Duplicate option or alias "version".
   Configuration.addArguments(Commands.global, runner.argParser);
 
   // exclude -v (verbose) from the arguments
@@ -40,6 +40,8 @@ _setupSingletonServices(ArgResults args) {
   GetIt.I.registerSingleton<Logger>(args.arguments.contains('-v')
       ? Logger.verbose()
       : Logger.standard(ansi: Ansi(true)));
+
+  // TODO: in Configuration - load yaml values in to cli command
 
   GetIt.I.registerSingleton<Configuration>(Configuration(args));
   GetIt.I.registerSingleton<SignTool>(SignTool());
