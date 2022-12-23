@@ -41,6 +41,7 @@ class Configuration {
   String? outputName;
   String? publishFolderPath;
   int hoursBetweenUpdateChecks = 0;
+  int buildNumber = 0;
   bool automaticBackgroundTask = false;
   bool updateBlocksActivation = false;
   bool showPrompt = false;
@@ -73,6 +74,10 @@ class Configuration {
     appName = pubspec['name'];
     appDescription = pubspec['description'];
     dynamic yaml = pubspec['msix_config'] ?? YamlMap();
+    buildNumber = int.parse(_args['build-number'] ??
+        yaml['build_number']?.toString() ??
+        '0');
+    if (buildNumber < 0) buildNumber = 0;
     msixVersion =
         _args['version'] ?? yaml['msix_version'] ?? _getPubspecVersion(pubspec);
     certificatePath = _args['certificate-path'] ?? yaml['certificate_path'];
@@ -296,6 +301,7 @@ class Configuration {
       ..addOption('toast-activator-display-name')
       ..addOption('publish-folder-path')
       ..addOption('hours-between-update-checks')
+      ..addOption('build-number')
       ..addOption('build-windows')
       ..addOption('app-uri-handler-hosts')
       ..addFlag('store')
@@ -357,7 +363,7 @@ class Configuration {
         pubspecVersion.major,
         pubspecVersion.minor,
         pubspecVersion.patch,
-        0
+        buildNumber
       ].join('.');
     } on FormatException {
       _logger.stderr(

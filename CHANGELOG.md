@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.7.1
+
+- add `build-number` configuration options for distribution outside of the microsoft store
+
 ## 3.7.0
 
 - add full support for [SignTool](https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe) usage (addressing [#155](https://github.com/YehudaKremer/msix/pull/155#issue-1421291620)), see [examples page](https://github.com/YehudaKremer/msix/tree/main/example)

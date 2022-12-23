@@ -9,6 +9,7 @@ The MSIX installer version number is used to determine updates to the app and co
 3. Using the `version` field in `pubspec.yaml`.
    - The Pubspec version uses [semver], which is of the form `major.minor.patch-prerelease+build`
    - `msix` will use the `major.minor.patch` and append a `0` for the MSIX version
+   - if `--build-number` is used then this number is appended instead of `0`
    - All prerelease and build info is discarded
 4. Fallback to `1.0.0.0`
 
