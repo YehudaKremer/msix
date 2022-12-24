@@ -49,4 +49,6 @@ _setupSingletonServices(ArgResults args) {
   //TODO: make Msix instance depends on Configuration insttace
   //so we dont need to invoke "_msix.loadConfigurations()"
   GetIt.I.registerSingleton<Msix>(Msix());
+
+  // TODO: https://github.com/YehudaKremer/msix/commit/9c4de2910d7ad19801aa252a7f6950449f7245a3
 }
