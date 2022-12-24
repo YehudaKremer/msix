@@ -48,12 +48,12 @@ class AppInstaller {
             'You publishing older version ($msixVersion) then last publish version ($lastPublishVersion)');
       }
 
-      String installCertificate = await readInput(
+      String incrementVersion = await readInput(
           'Do you want to increment it to version ${lastPublishVersion.nextPatch} ?'
                   .emphasized +
               ' (y/N) '.gray);
 
-      if (installCertificate.toLowerCase().trim() == 'y') {
+      if (incrementVersion.toLowerCase().trim() == 'y') {
         _config.msixVersion =
             '${lastPublishVersion.nextPatch}$msixVersionRevision';
       }
