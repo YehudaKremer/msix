@@ -16,6 +16,8 @@ class WindowsBuild {
   Future<void> build() async {
     List<String> buildWindowsArguments = ['build', 'windows'];
     if (_config.createWithDebugBuildFiles) buildWindowsArguments.add('--debug');
+    buildWindowsArguments.add('--build-number');
+    buildWindowsArguments.add(_config.buildNumber.toString(); 
 
     Progress loggerProgress = _logger
         .progress('running "flutter ${buildWindowsArguments.join(' ')}"');
