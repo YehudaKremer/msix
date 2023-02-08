@@ -31,6 +31,7 @@ class Configuration {
   String? logoPath;
   String? executableFileName;
   List<String>? signToolOptions;
+  List<String>? windowsBuildArgs;
   late Iterable<String> protocolActivation;
   String? executionAlias;
   String? fileExtension;
@@ -110,11 +111,19 @@ class Configuration {
     publisher = _args['publisher'] ?? yaml['publisher'];
     identityName = _args['identity-name'] ?? yaml['identity_name'];
     logoPath = _args['logo-path'] ?? yaml['logo_path'];
+
     final String? signToolOptionsConfig =
         (_args['signtool-options'] ?? yaml['signtool_options'])?.toString();
     if (signToolOptionsConfig != null && signToolOptionsConfig.isNotEmpty) {
       CommandLineConverter commandLineConverter = CommandLineConverter();
       signToolOptions = commandLineConverter.convert(signToolOptionsConfig);
+    }
+
+    final String? windowsBuildArgsConfig =
+        (_args['windows-build-args'] ?? yaml['windows_build_args'])?.toString();
+    if (windowsBuildArgsConfig != null && windowsBuildArgsConfig.isNotEmpty) {
+      CommandLineConverter commandLineConverter = CommandLineConverter();
+      windowsBuildArgs = commandLineConverter.convert(windowsBuildArgsConfig);
     }
 
     //CommandLineConverter
@@ -282,6 +291,7 @@ class Configuration {
       ..addOption('output-path', abbr: 'o')
       ..addOption('output-name', abbr: 'n')
       ..addOption('signtool-options')
+      ..addOption('windows-build-args')
       ..addOption('protocol-activation')
       ..addOption('execution-alias')
       ..addOption('file-extension', abbr: 'f')

@@ -85,13 +85,14 @@ See [Configurations Examples And Use Cases].
 <details>
 <summary>Build configuration (click to expand)</summary>
 
-| YAML name       | Command-line argument          | Description                                                                                                                      | Example              |
-| --------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| `debug`         | `--debug` or `--release`       | Create MSIX from the **debug** or **release** build files (`\build\windows\runner\<Debug/Release>`), **release** is the default. | `true`               |
-| `output_path`   | `--output-path` `-o`           | The directory where the output MSIX file should be stored.                                                                       | `C:\src\some\folder` |
-| `output_name`   | `--output-name` `-n`           | The filename that should be given to the created MSIX file.                                                                      | `flutterApp_dev`     |
-| `architecture`  | `--architecture` `-h`          | Describes the architecture of the code in the package, `x64` or `x86`, `x64` is default.                                         | `x64`                |
-| `build_windows` | `--build-windows <true/false>` | If `false`, don't run the build command `flutter build windows`, default is `true`.                                              | `true`               |
+| YAML name            | Command-line argument          | Description                                                                                                                      | Example                                             |
+| -------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `debug`              | `--debug` or `--release`       | Create MSIX from the **debug** or **release** build files (`\build\windows\runner\<Debug/Release>`), **release** is the default. | `true`                                              |
+| `output_path`        | `--output-path` `-o`           | The directory where the output MSIX file should be stored.                                                                       | `C:\src\some\folder`                                |
+| `output_name`        | `--output-name` `-n`           | The filename that should be given to the created MSIX file.                                                                      | `flutterApp_dev`                                    |
+| `architecture`       | `--architecture` `-h`          | Describes the architecture of the code in the package, `x64` or `x86`, `x64` is default.                                         | `x64`                                               |
+| `build_windows`      | `--build-windows <true/false>` | If `false`, don't run the build command `flutter build windows`, default is `true`.                                              | `true`                                              |
+| `windows_build_args` | `--windows-build-args`         | Any arguments for the `flutter build windows` command.                                                                           | `--obfuscate --split-debug-info=C:\Users\me\folder` |
 
 </details>
 
