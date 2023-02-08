@@ -54,8 +54,8 @@ void main() {
   });
 
   test('generate icons (expect 82 new images)', () async {
-    Image image = Image(320, 240);
-    fill(image, getColor(0, 0, 255));
+    Image image = Image(width: 320, height: 240);
+    fill(image, color: ColorRgb8(0, 0, 255));
     await File('$tempFolderPath/test.png').writeAsBytes(encodePng(image));
     await Directory('$tempFolderPath/Images').create(recursive: true);
     await Future.delayed(const Duration(milliseconds: 200));

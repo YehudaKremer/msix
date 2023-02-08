@@ -147,16 +147,17 @@ class Assets {
       );
     }
 
-    Image imageCanvas = Image(scaledWidth.ceil(), scaledHeight.ceil());
+    Image imageCanvas = Image(
+      width: scaledWidth.ceil(),
+      height: scaledHeight.ceil(),
+      numChannels: 4,
+    );
 
-    int drawX = imageCanvas.width ~/ 2 - resizedImage.width ~/ 2;
-    int drawY = imageCanvas.height ~/ 2 - resizedImage.height ~/ 2;
-    drawImage(
+    compositeImage(
       imageCanvas,
       resizedImage,
-      dstX: drawX > 0 ? drawX : 0,
-      dstY: drawY > 0 ? drawY : 0,
-      blend: false,
+      center: true,
+      linearBlend: true,
     );
 
     String fileName = name;
