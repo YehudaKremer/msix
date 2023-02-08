@@ -64,7 +64,7 @@ msix_config:
 
   test('valid description', () async {
     await File(yamlTestPath)
-        .writeAsString('description: description123' + yamlContent);
+        .writeAsString('description: description123$yamlContent');
     await config.getConfigValues();
     expect(config.appDescription, 'description123');
   });
@@ -72,14 +72,14 @@ msix_config:
   group('msix version:', () {
     test('valid version in yaml', () async {
       await File(yamlTestPath)
-          .writeAsString(yamlContent + 'msix_version: 1.2.3.4');
+          .writeAsString('${yamlContent}msix_version: 1.2.3.4');
       await config.getConfigValues();
       expect(config.msixVersion, '1.2.3.4');
     });
 
     test('invalid version letter in yaml', () async {
       await File(yamlTestPath)
-          .writeAsString(yamlContent + 'msix_version: 1.s.3.4');
+          .writeAsString('${yamlContent}msix_version: 1.s.3.4');
       await config.getConfigValues();
       await expectLater(
           config.validateConfigValues,
@@ -89,7 +89,7 @@ msix_config:
 
     test('invalid version space in yaml', () async {
       await File(yamlTestPath)
-          .writeAsString(yamlContent + 'msix_version: 1.s. 3.4');
+          .writeAsString('${yamlContent}msix_version: 1.s. 3.4');
       await config.getConfigValues();
       await expectLater(
           config.validateConfigValues,
@@ -167,8 +167,8 @@ msix_config:
     test('exited certificate path with password', () async {
       const pfxTestPath = '$tempFolderPath/test.pfx';
       await File(pfxTestPath).create();
-      await File(yamlTestPath).writeAsString(yamlContent +
-          '''certificate_path: $pfxTestPath  
+      await File(yamlTestPath)
+          .writeAsString('''${yamlContent}certificate_path: $pfxTestPath  
   certificate_password: 1234''');
       await config.getConfigValues();
       expect(config.certificatePath, pfxTestPath);
@@ -176,7 +176,7 @@ msix_config:
 
     test('invalid certificate path', () async {
       await File(yamlTestPath).writeAsString(
-          yamlContent + 'certificate_path: $tempFolderPath/test123.pfx');
+          '${yamlContent}certificate_path: $tempFolderPath/test123.pfx');
       await config.getConfigValues();
       await expectLater(
           config.validateConfigValues,
@@ -188,7 +188,7 @@ msix_config:
       const pfxTestPath = '$tempFolderPath/test.pfx';
       await File(pfxTestPath).create();
       await File(yamlTestPath)
-          .writeAsString(yamlContent + 'certificate_path: $pfxTestPath');
+          .writeAsString('${yamlContent}certificate_path: $pfxTestPath');
       await config.getConfigValues();
       await expectLater(
           config.validateConfigValues,

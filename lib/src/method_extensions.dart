@@ -11,11 +11,11 @@ extension StringValidations on String? {
 
 /// Used for colored logs
 extension StringExtensions on String {
-  String get emphasized => '${Ansi(true).bold}${this}${Ansi(true).none}';
-  String get green => '${Ansi(true).green}${this}${Ansi(true).none}';
-  String get blue => '${Ansi(true).blue}${this}${Ansi(true).none}';
-  String get red => '${Ansi(true).red}${this}${Ansi(true).none}';
-  String get gray => '${Ansi(true).gray}${this}${Ansi(true).none}';
+  String get emphasized => '${Ansi(true).bold}$this${Ansi(true).none}';
+  String get green => '${Ansi(true).green}$this${Ansi(true).none}';
+  String get blue => '${Ansi(true).blue}$this${Ansi(true).none}';
+  String get red => '${Ansi(true).red}$this${Ansi(true).none}';
+  String get gray => '${Ansi(true).gray}$this${Ansi(true).none}';
 }
 
 extension StringListExtensions on List<String> {

@@ -345,8 +345,7 @@ class Configuration {
     Package msixPackage =
         packagesConfig.packages.firstWhere((package) => package.name == "msix");
     String path =
-        msixPackage.packageUriRoot.toString().replaceAll('file:///', '') +
-            'assets';
+        '${msixPackage.packageUriRoot.toString().replaceAll('file:///', '')}assets';
 
     msixAssetsPath = Uri.decodeFull(path);
   }
