@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.8.0
+
+- update the [Image](https://pub.dev/packages/image) dependency package to version >=4.0.0
+- added `windows_build_args` config option, see "Build configuration" documentation table for more details
+
 ## 3.7.0
 
 - add full support for [SignTool](https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe) usage (addressing [#155](https://github.com/YehudaKremer/msix/pull/155#issue-1421291620)), see [examples page](https://github.com/YehudaKremer/msix/tree/main/example)
