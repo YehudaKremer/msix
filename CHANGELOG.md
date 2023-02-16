@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.8.1
+
+- fix [#178](https://github.com/YehudaKremer/msix/issues/178)
+
 ## 3.8.0
 
 - update the [Image](https://pub.dev/packages/image) dependency package to version >=4.0.0
