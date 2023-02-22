@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.8.2
+
+- fix [#180](https://github.com/YehudaKremer/msix/issues/180)
+
 ## 3.8.1
 
 - fix [#178](https://github.com/YehudaKremer/msix/issues/178)
