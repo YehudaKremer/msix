@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.8.3
+
+- add `screenshot` and `issue_tracker` to the package metadata
+
 ## 3.8.2
 
 - fix [#180](https://github.com/YehudaKremer/msix/issues/180)
