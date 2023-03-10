@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.8.3
+## 3.8.4
 
 - add `screenshot` and `issue_tracker` to the package metadata
 
