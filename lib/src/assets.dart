@@ -112,19 +112,12 @@ class Assets {
 
   /// Generate icon with specified size, padding and scale
   Future<void> _generateIcon(String name, _Size size,
-      {double scale = 1,
-      double paddingWidthPercent = 0,
-      double paddingHeightPercent = 0}) async {
-    double scaledWidth = size.width * scale;
-    double scaledHeight = size.height * scale;
-    int widthLessPaddingWidth =
-        (scaledWidth - (scaledWidth * paddingWidthPercent)).ceil();
-    int heightLessPaddingHeight =
-        (scaledHeight - (scaledHeight * paddingHeightPercent)).ceil();
-    Interpolation interpolation =
-        widthLessPaddingWidth < 200 || heightLessPaddingHeight < 200
-            ? Interpolation.average
-            : Interpolation.cubic;
+      {double scale = 1}) async {
+    int scaledWidth = (size.width * scale).ceil();
+    int scaledHeight = (size.height * scale).ceil();
+    Interpolation interpolation = scaledWidth < 200 || scaledHeight < 200
+        ? Interpolation.average
+        : Interpolation.cubic;
 
     if (_config.trimLogo) {
       try {
@@ -133,16 +126,16 @@ class Assets {
     }
 
     Image resizedImage;
-    if (widthLessPaddingWidth > heightLessPaddingHeight) {
+    if (scaledWidth > scaledHeight) {
       resizedImage = copyResize(
         image,
-        height: heightLessPaddingHeight,
+        height: scaledHeight,
         interpolation: interpolation,
       );
     } else {
       resizedImage = copyResize(
         image,
-        width: widthLessPaddingWidth,
+        width: scaledWidth,
         interpolation: interpolation,
       );
     }
@@ -173,60 +166,47 @@ class Assets {
   Future<void> _generateAssetsIconsPart1(SendPort port) async {
     await Future.wait([
       // SmallTile
-      _generateIcon('SmallTile', const _Size(71, 71),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),
-      _generateIcon('SmallTile', const _Size(71, 71),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.34, scale: 1.25),
-      _generateIcon('SmallTile', const _Size(71, 71),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.34, scale: 1.5),
-      _generateIcon('SmallTile', const _Size(71, 71),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.34, scale: 2),
-      _generateIcon('SmallTile', const _Size(71, 71),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.34, scale: 4),
+      _generateIcon('SmallTile', const _Size(71, 71)),
+      _generateIcon('SmallTile', const _Size(71, 71), scale: 1.25),
+      _generateIcon('SmallTile', const _Size(71, 71), scale: 1.5),
+      _generateIcon('SmallTile', const _Size(71, 71), scale: 2),
+      _generateIcon('SmallTile', const _Size(71, 71), scale: 4),
       // Square150x150Logo (Medium tile)
-      _generateIcon('Square150x150Logo', const _Size(150, 150),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),
-      _generateIcon('Square150x150Logo', const _Size(150, 150),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.25),
-      _generateIcon('Square150x150Logo', const _Size(150, 150),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.5),
-      _generateIcon('Square150x150Logo', const _Size(150, 150),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 2),
-      _generateIcon('Square150x150Logo', const _Size(150, 150),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 4),
+      _generateIcon(
+        'Square150x150Logo',
+        const _Size(150, 150),
+      ),
+      _generateIcon('Square150x150Logo', const _Size(150, 150), scale: 1.25),
+      _generateIcon('Square150x150Logo', const _Size(150, 150), scale: 1.5),
+      _generateIcon('Square150x150Logo', const _Size(150, 150), scale: 2),
+      _generateIcon('Square150x150Logo', const _Size(150, 150), scale: 4),
       // Wide310x150Logo (Wide tile)
-      _generateIcon('Wide310x150Logo', const _Size(310, 150),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),
-      _generateIcon('Wide310x150Logo', const _Size(310, 150),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.25),
-      _generateIcon('Wide310x150Logo', const _Size(310, 150),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.5),
-      _generateIcon('Wide310x150Logo', const _Size(310, 150),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 2),
-      _generateIcon('Wide310x150Logo', const _Size(310, 150),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 4),
+      _generateIcon(
+        'Wide310x150Logo',
+        const _Size(310, 150),
+      ),
+      _generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 1.25),
+      _generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 1.5),
+      _generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 2),
+      _generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 4),
       // LargeTile
-      _generateIcon('LargeTile', const _Size(310, 310),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),
-      _generateIcon('LargeTile', const _Size(310, 310),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.25),
-      _generateIcon('LargeTile', const _Size(310, 310),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.5),
-      _generateIcon('LargeTile', const _Size(310, 310),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 2),
-      _generateIcon('LargeTile', const _Size(310, 310),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 4),
+      _generateIcon(
+        'LargeTile',
+        const _Size(310, 310),
+      ),
+      _generateIcon('LargeTile', const _Size(310, 310), scale: 1.25),
+      _generateIcon('LargeTile', const _Size(310, 310), scale: 1.5),
+      _generateIcon('LargeTile', const _Size(310, 310), scale: 2),
+      _generateIcon('LargeTile', const _Size(310, 310), scale: 4),
       // Square44x44Logo (App icon)
-      _generateIcon('Square44x44Logo', const _Size(44, 44),
-          paddingWidthPercent: 0.16, paddingHeightPercent: 0.16),
-      _generateIcon('Square44x44Logo', const _Size(44, 44),
-          paddingWidthPercent: 0.16, paddingHeightPercent: 0.16, scale: 1.25),
-      _generateIcon('Square44x44Logo', const _Size(44, 44),
-          paddingWidthPercent: 0.16, paddingHeightPercent: 0.16, scale: 1.5),
-      _generateIcon('Square44x44Logo', const _Size(44, 44),
-          paddingWidthPercent: 0.16, paddingHeightPercent: 0.16, scale: 2),
-      _generateIcon('Square44x44Logo', const _Size(44, 44),
-          paddingWidthPercent: 0.16, paddingHeightPercent: 0.16, scale: 4),
+      _generateIcon(
+        'Square44x44Logo',
+        const _Size(44, 44),
+      ),
+      _generateIcon('Square44x44Logo', const _Size(44, 44), scale: 1.25),
+      _generateIcon('Square44x44Logo', const _Size(44, 44), scale: 1.5),
+      _generateIcon('Square44x44Logo', const _Size(44, 44), scale: 2),
+      _generateIcon('Square44x44Logo', const _Size(44, 44), scale: 4),
     ]);
 
     Isolate.exit(port);
@@ -315,16 +295,14 @@ class Assets {
       _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-96',
           const _Size(96, 96)),
       // SplashScreen
-      _generateIcon('SplashScreen', const _Size(620, 300),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5),
-      _generateIcon('SplashScreen', const _Size(620, 300),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.25),
-      _generateIcon('SplashScreen', const _Size(620, 300),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 1.5),
-      _generateIcon('SplashScreen', const _Size(620, 300),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 2),
-      _generateIcon('SplashScreen', const _Size(620, 300),
-          paddingWidthPercent: 0.34, paddingHeightPercent: 0.5, scale: 4),
+      _generateIcon(
+        'SplashScreen',
+        const _Size(620, 300),
+      ),
+      _generateIcon('SplashScreen', const _Size(620, 300), scale: 1.25),
+      _generateIcon('SplashScreen', const _Size(620, 300), scale: 1.5),
+      _generateIcon('SplashScreen', const _Size(620, 300), scale: 2),
+      _generateIcon('SplashScreen', const _Size(620, 300), scale: 4),
       // BadgeLogo
       _generateIcon('BadgeLogo', const _Size(24, 24)),
       _generateIcon('BadgeLogo', const _Size(24, 24), scale: 1.25),
