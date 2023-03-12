@@ -125,6 +125,8 @@ class Assets {
       } catch (_) {}
     }
 
+    image = image.convert(numChannels: 4);
+
     Image resizedImage;
     if (scaledWidth > scaledHeight) {
       resizedImage = copyResize(
