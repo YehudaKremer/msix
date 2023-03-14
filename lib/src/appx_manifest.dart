@@ -87,13 +87,14 @@ class AppxManifest {
         !_config.toastActivatorCLSID.isNull ||
         (_config.appUriHandlerHosts != null &&
             _config.appUriHandlerHosts!.isNotEmpty) ||
-        _config.enableAtStartup) {
+        _config.enableAtStartup ||
+        _config.startupTask != null) {
       return '''<Extensions>
       ${!_config.executionAlias.isNull ? _getExecutionAliasExtension() : ''}
       ${_config.protocolActivation.isNotEmpty ? _getProtocolActivationExtension() : ''}
       ${!_config.fileExtension.isNull ? _getFileAssociationsExtension() : ''}
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
-      ${_config.enableAtStartup ? _getStartupTaskExtension() : ''}
+      ${_config.enableAtStartup || _config.startupTask != null ? _getStartupTaskExtension() : ''}
       ${_config.appUriHandlerHosts != null && _config.appUriHandlerHosts!.isNotEmpty ? _getAppUriHandlerHostExtension() : ''}
         </Extensions>''';
     } else {
@@ -152,8 +153,14 @@ class AppxManifest {
   }
 
   String _getStartupTaskExtension() {
-    return '''<desktop:Extension Category="windows.startupTask" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication">
-      <desktop:StartupTask TaskId="${_config.appName!.replaceAll('_', '')}" Enabled="true" DisplayName="${_config.displayName.toHtmlEscape()}"/>
+    final taskId =
+        _config.startupTask?.taskId ?? _config.appName?.replaceAll('_', '');
+    final enabled = _config.startupTask?.enabled ?? true;
+    final parameters = _config.startupTask?.parameters != null
+        ? 'uap10:Parameters="${_config.startupTask?.parameters}"'
+        : '';
+    return '''<desktop:Extension Category="windows.startupTask" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication" $parameters>
+      <desktop:StartupTask TaskId="$taskId" Enabled="$enabled" DisplayName="${_config.displayName.toHtmlEscape()}"/>
       </desktop:Extension>''';
   }
 

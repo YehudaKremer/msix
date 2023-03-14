@@ -77,6 +77,7 @@ See [Configurations Examples And Use Cases].
 | `enable_at_startup`                 | `--enable-at-startup`           | App start at startup or user log-in.                                                              | `true`                                      |
 | `store`                             | `--store`                       | Generate a MSIX file for publishing to the Microsoft Store.                                       | `false`                                     |
 | [Toast Notifications configuration] |                                 |                                                                                                   |                                             |
+| [Startup Task configuration]        |                                 |                                                                                                   |                                             |
 
 </details>
 
