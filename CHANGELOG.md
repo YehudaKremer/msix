@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.9.2
+
+- update `cli_util` dependency to `0.4.0`
+
 ## 3.9.1
 
 - remove padding from generated icons (fix [#179](https://github.com/YehudaKremer/msix/issues/179))
