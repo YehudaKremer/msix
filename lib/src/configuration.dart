@@ -53,6 +53,7 @@ class Configuration {
   bool trimLogo = true;
   bool createWithDebugBuildFiles = false;
   bool enableAtStartup = false;
+  StartupTask? startupTask;
   Iterable<String>? appUriHandlerHosts;
   Iterable<String>? languages;
   String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
@@ -138,6 +139,11 @@ class Configuration {
     appUriHandlerHosts = _getAppUriHandlerHosts(yaml);
     enableAtStartup = _args.wasParsed('enable-at-startup') ||
         yaml['enable_at_startup']?.toString().toLowerCase() == 'true';
+
+    // A more advanced version of 'enable_at_startup'
+    startupTask = yaml['startup_task'] != null
+        ? StartupTask.fromMap(yaml['startup_task'], appName!)
+        : null;
 
     // toast activator configurations
     dynamic toastActivatorYaml = yaml['toast_activator'] ?? YamlMap();
@@ -404,4 +410,31 @@ class Configuration {
               .replaceAll(':', ''))
           .where((protocol) => protocol.isNotEmpty) ??
       [];
+}
+
+/// A more advanced version of 'enable_at_startup'.
+class StartupTask {
+  /// Identifier to enable / disable programmatically
+  final String taskId;
+
+  /// If true, then autostart is enabled by default
+  final bool enabled;
+
+  /// Parameters separated by space.
+  /// This is useful to detect if the app was started automatically.
+  final String? parameters;
+
+  StartupTask({
+    required this.taskId,
+    required this.enabled,
+    required this.parameters,
+  });
+
+  factory StartupTask.fromMap(Map map, String appName) {
+    return StartupTask(
+      taskId: map['task_id'] ?? appName.replaceAll('_', ''),
+      enabled: map['enabled'] ?? true,
+      parameters: map['parameters'],
+    );
+  }
 }
