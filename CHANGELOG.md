@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.10.0
+## 3.10.1
 
 - add [startup task](https://github.com/YehudaKremer/msix/blob/main/doc/startup_task_configuration.md) configuration
 

@@ -76,8 +76,8 @@ See [Configurations Examples And Use Cases].
 | `execution_alias`                   | `--execution-alias`             | [Execution alias] command (cmd) that will activate the app.                                       | `myapp`                                     |
 | `enable_at_startup`                 | `--enable-at-startup`           | App start at startup or user log-in.                                                              | `true`                                      |
 | `store`                             | `--store`                       | Generate a MSIX file for publishing to the Microsoft Store.                                       | `false`                                     |
-| [Toast Notifications configuration] |                                 | pass the app values (args) on startup or user log-in                                              |                                             |
-| [Startup Task configuration]        |                                 |                                                                                                   |                                             |
+| [Toast Notifications configuration] |                                 |                                                                                                   |                                             |
+| [Startup Task configuration]        |                                 | pass the app values (args) on startup or user log-in                                              |                                             |
 
 </details>
 
