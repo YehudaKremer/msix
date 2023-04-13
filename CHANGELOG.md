@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.10.0
+
+- add [startup task](https://github.com/YehudaKremer/msix/blob/main/doc/startup_task_configuration.md) configuration
+
 ## 3.9.2
 
 - update `cli_util` dependency to `0.4.0`
