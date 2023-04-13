@@ -4,9 +4,6 @@ import 'package:get_it/get_it.dart';
 import 'method_extensions.dart';
 import 'configuration.dart';
 
-const runnerRcPath = 'windows/runner/Runner.rc';
-const mainCppPath = 'windows/runner/main.cpp';
-
 /// Handles windows files build steps
 class WindowsBuild {
   final Logger _logger = GetIt.I<Logger>();
