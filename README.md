@@ -61,7 +61,7 @@ See [Configurations Examples And Use Cases].
 <summary>MSIX configuration (click to expand)</summary>
 
 | YAML name                           | Command-line argument           | Description (from Microsoft [Package manifest schema reference])                                  | Example                                     |
-| ----------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+|-------------------------------------|---------------------------------|---------------------------------------------------------------------------------------------------|---------------------------------------------|
 | `display_name`                      | `--display-name` `-d`           | A friendly app name that can be displayed to users.                                               | `Flutter App`                               |
 | `publisher_display_name`            | `--publisher-display-name` `-u` | A friendly name for the publisher that can be displayed to users.                                 | `Company Name`                              |
 | `identity_name`                     | `--identity-name` `-i`          | Defines the unique identifier for the app.                                                        | `company.suite.flutterapp`                  |
@@ -76,6 +76,7 @@ See [Configurations Examples And Use Cases].
 | `execution_alias`                   | `--execution-alias`             | [Execution alias] command (cmd) that will activate the app.                                       | `myapp`                                     |
 | `enable_at_startup`                 | `--enable-at-startup`           | App start at startup or user log-in.                                                              | `true`                                      |
 | `store`                             | `--store`                       | Generate a MSIX file for publishing to the Microsoft Store.                                       | `false`                                     |
+| `os_min_version`                    | `--os-min-version`              | Set minimum OS version                                                                            | `10.0.17763.0`                              |
 | [Toast Notifications configuration] |                                 |                                                                                                   |                                             |
 | [Startup Task configuration]        |                                 | pass the app values (args) on startup or user log-in                                              |                                             |
 

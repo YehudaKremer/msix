@@ -112,6 +112,7 @@ class Configuration {
     publisher = _args['publisher'] ?? yaml['publisher'];
     identityName = _args['identity-name'] ?? yaml['identity_name'];
     logoPath = _args['logo-path'] ?? yaml['logo_path'];
+    osMinVersion = _args['os-min-version'] ?? yaml['os_min_version'] ?? osMinVersion;
 
     final String? signToolOptionsConfig =
         (_args['signtool-options'] ?? yaml['signtool_options'])?.toString();
@@ -294,6 +295,7 @@ class Configuration {
       ..addOption('identity-name', abbr: 'i')
       ..addOption('publisher', abbr: 'b')
       ..addOption('logo-path', abbr: 'l')
+      ..addOption('os-min-version')
       ..addOption('output-path', abbr: 'o')
       ..addOption('output-name', abbr: 'n')
       ..addOption('signtool-options')
