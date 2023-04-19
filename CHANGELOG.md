@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.11.0
+
+- add `os_min_version` configuration
+
 ## 3.10.1
 
 - add [startup task](https://github.com/YehudaKremer/msix/blob/main/doc/startup_task_configuration.md) configuration
