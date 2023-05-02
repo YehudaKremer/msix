@@ -18,6 +18,11 @@ class SignTool {
   /// get the certificate "Subject" for the Publisher value
   Future<void> getCertificatePublisher() async {
     _logger.trace('getting certificate publisher');
+      
+    if (_config.publisher != null && _config.publisher!.isNotEmpty) {
+      _checkCertificateSubject(_config.publisher!);
+      return;
+    }
 
     String subject = '';
 
