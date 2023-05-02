@@ -18,37 +18,34 @@ class SignTool {
   /// get the certificate "Subject" for the Publisher value
   Future<void> getCertificatePublisher() async {
     _logger.trace('getting certificate publisher');
-      
-    if (_config.publisher != null && _config.publisher!.isNotEmpty) {
-      _checkCertificateSubject(_config.publisher!);
-      return;
-    }
 
-    String subject = '';
+    if (_config.publisher.isNullOrEmpty) {
+      String subject = '';
 
-    if (_config.signToolOptions != null) {
-      if (_config.signToolOptions!.containsArgument('/sha1')) {
-        subject = await _getCertificateSubjectByThumbprint();
-      } else if (_config.signToolOptions!.containsArguments(['/n', '/r'])) {
-        subject = await _getCertificateSubjectBySubject();
-      } else if (_config.signToolOptions!.containsArgument('/i')) {
-        subject = await _getCertificateSubjectByIssuer();
-      } else if (_config.signToolOptions!.containsArgument('/f')) {
-        subject = await _getCertificateSubjectByFile(true);
+      if (_config.signToolOptions != null) {
+        if (_config.signToolOptions!.containsArgument('/sha1')) {
+          subject = await _getCertificateSubjectByThumbprint();
+        } else if (_config.signToolOptions!.containsArguments(['/n', '/r'])) {
+          subject = await _getCertificateSubjectBySubject();
+        } else if (_config.signToolOptions!.containsArgument('/i')) {
+          subject = await _getCertificateSubjectByIssuer();
+        } else if (_config.signToolOptions!.containsArgument('/f')) {
+          subject = await _getCertificateSubjectByFile(true);
+        }
+      } else if (_config.certificatePath != null &&
+          _config.certificatePath!.isNotEmpty) {
+        subject = await _getCertificateSubjectByFile(false);
       }
-    } else if (_config.certificatePath != null &&
-        _config.certificatePath!.isNotEmpty) {
-      subject = await _getCertificateSubjectByFile(false);
+
+      if (subject.isNotEmpty) {
+        _config.publisher = subject;
+      }
     }
 
-    if (subject.isNotEmpty) {
-      _config.publisher = subject;
-    }
-
-    if (_config.publisher != null && _config.publisher!.isNotEmpty) {
-      _checkCertificateSubject(_config.publisher!);
-    } else {
+    if (_config.publisher.isNullOrEmpty) {
       _failToGetCertificateSubject();
+    } else {
+      _checkCertificateSubject(_config.publisher!);
     }
   }
 
