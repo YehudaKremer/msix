@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.11.1
+
+- fix [#159](https://github.com/YehudaKremer/msix/issues/159)
+
 ## 3.11.0
 
 - add `os_min_version` configuration
