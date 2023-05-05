@@ -25,7 +25,7 @@ Example:
 Config Example:
 ```yaml
 name: myProject
-version:1.2.3+4
+version: 1.2.3+4
 msix_config:
   # Make sure that there is no msix_version key in this config, otherwise append_build_number_to_patch will not work
   append_build_number_to_patch: true
