@@ -369,19 +369,32 @@ class Configuration {
   String? _getPubspecVersion(dynamic yaml) {
     // Existing behavior is to put null if no version, so matching
     if (yaml['version'] == null) return null;
+    final bool appendBuildNumberToPatch =
+        yaml['msix_config']?['append_build_number_to_patch'] == true;
     try {
       final Version pubspecVersion = Version.parse(yaml['version']);
-      late final int buildNumber;
-      if (pubspecVersion.build.isNotEmpty && pubspecVersion.build[0] is int) {
-        buildNumber = pubspecVersion.build[0] as int;
+      late final int patchNumber;
+      if (appendBuildNumberToPatch &&
+          pubspecVersion.build.isNotEmpty &&
+          pubspecVersion.build[0] is int) {
+        final buildNumber = pubspecVersion.build[0] as int;
+        final combinedPatchNumber =
+            int.parse('${pubspecVersion.patch}$buildNumber');
+        if (combinedPatchNumber > 65535) {
+          _logger.stderr(
+              "Warning: The buildnumber appended to the patchnumber ($combinedPatchNumber) is higher than is allowed in the windows store (65535). Using the normal patchnumber instead.");
+          patchNumber = pubspecVersion.patch;
+        } else {
+          patchNumber = combinedPatchNumber;
+        }
       } else {
-        buildNumber = 0;
+        patchNumber = pubspecVersion.patch;
       }
       return [
         pubspecVersion.major,
         pubspecVersion.minor,
-        pubspecVersion.patch,
-        buildNumber
+        patchNumber,
+        0,
       ].join('.');
     } on FormatException {
       _logger.stderr(

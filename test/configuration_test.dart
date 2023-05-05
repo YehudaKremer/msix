@@ -135,18 +135,54 @@ msix_config:
       await config.getConfigValues();
       expect(config.msixVersion, equals('1.2.3.0'));
     });
-    test('fallback to pubspec version', () async {
+    test('pubspec with buildnumber', () async {
       await File(yamlTestPath).writeAsString(
         'name: testAppWithVersion\n'
         'version: 1.2.3+45',
       );
       await config.getConfigValues();
-      expect(config.msixVersion, equals('1.2.3.45'));
+      expect(config.msixVersion, equals('1.2.3.0'));
     });
-    test('fallback to pubspec version', () async {
+    test('pubspec with append_build_number_to_patch false', () async {
+      await File(yamlTestPath).writeAsString('name: testAppWithVersion\n'
+          'version: 3.6.9+91\n'
+          'msix_config:\n'
+          '  append_build_number_to_patch: false');
+      print(File(yamlTestPath).readAsStringSync());
+      await config.getConfigValues();
+      expect(config.msixVersion, equals('3.6.9.0'));
+    });
+    test('pubspec with append_build_number_to_patch', () async {
+      await File(yamlTestPath).writeAsString('name: testAppWithVersion\n'
+          'version: 1.2.3+45\n'
+          'msix_config:\n'
+          '  append_build_number_to_patch: true');
+      await config.getConfigValues();
+      expect(config.msixVersion, equals('1.2.345.0'));
+    });
+    test('pubspec with max build & patch number', () async {
+      await File(yamlTestPath).writeAsString('name: testAppWithVersion\n'
+          'version: 1.2.65+535\n'
+          'msix_config:\n'
+          '  append_build_number_to_patch: true');
+      await config.getConfigValues();
+      expect(config.msixVersion, equals('1.2.65535.0'));
+    });
+    test('pubspec with max build & patch number', () async {
+      await File(yamlTestPath).writeAsString('name: testAppWithVersion\n'
+          'version: 1.2.65+536\n'
+          'msix_config:\n'
+          '  append_build_number_to_patch: true');
+      await config.getConfigValues();
+      expect(config.msixVersion, equals('1.2.65.0'));
+    });
+
+    test('pubspec with non-numeric build-number', () async {
       await File(yamlTestPath).writeAsString(
         'name: testAppWithVersion\n'
-        'version: 1.2.3+a',
+        'version: 1.2.3+a\n'
+        'msix_config:\n'
+        '  append_build_number_to_patch: true',
       );
       await config.getConfigValues();
       expect(config.msixVersion, equals('1.2.3.0'));
