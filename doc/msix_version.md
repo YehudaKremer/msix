@@ -22,7 +22,14 @@ Example:
 - Given the following value for the `version` flag: `1.2.13+35`
 - The resulting value, will be `1.2.1335.0`.
 
-
+Config Example:
+```yaml
+name: myProject
+version:1.2.3+4
+msix_config:
+  # Make sure that there is no msix_version key in this config, otherwise append_build_number_to_patch will not work
+  append_build_number_to_patch: true
+```
 
 Caveats:
 - If another version is given via the commandline (1.) or the via the `msix_version` in the `pubspec.yaml`, then the normal version tag will not be used.
