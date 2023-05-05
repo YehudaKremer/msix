@@ -25,7 +25,7 @@ Example 1:
 Caveats:
 - The maximum allowed number in the version [in the windows store is 65535](https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/package-version-numbering?pivots=store-installer-msix#version-numbering-for-windows10-packages). If the combined value of `build` and `patch` exceed this value, the `build` number will not be appended.
 
-To make it easy, the `build` and `patch` number should be below one of these combinations: 
+To make it easy, the `build` and `patch` number should be below one of these combinations for the `build`number to be appended to the `patch`number: 
 | `patch` | `build` |
 | ------- | ------- |
 | 6       | 5535    |
