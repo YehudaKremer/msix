@@ -1,7 +1,7 @@
 ## MSIX Version
 
 The MSIX installer version number is used to determine updates to the app and consists of 4 numbers (`1.0.0.0`). 
-Using the build number as the fourth number is not allowed on the windows store ([see the important banner in the microsoft documentation](https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/package-version-numbering?pivots=store-installer-msix#version-numbering-for-windows10-packages)).
+Using the build number as the fourth number is not allowed in the windows store ([see the important banner in the microsoft documentation](https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/package-version-numbering?pivots=store-installer-msix#version-numbering-for-windows10-packages)).
 #### The version is determined by the first available option:
 
 1. Command line `--version` flag
