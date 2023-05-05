@@ -130,12 +130,27 @@ msix_config:
     test('fallback to pubspec version', () async {
       await File(yamlTestPath).writeAsString(
         'name: testAppWithVersion\n'
-        'version: 1.1.3',
+        'version: 1.2.3',
       );
       await config.getConfigValues();
-      expect(config.msixVersion, equals('1.1.3.0'));
+      expect(config.msixVersion, equals('1.2.3.0'));
     });
-
+    test('fallback to pubspec version', () async {
+      await File(yamlTestPath).writeAsString(
+        'name: testAppWithVersion\n'
+        'version: 1.2.3+45',
+      );
+      await config.getConfigValues();
+      expect(config.msixVersion, equals('1.2.3.45'));
+    });
+    test('fallback to pubspec version', () async {
+      await File(yamlTestPath).writeAsString(
+        'name: testAppWithVersion\n'
+        'version: 1.2.3+a',
+      );
+      await config.getConfigValues();
+      expect(config.msixVersion, equals('1.2.3.0'));
+    });
     test('ignores extra semver info in pubspec version', () async {
       await File(yamlTestPath).writeAsString(
         'name: testAppWithVersion\n'
