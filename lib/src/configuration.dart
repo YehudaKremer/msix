@@ -371,11 +371,17 @@ class Configuration {
     if (yaml['version'] == null) return null;
     try {
       final Version pubspecVersion = Version.parse(yaml['version']);
+      late final int buildNumber;
+      if (pubspecVersion.build.isNotEmpty && pubspecVersion.build[0] is int) {
+        buildNumber = pubspecVersion.build[0] as int;
+      } else {
+        buildNumber = 0;
+      }
       return [
         pubspecVersion.major,
         pubspecVersion.minor,
         pubspecVersion.patch,
-        0
+        buildNumber
       ].join('.');
     } on FormatException {
       _logger.stderr(
