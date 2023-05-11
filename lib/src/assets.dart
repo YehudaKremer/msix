@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:isolate';
 import 'package:get_it/get_it.dart';
 import 'package:image/image.dart';
 import 'package:path/path.dart';
@@ -33,26 +32,9 @@ class Assets {
         throw 'Error reading logo file: ${_config.logoPath!}';
       }
 
-      var generateAssetsIconsParts = [
-        _generateAssetsIconsPart1,
-        _generateAssetsIconsPart2,
-        _generateAssetsIconsPart3,
-      ];
-
-      Iterable<Future> isolatesFutures = [
-        ReceivePort(),
-        ReceivePort(),
-        ReceivePort(),
-      ]
-          .asMap()
-          .map((index, port) => MapEntry(index, [
-                Isolate.spawn(generateAssetsIconsParts[index], port.sendPort),
-                port.first
-              ]))
-          .values
-          .expand((i) => i);
-
-      await Future.wait(isolatesFutures);
+      await _generateAssetsIconsPart1();
+      await _generateAssetsIconsPart2();
+      await _generateAssetsIconsPart3();
     } else {
       await _copyDefaultsIcons();
     }
@@ -165,7 +147,7 @@ class Assets {
   }
 
   /// Generate optimized msix icons from the user logo
-  Future<void> _generateAssetsIconsPart1(SendPort port) async {
+  Future<void> _generateAssetsIconsPart1() async {
     await Future.wait([
       // SmallTile
       _generateIcon('SmallTile', const _Size(71, 71)),
@@ -210,11 +192,9 @@ class Assets {
       _generateIcon('Square44x44Logo', const _Size(44, 44), scale: 2),
       _generateIcon('Square44x44Logo', const _Size(44, 44), scale: 4),
     ]);
-
-    Isolate.exit(port);
   }
 
-  Future<void> _generateAssetsIconsPart2(SendPort port) async {
+  Future<void> _generateAssetsIconsPart2() async {
     await Future.wait([
       // targetsize
       _generateIcon('Square44x44Logo.targetsize-16', const _Size(16, 16)),
@@ -261,11 +241,9 @@ class Assets {
       _generateIcon('Square44x44Logo.altform-unplated_targetsize-96',
           const _Size(96, 96)),
     ]);
-
-    Isolate.exit(port);
   }
 
-  Future<void> _generateAssetsIconsPart3(SendPort port) async {
+  Future<void> _generateAssetsIconsPart3() async {
     await Future.wait([
       // light unplated targetsize
       _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-16',
@@ -318,8 +296,6 @@ class Assets {
       _generateIcon('StoreLogo', const _Size(50, 50), scale: 2),
       _generateIcon('StoreLogo', const _Size(50, 50), scale: 4),
     ]);
-
-    Isolate.exit(port);
   }
 }
 

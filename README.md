@@ -9,6 +9,12 @@
 
 [![pub package](https://img.shields.io/pub/v/msix.svg?color=blue)](https://pub.dev/packages/msix) [![MSIX toolkit package](https://img.shields.io/github/v/tag/microsoft/MSIX-Toolkit?color=blue&label=MSIX-Toolkit)](https://github.com/microsoft/MSIX-Toolkit) [![issues-closed](https://img.shields.io/github/issues-closed/YehudaKremer/msix?color=green)](https://github.com/YehudaKremer/msix/issues?q=is%3Aissue+is%3Aclosed) [![issues-open](https://img.shields.io/github/issues-raw/YehudaKremer/msix)](https://github.com/YehudaKremer/msix/issues)
 
+---
+
+##### 📢**Important**: For Flutter version `>=3.10.0`, you need to use Msix package version `>=3.12.0`
+
+---
+
 [MSIX] is a Windows app packaging format from Microsoft that combines the best
 features of MSI, .appx, App-V, and ClickOnce to provide a modern and reliable
 packaging experience.
@@ -31,7 +37,7 @@ PS c:\src\flutter_project> flutter pub add --dev msix
 To create a MSIX installer, run the following command:
 
 ```console
-PS c:\src\flutter_project> flutter pub run msix:create
+PS c:\src\flutter_project> dart run msix:create
 ```
 
 ## ⚙️ Configuring your installer
