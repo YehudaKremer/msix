@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.12.1
+
+- fix [#175](https://github.com/YehudaKremer/msix/issues/175): `app_installer -> publish_folder_path` config field is now support absolute-path
+
 ## 3.12.0
 
 - fix [#193](https://github.com/YehudaKremer/msix/issues/193): remove `isolate` to support Flutter version >=3.10.0 (Dart 3v)

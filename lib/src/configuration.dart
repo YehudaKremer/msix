@@ -334,7 +334,10 @@ class Configuration {
     _logger.trace('validating app installer config values');
 
     if (publishFolderPath.isNullOrEmpty ||
-        !await Directory(publishFolderPath!).exists()) {
+        (!await Directory(publishFolderPath!).exists() &&
+            !await Directory(publishFolderPath =
+                    '${Directory.current.path}\\${publishFolderPath!}')
+                .exists())) {
       _logger.stderr(
           'publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml'
               .red);

@@ -11,7 +11,7 @@
 
 ---
 
-##### 📢**Important**: For Flutter version `>=3.10.0`, you need to use Msix package version `>=3.12.0`
+#### 📢 **Important**: For Flutter version `>=3.10.0`, you need to use Msix package version `>=3.12.0`
 
 ---
 
