@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.12.2
+
+- brings back Isolates for faster icons generation (after remove them in `3.12.0`)
+
 ## 3.12.1
 
 - fix [#175](https://github.com/YehudaKremer/msix/issues/175): `app_installer -> publish_folder_path` config field is now support absolute-path
