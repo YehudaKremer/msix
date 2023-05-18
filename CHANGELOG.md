@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.12.3
+
+- fix [#196](https://github.com/YehudaKremer/msix/issues/196)
+
 ## 3.12.2
 
 - brings back Isolates for faster icons generation (after remove them in `3.12.0`)

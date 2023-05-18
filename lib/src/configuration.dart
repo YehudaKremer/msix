@@ -8,6 +8,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
 import 'command_line_converter.dart';
 import 'method_extensions.dart';
+import 'sign_tool.dart';
 
 /// Handles loading and validating the configuration values
 class Configuration {
@@ -242,7 +243,9 @@ class Configuration {
       throw '"publisher display name" is too long, it should be less than 256 characters';
     }
 
-    if (!certificatePath.isNull || signToolOptions != null || store) {
+    if (!certificatePath.isNull ||
+        (SignTool.isCustomSignCommand(signToolOptions)) ||
+        store) {
       if (!certificatePath.isNull) {
         if (!(await File(certificatePath!).exists())) {
           throw 'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml';
