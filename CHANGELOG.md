@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.13.0
+
+- fix [#139](https://github.com/YehudaKremer/msix/issues/139): remove Flutter SDK constraints
+
 ## 3.12.3
 
 - fix [#196](https://github.com/YehudaKremer/msix/issues/196)
