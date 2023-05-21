@@ -357,8 +357,19 @@ class Configuration {
       throw 'Failed to locate or read package config.';
     }
 
-    Package msixPackage =
-        packagesConfig.packages.firstWhere((package) => package.name == "msix");
+    Package? msixPackage = packagesConfig['msix'];
+
+    // Locate package config from script file directory
+    if (msixPackage == null) {
+      final scriptFile = File.fromUri(Platform.script);
+      packagesConfig = await findPackageConfig(scriptFile.parent);
+      msixPackage = packagesConfig?['msix'];
+    }
+
+    if (msixPackage == null) {
+      throw 'Failed to locate msix assets path.';
+    }
+
     String path =
         '${msixPackage.packageUriRoot.toString().replaceAll('file:///', '')}assets';
 
