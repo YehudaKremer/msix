@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.13.1
+
+- fix [#197](https://github.com/YehudaKremer/msix/issues/197): locate msix assets path from script file directory
+
 ## 3.13.0
 
 - fix [#139](https://github.com/YehudaKremer/msix/issues/139): remove Flutter SDK constraints
