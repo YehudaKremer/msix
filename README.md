@@ -31,7 +31,7 @@ PS c:\src\flutter_project> flutter pub add --dev msix
 To create a MSIX installer, run the following command:
 
 ```console
-PS c:\src\flutter_project> flutter pub run msix:create
+PS c:\src\flutter_project> dart run msix:create
 ```
 
 ## ⚙️ Configuring your installer

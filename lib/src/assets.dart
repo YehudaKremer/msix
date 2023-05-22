@@ -6,53 +6,250 @@ import 'package:path/path.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'configuration.dart';
 import 'method_extensions.dart';
+import 'dart:async';
 
 /// Handles all the msix and user assets files
 class Assets {
   final Logger _logger = GetIt.I<Logger>();
   final Configuration _config = GetIt.I<Configuration>();
-  late Image image;
   String get _msixIconsFolderPath => '${_config.buildFilesFolder}/Images';
 
   /// Generate new app icons or copy default app icons
   Future<void> createIcons() async {
     _logger.trace('create app icons');
+    String? logoPath = _config.logoPath;
 
     await Directory(_msixIconsFolderPath).create();
 
-    if (_config.logoPath != null) {
+    if (logoPath != null) {
       _logger.trace('generating icons');
 
-      if (!(await File(_config.logoPath!).exists())) {
-        throw 'Logo file not found at ${_config.logoPath}';
+      if (!(await File(logoPath).exists())) {
+        throw 'Logo file not found at $logoPath';
       }
+
+      bool trimLogo = _config.trimLogo;
+      String buildFilesFolder = _config.buildFilesFolder;
+      Image image;
 
       try {
-        image = decodeImage(await File(_config.logoPath!).readAsBytes())!;
+        image = decodeImage(await File(logoPath).readAsBytes())!;
       } catch (e) {
-        throw 'Error reading logo file: ${_config.logoPath!}';
+        throw 'Error reading logo file: $logoPath';
       }
 
-      var generateAssetsIconsParts = [
-        _generateAssetsIconsPart1,
-        _generateAssetsIconsPart2,
-        _generateAssetsIconsPart3,
-      ];
+      /// Generate icon with specified size, padding and scale
+      Future<void> generateIcon(String name, _Size size,
+          {double scale = 1}) async {
+        int scaledWidth = (size.width * scale).ceil();
+        int scaledHeight = (size.height * scale).ceil();
+        Interpolation interpolation = scaledWidth < 200 || scaledHeight < 200
+            ? Interpolation.average
+            : Interpolation.cubic;
 
-      Iterable<Future> isolatesFutures = [
-        ReceivePort(),
-        ReceivePort(),
-        ReceivePort(),
-      ]
-          .asMap()
-          .map((index, port) => MapEntry(index, [
-                Isolate.spawn(generateAssetsIconsParts[index], port.sendPort),
-                port.first
-              ]))
-          .values
-          .expand((i) => i);
+        if (trimLogo) {
+          try {
+            image = trim(image);
+          } catch (_) {}
+        }
 
-      await Future.wait(isolatesFutures);
+        image = image.convert(numChannels: 4);
+
+        Image resizedImage;
+        if (scaledWidth > scaledHeight) {
+          resizedImage = copyResize(
+            image,
+            height: scaledHeight,
+            interpolation: interpolation,
+          );
+        } else {
+          resizedImage = copyResize(
+            image,
+            width: scaledWidth,
+            interpolation: interpolation,
+          );
+        }
+
+        Image imageCanvas = Image(
+          width: scaledWidth.ceil(),
+          height: scaledHeight.ceil(),
+          numChannels: 4,
+        );
+
+        compositeImage(
+          imageCanvas,
+          resizedImage,
+          center: true,
+          linearBlend: true,
+        );
+
+        String fileName = name;
+        if (!name.contains('targetsize')) {
+          fileName = '$name.scale-${(scale * 100).toInt()}';
+        }
+
+        await File('$buildFilesFolder/Images/$fileName.png')
+            .writeAsBytes(encodePng(imageCanvas));
+      }
+
+      /// Generate optimized msix icons from the user logo
+      await Future.wait([
+        Isolate.run(() async {
+          await Future.wait([
+            // SmallTile
+            generateIcon('SmallTile', const _Size(71, 71)),
+            generateIcon('SmallTile', const _Size(71, 71), scale: 1.25),
+            generateIcon('SmallTile', const _Size(71, 71), scale: 1.5),
+            generateIcon('SmallTile', const _Size(71, 71), scale: 2),
+            generateIcon('SmallTile', const _Size(71, 71), scale: 4),
+            // Square150x150Logo (Medium tile)
+            generateIcon(
+              'Square150x150Logo',
+              const _Size(150, 150),
+            ),
+            generateIcon('Square150x150Logo', const _Size(150, 150),
+                scale: 1.25),
+            generateIcon('Square150x150Logo', const _Size(150, 150),
+                scale: 1.5),
+            generateIcon('Square150x150Logo', const _Size(150, 150), scale: 2),
+            generateIcon('Square150x150Logo', const _Size(150, 150), scale: 4),
+            // Wide310x150Logo (Wide tile)
+            generateIcon(
+              'Wide310x150Logo',
+              const _Size(310, 150),
+            ),
+            generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 1.25),
+            generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 1.5),
+            generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 2),
+            generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 4),
+            // LargeTile
+            generateIcon(
+              'LargeTile',
+              const _Size(310, 310),
+            ),
+            generateIcon('LargeTile', const _Size(310, 310), scale: 1.25),
+            generateIcon('LargeTile', const _Size(310, 310), scale: 1.5),
+            generateIcon('LargeTile', const _Size(310, 310), scale: 2),
+            generateIcon('LargeTile', const _Size(310, 310), scale: 4),
+          ]);
+        }),
+        Isolate.run(() async {
+          await Future.wait([
+            // Square44x44Logo (App icon)
+            generateIcon(
+              'Square44x44Logo',
+              const _Size(44, 44),
+            ),
+            generateIcon('Square44x44Logo', const _Size(44, 44), scale: 1.25),
+            generateIcon('Square44x44Logo', const _Size(44, 44), scale: 1.5),
+            generateIcon('Square44x44Logo', const _Size(44, 44), scale: 2),
+            generateIcon('Square44x44Logo', const _Size(44, 44), scale: 4),
+            // targetsize
+            generateIcon('Square44x44Logo.targetsize-16', const _Size(16, 16)),
+            generateIcon('Square44x44Logo.targetsize-24', const _Size(24, 24)),
+            generateIcon('Square44x44Logo.targetsize-32', const _Size(32, 32)),
+            generateIcon('Square44x44Logo.targetsize-48', const _Size(48, 48)),
+            generateIcon(
+                'Square44x44Logo.targetsize-256', const _Size(256, 256)),
+            generateIcon('Square44x44Logo.targetsize-20', const _Size(20, 20)),
+            generateIcon('Square44x44Logo.targetsize-30', const _Size(30, 30)),
+            generateIcon('Square44x44Logo.targetsize-36', const _Size(36, 36)),
+            generateIcon('Square44x44Logo.targetsize-40', const _Size(40, 40)),
+            generateIcon('Square44x44Logo.targetsize-60', const _Size(60, 60)),
+            generateIcon('Square44x44Logo.targetsize-64', const _Size(64, 64)),
+            generateIcon('Square44x44Logo.targetsize-72', const _Size(72, 72)),
+            generateIcon('Square44x44Logo.targetsize-80', const _Size(80, 80)),
+            generateIcon('Square44x44Logo.targetsize-96', const _Size(96, 96)),
+          ]);
+        }),
+        Isolate.run(() async {
+          await Future.wait([
+            // unplated targetsize
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-16',
+                const _Size(16, 16)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-24',
+                const _Size(24, 24)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-32',
+                const _Size(32, 32)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-48',
+                const _Size(48, 48)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-256',
+                const _Size(256, 256)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-20',
+                const _Size(20, 20)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-30',
+                const _Size(30, 30)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-36',
+                const _Size(36, 36)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-40',
+                const _Size(40, 40)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-60',
+                const _Size(60, 60)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-64',
+                const _Size(64, 64)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-72',
+                const _Size(72, 72)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-80',
+                const _Size(80, 80)),
+            generateIcon('Square44x44Logo.altform-unplated_targetsize-96',
+                const _Size(96, 96)),
+            // light unplated targetsize
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-16',
+                const _Size(16, 16)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-24',
+                const _Size(24, 24)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-32',
+                const _Size(32, 32)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-48',
+                const _Size(48, 48)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-256',
+                const _Size(256, 256)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-20',
+                const _Size(20, 20)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-30',
+                const _Size(30, 30)),
+          ]);
+        }),
+        Isolate.run(() async {
+          await Future.wait([
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-36',
+                const _Size(36, 36)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-40',
+                const _Size(40, 40)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-60',
+                const _Size(60, 60)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-64',
+                const _Size(64, 64)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-72',
+                const _Size(72, 72)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-80',
+                const _Size(80, 80)),
+            generateIcon('Square44x44Logo.altform-lightunplated_targetsize-96',
+                const _Size(96, 96)),
+            // SplashScreen
+            generateIcon(
+              'SplashScreen',
+              const _Size(620, 300),
+            ),
+            generateIcon('SplashScreen', const _Size(620, 300), scale: 1.25),
+            generateIcon('SplashScreen', const _Size(620, 300), scale: 1.5),
+            generateIcon('SplashScreen', const _Size(620, 300), scale: 2),
+            generateIcon('SplashScreen', const _Size(620, 300), scale: 4),
+            // BadgeLogo
+            generateIcon('BadgeLogo', const _Size(24, 24)),
+            generateIcon('BadgeLogo', const _Size(24, 24), scale: 1.25),
+            generateIcon('BadgeLogo', const _Size(24, 24), scale: 1.5),
+            generateIcon('BadgeLogo', const _Size(24, 24), scale: 2),
+            generateIcon('BadgeLogo', const _Size(24, 24), scale: 4),
+            // StoreLogo
+            generateIcon('StoreLogo', const _Size(50, 50)),
+            generateIcon('StoreLogo', const _Size(50, 50), scale: 1.25),
+            generateIcon('StoreLogo', const _Size(50, 50), scale: 1.5),
+            generateIcon('StoreLogo', const _Size(50, 50), scale: 2),
+            generateIcon('StoreLogo', const _Size(50, 50), scale: 4),
+          ]);
+        })
+      ]);
     } else {
       await _copyDefaultsIcons();
     }
@@ -108,218 +305,6 @@ class Assets {
             await File('$buildPath/$fileName').deleteIfExists()),
       ]);
     }
-  }
-
-  /// Generate icon with specified size, padding and scale
-  Future<void> _generateIcon(String name, _Size size,
-      {double scale = 1}) async {
-    int scaledWidth = (size.width * scale).ceil();
-    int scaledHeight = (size.height * scale).ceil();
-    Interpolation interpolation = scaledWidth < 200 || scaledHeight < 200
-        ? Interpolation.average
-        : Interpolation.cubic;
-
-    if (_config.trimLogo) {
-      try {
-        image = trim(image);
-      } catch (_) {}
-    }
-
-    image = image.convert(numChannels: 4);
-
-    Image resizedImage;
-    if (scaledWidth > scaledHeight) {
-      resizedImage = copyResize(
-        image,
-        height: scaledHeight,
-        interpolation: interpolation,
-      );
-    } else {
-      resizedImage = copyResize(
-        image,
-        width: scaledWidth,
-        interpolation: interpolation,
-      );
-    }
-
-    Image imageCanvas = Image(
-      width: scaledWidth.ceil(),
-      height: scaledHeight.ceil(),
-      numChannels: 4,
-    );
-
-    compositeImage(
-      imageCanvas,
-      resizedImage,
-      center: true,
-      linearBlend: true,
-    );
-
-    String fileName = name;
-    if (!name.contains('targetsize')) {
-      fileName = '$name.scale-${(scale * 100).toInt()}';
-    }
-
-    await File('${_config.buildFilesFolder}/Images/$fileName.png')
-        .writeAsBytes(encodePng(imageCanvas));
-  }
-
-  /// Generate optimized msix icons from the user logo
-  Future<void> _generateAssetsIconsPart1(SendPort port) async {
-    await Future.wait([
-      // SmallTile
-      _generateIcon('SmallTile', const _Size(71, 71)),
-      _generateIcon('SmallTile', const _Size(71, 71), scale: 1.25),
-      _generateIcon('SmallTile', const _Size(71, 71), scale: 1.5),
-      _generateIcon('SmallTile', const _Size(71, 71), scale: 2),
-      _generateIcon('SmallTile', const _Size(71, 71), scale: 4),
-      // Square150x150Logo (Medium tile)
-      _generateIcon(
-        'Square150x150Logo',
-        const _Size(150, 150),
-      ),
-      _generateIcon('Square150x150Logo', const _Size(150, 150), scale: 1.25),
-      _generateIcon('Square150x150Logo', const _Size(150, 150), scale: 1.5),
-      _generateIcon('Square150x150Logo', const _Size(150, 150), scale: 2),
-      _generateIcon('Square150x150Logo', const _Size(150, 150), scale: 4),
-      // Wide310x150Logo (Wide tile)
-      _generateIcon(
-        'Wide310x150Logo',
-        const _Size(310, 150),
-      ),
-      _generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 1.25),
-      _generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 1.5),
-      _generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 2),
-      _generateIcon('Wide310x150Logo', const _Size(310, 150), scale: 4),
-      // LargeTile
-      _generateIcon(
-        'LargeTile',
-        const _Size(310, 310),
-      ),
-      _generateIcon('LargeTile', const _Size(310, 310), scale: 1.25),
-      _generateIcon('LargeTile', const _Size(310, 310), scale: 1.5),
-      _generateIcon('LargeTile', const _Size(310, 310), scale: 2),
-      _generateIcon('LargeTile', const _Size(310, 310), scale: 4),
-      // Square44x44Logo (App icon)
-      _generateIcon(
-        'Square44x44Logo',
-        const _Size(44, 44),
-      ),
-      _generateIcon('Square44x44Logo', const _Size(44, 44), scale: 1.25),
-      _generateIcon('Square44x44Logo', const _Size(44, 44), scale: 1.5),
-      _generateIcon('Square44x44Logo', const _Size(44, 44), scale: 2),
-      _generateIcon('Square44x44Logo', const _Size(44, 44), scale: 4),
-    ]);
-
-    Isolate.exit(port);
-  }
-
-  Future<void> _generateAssetsIconsPart2(SendPort port) async {
-    await Future.wait([
-      // targetsize
-      _generateIcon('Square44x44Logo.targetsize-16', const _Size(16, 16)),
-      _generateIcon('Square44x44Logo.targetsize-24', const _Size(24, 24)),
-      _generateIcon('Square44x44Logo.targetsize-32', const _Size(32, 32)),
-      _generateIcon('Square44x44Logo.targetsize-48', const _Size(48, 48)),
-      _generateIcon('Square44x44Logo.targetsize-256', const _Size(256, 256)),
-      _generateIcon('Square44x44Logo.targetsize-20', const _Size(20, 20)),
-      _generateIcon('Square44x44Logo.targetsize-30', const _Size(30, 30)),
-      _generateIcon('Square44x44Logo.targetsize-36', const _Size(36, 36)),
-      _generateIcon('Square44x44Logo.targetsize-40', const _Size(40, 40)),
-      _generateIcon('Square44x44Logo.targetsize-60', const _Size(60, 60)),
-      _generateIcon('Square44x44Logo.targetsize-64', const _Size(64, 64)),
-      _generateIcon('Square44x44Logo.targetsize-72', const _Size(72, 72)),
-      _generateIcon('Square44x44Logo.targetsize-80', const _Size(80, 80)),
-      _generateIcon('Square44x44Logo.targetsize-96', const _Size(96, 96)),
-      // unplated targetsize
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-16',
-          const _Size(16, 16)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-24',
-          const _Size(24, 24)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-32',
-          const _Size(32, 32)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-48',
-          const _Size(48, 48)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-256',
-          const _Size(256, 256)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-20',
-          const _Size(20, 20)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-30',
-          const _Size(30, 30)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-36',
-          const _Size(36, 36)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-40',
-          const _Size(40, 40)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-60',
-          const _Size(60, 60)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-64',
-          const _Size(64, 64)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-72',
-          const _Size(72, 72)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-80',
-          const _Size(80, 80)),
-      _generateIcon('Square44x44Logo.altform-unplated_targetsize-96',
-          const _Size(96, 96)),
-    ]);
-
-    Isolate.exit(port);
-  }
-
-  Future<void> _generateAssetsIconsPart3(SendPort port) async {
-    await Future.wait([
-      // light unplated targetsize
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-16',
-          const _Size(16, 16)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-24',
-          const _Size(24, 24)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-32',
-          const _Size(32, 32)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-48',
-          const _Size(48, 48)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-256',
-          const _Size(256, 256)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-20',
-          const _Size(20, 20)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-30',
-          const _Size(30, 30)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-36',
-          const _Size(36, 36)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-40',
-          const _Size(40, 40)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-60',
-          const _Size(60, 60)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-64',
-          const _Size(64, 64)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-72',
-          const _Size(72, 72)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-80',
-          const _Size(80, 80)),
-      _generateIcon('Square44x44Logo.altform-lightunplated_targetsize-96',
-          const _Size(96, 96)),
-      // SplashScreen
-      _generateIcon(
-        'SplashScreen',
-        const _Size(620, 300),
-      ),
-      _generateIcon('SplashScreen', const _Size(620, 300), scale: 1.25),
-      _generateIcon('SplashScreen', const _Size(620, 300), scale: 1.5),
-      _generateIcon('SplashScreen', const _Size(620, 300), scale: 2),
-      _generateIcon('SplashScreen', const _Size(620, 300), scale: 4),
-      // BadgeLogo
-      _generateIcon('BadgeLogo', const _Size(24, 24)),
-      _generateIcon('BadgeLogo', const _Size(24, 24), scale: 1.25),
-      _generateIcon('BadgeLogo', const _Size(24, 24), scale: 1.5),
-      _generateIcon('BadgeLogo', const _Size(24, 24), scale: 2),
-      _generateIcon('BadgeLogo', const _Size(24, 24), scale: 4),
-      // StoreLogo
-      _generateIcon('StoreLogo', const _Size(50, 50)),
-      _generateIcon('StoreLogo', const _Size(50, 50), scale: 1.25),
-      _generateIcon('StoreLogo', const _Size(50, 50), scale: 1.5),
-      _generateIcon('StoreLogo', const _Size(50, 50), scale: 2),
-      _generateIcon('StoreLogo', const _Size(50, 50), scale: 4),
-    ]);
-
-    Isolate.exit(port);
   }
 }
 

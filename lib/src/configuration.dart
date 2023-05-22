@@ -8,6 +8,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
 import 'command_line_converter.dart';
 import 'method_extensions.dart';
+import 'sign_tool.dart';
 
 /// Handles loading and validating the configuration values
 class Configuration {
@@ -242,7 +243,9 @@ class Configuration {
       throw '"publisher display name" is too long, it should be less than 256 characters';
     }
 
-    if (!certificatePath.isNull || signToolOptions != null || store) {
+    if (!certificatePath.isNull ||
+        (SignTool.isCustomSignCommand(signToolOptions)) ||
+        store) {
       if (!certificatePath.isNull) {
         if (!(await File(certificatePath!).exists())) {
           throw 'The file certificate not found in: $certificatePath, check "msix_config: certificate_path" at pubspec.yaml';
@@ -334,7 +337,10 @@ class Configuration {
     _logger.trace('validating app installer config values');
 
     if (publishFolderPath.isNullOrEmpty ||
-        !await Directory(publishFolderPath!).exists()) {
+        (!await Directory(publishFolderPath!).exists() &&
+            !await Directory(publishFolderPath =
+                    '${Directory.current.path}\\${publishFolderPath!}')
+                .exists())) {
       _logger.stderr(
           'publish folder path is not exists, check "app_installer: publish_folder_path" at pubspec.yaml'
               .red);
@@ -351,8 +357,19 @@ class Configuration {
       throw 'Failed to locate or read package config.';
     }
 
-    Package msixPackage =
-        packagesConfig.packages.firstWhere((package) => package.name == "msix");
+    Package? msixPackage = packagesConfig['msix'];
+
+    // Locate package config from script file directory
+    if (msixPackage == null) {
+      final scriptFile = File.fromUri(Platform.script);
+      packagesConfig = await findPackageConfig(scriptFile.parent);
+      msixPackage = packagesConfig?['msix'];
+    }
+
+    if (msixPackage == null) {
+      throw 'Failed to locate msix assets path.';
+    }
+
     String path =
         '${msixPackage.packageUriRoot.toString().replaceAll('file:///', '')}assets';
 

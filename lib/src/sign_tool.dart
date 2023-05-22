@@ -22,7 +22,7 @@ class SignTool {
     if (_config.publisher.isNullOrEmpty) {
       String subject = '';
 
-      if (_config.signToolOptions != null) {
+      if (isCustomSignCommand(_config.signToolOptions)) {
         if (_config.signToolOptions!.containsArgument('/sha1')) {
           subject = await _getCertificateSubjectByThumbprint();
         } else if (_config.signToolOptions!.containsArguments(['/n', '/r'])) {
@@ -205,10 +205,9 @@ class SignTool {
 
     String signtoolPath =
         '${_config.msixToolkitPath}/Redist.${_config.architecture}/signtool.exe';
-    List<String> signtoolOptions = ['/v'];
+    List<String> signtoolOptions = _config.signToolOptions ?? ['/v'];
 
-    if (_config.signToolOptions != null &&
-        _config.signToolOptions!.isNotEmpty) {
+    if (isCustomSignCommand(_config.signToolOptions)) {
       signtoolOptions = _config.signToolOptions!;
     } else if (_config.certificatePath != null) {
       switch (extension(_config.certificatePath!).toLowerCase()) {
@@ -247,4 +246,9 @@ class SignTool {
     ])
       ..exitOnError();
   }
+
+  static isCustomSignCommand(List<String>? signToolOptions) =>
+      signToolOptions != null &&
+      signToolOptions.isNotEmpty &&
+      signToolOptions.containsArguments(['/sha1', '/n', '/r', '/i', '/f']);
 }
