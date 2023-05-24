@@ -4,6 +4,8 @@ import 'package:get_it/get_it.dart';
 import 'package:msix/src/configuration.dart';
 import 'package:test/test.dart';
 
+import 'utils/version_test_case.dart';
+
 const tempFolderPath = 'test/configuration_temp';
 const yamlTestPath = '$tempFolderPath/test.yaml';
 
@@ -143,49 +145,91 @@ msix_config:
       await config.getConfigValues();
       expect(config.msixVersion, equals('1.2.3.0'));
     });
-    test('pubspec with append_build_number_to_patch false', () async {
-      await File(yamlTestPath).writeAsString('name: testAppWithVersion\n'
-          'version: 3.6.9+91\n'
-          'msix_config:\n'
-          '  append_build_number_to_patch: false');
-      print(File(yamlTestPath).readAsStringSync());
-      await config.getConfigValues();
-      expect(config.msixVersion, equals('3.6.9.0'));
-    });
-    test('pubspec with append_build_number_to_patch', () async {
-      await File(yamlTestPath).writeAsString('name: testAppWithVersion\n'
-          'version: 1.2.3+45\n'
-          'msix_config:\n'
-          '  append_build_number_to_patch: true');
-      await config.getConfigValues();
-      expect(config.msixVersion, equals('1.2.345.0'));
-    });
-    test('pubspec with max build & patch number', () async {
-      await File(yamlTestPath).writeAsString('name: testAppWithVersion\n'
-          'version: 1.2.65+535\n'
-          'msix_config:\n'
-          '  append_build_number_to_patch: true');
-      await config.getConfigValues();
-      expect(config.msixVersion, equals('1.2.65535.0'));
-    });
-    test('pubspec with max build & patch number', () async {
-      await File(yamlTestPath).writeAsString('name: testAppWithVersion\n'
-          'version: 1.2.65+536\n'
-          'msix_config:\n'
-          '  append_build_number_to_patch: true');
-      await config.getConfigValues();
-      expect(config.msixVersion, equals('1.2.65.0'));
-    });
-
-    test('pubspec with non-numeric build-number', () async {
-      await File(yamlTestPath).writeAsString(
-        'name: testAppWithVersion\n'
-        'version: 1.2.3+a\n'
-        'msix_config:\n'
-        '  append_build_number_to_patch: true',
-      );
-      await config.getConfigValues();
-      expect(config.msixVersion, equals('1.2.3.0'));
+    group("versionWithBuildNumber:", () {
+      const _testList = <VersionTestCase>[
+        VersionTestCase(
+          testName: "normal version",
+          versionString: "1.2.3+4",
+          versionWithBuildNumber: false,
+          result: "1.2.3.0",
+        ),
+        VersionTestCase(
+          testName: "normal version",
+          versionString: "1.2.3+4",
+          versionWithBuildNumber: true,
+          result: "1.203.4.0",
+        ),
+        VersionTestCase(
+          testName: "maximum major version",
+          versionString: "65535.2.3+4",
+          versionWithBuildNumber: true,
+          result: "65535.203.4.0",
+        ),
+        VersionTestCase(
+          testName: "major version too high",
+          versionString: "65536.2.3+4",
+          versionWithBuildNumber: true,
+          result: null,
+        ),
+        VersionTestCase(
+          testName: "maximum minor version",
+          versionString: "5.654.0+0",
+          versionWithBuildNumber: true,
+          result: "5.65400.0.0",
+        ),
+        VersionTestCase(
+          testName: "minor version too high",
+          versionString: "5.655.0+0",
+          versionWithBuildNumber: true,
+          result: null,
+        ),
+        VersionTestCase(
+          testName: "maximum minor version",
+          versionString: "5.6.99+0",
+          versionWithBuildNumber: true,
+          result: "5.6099.0.0",
+        ),
+        VersionTestCase(
+          testName: " minor version too high",
+          versionString: "5.6.100+0",
+          versionWithBuildNumber: true,
+          result: null,
+        ),
+        VersionTestCase(
+          testName: "maximum build version",
+          versionString: "5.6.7+65535",
+          versionWithBuildNumber: true,
+          result: "5.607.65535.0",
+        ),
+        VersionTestCase(
+          testName: "build version too high",
+          versionString: "5.6.7+65536",
+          versionWithBuildNumber: true,
+          result: null,
+        ),
+        VersionTestCase(
+          testName: "invalid buildVersion",
+          versionString: "5.6.7+a",
+          versionWithBuildNumber: true,
+          result: null,
+        ),
+        VersionTestCase(
+          testName: "from msix_version example",
+          versionString: "1.2.13+35",
+          versionWithBuildNumber: true,
+          result: "1.2013.35.0",
+        )
+      ];
+      for (final testCase in _testList) {
+        test(testCase.testName, () async {
+          await File(yamlTestPath).writeAsString('name: testAppWithVersion\n'
+              'version: ${testCase.versionString}\n'
+              'msix_config:\n'
+              '  version_with_build_number: ${testCase.versionWithBuildNumber}');
+          await config.getConfigValues();
+          expect(config.msixVersion, equals(testCase.result));
+        });
+      }
     });
     test('ignores extra semver info in pubspec version', () async {
       await File(yamlTestPath).writeAsString(

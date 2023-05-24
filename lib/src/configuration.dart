@@ -383,34 +383,63 @@ class Configuration {
     return pubspec;
   }
 
+  String? _getPubspecVersionWithBuildNumber(Version pubspecVersion) {
+    const prefix = "Warning: version_with_build_number is enabled,";
+    if (pubspecVersion.build.isNotEmpty && pubspecVersion.build[0] is int) {
+      final buildNumber = pubspecVersion.build[0] as int;
+      if (pubspecVersion.major > 65535) {
+        _logger.stderr(
+          '$prefix but the major version ${pubspecVersion.major} is higher than 65535.',
+        );
+        return null;
+      }
+      if (pubspecVersion.minor > 654) {
+        _logger.stderr(
+          '$prefix but the minor version ${pubspecVersion.minor} is higher than 654.',
+        );
+        return null;
+      }
+      if (pubspecVersion.patch > 99) {
+        _logger.stderr(
+          '$prefix but the patch version ${pubspecVersion.patch} is higher than 99.',
+        );
+        return null;
+      }
+      if (buildNumber > 65535) {
+        _logger.stderr(
+          '$prefix but the build version ${buildNumber} is higher than 65535.',
+        );
+        return null;
+      }
+      final combinedPatchNumber =
+          int.parse('${pubspecVersion.minor}0${pubspecVersion.patch}');
+      return [
+        pubspecVersion.major,
+        combinedPatchNumber,
+        buildNumber,
+        0,
+      ].join('.');
+    }
+    _logger.stderr(
+      'Warning: version_with_build_number is enabled, but the buildnumber could not be parsed.',
+    );
+    return null;
+  }
+
   String? _getPubspecVersion(dynamic yaml) {
     // Existing behavior is to put null if no version, so matching
     if (yaml['version'] == null) return null;
-    final bool appendBuildNumberToPatch =
-        yaml['msix_config']?['append_build_number_to_patch'] == true;
+    final bool versionWithBuildNumber =
+        yaml['msix_config']?['version_with_build_number'] == true;
     try {
       final Version pubspecVersion = Version.parse(yaml['version']);
-      late final int patchNumber;
-      if (appendBuildNumberToPatch &&
-          pubspecVersion.build.isNotEmpty &&
-          pubspecVersion.build[0] is int) {
-        final buildNumber = pubspecVersion.build[0] as int;
-        final combinedPatchNumber =
-            int.parse('${pubspecVersion.patch}$buildNumber');
-        if (combinedPatchNumber > 65535) {
-          _logger.stderr(
-              "Warning: The buildnumber appended to the patchnumber ($combinedPatchNumber) is higher than is allowed in the windows store (65535). Using the normal patchnumber instead.");
-          patchNumber = pubspecVersion.patch;
-        } else {
-          patchNumber = combinedPatchNumber;
-        }
-      } else {
-        patchNumber = pubspecVersion.patch;
+      if (versionWithBuildNumber) {
+        return _getPubspecVersionWithBuildNumber(pubspecVersion);
       }
       return [
         pubspecVersion.major,
         pubspecVersion.minor,
-        patchNumber,
+        pubspecVersion.patch,
         0,
       ].join('.');
     } on FormatException {
