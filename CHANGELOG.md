@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.13.2
+
+- get certificate publisher id using test certificate (fix [#159](https://github.com/YehudaKremer/msix/issues/159))
+
 ## 3.13.1
 
 - fix [#197](https://github.com/YehudaKremer/msix/issues/197): locate msix assets path from script file directory

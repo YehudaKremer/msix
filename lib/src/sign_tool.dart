@@ -19,7 +19,7 @@ class SignTool {
   Future<void> getCertificatePublisher() async {
     _logger.trace('getting certificate publisher');
 
-    if (_config.publisher.isNullOrEmpty) {
+    if (_config.publisher.isNullOrEmpty || _config.isTestCertificate) {
       String subject = '';
 
       if (isCustomSignCommand(_config.signToolOptions)) {

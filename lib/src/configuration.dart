@@ -65,6 +65,7 @@ class Configuration {
       '$publishFolderPath/${basename(msixPath).replaceAll('.msix', '.appinstaller')}';
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
+  bool isTestCertificate = false;
 
   Configuration(this._arguments);
 
@@ -260,6 +261,7 @@ class Configuration {
       // if no certificate was chosen then use test certificate
       certificatePath = '$msixAssetsPath/test_certificate.pfx';
       certificatePassword = '1234';
+      isTestCertificate = true;
     }
 
     if (!['x86', 'x64'].contains(architecture)) {
