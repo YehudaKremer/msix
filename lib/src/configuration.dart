@@ -411,8 +411,8 @@ class Configuration {
         );
         return null;
       }
-      final combinedPatchNumber =
-          int.parse('${pubspecVersion.minor}0${pubspecVersion.patch}');
+      final combinedPatchNumber =  '${pubspecVersion.minor}'
+        '${pubspecVersion.patch.toString().padLeft(2,"0")}';
       return [
         pubspecVersion.major,
         combinedPatchNumber,
