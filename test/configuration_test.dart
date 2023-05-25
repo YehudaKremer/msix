@@ -217,7 +217,7 @@ msix_config:
           testName: "from msix_version example",
           versionString: "1.2.13+35",
           versionWithBuildNumber: true,
-          result: "1.2013.35.0",
+          result: "1.213.35.0",
         )
       ];
       for (final testCase in _testList) {
