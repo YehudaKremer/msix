@@ -414,10 +414,10 @@ class Configuration {
       final combinedPatchNumber =  '${pubspecVersion.minor}'
         '${pubspecVersion.patch.toString().padLeft(2,"0")}';
       return [
-        pubspecVersion.major,
+        pubspecVersion.major.toString(),
         combinedPatchNumber,
-        buildNumber,
-        0,
+        buildNumber.toString(),
+        '0',
       ].join('.');
     }
     _logger.stderr(
