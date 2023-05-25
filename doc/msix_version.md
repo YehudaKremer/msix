@@ -16,11 +16,17 @@ Using the build number as the fourth number is not allowed in the windows store 
 By default, if you have a valid `version` in your `pubspec.yaml` file, that will form the basis for your MSIX installer version.
 
 #### The `version_with_build_number` configuration flag:
-If true, the `build`number from the `pubspec.yaml` will be appended to `patch`: `major.minor0patch.build.0`.
+If true, the `build`number from the `pubspec.yaml` will be appended to `patch`.
+- If patch consists of one digit, the version number will be
+ `major.minor`0`patch.build.0`
+- otherwise the version number wil be 
+ `major.minorpatch.build.0`. 
 
-Example: 
-- Given the following value for the `version` flag: `1.2.13+35`
-- The resulting value, will be `1.2013.35.0`.
+Examples:
+| version in `pubspec.yaml` | output version |
+| ------------------------- | -------------- |
+| 1.2.13+35                 | 1.213.35.0     |
+| 1.2.4+56                  | 1.204.56.0     |
 
 Config Example:
 ```yaml
@@ -35,12 +41,12 @@ Caveats:
 - If another version is given via the command line (1.) or the via the `msix_version` in the `pubspec.yaml`, then the normal version tag will not be used.
 - The maximum allowed number in the version [in the windows store is 65535](https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/package-version-numbering?pivots=store-installer-msix#version-numbering-for-windows10-packages). This imposes certain constraints on each of the four numbers. The table below shows these constraints which are checked in the code. If one of these constraints are not met, the version number defaults to `1.0.0.0`.
 
-| part   | minimal value | maximal value (inclusive) |
-| ------ | ------------- | ------------------------- |
-| major  | 0             | 65535                     |
-| minor  | 0             | 654                       |
-| patch  | 0             | 99                        |
-| build  | 0             | 65535                     |
+| part  | minimal value | maximal value (inclusive) |
+| ----- | ------------- | ------------------------- |
+| major | 0             | 65535                     |
+| minor | 0             | 654                       |
+| patch | 0             | 99                        |
+| build | 0             | 65535                     |
 
 
 
