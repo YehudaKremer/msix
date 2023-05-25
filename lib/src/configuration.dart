@@ -401,7 +401,8 @@ class Configuration {
       }
       if (pubspecVersion.patch > 99) {
         _logger.stderr(
-          '$prefix but the patch version ${pubspecVersion.patch} is higher than 99.',
+          '$prefix but the patch version ${pubspecVersion.patch} is higher than 99.\n'
+          'Please increment the minor version and reset the patch version',
         );
         return null;
       }
