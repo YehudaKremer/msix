@@ -145,90 +145,90 @@ msix_config:
       await config.getConfigValues();
       expect(config.msixVersion, equals('1.2.3.0'));
     });
-    group("versionWithBuildNumber:", () {
+    group("autoVersionWithBuildNumber:", () {
       const _testList = <VersionTestCase>[
         VersionTestCase(
           testName: "normal version",
           versionString: "1.2.3+4",
-          versionWithBuildNumber: false,
+          autoVersionWithBuildNumber: false,
           result: "1.2.3.0",
         ),
         VersionTestCase(
           testName: "normal version",
           versionString: "1.2.3+4",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: "1.203.4.0",
         ),
         VersionTestCase(
           testName: "maximum major version",
           versionString: "65535.2.3+4",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: "65535.203.4.0",
         ),
         VersionTestCase(
           testName: "major version too high",
           versionString: "65536.2.3+4",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: null,
         ),
         VersionTestCase(
           testName: "maximum minor version",
           versionString: "5.654.0+0",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: "5.65400.0.0",
         ),
         VersionTestCase(
           testName: "minor version too high",
           versionString: "5.655.0+0",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: null,
         ),
         VersionTestCase(
           testName: "maximum minor version",
           versionString: "5.6.99+0",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: "5.699.0.0",
         ),
         VersionTestCase(
           testName: " minor version too high",
           versionString: "5.6.100+0",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: null,
         ),
         VersionTestCase(
           testName: "maximum build version",
           versionString: "5.6.7+65535",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: "5.607.65535.0",
         ),
         VersionTestCase(
           testName: "build version too high",
           versionString: "5.6.7+65536",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: null,
         ),
         VersionTestCase(
           testName: "invalid buildVersion",
           versionString: "5.6.7+a",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: null,
         ),
         VersionTestCase(
           testName: "from msix_version example 1",
           versionString: "1.2.13+35",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: "1.213.35.0",
         ),
         VersionTestCase(
           testName: "from msix_version example 2",
           versionString: "1.2.4+56",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: "1.204.56.0",
         ),
         VersionTestCase(
           testName: "maximum patch and maximum minor number",
           versionString: "5.654.99+0",
-          versionWithBuildNumber: true,
+          autoVersionWithBuildNumber: true,
           result: "5.65499.0.0",
         )
       ];
@@ -237,7 +237,7 @@ msix_config:
           await File(yamlTestPath).writeAsString('name: testAppWithVersion\n'
               'version: ${testCase.versionString}\n'
               'msix_config:\n'
-              '  version_with_build_number: ${testCase.versionWithBuildNumber}');
+              '  auto_version_with_build_number: ${testCase.autoVersionWithBuildNumber}');
           await config.getConfigValues();
           expect(config.msixVersion, equals(testCase.result));
         });

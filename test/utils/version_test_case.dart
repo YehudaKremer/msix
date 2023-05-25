@@ -1,11 +1,11 @@
 class VersionTestCase {
   final String testName;
   final String versionString;
-  final bool versionWithBuildNumber;
+  final bool autoVersionWithBuildNumber;
   final String? result;
   const VersionTestCase(
       {required this.testName,
       required this.versionString,
-      required this.versionWithBuildNumber,
+      required this.autoVersionWithBuildNumber,
       required this.result});
 }

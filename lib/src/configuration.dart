@@ -383,8 +383,8 @@ class Configuration {
     return pubspec;
   }
 
-  String? _getPubspecVersionWithBuildNumber(Version pubspecVersion) {
-    const prefix = "Warning: version_with_build_number is enabled,";
+  String? _getPubspecAutoVersionWithBuildNumber(Version pubspecVersion) {
+    const prefix = "Warning: auto_version_with_build_number is enabled,";
     if (pubspecVersion.build.isNotEmpty && pubspecVersion.build[0] is int) {
       final buildNumber = pubspecVersion.build[0] as int;
       if (pubspecVersion.major > 65535) {
@@ -417,7 +417,7 @@ class Configuration {
       return "${pubspecVersion.major}.$combinedPatchNumber.$buildNumber.0";
     }
     _logger.stderr(
-      'Warning: version_with_build_number is enabled, but the buildnumber could not be parsed.',
+      'Warning: auto_version_with_build_number is enabled, but the buildnumber could not be parsed.',
     );
     return null;
   }
@@ -425,12 +425,12 @@ class Configuration {
   String? _getPubspecVersion(dynamic yaml) {
     // Existing behavior is to put null if no version, so matching
     if (yaml['version'] == null) return null;
-    final bool versionWithBuildNumber =
-        yaml['msix_config']?['version_with_build_number'] == true;
+    final bool autoVersionWithBuildNumber =
+        yaml['msix_config']?['auto_version_with_build_number'] == true;
     try {
       final Version pubspecVersion = Version.parse(yaml['version']);
-      if (versionWithBuildNumber) {
-        return _getPubspecVersionWithBuildNumber(pubspecVersion);
+      if (autoVersionWithBuildNumber) {
+        return _getPubspecAutoVersionWithBuildNumber(pubspecVersion);
       }
       return [
         pubspecVersion.major,

@@ -10,12 +10,12 @@ Using the build number as the fourth number is not allowed in the windows store 
    - The Pubspec version uses [semver], which is of the form `major.minor.patch-prerelease+build`
    - `msix` will use the `major.minor.patch.0`.
    - All `prerelease` info is discarded
-   - NOTE: An additional flag can be enabled in the config called `version_with_build_number`. [See below for more info](#the-version_with_build_number-flag) 
+   - NOTE: An additional flag can be enabled in the config called `auto_version_with_build_number`. [See below for more info](#the-auto_version_with_build_number-flag) 
 4. Fallback to `1.0.0.0`
 
 By default, if you have a valid `version` in your `pubspec.yaml` file, that will form the basis for your MSIX installer version.
 
-#### The `version_with_build_number` configuration flag:
+#### The `auto_version_with_build_number` configuration flag:
 If true, the `build`number from the `pubspec.yaml` will be appended to `patch`.
 - If patch consists of one digit, the version number will be
  `major.minor`0`patch.build.0`
@@ -33,8 +33,8 @@ Config Example:
 name: myProject
 version: 1.2.3+4
 msix_config:
-  # Make sure that there is no msix_version key in this config, otherwise version_with_build_number will not work
-  version_with_build_number: true
+  # Make sure that there is no msix_version key in this config, otherwise auto_version_with_build_number will not work
+  auto_version_with_build_number: true
 ```
 
 Caveats:
