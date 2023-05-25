@@ -187,7 +187,7 @@ msix_config:
           testName: "maximum minor version",
           versionString: "5.6.99+0",
           versionWithBuildNumber: true,
-          result: "5.6099.0.0",
+          result: "5.699.0.0",
         ),
         VersionTestCase(
           testName: " minor version too high",
