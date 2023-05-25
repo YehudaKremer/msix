@@ -411,14 +411,9 @@ class Configuration {
         );
         return null;
       }
-      final combinedPatchNumber =  '${pubspecVersion.minor}'
-        '${pubspecVersion.patch.toString().padLeft(2,"0")}';
-      return [
-        pubspecVersion.major.toString(),
-        combinedPatchNumber,
-        buildNumber.toString(),
-        '0',
-      ].join('.');
+      final combinedPatchNumber = '${pubspecVersion.minor}'
+          '${pubspecVersion.patch.toString().padLeft(2, "0")}';
+      return "${pubspecVersion.major}.$combinedPatchNumber.$buildNumber.0";
     }
     _logger.stderr(
       'Warning: version_with_build_number is enabled, but the buildnumber could not be parsed.',

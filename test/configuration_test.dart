@@ -214,10 +214,22 @@ msix_config:
           result: null,
         ),
         VersionTestCase(
-          testName: "from msix_version example",
+          testName: "from msix_version example 1",
           versionString: "1.2.13+35",
           versionWithBuildNumber: true,
           result: "1.213.35.0",
+        ),
+        VersionTestCase(
+          testName: "from msix_version example 2",
+          versionString: "1.2.4+56",
+          versionWithBuildNumber: true,
+          result: "1.204.56.0",
+        ),
+        VersionTestCase(
+          testName: "maximum patch and maximum minor number",
+          versionString: "5.654.99+0",
+          versionWithBuildNumber: true,
+          result: "5.65499.0.0",
         )
       ];
       for (final testCase in _testList) {
