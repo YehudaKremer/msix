@@ -151,7 +151,7 @@ class SignTool {
         await Process.run('powershell.exe', [
       '-NoProfile',
       '-NonInteractive',
-      "dir Cert:\\CurrentUser\\Root | Where-Object { \$_.Subject -eq  '${_config.publisher}'}"
+      "\$env:PSModulePath = [Environment]::GetEnvironmentVariable('PSModulePath', 'Machine');dir Cert:\\CurrentUser\\Root | Where-Object { \$_.Subject -eq  '${_config.publisher}'}"
     ])
           ..exitOnError();
 
