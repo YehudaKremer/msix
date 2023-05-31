@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.13.3
+
+- fix [#181](https://github.com/YehudaKremer/msix/issues/181)
+
 ## 3.13.2
 
 - get certificate publisher if using test certificate (fix [#159](https://github.com/YehudaKremer/msix/issues/159))

@@ -87,7 +87,7 @@ class SignTool {
 
   Future<String> _getInstalledCertificateSubject(String searchCondition) async {
     ProcessResult certificateDetailsProcess = await _executePowershellCommand(
-        "dir -Recurse cert: | where {$searchCondition} | select -expandproperty Subject -First 1");
+        "\$env:PSModulePath = [Environment]::GetEnvironmentVariable('PSModulePath', 'Machine');dir -Recurse cert: | where {$searchCondition} | select -expandproperty Subject -First 1");
 
     String subject = (certificateDetailsProcess.stdout as String).trim();
 
