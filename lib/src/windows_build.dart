@@ -28,10 +28,12 @@ class WindowsBuild {
       'flutter',
     ]);
 
-    final Progress loggerProgress = _logger
-        .progress('running ""$flutterPath" ${flutterArgs.join(' ')}"');
+    final Progress loggerProgress =
+        _logger.progress('running "flutter ${flutterArgs.join(' ')}"');
 
-    // ignore: avoid_single_cascade_in_expression_statements
+    _logger.trace('build windows files with the command: ' +
+        '"$flutterPath ${flutterArgs.join(' ')}"');
+
     await Process.run(flutterPath, flutterArgs, runInShell: true)
       ..exitOnError();
 
