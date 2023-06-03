@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.14.1
+
+- fix [#203](https://github.com/YehudaKremer/msix/issues/203)
+
 ## 3.14.0
 
 - fix [#201](https://github.com/YehudaKremer/msix/issues/201): use correct flutter executable (support [fvm](https://fvm.app/))

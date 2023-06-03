@@ -19,14 +19,7 @@ class WindowsBuild {
       if (_config.createWithDebugBuildFiles) '--debug',
     ];
 
-    // e.g. C:\Users\MyUser\fvm\versions\3.7.12\bin\cache\dart-sdk\bin\dart.exe
-    final dartPath = p.split(Platform.executable);
-
-    // e.g. C:\Users\MyUser\fvm\versions\3.7.12\bin\flutter
-    final flutterPath = p.joinAll([
-      ...dartPath.sublist(0, dartPath.length - 4),
-      'flutter',
-    ]);
+    var flutterPath = await GetFlutterPath();
 
     final Progress loggerProgress =
         _logger.progress('running "flutter ${flutterArgs.join(' ')}"');
@@ -39,4 +32,27 @@ class WindowsBuild {
 
     loggerProgress.finish(showTiming: true);
   }
+}
+
+Future<String> GetFlutterPath() async {
+  // use environment-variable 'flutter' by default
+  var flutterPath = 'flutter';
+
+  // e.g. C:\Users\MyUser\fvm\versions\3.7.12\bin\cache\dart-sdk\bin\dart.exe
+  final dartPath = p.split(Platform.executable);
+
+  // if contains 'cache\dart-sdk' we can know where is the 'flutter' located
+  if (dartPath.contains('dart-sdk') && dartPath.length > 4) {
+    // e.g. C:\Users\MyUser\fvm\versions\3.7.12\bin\flutter
+    final flutterRelativePath = p.joinAll([
+      ...dartPath.sublist(0, dartPath.length - 4),
+      flutterPath,
+    ]);
+
+    if (await File(flutterRelativePath).exists()) {
+      flutterPath = flutterRelativePath;
+    }
+  }
+
+  return flutterPath;
 }
