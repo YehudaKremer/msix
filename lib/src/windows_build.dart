@@ -12,29 +12,31 @@ class WindowsBuild {
 
   /// Run "flutter build windows" command
   Future<void> build() async {
-    final flutterArgs = [
+    final flutterBuildArgs = [
       'build',
       'windows',
       ...?_config.windowsBuildArgs,
       if (_config.createWithDebugBuildFiles) '--debug',
     ];
 
-    var flutterPath = await GetFlutterPath();
+    var flutterPath = await _getFlutterPath();
 
     final Progress loggerProgress =
-        _logger.progress('running "flutter ${flutterArgs.join(' ')}"');
+        _logger.progress('running "flutter ${flutterBuildArgs.join(' ')}"');
 
-    _logger.trace('build windows files with the command: ' +
-        '"$flutterPath ${flutterArgs.join(' ')}"');
+    _logger.trace('build windows files with the command: '
+        '"$flutterPath ${flutterBuildArgs.join(' ')}"');
 
-    await Process.run(flutterPath, flutterArgs, runInShell: true)
-      ..exitOnError();
+    ProcessResult buildProcess =
+        await Process.run(flutterPath, flutterBuildArgs, runInShell: true);
+
+    buildProcess.exitOnError();
 
     loggerProgress.finish(showTiming: true);
   }
 }
 
-Future<String> GetFlutterPath() async {
+Future<String> _getFlutterPath() async {
   // use environment-variable 'flutter' by default
   var flutterPath = 'flutter';
 
