@@ -79,7 +79,6 @@ msix_config:
     });
 
     test('invalid version letter in yaml', () async {
-      var test = Platform.environment.containsKey('FLUTTER_TEST');
       await File(yamlTestPath)
           .writeAsString('${yamlContent}msix_version: 1.s.3.4');
       await config.getConfigValues();
