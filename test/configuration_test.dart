@@ -1,11 +1,12 @@
 import 'dart:io';
+import 'package:path/path.dart' as p;
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:msix/src/configuration.dart';
 import 'package:test/test.dart';
 
-const tempFolderPath = 'test/configuration_temp';
-const yamlTestPath = '$tempFolderPath/test.yaml';
+var tempFolderPath = p.join('test', 'runner', 'configuration_temp');
+var yamlTestPath = p.join(tempFolderPath, 'test.yaml');
 
 void main() {
   late Configuration config;
@@ -25,14 +26,14 @@ msix_config:
 
     GetIt.I.registerSingleton<Configuration>(config);
 
-    await Directory('$tempFolderPath/').create(recursive: true);
+    await Directory(tempFolderPath).create(recursive: true);
   });
 
   tearDown(() async {
     GetIt.I.reset();
 
-    if (await Directory('$tempFolderPath/').exists()) {
-      await Directory('$tempFolderPath/').delete(recursive: true);
+    if (await Directory(tempFolderPath).exists()) {
+      await Directory(tempFolderPath).delete(recursive: true);
     }
   });
 
@@ -78,6 +79,7 @@ msix_config:
     });
 
     test('invalid version letter in yaml', () async {
+      var test = Platform.environment.containsKey('FLUTTER_TEST');
       await File(yamlTestPath)
           .writeAsString('${yamlContent}msix_version: 1.s.3.4');
       await config.getConfigValues();
@@ -165,7 +167,7 @@ msix_config:
 
   group('certificate:', () {
     test('exited certificate path with password', () async {
-      const pfxTestPath = '$tempFolderPath/test.pfx';
+      var pfxTestPath = p.join(tempFolderPath, 'test.pfx');
       await File(pfxTestPath).create();
       await File(yamlTestPath)
           .writeAsString('''${yamlContent}certificate_path: $pfxTestPath  
@@ -185,7 +187,7 @@ msix_config:
     });
 
     test('certificate without password', () async {
-      const pfxTestPath = '$tempFolderPath/test.pfx';
+      var pfxTestPath = p.join(tempFolderPath, 'test.pfx');
       await File(pfxTestPath).create();
       await File(yamlTestPath)
           .writeAsString('${yamlContent}certificate_path: $pfxTestPath');

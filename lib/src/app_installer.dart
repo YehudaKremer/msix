@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as p;
 import 'dart:convert';
 import 'package:console/console.dart';
 import 'package:get_it/get_it.dart';
@@ -14,9 +15,10 @@ class AppInstaller {
   final Logger _logger = GetIt.I<Logger>();
   final Configuration _config = GetIt.I<Configuration>();
 
-  String get _versionsFolderPath => '${_config.publishFolderPath}/versions';
-  String get _msixVersionPath =>
-      '$_versionsFolderPath/${_config.appName}_${_config.msixVersion}.msix';
+  String get _versionsFolderPath =>
+      p.join(_config.publishFolderPath!, 'versions');
+  String get _msixVersionPath => p.join(
+      _versionsFolderPath, '${_config.appName}_${_config.msixVersion}.msix');
 
   /// Ask the user if he want to increment the version
   /// if the current publish version is the same or lower than the last published version.
@@ -113,7 +115,8 @@ class AppInstaller {
         .replaceAll('PUBLISHER_NAME', _config.publisherName!);
 
     Image logoImage = decodeImage(await File(_config.logoPath ??
-            '${_config.defaultsIconsFolderPath}/Square44x44Logo.altform-lightunplated_targetsize-256.png')
+            p.join(_config.defaultsIconsFolderPath,
+                'Square44x44Logo.altform-lightunplated_targetsize-256.png'))
         .readAsBytes())!;
 
     try {
@@ -130,7 +133,7 @@ class AppInstaller {
         .replaceAll('IMAGE_BASE64', base64Logo)
         .replaceAll('FAVICON_BASE64', base64favicon);
 
-    await File('${_config.publishFolderPath}/index.html')
+    await File(p.join(_config.publishFolderPath!, 'index.html'))
         .writeAsString(webInstallerSite);
   }
 }

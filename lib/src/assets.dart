@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as p;
 import 'dart:isolate';
 import 'package:get_it/get_it.dart';
 import 'package:image/image.dart';
@@ -12,7 +13,7 @@ import 'dart:async';
 class Assets {
   final Logger _logger = GetIt.I<Logger>();
   final Configuration _config = GetIt.I<Configuration>();
-  String get _msixIconsFolderPath => '${_config.buildFilesFolder}/Images';
+  String get _msixIconsFolderPath => p.join(_config.buildFilesFolder, 'Images');
 
   /// Generate new app icons or copy default app icons
   Future<void> createIcons() async {
@@ -88,7 +89,7 @@ class Assets {
           fileName = '$name.scale-${(scale * 100).toInt()}';
         }
 
-        await File('$buildFilesFolder/Images/$fileName.png')
+        await File(p.join(buildFilesFolder, 'Images', '$fileName.png'))
             .writeAsBytes(encodePng(imageCanvas));
       }
 
@@ -263,7 +264,8 @@ class Assets {
   Future<void> copyVCLibsFiles() async {
     _logger.trace('copying VC libraries');
 
-    await Directory('${_config.msixAssetsPath}/VCLibs/${_config.architecture}')
+    await Directory(
+            p.join(_config.msixAssetsPath, 'VCLibs', _config.architecture))
         .copyDirectory(Directory(_config.buildFilesFolder));
   }
 
@@ -285,8 +287,8 @@ class Assets {
         'vcruntime140_1.dll',
         'vcruntime140.dll'
       ].map((fileName) async =>
-          await File('$buildPath/$fileName').deleteIfExists()),
-      Directory('$buildPath/Images').deleteIfExists(recursive: true),
+          await File(p.join(buildPath, fileName)).deleteIfExists()),
+      Directory(p.join(buildPath, 'Images')).deleteIfExists(recursive: true),
       clearMsixFiles
           ? Directory(buildPath)
               .list(recursive: true, followLinks: false)
@@ -302,7 +304,7 @@ class Assets {
           'InstallTestCertificate.exe',
           'test_certificate.pfx'
         ].map((fileName) async =>
-            await File('$buildPath/$fileName').deleteIfExists()),
+            await File(p.join(buildPath, fileName)).deleteIfExists()),
       ]);
     }
   }

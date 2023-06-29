@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path/path.dart' as p;
 import 'package:cli_util/cli_logging.dart';
 import 'package:console/console.dart';
 import 'package:get_it/get_it.dart';
@@ -172,7 +173,7 @@ class SignTool {
         String installCertificateScript =
             'Import-PfxCertificate -FilePath "${_config.certificatePath}" -Password (ConvertTo-SecureString -String "${_config.certificatePassword}" -AsPlainText -Force) -CertStoreLocation Cert:\\LocalMachine\\Root';
         String installCertificateScriptPath =
-            '${_config.msixAssetsPath}/installCertificate.ps1';
+            p.join(_config.msixAssetsPath, 'installCertificate.ps1');
         await File(installCertificateScriptPath)
             .writeAsString(installCertificateScript);
 
@@ -203,8 +204,7 @@ class SignTool {
   Future<void> sign() async {
     _logger.trace('signing');
 
-    String signtoolPath =
-        '${_config.msixToolkitPath}/Redist.${_config.architecture}/signtool.exe';
+    String signtoolPath = p.join(_config.msixToolkitPath, 'signtool.exe');
     List<String> signtoolOptions = _config.signToolOptions ?? ['/v'];
 
     if (isCustomSignCommand(_config.signToolOptions)) {

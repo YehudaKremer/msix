@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.15.0
+
+- add support for `arm64` build folder layout [#205](https://github.com/YehudaKremer/msix/issues/205)
+
+### Breaking Changes
+
+- `architecture` config field is now accepts `x64` or `arm64` (instead of `x86`)
+
 ## 3.14.2
 
 - fix [#203](https://github.com/YehudaKremer/msix/issues/203)

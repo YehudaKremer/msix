@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as p;
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'src/app_installer.dart';
@@ -36,7 +37,8 @@ class Msix {
     await _initConfig();
 
     /// check if the appx manifest is exist
-    String appxManifestPath = '${_config.buildFilesFolder}/AppxManifest.xml';
+    String appxManifestPath =
+        p.join(_config.buildFilesFolder, 'AppxManifest.xml');
     if (!(await File(appxManifestPath).exists())) {
       String error = 'run "msix:build" first';
       _logger.stderr(error.red);
@@ -85,9 +87,11 @@ class Msix {
     GetIt.I.registerSingleton<Configuration>(Configuration(args));
   }
 
-  String get _msixOutputPath => _config.msixPath.contains('build/windows')
-      ? _config.msixPath.substring(_config.msixPath.indexOf('build/windows'))
-      : _config.msixPath;
+  String get _msixOutputPath =>
+      _config.msixPath.contains(p.join('build', 'windows'))
+          ? _config.msixPath
+              .substring(_config.msixPath.indexOf(p.join('build', 'windows')))
+          : _config.msixPath;
 
   Future<void> _initConfig() async {
     await _config.getConfigValues();
