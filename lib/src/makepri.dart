@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as p;
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'configuration.dart';
@@ -13,8 +14,7 @@ class MakePri {
     _logger.trace('generate package resource indexing files');
 
     final String buildPath = _config.buildFilesFolder;
-    String makePriPath =
-        '${_config.msixToolkitPath}/Redist.${_config.architecture}/makepri.exe';
+    String makePriPath = p.join(_config.msixToolkitPath, 'makepri.exe');
 
     // ignore: avoid_single_cascade_in_expression_statements
     await Process.run(makePriPath, [

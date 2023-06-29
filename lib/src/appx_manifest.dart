@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as p;
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
 import 'capabilities.dart';
@@ -76,7 +77,8 @@ class AppxManifest {
     //clear empty rows
     manifestContent = manifestContent.replaceAll('    \n', '');
 
-    String appxManifestPath = '${_config.buildFilesFolder}/AppxManifest.xml';
+    String appxManifestPath =
+        p.join(_config.buildFilesFolder, 'AppxManifest.xml');
     await File(appxManifestPath).writeAsString(manifestContent);
   }
 

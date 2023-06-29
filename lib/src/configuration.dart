@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as p;
 import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
@@ -22,7 +23,7 @@ class Configuration {
   String? msixVersion;
   String? appDescription;
   String buildFilesFolder =
-      '${Directory.current.path}/build/windows/runner/Release';
+      p.join(Directory.current.path, 'build', 'windows', 'runner', 'Release');
   String? certificatePath;
   String? certificatePassword;
   String? publisher;
@@ -57,12 +58,13 @@ class Configuration {
   StartupTask? startupTask;
   Iterable<String>? appUriHandlerHosts;
   Iterable<String>? languages;
-  String get defaultsIconsFolderPath => '$msixAssetsPath/icons';
-  String get msixToolkitPath => '$msixAssetsPath/MSIX-Toolkit';
+  String get defaultsIconsFolderPath => p.join(msixAssetsPath, 'icons');
+  String get msixToolkitPath =>
+      p.join(msixAssetsPath, 'MSIX-Toolkit', 'Redist.x64');
   String get msixPath =>
-      '${outputPath ?? buildFilesFolder}/${outputName ?? appName}.msix';
-  String get appInstallerPath =>
-      '$publishFolderPath/${basename(msixPath).replaceAll('.msix', '.appinstaller')}';
+      p.join(outputPath ?? buildFilesFolder, '${outputName ?? appName}.msix');
+  String get appInstallerPath => p.join(publishFolderPath!,
+      basename(msixPath).replaceAll('.msix', '.appinstaller'));
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
   bool isTestCertificate = false;
@@ -105,9 +107,7 @@ class Configuration {
         yaml['store']?.toString().toLowerCase() == 'true';
     createWithDebugBuildFiles = _args.wasParsed('debug') ||
         yaml['debug']?.toString().toLowerCase() == 'true';
-    if (createWithDebugBuildFiles) {
-      buildFilesFolder = buildFilesFolder.replaceFirst('Release', 'Debug');
-    }
+
     displayName = _args['display-name'] ?? yaml['display_name'];
     publisherName =
         _args['publisher-display-name'] ?? yaml['publisher_display_name'];
@@ -230,6 +230,14 @@ class Configuration {
     }
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
+
+    buildFilesFolder = await _getBuildFilesFolder();
+
+    if (createWithDebugBuildFiles) {
+      buildFilesFolder = buildFilesFolder.replaceFirst('Release', 'Debug');
+    }
+    _logger.trace('pack files in build folder: $buildFilesFolder');
+
     languages ??= ['en-us'];
 
     if (!RegExp(r'^(\*|\d+(\.\d+){3,3}(\.\*)?)$').hasMatch(msixVersion!)) {
@@ -259,13 +267,13 @@ class Configuration {
       }
     } else {
       // if no certificate was chosen then use test certificate
-      certificatePath = '$msixAssetsPath/test_certificate.pfx';
+      certificatePath = p.join(msixAssetsPath, 'test_certificate.pfx');
       certificatePassword = '1234';
       isTestCertificate = true;
     }
 
-    if (!['x86', 'x64'].contains(architecture)) {
-      throw 'Architecture can be "x86" or "x64", check "msix_config: architecture" at pubspec.yaml';
+    if (!['x64', 'arm64'].contains(architecture)) {
+      throw 'Architecture can be "x64" or "arm64", check "msix_config: architecture" at pubspec.yaml';
     }
   }
 
@@ -333,6 +341,29 @@ class Configuration {
 
     // exclude -v (verbose) from the arguments
     _args = parser.parse(args.where((arg) => arg != '-v'));
+  }
+
+  Future<String> _getBuildFilesFolder() async {
+    final String buildFilesFolderStart =
+        buildFilesFolder.substring(0, buildFilesFolder.indexOf('runner'));
+    final String buildFilesFolderArchitecture =
+        p.join(buildFilesFolderStart, architecture);
+    final String buildFilesFolderEnd =
+        buildFilesFolder.substring(buildFilesFolder.indexOf('runner'));
+
+    if (architecture == 'arm64' &&
+        !(await Directory(buildFilesFolderArchitecture).exists())) {
+      _logger.stderr(
+          'cannot find arm64 build folder at: $buildFilesFolderArchitecture');
+      exit(-1);
+    }
+
+    if (await Directory(p.join(buildFilesFolderArchitecture, 'runner'))
+        .exists()) {
+      return p.join(buildFilesFolderStart, architecture, buildFilesFolderEnd);
+    } else {
+      return p.join(buildFilesFolderStart, buildFilesFolderEnd);
+    }
   }
 
   Future<void> validateAppInstallerConfigValues() async {
