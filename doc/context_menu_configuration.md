@@ -452,9 +452,6 @@ This configuration will add a context menu item to all files and folders. If you
 - [PhotoStoreDemo source code]
 
 
-
-<br>
-
 [Extending the context menu and share dialog in Windows 11]: https://blogs.windows.com/windowsdeveloper/2021/07/19/extending-the-context-menu-and-share-dialog-in-windows-11/
 [PowerToys]: https://github.com/microsoft/PowerToys
 [PowerToys PowerRenamme context menu dll source code]: https://github.com/microsoft/PowerToys/tree/8ccbb694dd3c00b5d28132620a47b0e9a3a975c7/src/modules/powerrename/PowerRenameContextMenu
