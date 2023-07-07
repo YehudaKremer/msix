@@ -70,7 +70,7 @@ msix_config:
 | ------------ | --------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------- |
 | `id`         | N/A                   | Id of the command. You need to grab this from your dll source code.           | `Command1`                                         |
 | `clsid`      | N/A                   | Clsid of the command. You need to grab this from your dll source code.        | `a45623df-ac7b-40e6-a230-73d937322b97`             |
-| `custom_dll` | N/A                   | Path of the custom dll. You need to pass this if you want to use a custom dll | `C:\\Users\user\Desktop\Projects\ContextMenu2.dll` |
+| `custom_dll` | N/A                   | Path of the custom dll. You need to pass this if you want to use a custom dll | `C:\Users\user\Desktop\Projects\ContextMenu2.dll` |
 
 ```yaml	
 - id: Command1 # required (Grab this from your dll source code)
