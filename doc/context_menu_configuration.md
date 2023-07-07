@@ -413,7 +413,7 @@ Set your build configuration to `Release`. Then click `Build` tab and click `Bui
 
 Under `View` tab, click `Output` and you will see your dll location in build logs. Copy your dll to your project folder.
 
-> ***Note***: You can also find your dll location on your project folder under  `x64/Release` folder.  
+> ***Note***: You can also find your dll location on your **solution** folder under  `x64/Release` folder.  
 
 > ***Note***: You don't really need to copy your dll to your project folder. You can use it from where it is. But we need to pass its location to our context menu configuration. So it is easier to copy it to your project folder.
 
