@@ -98,6 +98,7 @@ class AppxManifest {
       ${!_config.toastActivatorCLSID.isNull ? _getToastNotificationActivationExtension() : ''}
       ${_config.enableAtStartup || _config.startupTask != null ? _getStartupTaskExtension() : ''}
       ${_config.appUriHandlerHosts != null && _config.appUriHandlerHosts!.isNotEmpty ? _getAppUriHandlerHostExtension() : ''}
+      ${_config.contextMenuConfiguration != null ? _getContextMenuExtension() : ''}
         </Extensions>''';
     } else {
       return '';
@@ -125,6 +126,30 @@ class AppxManifest {
         </uap:Extension>''';
     }
     return protocolsActivation;
+  }
+
+  /// Add extension section for context menu
+  _getContextMenuExtension() {
+    return '''  <desktop4:Extension Category="windows.fileExplorerContextMenus">
+              <desktop4:FileExplorerContextMenus>
+                ${_config.contextMenuConfiguration!.items.map((item) {
+      return '''<desktop5:ItemType Type="${item.type}">
+                  ${item.commands.map((command) {
+        return '''<desktop5:Verb Id="${command.id}" Clsid="${command.clsid}" />''';
+      }).join('\n                  ')}
+                </desktop5:ItemType>''';
+    }).join('\n                ')}
+              </desktop4:FileExplorerContextMenus>
+            </desktop4:Extension>
+            <com:Extension Category="windows.comServer">
+              <com:ComServer>
+                ${_config.contextMenuConfiguration!.comSurrogateServers.map((item) {
+      return '''<com:SurrogateServer DisplayName="Context menu verb handler">
+                  <com:Class Id="${item.clsid}" Path="${p.basename(item.dllPath)}" ThreadingModel="STA"/>
+                </com:SurrogateServer>''';
+    }).join('\n                ')}
+              </com:ComServer>
+          </com:Extension>''';
   }
 
   /// Add extension section for [_config.fileExtension]

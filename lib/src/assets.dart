@@ -269,6 +269,13 @@ class Assets {
         .copyDirectory(Directory(_config.buildFilesFolder));
   }
 
+  Future<void> copyContextMenuDll(String dllPath) async {
+    _logger.trace('copying context menu dll');
+
+    await File(dllPath)
+        .copy(p.join(_config.buildFilesFolder, p.basename(dllPath)));
+  }
+
   /// Clear the build folder from temporary files
   Future<void> cleanTemporaryFiles({clearMsixFiles = false}) async {
     _logger.trace('cleaning temporary files');

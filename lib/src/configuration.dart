@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:msix/src/context_menu_configuration.dart';
 import 'package:path/path.dart' as p;
 import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
@@ -68,6 +69,7 @@ class Configuration {
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
   bool isTestCertificate = false;
+  ContextMenuConfiguration? contextMenuConfiguration;
 
   Configuration(this._arguments);
 
@@ -184,6 +186,14 @@ class Configuration {
                     ?.toString()
                     .toLowerCase() ==
                 'true';
+
+    // context menu configurations
+    dynamic contextMenuYaml = yaml['context_menu'];
+
+    contextMenuConfiguration =
+        contextMenuYaml != null && contextMenuYaml is YamlMap
+            ? ContextMenuConfiguration.fromYaml(contextMenuYaml)
+            : null;
   }
 
   /// Validate the configuration values and set default values
@@ -274,6 +284,64 @@ class Configuration {
 
     if (!['x64', 'arm64'].contains(architecture)) {
       throw 'Architecture can be "x64" or "arm64", check "msix_config: architecture" at pubspec.yaml';
+    }
+
+    if (contextMenuConfiguration != null) {
+      if (!await File(contextMenuConfiguration!.dllPath).exists()) {
+        throw 'The context menu dll file not found in: ${contextMenuConfiguration!.dllPath}, check "msix_config: context_menu: dll_path" at pubspec.yaml';
+      }
+
+      if (contextMenuConfiguration!.items.isEmpty) {
+        throw 'Context menu items is empty, check "msix_config: context_menu: items" at pubspec.yaml';
+      }
+
+      for (var item in contextMenuConfiguration!.items) {
+        if (item.type.isNullOrEmpty) {
+          throw 'Context menu item type is empty';
+        }
+
+        if (item.commands.isEmpty) {
+          throw 'Context menu item commands is empty';
+        }
+
+        if (contextMenuConfiguration!.items
+                .where((element) => element.type == item.type)
+                .length >
+            1) {
+          throw 'Found same context menu item type more than once, type must be unique for each item. Type: ${item.type}';
+        }
+
+        for (var command in item.commands) {
+          if (command.id.isNullOrEmpty) {
+            throw 'Context menu command id is empty';
+          }
+
+          if (command.clsid.isNullOrEmpty) {
+            throw 'Context menu command clsid is empty';
+          }
+
+          if (command.customDllPath != null &&
+              !await File(command.customDllPath!).exists()) {
+            throw 'The context menu command custom dll file not found in: ${command.customDllPath}, check "msix_config: context_menu: items: commands: custom_dll" at pubspec.yaml';
+          }
+
+          if (item.commands
+                  .where((element) => element.clsid == command.clsid)
+                  .length >
+              1) {
+            throw 'Found same context menu command more than once in same type. Clsid: ${command.clsid}, Type: ${item.type}';
+          }
+
+          for (List<ContextMenuItemCommand> command2
+              in contextMenuConfiguration!.items.map((e) => e.commands)) {
+            if (command2.any((element) =>
+                element.clsid == command.clsid &&
+                element.customDllPath != command.customDllPath)) {
+              throw 'Context menu command clsid must be unique for each class, but found duplicate.\nClsid: ${command.clsid} with different dll path: ${command.customDllPath ?? contextMenuConfiguration!.dllPath} and ${command2.firstWhere((element) => element.id == command.id).customDllPath}';
+            }
+          }
+        }
+      }
     }
   }
 

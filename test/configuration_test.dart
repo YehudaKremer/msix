@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:msix/src/context_menu_configuration.dart';
 import 'package:path/path.dart' as p;
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
@@ -195,6 +196,76 @@ msix_config:
           config.validateConfigValues,
           throwsA(predicate((String error) =>
               error.contains('Certificate password is empty'))));
+    });
+  });
+
+  group('context menu:', () {
+    late File fakeContextMenuDll;
+    late File fakeContextMenuDll2;
+    const String testGuid = 'ba40803c-736a-41f0-ba7c-cdb3eaed7496';
+    const String testGuid2 = 'ba40803c-736a-41f0-ba7c-cdb3eaed7497';
+
+    setUp(() async {
+      fakeContextMenuDll = await File(p.join(tempFolderPath, 'test.dll'))
+          .create(recursive: true);
+
+      fakeContextMenuDll2 = await File(p.join(tempFolderPath, 'test2.dll'))
+          .create(recursive: true);
+    });
+
+    tearDown(() async {
+      if (await fakeContextMenuDll.exists()) {
+        await fakeContextMenuDll.delete();
+      }
+
+      if (await fakeContextMenuDll2.exists()) {
+        await fakeContextMenuDll2.delete();
+      }
+    });
+
+    test('valid context menu', () async {
+      await File(yamlTestPath).writeAsString('''${yamlContent}context_menu:
+    dll_path: ${fakeContextMenuDll.path}
+    items:
+      - type: "*"
+        commands:
+          - id: command1
+            clsid: $testGuid
+      - type: .png
+        commands:
+          - id: command1
+            clsid: $testGuid2
+            custom_dll: ${fakeContextMenuDll2.path}''');
+      await config.getConfigValues();
+      await config.validateConfigValues();
+
+      expect(
+          config.contextMenuConfiguration?.items.map((e) => e.toString()),
+          containsAll([
+            ContextMenuItem(type: '*', commands: [
+              ContextMenuItemCommand(id: 'command1', clsid: testGuid)
+            ]).toString(),
+            ContextMenuItem(type: '.png', commands: [
+              ContextMenuItemCommand(
+                  id: 'command1',
+                  clsid: testGuid2,
+                  customDllPath: fakeContextMenuDll2.path),
+            ]).toString()
+          ]));
+
+      expect(
+          config.contextMenuConfiguration?.comSurrogateServers
+              .map((e) => e.toString()),
+          containsAll([
+            ContextMenuComSurrogateServer(
+              clsid: testGuid,
+              dllPath: fakeContextMenuDll.path,
+            ).toString(),
+            ContextMenuComSurrogateServer(
+              clsid: testGuid2,
+              dllPath: fakeContextMenuDll2.path,
+            ).toString()
+          ]));
     });
   });
 }

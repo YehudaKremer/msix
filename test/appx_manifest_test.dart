@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:msix/src/context_menu_configuration.dart';
 import 'package:path/path.dart' as p;
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
@@ -247,5 +248,58 @@ void main() {
             '<desktop:ToastNotificationActivation ToastActivatorCLSID="$testValue"/>'),
         true);
     expect(manifestContent.contains('<com:Class Id="$testValue"/>'), true);
+  });
+
+  test('context-menu is valid', () async {
+    var testGuid = 'ba40803c-736a-41f0-ba7c-cdb3eaed7496';
+    var testGuid2 = 'ba40803c-736a-41f0-ba7c-cdb3eaed7497';
+
+    config.contextMenuConfiguration =
+        ContextMenuConfiguration(dllPath: 'test_dll.dll', items: [
+      ContextMenuItem(
+        type: '*',
+        commands: [
+          ContextMenuItemCommand(id: 'test1', clsid: testGuid),
+        ],
+      ),
+      ContextMenuItem(
+        type: 'Directory',
+        commands: [
+          ContextMenuItemCommand(id: 'test1', clsid: testGuid),
+        ],
+      ),
+      ContextMenuItem(
+        type: 'Directory\\Background',
+        commands: [
+          ContextMenuItemCommand(
+              id: 'test2', clsid: testGuid2, customDllPath: 'test_dll2.dll'),
+        ],
+      ),
+    ]);
+
+    await AppxManifest().generateAppxManifest();
+
+    var manifestContent =
+        await File(p.join(tempFolderPath, 'AppxManifest.xml')).readAsString();
+
+    expect(
+      manifestContent,
+      stringContainsInOrder(
+        config.contextMenuConfiguration!.items.map((e) {
+          return '''<desktop5:ItemType Type="${e.type}">
+                  ${e.commands.map((e) => '''<desktop5:Verb Id="${e.id}" Clsid="${e.clsid}" />''').join('\n')}
+                </desktop5:ItemType>''';
+        }).toList(),
+      ),
+    );
+
+    expect(
+      manifestContent,
+      stringContainsInOrder(
+        config.contextMenuConfiguration!.comSurrogateServers.map((e) {
+          return '<com:Class Id="${e.clsid}" Path="${p.basename(e.dllPath)}" ThreadingModel="STA"/>';
+        }).toList(),
+      ),
+    );
   });
 }
