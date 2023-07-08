@@ -90,7 +90,8 @@ class AppxManifest {
         (_config.appUriHandlerHosts != null &&
             _config.appUriHandlerHosts!.isNotEmpty) ||
         _config.enableAtStartup ||
-        _config.startupTask != null) {
+        _config.startupTask != null ||
+        _config.contextMenuConfiguration != null) {
       return '''<Extensions>
       ${!_config.executionAlias.isNull ? _getExecutionAliasExtension() : ''}
       ${_config.protocolActivation.isNotEmpty ? _getProtocolActivationExtension() : ''}
