@@ -44,7 +44,7 @@ msix_config:
 
 | YAML name  | Command-line argument | Description                   | Example                                           |
 | ---------- | --------------------- | ----------------------------- | ------------------------------------------------- |
-| `dll_path` | N/A                   | Path of your context menu dll | `C:\\Users\user\Desktop\Projects\ContextMenu.dll` |
+| `dll_path` | N/A                   | Path of your context menu dll | `C:\Users\user\Desktop\Projects\ContextMenu.dll` |
 | `items`    | N/A                   | List of context menu item     |                                                   |
 
 ### Item structure
