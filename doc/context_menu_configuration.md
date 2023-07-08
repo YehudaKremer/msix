@@ -447,13 +447,13 @@ This configuration will add a context menu item to all files and folders. If you
 
 - [Extending the context menu and share dialog in Windows 11]
 - [PowerToys]
-- [PowerToys PowerRenamme context menu dll source code]
+- [PowerToys PowerRename context menu dll source code]
 - [Walkthrough: Create and use your own Dynamic Link Library (C++)]
 - [PhotoStoreDemo source code]
 
 
 [Extending the context menu and share dialog in Windows 11]: https://blogs.windows.com/windowsdeveloper/2021/07/19/extending-the-context-menu-and-share-dialog-in-windows-11/
 [PowerToys]: https://github.com/microsoft/PowerToys
-[PowerToys PowerRenamme context menu dll source code]: https://github.com/microsoft/PowerToys/tree/8ccbb694dd3c00b5d28132620a47b0e9a3a975c7/src/modules/powerrename/PowerRenameContextMenu
+[PowerToys PowerRename context menu dll source code]: https://github.com/microsoft/PowerToys/tree/8ccbb694dd3c00b5d28132620a47b0e9a3a975c7/src/modules/powerrename/PowerRenameContextMenu
 [Walkthrough: Create and use your own Dynamic Link Library (C++)]: https://docs.microsoft.com/en-us/cpp/build/walkthrough-creating-and-using-a-dynamic-link-library-cpp?view=msvc-160
 [PhotoStoreDemo source code]: https://github.com/microsoft/AppModelSamples/tree/master/Samples/SparsePackages
