@@ -28,6 +28,8 @@ class AppxManifest {
           xmlns:iot="http://schemas.microsoft.com/appx/manifest/iot/windows10" 
           xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" 
           xmlns:desktop2="http://schemas.microsoft.com/appx/manifest/desktop/windows10/2" 
+          xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+          xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
           xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6" 
           xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" 
           xmlns:rescap3="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities/3" 
