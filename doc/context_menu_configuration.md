@@ -46,7 +46,8 @@ msix_config:
 | ---------- | --------------------- | ----------------------------------------------------- | ------------------------------------------------- |
 | `dll_path` | N/A                   | Path of your context menu dll                         | `C:\Users\user\Desktop\Projects\ContextMenu.dll`  |
 | `items`    | N/A                   | List of context menu item                             |                                                   |
-| N/A        | `skip-context-menu`   | Skip context menu configuration. Can be helful in CI. |                                                   |
+
+> ***Note***: **Configuring context menu with command line arguments not supported. So if you don't want to include context menu in to your msix package, you can use `skip-context-menu` argument. This will skip context menu configuration. Can be helpful in CI.**
 
 ### Item structure
 
