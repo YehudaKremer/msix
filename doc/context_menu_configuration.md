@@ -138,13 +138,13 @@ msix_config:
 
 ### 0. Introduction
 
-Before we dive in, This guide doesn't written by who expert on C++ or Windows. Due to very limited information about windows context menus, I felt like I need to write this guide. If you see any mistake or something that can be improved, don't hesitate to create a pull request.
-
-Also, You will very likely to see some errors while you are trying to build your dll. You need to use your developer skills to solve them.
+Before we dive in, This guide doesn't written by who expert on C++ or Windows. Due to very limited information about windows context menus, I felt responsible to write this guide. If you see any mistake or something that can be improved, don't hesitate to create a pull request.
 
 In this guide we will create a basic context menu dll that will open our flutter application with selected file/folder paths as arguments.
 
-<br clear="right"/>
+> ***Warning***: This guide will assume you to have basic knowledge about C++, Visual Studio and Context menus.
+>
+> Also, you will very likely to see some errors while you are trying to build your dll. You need to use your developer skills to solve them. 
 
 ### 1. Install Visual Studio with `Desktop development with C++` workload.
 
@@ -443,14 +443,21 @@ msix_config:
 
 This configuration will add a context menu item to all files and folders. If you want to add it to only one file type, you can change `*` with `.txt` or `.png` or whatever you want.
 
+### 12. Conclusion
+
+Now you can build your msix package and install it to your computer. You will see your context menu item when you right click to a file or folder. 
+
+For more information like how to add subcommands, I am leaving some useful links below.
 
 ### Useful links
 
-- [Extending the context menu and share dialog in Windows 11]
-- [PowerToys]
-- [PowerToys PowerRename context menu dll source code]
-- [Walkthrough: Create and use your own Dynamic Link Library (C++)]
-- [PhotoStoreDemo source code]
+| Links                                                             | Description                                                   |
+| ----------------------------------------------------------------- | ------------------------------------------------------------- |
+| [Extending the context menu and share dialog in Windows 11]       | Microsoft's official blog post about Windows 11 context menus |
+| [PowerToys]                                                       | Microsoft's open source project that has a context menu dll.  |
+| [PowerToys PowerRename context menu dll source code]              | PowerToys context menu dll source code                        |
+| [Walkthrough: Create and use your own Dynamic Link Library (C++)] | Microsoft's official guide about creating a dll               |
+| [PhotoStoreDemo source code]                                      | Microsoft's official sample about context menus               |
 
 
 [Extending the context menu and share dialog in Windows 11]: https://blogs.windows.com/windowsdeveloper/2021/07/19/extending-the-context-menu-and-share-dialog-in-windows-11/
