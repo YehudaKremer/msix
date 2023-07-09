@@ -190,10 +190,13 @@ class Configuration {
     // context menu configurations
     dynamic contextMenuYaml = yaml['context_menu'];
 
-    contextMenuConfiguration =
-        contextMenuYaml != null && contextMenuYaml is YamlMap
-            ? ContextMenuConfiguration.fromYaml(contextMenuYaml)
-            : null;
+    bool skipContextMenu = _args.wasParsed('skip-context-menu');
+
+    contextMenuConfiguration = contextMenuYaml != null &&
+            contextMenuYaml is YamlMap &&
+            !skipContextMenu
+        ? ContextMenuConfiguration.fromYaml(contextMenuYaml)
+        : null;
   }
 
   /// Validate the configuration values and set default values
@@ -405,7 +408,8 @@ class Configuration {
       ..addFlag('automatic-background-task')
       ..addFlag('update-blocks-activation')
       ..addFlag('show-prompt')
-      ..addFlag('force-update-from-any-version');
+      ..addFlag('force-update-from-any-version')
+      ..addFlag('skip-context-menu');
 
     // exclude -v (verbose) from the arguments
     _args = parser.parse(args.where((arg) => arg != '-v'));

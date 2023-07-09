@@ -42,10 +42,11 @@ msix_config:
       ...
 ```
 
-| YAML name  | Command-line argument | Description                   | Example                                           |
-| ---------- | --------------------- | ----------------------------- | ------------------------------------------------- |
-| `dll_path` | N/A                   | Path of your context menu dll | `C:\Users\user\Desktop\Projects\ContextMenu.dll` |
-| `items`    | N/A                   | List of context menu item     |                                                   |
+| YAML name  | Command-line argument | Description                                           | Example                                           |
+| ---------- | --------------------- | ----------------------------------------------------- | ------------------------------------------------- |
+| `dll_path` | N/A                   | Path of your context menu dll                         | `C:\Users\user\Desktop\Projects\ContextMenu.dll`  |
+| `items`    | N/A                   | List of context menu item                             |                                                   |
+| N/A        | `skip-context-menu`   | Skip context menu configuration. Can be helful in CI. |                                                   |
 
 ### Item structure
 
