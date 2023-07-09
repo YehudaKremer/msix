@@ -134,25 +134,25 @@ msix_config:
 
 ## How to create a basic context menu dll
 
-<img align="right" height=350 src="./context_menu_images/context_menu_example.png">
+<img align="right" height=340 src="./context_menu_images/context_menu_example.png">
 
 ### 0. Introduction
 
-Before we dive in, This guide doesn't written by who expert on C++ or Windows. Due to very limited information about windows context menus, I felt responsible to write this guide. If you see any mistake or something that can be improved, don't hesitate to create a pull request.
-
 In this guide we will create a basic context menu dll that will open our flutter application with selected file/folder paths as arguments.
+
+**This guide will assume you to have basic knowledge about C++, Visual Studio and Context menus.**
+ 
+Also, you will very likely to see some errors while you are trying to build your dll. You need to use your developer skills to solve them. 
 
 > ***Note***
 > 
-> This guide will assume you to have basic knowledge about C++, Visual Studio and Context menus.
->
-> Also, you will very likely to see some errors while you are trying to build your dll. You need to use your developer skills to solve them. 
+> This guide currently doesn't written by who expert on C++ or Windows. Due to very limited information about windows context menus, I felt responsible to write it. If you see any mistake or something that can be improved, don't hesitate to create a pull request.
 
 ### 1. Install Visual Studio with `Desktop development with C++` workload.
 
 Make sure you installed `Visual Studio` with the `Desktop development with C++` workload.
 
-![](./context_menu_images/desktop_development_workload.png?raw=true "Desktop development with C++ workload")
+![](./context_menu_images/desktop_development_workload.png)
 
 ### 2. Create a new project
 
