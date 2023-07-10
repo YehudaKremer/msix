@@ -449,7 +449,7 @@ This configuration will add a context menu item to all files and folders. If you
 
 ### 12. Conclusion
 
-Now you can build your msix package and install it to your computer. You will see your context menu item when you right click to a file or folder. 
+Now you can build your msix package and install it to your computer. You will see your context menu item when you right click to a file or folder. You may need to restart your computer to see your context menu item.
 
 For more information like how to add subcommands, I am leaving some useful links below.
 
