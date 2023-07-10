@@ -328,6 +328,10 @@ class Configuration {
             throw 'The context menu command custom dll file not found in: ${command.customDllPath}, check "msix_config: context_menu: items: commands: custom_dll" at pubspec.yaml';
           }
 
+          if (command.clsid == toastActivatorCLSID) {
+            throw 'Context menu command clsid cannot be the same as toast activator clsid, Clsid: ${command.clsid}';
+          }
+
           if (item.commands
                   .where((element) => element.clsid == command.clsid)
                   .length >

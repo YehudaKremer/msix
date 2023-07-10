@@ -102,6 +102,7 @@ class AppxManifest {
       ${_config.enableAtStartup || _config.startupTask != null ? _getStartupTaskExtension() : ''}
       ${_config.appUriHandlerHosts != null && _config.appUriHandlerHosts!.isNotEmpty ? _getAppUriHandlerHostExtension() : ''}
       ${_config.contextMenuConfiguration != null ? _getContextMenuExtension() : ''}
+      ${_config.contextMenuConfiguration?.comSurrogateServers.isNotEmpty == true || _config.toastActivatorCLSID != null ? _getComServers() : ''}
         </Extensions>''';
     } else {
       return '';
@@ -132,27 +133,18 @@ class AppxManifest {
   }
 
   /// Add extension section for context menu
-  _getContextMenuExtension() {
+  String _getContextMenuExtension() {
     return '''  <desktop4:Extension Category="windows.fileExplorerContextMenus">
               <desktop4:FileExplorerContextMenus>
                 ${_config.contextMenuConfiguration!.items.map((item) {
       return '''<desktop5:ItemType Type="${item.type}">
                   ${item.commands.map((command) {
-        return '''<desktop5:Verb Id="${command.id}" Clsid="${command.clsid}" />''';
+        return '''<desktop5:Verb Id="${command.id.toHtmlEscape()}" Clsid="${command.clsid.toHtmlEscape()}" />''';
       }).join('\n                  ')}
                 </desktop5:ItemType>''';
     }).join('\n                ')}
               </desktop4:FileExplorerContextMenus>
-            </desktop4:Extension>
-            <com:Extension Category="windows.comServer">
-              <com:ComServer>
-                ${_config.contextMenuConfiguration!.comSurrogateServers.map((item) {
-      return '''<com:SurrogateServer DisplayName="Context menu verb handler">
-                  <com:Class Id="${item.clsid}" Path="${p.basename(item.dllPath)}" ThreadingModel="STA"/>
-                </com:SurrogateServer>''';
-    }).join('\n                ')}
-              </com:ComServer>
-          </com:Extension>''';
+            </desktop4:Extension>''';
   }
 
   /// Add extension section for [_config.fileExtension]
@@ -170,16 +162,25 @@ class AppxManifest {
 
   /// Add extension section for "toast_activator" configurations
   String _getToastNotificationActivationExtension() {
-    return '''  <com:Extension Category="windows.comServer">
-          <com:ComServer>
-            <com:ExeServer Executable="${_config.executableFileName.toHtmlEscape()}" Arguments="${_config.toastActivatorArguments.toHtmlEscape()}" DisplayName="${_config.toastActivatorDisplayName.toHtmlEscape()}">
-              <com:Class Id="${_config.toastActivatorCLSID.toHtmlEscape()}"/>
-            </com:ExeServer>
-          </com:ComServer>
-        </com:Extension>
-        <desktop:Extension Category="windows.toastNotificationActivation">
+    return '''  <desktop:Extension Category="windows.toastNotificationActivation">
           <desktop:ToastNotificationActivation ToastActivatorCLSID="${_config.toastActivatorCLSID.toHtmlEscape()}"/>
         </desktop:Extension>''';
+  }
+
+  String _getComServers() {
+    return '''  <com:Extension Category="windows.comServer">
+          <com:ComServer>
+             ${_config.toastActivatorCLSID != null ? '''<com:ExeServer Executable="${_config.executableFileName.toHtmlEscape()}" Arguments="${_config.toastActivatorArguments.toHtmlEscape()}" DisplayName="${_config.toastActivatorDisplayName.toHtmlEscape()}">
+              <com:Class Id="${_config.toastActivatorCLSID.toHtmlEscape()}"/>
+            </com:ExeServer>''' : ''}
+              ${_config.contextMenuConfiguration?.comSurrogateServers.map((item) {
+              return '''<com:SurrogateServer DisplayName="Context menu verb handler">
+                  <com:Class Id="${item.clsid}" Path="${p.basename(item.dllPath).toHtmlEscape()}" ThreadingModel="STA"/>
+                </com:SurrogateServer>''';
+            }).join('\n                ') ?? ''}
+          </com:ComServer>
+        </com:Extension>
+      ''';
   }
 
   String _getStartupTaskExtension() {
