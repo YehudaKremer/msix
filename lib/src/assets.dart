@@ -292,7 +292,11 @@ class Assets {
         'resources.scale-400.pri',
         'msvcp140.dll',
         'vcruntime140_1.dll',
-        'vcruntime140.dll'
+        'vcruntime140.dll',
+        ..._config.contextMenuConfiguration?.comSurrogateServers
+                .map((server) => basename(server.dllPath))
+                .toList() ??
+            []
       ].map((fileName) async =>
           await File(p.join(buildPath, fileName)).deleteIfExists()),
       Directory(p.join(buildPath, 'Images')).deleteIfExists(recursive: true),
