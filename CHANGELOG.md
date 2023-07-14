@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.15.1
+
+- fix [#211](https://github.com/YehudaKremer/msix/issues/211)
+
 ## 3.15.0
 
 - add support for `arm64` build folder layout [#205](https://github.com/YehudaKremer/msix/issues/205)
