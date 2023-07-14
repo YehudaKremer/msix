@@ -345,11 +345,11 @@ class Configuration {
 
   Future<String> _getBuildFilesFolder() async {
     final String buildFilesFolderStart =
-        buildFilesFolder.substring(0, buildFilesFolder.indexOf('runner'));
+        buildFilesFolder.substring(0, buildFilesFolder.lastIndexOf('runner'));
     final String buildFilesFolderArchitecture =
         p.join(buildFilesFolderStart, architecture);
     final String buildFilesFolderEnd =
-        buildFilesFolder.substring(buildFilesFolder.indexOf('runner'));
+        buildFilesFolder.substring(buildFilesFolder.lastIndexOf('runner'));
 
     if (architecture == 'arm64' &&
         !(await Directory(buildFilesFolderArchitecture).exists())) {
