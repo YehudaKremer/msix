@@ -114,6 +114,14 @@ class Msix {
     await assets.createIcons();
     await assets.copyVCLibsFiles();
 
+    if (_config.contextMenuConfiguration?.comSurrogateServers.isNotEmpty ==
+        true) {
+      for (var element
+          in _config.contextMenuConfiguration!.comSurrogateServers) {
+        await assets.copyContextMenuDll(element.dllPath);
+      }
+    }
+
     if (_config.signMsix && !_config.store) {
       await SignTool().getCertificatePublisher();
     }

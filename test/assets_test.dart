@@ -95,6 +95,17 @@ void main() {
         true);
   });
 
+  test('copy context menu dll', () async {
+    var dllFile = await File(p.join(tempFolderPath, 'test', 'ContextMenu.dll'))
+        .create(recursive: true);
+    await Future.delayed(const Duration(milliseconds: 100));
+    config.msixAssetsPath = tempFolderPath;
+    await Assets().copyContextMenuDll(dllFile.path);
+    await Future.delayed(const Duration(milliseconds: 100));
+    expect(
+        await File(p.join(tempFolderPath, 'ContextMenu.dll')).exists(), true);
+  });
+
   test('clean temporary files', () async {
     await File(p.join(tempFolderPath, 'resources.scale-125.pri')).create();
     await File(p.join(tempFolderPath, 'test.msix')).create();
