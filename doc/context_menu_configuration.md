@@ -64,7 +64,7 @@ msix_config:
     ...
 ```
 
-> [!IMPORTANT]\ 
+> [!IMPORTANT]\
 > If you want to use `*` as a type, you need to put it into double quotes (`"*"`). Otherwise, yaml parser doesn't understand it as a string.
 
 
