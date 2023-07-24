@@ -47,7 +47,8 @@ msix_config:
 | `dll_path` | N/A                   | Path of your context menu dll                         | `C:\Users\user\Desktop\Projects\ContextMenu.dll`  |
 | `items`    | N/A                   | List of context menu item                             |                                                   |
 
-> ***Note***: **Configuring context menu with command line arguments not supported. So if you don't want to include context menu in to your msix package, you can use `skip-context-menu` argument. This will skip context menu configuration. Can be helpful in CI.**
+> [!NOTE]\
+> **Configuring context menu with command line arguments not supported. So if you don't want to include context menu in to your msix package, you can use `skip-context-menu` argument. This will skip context menu configuration. Can be helpful in CI.**
 
 ### Item structure
 
@@ -63,7 +64,8 @@ msix_config:
     ...
 ```
 
-> ***Warning***: If you want to use `*` as a type, you need to put it into double quotes (`"*"`). Otherwise, yaml parser doesn't understand it as a string.
+> [!IMPORTANT]\ 
+> If you want to use `*` as a type, you need to put it into double quotes (`"*"`). Otherwise, yaml parser doesn't understand it as a string.
 
 
 ### Command structure
@@ -130,7 +132,8 @@ msix_config:
                                                                     ┘
 ```
 
-> ***Note***: You can add as many items as you want. You can also add as many commands as you want to one item. But you can't add same command inside one item. And you can't add same item type more than once. If you do, you will get an error.
+> [!NOTE]\
+> You can add as many items as you want. You can also add as many commands as you want to one item. But you can't add same command inside one item. And you can't add same item type more than once. If you do, you will get an error.
 
 <br>
 
@@ -146,8 +149,7 @@ In this guide we will create a basic context menu dll that will open our flutter
  
 Also, you will very likely to see some errors while you are trying to build your dll. You need to use your developer skills to solve them. 
 
-> ***Note***
-> 
+> [!IMPORTANT]\
 > This guide currently doesn't written by who expert on C++ or Windows. Due to very limited information about windows context menus, I felt responsible to write it. If you see any mistake or something that can be improved, don't hesitate to create a pull request.
 
 ### 1. Install Visual Studio with `Desktop development with C++` workload.
@@ -173,7 +175,8 @@ Under `Project` tab, click `Manage NuGet Packages...` click `browse` and install
 
 Turn back to `dllmain.cpp` and replace its content with the following code. And make changes that I mentioned on the code.
 
-> ***Note***: You can generate guid under `Tools` tab and click `Create GUID` and click `Copy` and paste it to your code.
+> [!NOTE]\
+> You can generate guid under `Tools` tab and click `Create GUID` and click `Copy` and paste it to your code.
 
 <details>
 <summary>Code</summary>
@@ -358,7 +361,8 @@ STDAPI DllGetClassObject(_In_ REFCLSID rclsid, _In_ REFIID riid, _Outptr_ LPVOID
 
 Go project location and create a file named `Source.def` and paste the following code into it.
 
-> ***Note***: Not the solition location. You should place that file to same location with `dllmain.cpp` file.
+> [!IMPORTANT]\
+> Not the solition location. You should place that file to same location with `dllmain.cpp` file.
 
 If you don't know where is your project location, click `View` tab and click `Solution Explorer` and you will see your project files on the right side of the screen. Right click to your project name and click `Open Folder in File Explorer`. You will see your project location.
 
@@ -418,9 +422,11 @@ Set your build configuration to `Release`. Then click `Build` tab and click `Bui
 
 Under `View` tab, click `Output` and you will see your dll location in build logs. Copy your dll to your project folder.
 
-> ***Note***: You can also find your dll location on your **solution** folder under  `x64/Release` folder.  
+> [!NOTE]\
+> You can also find your dll location on your **solution** folder under  `x64/Release` folder.  
 
-> ***Note***: You don't really need to copy your dll to your project folder. You can use it from where it is. But we need to pass its location to our context menu configuration. So it is easier to copy it to your project folder.
+> [!NOTE]\
+> You don't really need to copy your dll to your project folder. You can use it from where it is. But we need to pass its location to our context menu configuration. So it is easier to copy it to your project folder.
 
 ### 11. Msix configuration
 
