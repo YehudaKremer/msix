@@ -60,7 +60,7 @@ class AppxManifest {
         <uap:VisualElements BackgroundColor="transparent"
           DisplayName="${_config.displayName.toHtmlEscape()}" Square150x150Logo="Images\\Square150x150Logo.png"
           Square44x44Logo="Images\\Square44x44Logo.png" Description="${_config.appDescription.toHtmlEscape()}">
-          <uap:DefaultTile ShortName="${_getTileShortName(_config.displayName.toHtmlEscape())}" Square310x310Logo="Images\\LargeTile.png"
+          <uap:DefaultTile ShortName="${_getTileShortName(_config.displayName).toHtmlEscape()}" Square310x310Logo="Images\\LargeTile.png"
           Square71x71Logo="Images\\SmallTile.png" Wide310x150Logo="Images\\Wide310x150Logo.png">
             <uap:ShowNameOnTiles>
               <uap:ShowOn Tile="square150x150Logo"/>
