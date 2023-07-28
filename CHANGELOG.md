@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.16.0
+
+- add Context menu extension ([#208](https://github.com/YehudaKremer/msix/issues/208))
+
 ## 3.15.1
 
 - fix [#211](https://github.com/YehudaKremer/msix/issues/211)
