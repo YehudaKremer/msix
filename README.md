@@ -34,13 +34,28 @@ To create a MSIX installer, run the following command:
 PS c:\src\flutter_project> dart run msix:create
 ```
 
+or 
+
+When using custom config file location:
+
+```console
+PS c:\src\flutter_project> dart run msix:create --config="relative/path/to/msix_config.yaml"
+```
+
+
+NOTE: If the `msix_config.yaml` is placed in the root folder, i.e., `c:\src\flutter_project\msix_config.yaml`, then giving `--config` option is not required.
+
+
+
 ## ⚙️ Configuring your installer
 
-You will almost certainly want to customize various settings in the MSIX
-installer, such as the application title, the default icon, and which [Windows
-capabilities] your application needs. You can customize the generated MSIX
-installer by adding declarations to an `msix_config:` node in your
-`pubspec.yaml` file:
+By default, the msix package will use default values to create the msix installer. But you will almost certainly want to customize various settings in the MSIX installer, such as the application title, the default icon, and which [Windows capabilities] your application needs. 
+
+You can customize the generated MSIX installer by adding declarations to an `msix_config:` node in your `pubspec.yaml` file 
+
+or 
+
+by creating a separate `msix_config.yaml` file in your project. The config file can be created at the root of the project or in a separate folder.
 
 ```yaml
 msix_config:
@@ -51,6 +66,8 @@ msix_config:
   logo_path: C:\path\to\logo.png
   capabilities: internetClient, location, microphone, webcam
 ```
+
+
 
 See [Configurations Examples And Use Cases].
 
