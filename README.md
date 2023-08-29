@@ -42,9 +42,17 @@ When using custom config file location:
 PS c:\src\flutter_project> dart run msix:create --config="relative/path/to/msix_config.yaml"
 ```
 
-
 NOTE: If the `msix_config.yaml` is placed in the root folder, i.e., `c:\src\flutter_project\msix_config.yaml`, then giving `--config` option is not required.
 
+or
+
+When using custom config node for providing build arguments using `--dart-define`:
+
+```console
+PS c:\src\flutter_project> dart run msix:create --flavour="development-sql"
+```
+
+NOTE: Please check out below section on how to create a custom `msix_config` node.
 
 
 ## ⚙️ Configuring your installer
@@ -67,6 +75,19 @@ msix_config:
   capabilities: internetClient, location, microphone, webcam
 ```
 
+If you want to customise your msix builds as per `windows_build_args:` such as defining `--dart-define="FLAVOUR=production"` or any other custom variable in the build command, you can provide a very custom config based on such definition value. So the production config will become `msix_config-production`. 
+
+```yaml
+msix_config-production:
+  windows_build_args: --dart-define="FLAVOUR=production"
+```
+
+For multiple `--dart-define` values, you can concatenate each definition value by `-`. Example: 
+
+```yaml
+msix_config-develpment-sql:
+  windows_build_args: --dart-define="FLAVOUR=production" --dart-define="DATABASE=sql"
+```
 
 
 See [Configurations Examples And Use Cases].

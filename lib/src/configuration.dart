@@ -78,13 +78,18 @@ class Configuration {
     _parseCliArguments(_arguments);
     await _getMsixAssetsFolderPath();
     dynamic pubspec = await _getPubspec();
-    final msixConfig = getMsixConfig(configFile: _args['config']);
+    final msixConfig = getMsixConfig(
+      configFile: _args['config'],
+      values: _args['values'],
+    );
 
     appName = pubspec['name'];
     appDescription = pubspec['description'];
 
-    dynamic yaml =
-        pubspec['msix_config'] ?? msixConfig['msix_config'] ?? YamlMap();
+    dynamic yaml = pubspec[
+            'msix_config${_args['values'] != null ? "-$_args['values']" : ''}'] ??
+        msixConfig ??
+        YamlMap();
 
     msixVersion =
         _args['version'] ?? yaml['msix_version'] ?? _getPubspecVersion(pubspec);
@@ -415,6 +420,11 @@ class Configuration {
         help:
             'Allows to specify config location. file should be named as `msix_config.ymal`',
       )
+      ..addOption(
+        'values',
+        help:
+            'Allows you to provide build args values to use a specific msix_config for building msix.',
+      )
       ..addFlag('store')
       ..addFlag('enable-at-startup')
       ..addFlag('debug')
@@ -524,6 +534,7 @@ class Configuration {
   /// Get config from custom `msix_config.yaml`
   Map getMsixConfig({
     required String? configFile,
+    String? values,
   }) {
     // if `msix_config.yaml` exists use it as config file, otherwise use `pubspec.yaml`
     String filePath;
@@ -532,7 +543,7 @@ class Configuration {
         filePath = configFile;
         checkConfigContent(filePath);
       } else {
-        print('The config file `$configFile` was not found.');
+        _logger.stderr('The config file `$configFile` was not found.');
         exit(1);
       }
     } else if (File('msix_config.yaml').existsSync()) {
@@ -545,20 +556,37 @@ class Configuration {
     final Map msixConfigMap =
         loadYaml(File(filePath).readAsStringSync()) as Map;
 
-    return msixConfigMap;
+    final valuesConfig =
+        msixConfigMap['msix_config${values != null ? '-$values' : ''}'];
+
+    if (valuesConfig == null) {
+      if (File('pubspec.yaml').existsSync() && values == null) {
+        return msixConfigMap;
+      } else {
+        _logger.stderr(
+          "msix_config node not found for '$values' values. Please create a node `msix_config-$values` to declare build valuess.",
+        );
+        exit(1);
+      }
+    } else if (valuesConfig is! Map) {
+      _logger.stderr("Invalid config");
+      exit(1);
+    } else {
+      return valuesConfig;
+    }
   }
 
   void checkConfigContent(String filePath) {
     final String fileContent = File(filePath).readAsStringSync();
 
     if (fileContent.isEmpty) {
-      print(
+      _logger.stderr(
           'Your config file is empty. Please create a `msix_config:` node to customise msix installer.');
       exit(1);
     }
 
     if (loadYaml(fileContent) == null) {
-      print(
+      _logger.stderr(
         'Your `$filePath` file does not contain a '
         '`msix_config:` node.',
       );
