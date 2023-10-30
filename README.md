@@ -155,7 +155,7 @@ To create a App Installer file, first set the `publish_folder_path` configuratio
 then run the following command:
 
 ```console
-PS c:\src\flutter_project> flutter pub run msix:publish
+PS c:\src\flutter_project> dart run msix:publish
 ```
 
 <details>
@@ -194,7 +194,7 @@ We added the most common features of Msix in this package, however, if you need 
 First, create the unpackaged msix files with the following command
 
 ```console
-PS c:\src\flutter_project> flutter pub run msix:build
+PS c:\src\flutter_project> dart run msix:build
 ```
 
 Then edit the files that were created in the build folder.
@@ -202,7 +202,7 @@ Then edit the files that were created in the build folder.
 After that create a msix installer file from those files with the following command
 
 ```console
-PS c:\src\flutter_project> flutter pub run msix:pack
+PS c:\src\flutter_project> dart run msix:pack
 ```
 
 ---

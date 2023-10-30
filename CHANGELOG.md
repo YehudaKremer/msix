@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.16.5
+
+- add support for older versions of windows [#243](https://github.com/YehudaKremer/msix/pull/243)
+
 ## 3.16.4
 
 - permanent fix for [#235](https://github.com/YehudaKremer/msix/issues/235)
