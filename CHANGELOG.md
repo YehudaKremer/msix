@@ -1,8 +1,8 @@
 # Changelog
 
-## 3.16.5
+## 3.16.6
 
-- add support for older versions of windows [#243](https://github.com/YehudaKremer/msix/pull/243)
+- update MaxVersionTested
 
 ## 3.16.4
 
