@@ -244,7 +244,7 @@ class Configuration {
     if (msixVersion.isNull) msixVersion = '1.0.0.0';
     if (architecture.isNull) architecture = 'x64';
 
-    buildFilesFolder = await _getBuildFilesFolder();
+    buildFilesFolder = await _updateBuildFilesFolder();
 
     if (createWithDebugBuildFiles) {
       buildFilesFolder = buildFilesFolder.replaceFirst('Release', 'Debug');
@@ -354,6 +354,8 @@ class Configuration {
 
   /// Validate "flutter build windows" output files
   Future<void> validateWindowsBuildFiles() async {
+    buildFilesFolder = await _updateBuildFilesFolder();
+
     _logger.trace('validating build files');
 
     if (!await Directory(buildFilesFolder).exists() ||
@@ -419,7 +421,7 @@ class Configuration {
     _args = parser.parse(args.where((arg) => arg != '-v'));
   }
 
-  Future<String> _getBuildFilesFolder() async {
+  Future<String> _updateBuildFilesFolder() async {
     final String buildFilesFolderStart =
         buildFilesFolder.substring(0, buildFilesFolder.lastIndexOf('runner'));
     final String buildFilesFolderArchitecture =
