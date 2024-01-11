@@ -52,6 +52,7 @@ class Configuration {
   bool store = false;
   bool signMsix = true;
   bool installCert = true;
+  bool addWebViewDependency = false;
   bool buildWindows = true;
   bool trimLogo = true;
   bool createWithDebugBuildFiles = false;
@@ -89,6 +90,10 @@ class Configuration {
     outputPath = _args['output-path'] ?? yaml['output_path'];
     outputName = _args['output-name'] ?? yaml['output_name'];
     executionAlias = _args['execution-alias'] ?? yaml['execution_alias'];
+    if (_args['add-webview-dependency'].toString() == 'true' ||
+        yaml['add_webview_dependency']?.toString().toLowerCase() == 'true') {
+      addWebViewDependency = true;
+    }
     if (_args['sign-msix'].toString() == 'false' ||
         yaml['sign_msix']?.toString().toLowerCase() == 'false') {
       signMsix = false;
@@ -415,7 +420,8 @@ class Configuration {
       ..addFlag('update-blocks-activation')
       ..addFlag('show-prompt')
       ..addFlag('force-update-from-any-version')
-      ..addFlag('skip-context-menu');
+      ..addFlag('skip-context-menu')
+      ..addFlag('add-webview-dependency');
 
     // exclude -v (verbose) from the arguments
     _args = parser.parse(args.where((arg) => arg != '-v'));
