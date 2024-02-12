@@ -1,13 +1,15 @@
 import 'dart:io';
-import 'package:msix/src/context_menu_configuration.dart';
-import 'package:path/path.dart' as p;
+
 import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
+import 'package:msix/src/context_menu_configuration.dart';
 import 'package:package_config/package_config.dart';
+import 'package:path/path.dart' as p;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
+
 import 'command_line_converter.dart';
 import 'method_extensions.dart';
 import 'sign_tool.dart';
@@ -50,6 +52,7 @@ class Configuration {
   bool showPrompt = false;
   bool forceUpdateFromAnyVersion = false;
   bool store = false;
+  bool bundle = false;
   bool signMsix = true;
   bool installCert = true;
   bool buildWindows = true;
@@ -107,6 +110,8 @@ class Configuration {
     }
     store = _args.wasParsed('store') ||
         yaml['store']?.toString().toLowerCase() == 'true';
+    bundle = _args.wasParsed('bundle') ||
+        yaml['bundle']?.toString().toLowerCase() == 'true';
     createWithDebugBuildFiles = _args.wasParsed('debug') ||
         yaml['debug']?.toString().toLowerCase() == 'true';
 
@@ -408,6 +413,7 @@ class Configuration {
       ..addOption('build-windows')
       ..addOption('app-uri-handler-hosts')
       ..addFlag('store')
+      ..addFlag('bundle')
       ..addFlag('enable-at-startup')
       ..addFlag('debug')
       ..addFlag('release')
