@@ -79,8 +79,7 @@ class AppxManifest {
     //clear empty rows
     manifestContent = manifestContent.replaceAll('    \n', '');
 
-    String appxManifestPath =
-        p.join(_config.buildFilesFolder, 'AppxManifest.xml');
+    String appxManifestPath = p.join(_config.buildFilesFolder, 'AppxManifest.xml');
     await File(appxManifestPath).writeAsString(manifestContent);
   }
 
@@ -89,8 +88,7 @@ class AppxManifest {
         _config.protocolActivation.isNotEmpty ||
         !_config.fileExtension.isNull ||
         !_config.toastActivatorCLSID.isNull ||
-        (_config.appUriHandlerHosts != null &&
-            _config.appUriHandlerHosts!.isNotEmpty) ||
+        (_config.appUriHandlerHosts != null && _config.appUriHandlerHosts!.isNotEmpty) ||
         _config.enableAtStartup ||
         _config.startupTask != null ||
         _config.contextMenuConfiguration != null) {
@@ -103,6 +101,7 @@ class AppxManifest {
       ${_config.appUriHandlerHosts != null && _config.appUriHandlerHosts!.isNotEmpty ? _getAppUriHandlerHostExtension() : ''}
       ${_config.contextMenuConfiguration != null ? _getContextMenuExtension() : ''}
       ${_config.contextMenuConfiguration?.comSurrogateServers.isNotEmpty == true || _config.toastActivatorCLSID != null ? _getComServers() : ''}
+      ${_config.msixFontsFiles?.isNotEmpty ?? false ? _getFonts() : ''}  
         </Extensions>''';
     } else {
       return '';
@@ -184,12 +183,9 @@ class AppxManifest {
   }
 
   String _getStartupTaskExtension() {
-    final taskId =
-        _config.startupTask?.taskId ?? _config.appName?.replaceAll('_', '');
+    final taskId = _config.startupTask?.taskId ?? _config.appName?.replaceAll('_', '');
     final enabled = _config.startupTask?.enabled ?? true;
-    final parameters = _config.startupTask?.parameters != null
-        ? 'uap10:Parameters="${_config.startupTask?.parameters}"'
-        : '';
+    final parameters = _config.startupTask?.parameters != null ? 'uap10:Parameters="${_config.startupTask?.parameters}"' : '';
     return '''<desktop:Extension Category="windows.startupTask" Executable="${_config.executableFileName.toHtmlEscape()}" EntryPoint="Windows.FullTrustApplication" $parameters>
       <desktop:StartupTask TaskId="$taskId" Enabled="$enabled" DisplayName="${_config.displayName.toHtmlEscape()}"/>
       </desktop:Extension>''';
@@ -203,6 +199,16 @@ class AppxManifest {
             }).toList().join('\n                ')}
           </uap3:AppUriHandler>
           </uap3:Extension>''';
+  }
+
+  String _getFonts() {
+    return '''  <uap4:Extension Category="windows.sharedFonts">
+            <uap4:SharedFonts>
+              ${_config.msixFontsFiles!.map((f) {
+              return '<uap4:Font File="data\\flutter_assets\\fonts\\$f" />';
+            }).toList().join('\n                ')}
+          </uap4:SharedFonts>
+          </uap4:Extension>''';
   }
 
   String _normalizeCapability(String capability) {
@@ -219,43 +225,31 @@ class AppxManifest {
     String capabilitiesString = '';
     const newline = '\n      ';
 
-    capabilities
-        .where((capability) => !capability.isNullOrEmpty)
-        .forEach((capability) {
+    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
       capability = _normalizeCapability(capability);
 
       if (appCapabilities['generalUseCapabilities']!.contains(capability)) {
         capabilitiesString += '<Capability Name="$capability" />$newline';
-      } else if (appCapabilities['generalUseCapabilitiesUap']!
-          .contains(capability)) {
+      } else if (appCapabilities['generalUseCapabilitiesUap']!.contains(capability)) {
         capabilitiesString += '<uap:Capability Name="$capability" />$newline';
-      } else if (appCapabilities['generalUseCapabilitiesIot']!
-          .contains(capability)) {
+      } else if (appCapabilities['generalUseCapabilitiesIot']!.contains(capability)) {
         capabilitiesString += '<iot:Capability Name="$capability" />$newline';
-      } else if (appCapabilities['generalUseCapabilitiesMobile']!
-          .contains(capability)) {
-        capabilitiesString +=
-            '<mobile:Capability Name="$capability" />$newline';
+      } else if (appCapabilities['generalUseCapabilitiesMobile']!.contains(capability)) {
+        capabilitiesString += '<mobile:Capability Name="$capability" />$newline';
       }
     });
 
-    capabilities
-        .where((capability) => !capability.isNullOrEmpty)
-        .forEach((capability) {
+    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
       capability = _normalizeCapability(capability);
 
       if (appCapabilities['restrictedCapabilitiesUap']!.contains(capability)) {
         capabilitiesString += '<uap:Capability Name="$capability" />$newline';
-      } else if (appCapabilities['restrictedCapabilitiesRescap']!
-          .contains(capability)) {
-        capabilitiesString +=
-            '<rescap:Capability Name="$capability" />$newline';
+      } else if (appCapabilities['restrictedCapabilitiesRescap']!.contains(capability)) {
+        capabilitiesString += '<rescap:Capability Name="$capability" />$newline';
       }
     });
 
-    capabilities
-        .where((capability) => !capability.isNullOrEmpty)
-        .forEach((capability) {
+    capabilities.where((capability) => !capability.isNullOrEmpty).forEach((capability) {
       capability = _normalizeCapability(capability);
 
       if (appCapabilities['deviceCapabilities']!.contains(capability)) {
