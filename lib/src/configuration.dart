@@ -44,6 +44,7 @@ class Configuration {
   String? outputPath;
   String? outputName;
   String? publishFolderPath;
+  String? remoteUrl;
   int hoursBetweenUpdateChecks = 0;
   bool automaticBackgroundTask = false;
   bool updateBlocksActivation = false;
@@ -186,6 +187,7 @@ class Configuration {
                     ?.toString()
                     .toLowerCase() ==
                 'true';
+    remoteUrl = _args['remote-url'] ?? installerYaml['remote_url'];
 
     // context menu configurations
     dynamic contextMenuYaml = yaml['context_menu'];
@@ -407,6 +409,7 @@ class Configuration {
       ..addOption('hours-between-update-checks')
       ..addOption('build-windows')
       ..addOption('app-uri-handler-hosts')
+      ..addOption('remote-url')
       ..addFlag('store')
       ..addFlag('enable-at-startup')
       ..addFlag('debug')
@@ -457,7 +460,11 @@ class Configuration {
               .red);
       exit(-1);
     } else {
-      publishFolderPath = Uri.decodeFull(publishFolderPath!);
+      if (remoteUrl.isNullOrEmpty) {
+        publishFolderPath = Uri.decodeFull(publishFolderPath!);
+      } else {
+        publishFolderPath = remoteUrl;
+      }
     }
   }
 

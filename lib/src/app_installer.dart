@@ -102,6 +102,7 @@ class AppInstaller {
 
     webInstallerSite = webInstallerSite
         .replaceAll('PAGE_TITLE', _config.displayName ?? _config.appName!)
+        .replaceAll('REMOTE_URL', _config.remoteUrl ?? '/')
         .replaceAll(
             'PAGE_DESCRIPTION',
             _config.appDescription ??
@@ -109,7 +110,7 @@ class AppInstaller {
         .replaceAll('PAGE_TITLE', _config.displayName ?? _config.appName!)
         .replaceAll('APP_NAME', _config.displayName ?? _config.appName!)
         .replaceAll('APP_VERSION', _config.msixVersion!)
-        .replaceAll('APP_INSTALLER_LINK', basename(_config.appInstallerPath))
+        .replaceAll('APP_INSTALLER_LINK', _config.remoteUrl == null ? '/${basename(_config.appInstallerPath)}' : basename(_config.appInstallerPath))
         .replaceAll('REQUIRED_OS_VERSION', _config.osMinVersion)
         .replaceAll('ARCHITECTURE', _config.architecture!)
         .replaceAll('PUBLISHER_NAME', _config.publisherName!);
@@ -149,6 +150,7 @@ String webInstallerSite = '''
     <link rel="icon" type="image/png" href="data:image/png;base64, FAVICON_BASE64" />
     <meta name="description" content="PAGE_DESCRIPTION">
     <title>PAGE_TITLE</title>
+    <base href="REMOTE_URL" />
 </head>
 
 <body>
@@ -188,7 +190,7 @@ String webInstallerSite = '''
     <script>
         function download() {
             var a = document.createElement("a");
-            a.href = '/APP_INSTALLER_LINK';
+            a.href = 'APP_INSTALLER_LINK';
             a.setAttribute("download", 'APP_INSTALLER_LINK');
             a.click();
         }
