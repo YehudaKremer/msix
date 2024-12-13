@@ -65,7 +65,7 @@ class Configuration {
       p.join(msixAssetsPath, 'MSIX-Toolkit', 'Redist.x64');
   String get msixPath =>
       p.join(outputPath ?? buildFilesFolder, '${outputName ?? appName}.msix');
-  String get appInstallerPath => p.join(publishFolderPath!,
+  String get appInstallerPath => p.join(remoteUrl ?? publishFolderPath!,
       basename(msixPath).replaceAll('.msix', '.appinstaller'));
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
@@ -460,11 +460,7 @@ class Configuration {
               .red);
       exit(-1);
     } else {
-      if (remoteUrl.isNullOrEmpty) {
-        publishFolderPath = Uri.decodeFull(publishFolderPath!);
-      } else {
-        publishFolderPath = remoteUrl;
-      }
+      publishFolderPath = Uri.decodeFull(publishFolderPath!);
     }
   }
 
