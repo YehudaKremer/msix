@@ -76,7 +76,7 @@ class AppInstaller {
 
     String appInstallerContent = '''<?xml version="1.0" encoding="utf-8"?>
   <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2018"
-    Uri="${_config.appInstallerPath}" Version="${_config.msixVersion}">
+    Uri="${_config.appInstallerWebSitePath}" Version="${_config.msixVersion}">
     <MainPackage Name="${_config.identityName}" Version="${_config.msixVersion}"
       Publisher="${const HtmlEscape().convert(_config.publisher!.replaceAll(' = ', '='))}"
       Uri="$_msixVersionPath"
@@ -110,7 +110,11 @@ class AppInstaller {
         .replaceAll('PAGE_TITLE', _config.displayName ?? _config.appName!)
         .replaceAll('APP_NAME', _config.displayName ?? _config.appName!)
         .replaceAll('APP_VERSION', _config.msixVersion!)
-        .replaceAll('APP_INSTALLER_LINK', _config.remoteUrl == null ? '/${basename(_config.appInstallerPath)}' : basename(_config.appInstallerPath))
+        .replaceAll(
+            'APP_INSTALLER_LINK',
+            _config.remoteUrl == null
+                ? '/${basename(_config.appInstallerPath)}'
+                : _config.appInstallerWebSitePath)
         .replaceAll('REQUIRED_OS_VERSION', _config.osMinVersion)
         .replaceAll('ARCHITECTURE', _config.architecture!)
         .replaceAll('PUBLISHER_NAME', _config.publisherName!);
