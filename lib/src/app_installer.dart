@@ -19,6 +19,10 @@ class AppInstaller {
       p.join(_config.publishFolderPath!, 'versions');
   String get _msixVersionPath => p.join(
       _versionsFolderPath, '${_config.appName}_${_config.msixVersion}.msix');
+  String get _versionsWebPath =>
+      p.join(_config.appInstallerWebSitePath, 'versions');
+  String get _msixVersionWebPath => p.join(
+      _versionsWebPath, '${_config.appName}_${_config.msixVersion}.msix');
 
   /// Ask the user if he want to increment the version
   /// if the current publish version is the same or lower than the last published version.
@@ -79,7 +83,7 @@ class AppInstaller {
     Uri="${_config.appInstallerWebSitePath}" Version="${_config.msixVersion}">
     <MainPackage Name="${_config.identityName}" Version="${_config.msixVersion}"
       Publisher="${const HtmlEscape().convert(_config.publisher!.replaceAll(' = ', '='))}"
-      Uri="$_msixVersionPath"
+      Uri="$_msixVersionWebPath"
       ProcessorArchitecture="${_config.architecture}" />
     <UpdateSettings>
       <OnLaunch HoursBetweenUpdateChecks="${_config.hoursBetweenUpdateChecks}" 
@@ -114,7 +118,7 @@ class AppInstaller {
             'APP_INSTALLER_LINK',
             _config.remoteUrl == null
                 ? '/${basename(_config.appInstallerPath)}'
-                : _config.appInstallerWebSitePath)
+                : '')
         .replaceAll('REQUIRED_OS_VERSION', _config.osMinVersion)
         .replaceAll('ARCHITECTURE', _config.architecture!)
         .replaceAll('PUBLISHER_NAME', _config.publisherName!);
