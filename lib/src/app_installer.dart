@@ -19,10 +19,12 @@ class AppInstaller {
       p.join(_config.publishFolderPath!, 'versions');
   String get _msixVersionPath => p.join(
       _versionsFolderPath, '${_config.appName}_${_config.msixVersion}.msix');
-  String get _versionsWebPath =>
-      p.join(_config.appInstallerWebSitePath, 'versions');
-  String get _msixVersionWebPath => p.join(
-      _versionsWebPath, '${_config.appName}_${_config.msixVersion}.msix');
+  String get _versionsWebPath => Uri.parse(_config.appInstallerWebSitePath)
+      .resolve('versions/')
+      .toString();
+  String get _msixVersionWebPath => Uri.parse(_versionsWebPath)
+      .resolve('${_config.appName}_${_config.msixVersion}.msix')
+      .toString();
 
   /// Ask the user if he want to increment the version
   /// if the current publish version is the same or lower than the last published version.
