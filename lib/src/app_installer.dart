@@ -22,9 +22,11 @@ class AppInstaller {
   String get _versionsWebPath => Uri.parse(_config.appInstallerWebSitePath)
       .resolve('versions/')
       .toString();
-  String get _msixVersionWebPath => Uri.parse(_versionsWebPath)
-      .resolve('${_config.appName}_${_config.msixVersion}.msix')
-      .toString();
+  String get _msixVersionWebPath => _config.remoteUrl == null
+      ? _msixVersionPath
+      : Uri.parse(_versionsWebPath)
+          .resolve('${_config.appName}_${_config.msixVersion}.msix')
+          .toString();
 
   /// Ask the user if he want to increment the version
   /// if the current publish version is the same or lower than the last published version.
@@ -120,7 +122,7 @@ class AppInstaller {
             'APP_INSTALLER_LINK',
             _config.remoteUrl == null
                 ? '/${basename(_config.appInstallerPath)}'
-                : '')
+                : basename(_config.appInstallerPath))
         .replaceAll('REQUIRED_OS_VERSION', _config.osMinVersion)
         .replaceAll('ARCHITECTURE', _config.architecture!)
         .replaceAll('PUBLISHER_NAME', _config.publisherName!);
