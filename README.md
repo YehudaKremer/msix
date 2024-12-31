@@ -19,11 +19,11 @@ it on a website.
 
 ## 📋 Installation
 
-In your `pubspec.yaml`, add the `msix` package as a new [dev dependency] with
+In your `pubspec.yaml`, add the `msix` package as a new dependency with
 the following command:
 
 ```console
-PS c:\src\flutter_project> flutter pub add --dev msix
+PS c:\src\flutter_project> dart pub add msix
 ```
 
 ## 📦 Creating an MSIX installer
@@ -134,6 +134,21 @@ the `certificate_path` and `certificate_password` fields.
 **Note**: By default, the MSIX package will install the certificate on your
 machine. You can disable this by using the `--install-certificate false` option, or the YAML
 option `install_certificate: false`.
+
+## Using Assets
+
+If you need to get an `ms-appx:///` URI from a Flutter asset, use `Msix.assetUrI()`:
+
+```dart
+// Flutter
+final logoPath = 'assets/logo.png';
+Image.asset(logoPath);
+
+// Windows APIs
+final logoUri = Msix.assetUri('assets/logo.png');
+someWindowsApi(logoUri);
+```
+
 
 ## ![microsoft store icon][] Publishing to the Microsoft Store
 
