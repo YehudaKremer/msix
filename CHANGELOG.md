@@ -3,6 +3,7 @@
 ## 3.17.0
 
 - Add `Msix.assetUri()` to get an `ms-appx:///` URI out of any Flutter asset name.
+- Add `Msix.hasPackageIdentity()` to check if the currently running program was installed with an MSIX.
 
 ## 3.16.8
 
