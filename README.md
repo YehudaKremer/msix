@@ -135,6 +135,21 @@ the `certificate_path` and `certificate_password` fields.
 machine. You can disable this by using the `--install-certificate false` option, or the YAML
 option `install_certificate: false`.
 
+## Using Assets
+
+If you need to get an `ms-appx:///` URI from a Flutter asset, use `Msix.assetUrI()`:
+
+```dart
+// Flutter
+final logoPath = 'assets/logo.png';
+Image.asset(logoPath);
+
+// Windows APIs
+final logoUri = Msix.assetUri('assets/logo.png');
+someWindowsApi(logoUri);
+```
+
+
 ## ![microsoft store icon][] Publishing to the Microsoft Store
 
 To generate an MSIX file for publishing to the Microsoft Store, use the

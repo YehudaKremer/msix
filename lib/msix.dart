@@ -14,6 +14,8 @@ import 'src/method_extensions.dart';
 
 /// Main class that handles all the msix package functionality
 class Msix {
+  static Uri assetUri(String path) => Uri.parse("ms-appx:///data/flutter_assets/$path");
+
   late Logger _logger;
   late Configuration _config;
 
