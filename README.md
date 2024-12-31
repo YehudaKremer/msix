@@ -19,11 +19,11 @@ it on a website.
 
 ## 📋 Installation
 
-In your `pubspec.yaml`, add the `msix` package as a new [dev dependency] with
+In your `pubspec.yaml`, add the `msix` package as a new dependency with
 the following command:
 
 ```console
-PS c:\src\flutter_project> flutter pub add msix
+PS c:\src\flutter_project> dart pub add msix
 ```
 
 ## 📦 Creating an MSIX installer
