@@ -135,7 +135,9 @@ the `certificate_path` and `certificate_password` fields.
 machine. You can disable this by using the `--install-certificate false` option, or the YAML
 option `install_certificate: false`.
 
-## Using Assets
+## Using this package at runtime
+
+### Get a URI to Flutter assets
 
 If you need to get an `ms-appx:///` URI from a Flutter asset, use `Msix.assetUrI()`:
 
@@ -149,6 +151,15 @@ final logoUri = Msix.assetUri('assets/logo.png');
 someWindowsApi(logoUri);
 ```
 
+### Check if an app was installed with an MSIX
+
+Using an MSIX grants your application [package identity](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview), which, among other things, allows it to use [certain APIs](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/modernize-packaged-apps). You might need to check at runtime if your application has package identity.
+
+```dart
+if (Msix.hasPackageIdentity()) {
+  showNotifications();
+}
+```
 
 ## ![microsoft store icon][] Publishing to the Microsoft Store
 
