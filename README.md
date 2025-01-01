@@ -19,11 +19,11 @@ it on a website.
 
 ## 📋 Installation
 
-In your `pubspec.yaml`, add the `msix` package as a new [dev dependency] with
+In your `pubspec.yaml`, add the `msix` package as a new dependency with
 the following command:
 
 ```console
-PS c:\src\flutter_project> flutter pub add --dev msix
+PS c:\src\flutter_project> dart pub add msix
 ```
 
 ## 📦 Creating an MSIX installer
@@ -134,6 +134,32 @@ the `certificate_path` and `certificate_password` fields.
 **Note**: By default, the MSIX package will install the certificate on your
 machine. You can disable this by using the `--install-certificate false` option, or the YAML
 option `install_certificate: false`.
+
+## Using this package at runtime
+
+### Get a URI to Flutter assets
+
+If you need to get an `ms-appx:///` URI from a Flutter asset, use `Msix.assetUrI()`:
+
+```dart
+// Flutter
+final logoPath = 'assets/logo.png';
+Image.asset(logoPath);
+
+// Windows APIs
+final logoUri = Msix.assetUri('assets/logo.png');
+someWindowsApi(logoUri);
+```
+
+### Check if an app was installed with an MSIX
+
+Using an MSIX grants your application [package identity](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview), which, among other things, allows it to use [certain APIs](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/modernize-packaged-apps). You might need to check at runtime if your application has package identity.
+
+```dart
+if (Msix.hasPackageIdentity()) {
+  showNotifications();
+}
+```
 
 ## ![microsoft store icon][] Publishing to the Microsoft Store
 

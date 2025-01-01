@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
+
 import 'src/app_installer.dart';
 import 'src/windows_build.dart';
 import 'src/configuration.dart';
@@ -11,9 +12,21 @@ import 'src/appx_manifest.dart';
 import 'src/makeappx.dart';
 import 'src/sign_tool.dart';
 import 'src/method_extensions.dart';
+import 'src/msix_check.dart';
 
 /// Main class that handles all the msix package functionality
 class Msix {
+  /// Gets an `ms-appx:///` URI from a [Flutter asset](https://docs.flutter.dev/ui/assets/assets-and-images).
+  static Uri assetUri(String path) => Uri.parse("ms-appx:///data/flutter_assets/$path");
+
+  /// Returns whether the current app was installed with an MSIX installer.
+  ///
+  /// Using an MSIX grants your application [package identity](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview),
+  /// which allows it to use [certain APIs](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/modernize-packaged-apps).
+  static bool hasPackageIdentity() {
+    return checkPackageIdentity();
+  }
+
   late Logger _logger;
   late Configuration _config;
 
