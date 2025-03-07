@@ -18,9 +18,31 @@ class Assets {
   /// Generate new app icons or copy default app icons
   Future<void> createIcons() async {
     _logger.trace('create app icons');
-    String? logoPath = _config.logoPath;
 
     await Directory(_msixIconsFolderPath).create();
+
+    // If use_runner_assets is enabled and the directory exists, use those assets
+    if (_config.useRunnerAssets) {
+      String runnerAssetsPath = _config.runnerAssetsPath;
+      Directory runnerAssetsDir = Directory(runnerAssetsPath);
+
+      // Check if directory exists
+      if (!await runnerAssetsDir.exists()) {
+        throw 'Directory not found: $runnerAssetsPath. Create the directory or use "logo_path" instead.';
+      }
+
+      // Check if directory has any contents
+      List<FileSystemEntity> contents = await runnerAssetsDir.list().toList();
+      if (contents.isEmpty) {
+        throw 'No assets found in $runnerAssetsPath. Provide assets or use "logo_path" to generate assets instead.';
+      }
+
+      _logger.trace('using existing assets from $runnerAssetsPath');
+      await runnerAssetsDir.copyDirectory(Directory(_msixIconsFolderPath));
+      return;
+    }
+
+    String? logoPath = _config.logoPath;
 
     if (logoPath != null) {
       _logger.trace('generating icons');

@@ -268,4 +268,44 @@ msix_config:
           ]));
     });
   });
+
+  group('use_runner_assets:', () {
+    test('conflict with logo_path', () async {
+      await File(yamlTestPath).writeAsString('''
+name: testAppName
+msix_config:
+  use_runner_assets: true
+  logo_path: test/logo.png
+''');
+      await config.getConfigValues();
+      expect(
+          () async => await config.validateConfigValues(),
+          throwsA(contains(
+              'Cannot use both "use_runner_assets" and "logo_path" at the same time')));
+    });
+
+    test('conflict with trim_logo', () async {
+      await File(yamlTestPath).writeAsString('''
+name: testAppName
+msix_config:
+  use_runner_assets: true
+  trim_logo: false
+''');
+      await config.getConfigValues();
+      expect(
+          () async => await config.validateConfigValues(),
+          throwsA(contains(
+              'Cannot use both "use_runner_assets" and "trim_logo" at the same time')));
+    });
+
+    test('valid use_runner_assets', () async {
+      await File(yamlTestPath).writeAsString('''
+name: testAppName
+msix_config:
+  use_runner_assets: true
+''');
+      await config.getConfigValues();
+      expect(config.useRunnerAssets, true);
+    });
+  });
 }
