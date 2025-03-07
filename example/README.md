@@ -44,6 +44,18 @@ msix_config:
   install_certificate: false
 ```
 
+###### Using Existing Assets:
+
+```yaml
+msix_config:
+  display_name: Flutter App
+  msix_version: 1.0.0.0
+  use_runner_assets: true # Uses assets from windows/runner/Assets (alternative to logo_path)
+```
+
+Note: The `windows/runner/Assets` directory must exist and contain assets. Cannot be used 
+with `logo_path` or `trim_logo`.
+
 ##### Note: The main app version will be used as a basis for the MSIX version (`1.3.2` to `1.3.2.0`)
 
 <br />
