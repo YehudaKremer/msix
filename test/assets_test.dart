@@ -57,6 +57,101 @@ void main() {
         true);
   });
 
+  test('use runner assets', () async {
+    // Create a mock runner assets directory with test files
+    var runnerAssetsPath =
+        p.join(tempFolderPath, 'windows', 'runner', 'Assets');
+    await File(p.join(runnerAssetsPath, 'app_icon.png'))
+        .create(recursive: true);
+    await File(p.join(runnerAssetsPath, 'SmallTile.scale-100.png'))
+        .create(recursive: true);
+    await File(p.join(runnerAssetsPath, 'Square150x150Logo.scale-200.png'))
+        .create(recursive: true);
+
+    // Create the Images directory
+    await Directory(p.join(tempFolderPath, 'Images')).create(recursive: true);
+
+    // Create a test configuration with overridden runnerAssetsPath
+    var testConfig = TestConfiguration(config, runnerAssetsPath);
+    GetIt.I.unregister<Configuration>();
+    GetIt.I.registerSingleton<Configuration>(testConfig);
+
+    // Enable use_runner_assets option
+    testConfig.useRunnerAssets = true;
+
+    // Call createIcons
+    await Assets().createIcons();
+
+    // Verify that the files were copied
+    expect(
+        await File(p.join(tempFolderPath, 'Images', 'app_icon.png')).exists(),
+        true);
+    expect(
+        await File(p.join(tempFolderPath, 'Images', 'SmallTile.scale-100.png'))
+            .exists(),
+        true);
+    expect(
+        await File(p.join(
+                tempFolderPath, 'Images', 'Square150x150Logo.scale-200.png'))
+            .exists(),
+        true);
+
+    // Restore original configuration
+    GetIt.I.unregister<Configuration>();
+    GetIt.I.registerSingleton<Configuration>(config);
+  });
+
+  test('use runner assets - directory not found', () async {
+    // Create a non-existent runner assets path
+    var runnerAssetsPath =
+        p.join(tempFolderPath, 'windows', 'runner', 'NonExistentAssets');
+
+    // Create the Images directory
+    await Directory(p.join(tempFolderPath, 'Images')).create(recursive: true);
+
+    // Create a test configuration with overridden runnerAssetsPath
+    var testConfig = TestConfiguration(config, runnerAssetsPath);
+    GetIt.I.unregister<Configuration>();
+    GetIt.I.registerSingleton<Configuration>(testConfig);
+
+    // Enable use_runner_assets option
+    testConfig.useRunnerAssets = true;
+
+    // Call createIcons and expect error
+    await expectLater(
+        () => Assets().createIcons(), throwsA(contains('Directory not found')));
+
+    // Restore original configuration
+    GetIt.I.unregister<Configuration>();
+    GetIt.I.registerSingleton<Configuration>(config);
+  });
+
+  test('use runner assets - empty directory', () async {
+    // Create an empty runner assets directory
+    var runnerAssetsPath =
+        p.join(tempFolderPath, 'windows', 'runner', 'EmptyAssets');
+    await Directory(runnerAssetsPath).create(recursive: true);
+
+    // Create the Images directory
+    await Directory(p.join(tempFolderPath, 'Images')).create(recursive: true);
+
+    // Create a test configuration with overridden runnerAssetsPath
+    var testConfig = TestConfiguration(config, runnerAssetsPath);
+    GetIt.I.unregister<Configuration>();
+    GetIt.I.registerSingleton<Configuration>(testConfig);
+
+    // Enable use_runner_assets option
+    testConfig.useRunnerAssets = true;
+
+    // Call createIcons and expect error
+    await expectLater(
+        () => Assets().createIcons(), throwsA(contains('No assets found')));
+
+    // Restore original configuration
+    GetIt.I.unregister<Configuration>();
+    GetIt.I.registerSingleton<Configuration>(config);
+  });
+
   test('generate icons (expect 82 new images)', () async {
     Image image = Image(width: 320, height: 240);
     fill(image, color: ColorRgb8(0, 0, 255));
@@ -128,4 +223,28 @@ void main() {
     await Future.delayed(const Duration(milliseconds: 100));
     expect(await File(p.join(tempFolderPath, 'test.msix')).exists(), false);
   });
+}
+
+/// Test configuration class that overrides the runnerAssetsPath getter
+class TestConfiguration extends Configuration {
+  final Configuration _baseConfig;
+  final String _customRunnerAssetsPath;
+
+  TestConfiguration(this._baseConfig, this._customRunnerAssetsPath) : super([]);
+
+  @override
+  String get runnerAssetsPath => _customRunnerAssetsPath;
+
+  // Forward all other properties to the base configuration
+  @override
+  String get msixAssetsPath => _baseConfig.msixAssetsPath;
+
+  @override
+  String get buildFilesFolder => _baseConfig.buildFilesFolder;
+
+  @override
+  String? get logoPath => _baseConfig.logoPath;
+
+  @override
+  bool get trimLogo => _baseConfig.trimLogo;
 }
