@@ -2,7 +2,7 @@
 
 ## 3.16.9
 
-- Fix [#303](https://github.com/YehudaKremer/msix/pull/#303) "Error SignerSign() failed." [#273](https://github.com/YehudaKremer/msix/pull/273) (Thank you @jacksonb-cs)
+- Fix [#303](https://github.com/YehudaKremer/msix/pull/#303) "Error SignerSign() failed." (Thank you @jacksonb-cs)
 
 ## 3.16.8
 
