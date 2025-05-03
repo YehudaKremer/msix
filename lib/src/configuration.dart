@@ -14,6 +14,10 @@ import 'sign_tool.dart';
 
 /// Handles loading and validating the configuration values
 class Configuration {
+  static final List<String> _blacklistedExecutables = [
+    'PSFLauncher64.exe',
+    'crashpad_handler.exe'
+  ];
   final List<String> _arguments;
   final Logger _logger = GetIt.I<Logger>();
   late ArgResults _args;
@@ -33,6 +37,7 @@ class Configuration {
   String? capabilities;
   String? logoPath;
   String? executableFileName;
+  String? overrideExecutableFileName;
   List<String>? signToolOptions;
   List<String>? windowsBuildArgs;
   late Iterable<String> protocolActivation;
@@ -89,6 +94,8 @@ class Configuration {
     outputPath = _args['output-path'] ?? yaml['output_path'];
     outputName = _args['output-name'] ?? yaml['output_name'];
     executionAlias = _args['execution-alias'] ?? yaml['execution_alias'];
+    overrideExecutableFileName =
+        _args['override-executable'] ?? yaml['override_executable'];
     if (_args['sign-msix'].toString() == 'false' ||
         yaml['sign_msix']?.toString().toLowerCase() == 'false') {
       signMsix = false;
@@ -365,12 +372,13 @@ class Configuration {
       throw 'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again';
     }
 
-    executableFileName = await Directory(buildFilesFolder)
-        .list()
-        .firstWhere((file) =>
-            file.path.endsWith('.exe') &&
-            !file.path.contains('PSFLauncher64.exe'))
-        .then((file) => basename(file.path));
+    executableFileName = overrideExecutableFileName ??
+        await Directory(buildFilesFolder)
+            .list()
+            .firstWhere((file) =>
+                file.path.endsWith('.exe') &&
+                !_blacklistedExecutables.any((b) => file.path.contains(b)))
+            .then((file) => basename(file.path));
   }
 
   /// Declare and parse the cli arguments
@@ -393,6 +401,7 @@ class Configuration {
       ..addOption('windows-build-args')
       ..addOption('protocol-activation')
       ..addOption('execution-alias')
+      ..addOption('override-executable')
       ..addOption('file-extension', abbr: 'f')
       ..addOption('architecture', abbr: 'h')
       ..addOption('capabilities', abbr: 'e')
