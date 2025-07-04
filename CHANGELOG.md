@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.16.9
+
+- Fix [#303](https://github.com/YehudaKremer/msix/pull/#303) "Error SignerSign() failed." (Thank you @jacksonb-cs)
+
 ## 3.16.8
 
 - update VCLibs files [#273](https://github.com/YehudaKremer/msix/pull/273)
