@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.16.10
+
+- Update `get_it` version [#306]
+
 ## 3.16.9
 
 - Fix [#303](https://github.com/YehudaKremer/msix/pull/#303) "Error SignerSign() failed." (Thank you @jacksonb-cs)
