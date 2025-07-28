@@ -30,4 +30,4 @@ dependencies:
 
 dev_dependencies:
   test: ^1.23.0
-  flutter_lints: ^2.0.0
+  flutter_lints: ^5.0.0
