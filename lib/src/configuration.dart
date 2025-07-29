@@ -44,6 +44,7 @@ class Configuration {
   String? outputPath;
   String? outputName;
   String? publishFolderPath;
+  String? remoteUrl;
   int hoursBetweenUpdateChecks = 0;
   bool automaticBackgroundTask = false;
   bool updateBlocksActivation = false;
@@ -65,6 +66,8 @@ class Configuration {
   String get msixPath =>
       p.join(outputPath ?? buildFilesFolder, '${outputName ?? appName}.msix');
   String get appInstallerPath => p.join(publishFolderPath!,
+      basename(msixPath).replaceAll('.msix', '.appinstaller'));
+  String get appInstallerWebSitePath => p.join(remoteUrl ?? publishFolderPath!,
       basename(msixPath).replaceAll('.msix', '.appinstaller'));
   String pubspecYamlPath = "pubspec.yaml";
   String osMinVersion = '10.0.17763.0';
@@ -186,6 +189,7 @@ class Configuration {
                     ?.toString()
                     .toLowerCase() ==
                 'true';
+    remoteUrl = _args['remote-url'] ?? installerYaml['remote_url'];
 
     // context menu configurations
     dynamic contextMenuYaml = yaml['context_menu'];
@@ -407,6 +411,7 @@ class Configuration {
       ..addOption('hours-between-update-checks')
       ..addOption('build-windows')
       ..addOption('app-uri-handler-hosts')
+      ..addOption('remote-url')
       ..addFlag('store')
       ..addFlag('enable-at-startup')
       ..addFlag('debug')
