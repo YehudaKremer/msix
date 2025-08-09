@@ -461,7 +461,8 @@ class Configuration {
     _logger.progress('executable name not found from pubspec, trying fallback method');
     // Fallback to searching the build files folder
     _logger.progress('using fallback method to find executable');
-    executableName = await Directory(buildFilesFolder).list().firstWhere((file) => file.path.endsWith('.exe') && !file.path.contains('PSFLauncher64.exe')).then((file) => p.basename(file.path));
+    // Use the new helper method to find the executable, excluding unwanted exe names
+    executableName = await _findExecutableFileName(exclude: ['PSFLauncher64.exe', 'crashpad_handler.exe']);
     _logger.progress('executable name found from fallback method: $executableName');
     if (executableName == null) {
       _logger.stderr('No executable file found in $buildFilesFolder, first run "flutter build windows" then try again');
@@ -530,6 +531,23 @@ class Configuration {
       }
     } catch (e) {
       _logger.trace('Error checking executable from pubspec: $e');
+    }
+    return null;
+  }
+
+  Future<String?> _findExecutableFileName({required List<String> exclude}) async {
+    try {
+      final files = await Directory(buildFilesFolder).list().toList();
+      for (var file in files) {
+        if (file is File && p.extension(file.path).toLowerCase() == '.exe') {
+          final fileName = p.basename(file.path);
+          if (!exclude.contains(fileName)) {
+            return fileName;
+          }
+        }
+      }
+    } catch (e) {
+      _logger.trace('Error finding executable file: $e');
     }
     return null;
   }
