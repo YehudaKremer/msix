@@ -311,7 +311,6 @@ class Configuration {
       _logger.stderr('No executable file found in $buildFilesFolder, first run "flutter build windows" then try again');
       exit(-1);
     }
-    _logger.progress('executable file name: $executableFileName');
   }
 
   /// Declare and parse the cli arguments
@@ -448,21 +447,29 @@ class Configuration {
     //Try to obtain executable name from CMake
     String? executableName = await _getExecutableFromCMake();
     if (executableName != null) {
-      _logger.trace('executable name found from CMake: $executableName');
+      _logger.progress('executable name found from CMake: $executableName');
       return executableName;
     }
-    _logger.trace('executable name not found from CMake, trying pubspec.yaml');
+    _logger.progress('executable name not found from CMake, trying pubspec.yaml');
 
     //Try to obtain executable name from pubspec.yaml (app name)
     executableName = await _getExecutableFromPubspec();
     if (executableName != null) {
-      _logger.trace('executable name found from pubspec: $executableName');
+      _logger.progress('executable name found from pubspec: $executableName');
       return executableName;
     }
-    _logger.trace('executable name not found from pubspec, trying fallback method');
+    _logger.progress('executable name not found from pubspec, trying fallback method');
     // Fallback to searching the build files folder
-    _logger.trace('using fallback method to find executable');
-    return await Directory(buildFilesFolder).list().firstWhere((file) => file.path.endsWith('.exe') && !file.path.contains('PSFLauncher64.exe')).then((file) => p.basename(file.path));
+    _logger.progress('using fallback method to find executable');
+    executableName = await Directory(buildFilesFolder).list().firstWhere((file) => file.path.endsWith('.exe') && !file.path.contains('PSFLauncher64.exe')).then((file) => p.basename(file.path));
+    _logger.progress('executable name found from fallback method: $executableName');
+    if (executableName == null) {
+      _logger.stderr('No executable file found in $buildFilesFolder, first run "flutter build windows" then try again');
+      exit(-1);
+    } else {
+      _logger.progress('executable name: $executableName');
+      return executableName;
+    }
   }
 
   Future<String?> _getExecutableFromCMake() async {
