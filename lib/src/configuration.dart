@@ -481,7 +481,7 @@ class Configuration {
       if (await cmakeFile.exists()) {
         final content = await cmakeFile.readAsString();
         final binaryNameMatch = RegExp(r'set\s*\(\s*BINARY_NAME\s+"([^"]+)"\s*\)', caseSensitive: false).firstMatch(content);
-        _logger.progress('Searching for executable name in CMakeLists.txt: $cmakeFile');
+        _logger.progress('Searching for executable name in CMakeLists.txt: $binaryNameMatch');
         _logger.trace('CMakeLists.txt content: $content');
         if (binaryNameMatch != null) {
           return '${binaryNameMatch.group(1)}.exe';
