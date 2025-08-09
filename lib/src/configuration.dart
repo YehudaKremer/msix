@@ -475,13 +475,14 @@ class Configuration {
 
   Future<String?> _getExecutableFromCMake() async {
     try {
-      // Procura pelo CMakeLists.txt na pasta windows
       final windowsPath = p.join(Directory.current.path, 'windows');
       final cmakeFile = File(p.join(windowsPath, 'CMakeLists.txt'));
 
       if (await cmakeFile.exists()) {
         final content = await cmakeFile.readAsString();
         final binaryNameMatch = RegExp(r'set\s*\(\s*BINARY_NAME\s+"([^"]+)"\s*\)', caseSensitive: false).firstMatch(content);
+        _logger.progress('Searching for executable name in CMakeLists.txt: $cmakeFile');
+        _logger.trace('CMakeLists.txt content: $content');
         if (binaryNameMatch != null) {
           return '${binaryNameMatch.group(1)}.exe';
         }
@@ -493,15 +494,6 @@ class Configuration {
           if (await File(p.join(buildFilesFolder, expectedExe)).exists()) {
             return expectedExe;
           }
-        }
-      }
-      final runnerCmakeFile = File(p.join(windowsPath, 'runner', 'CMakeLists.txt'));
-      if (await runnerCmakeFile.exists()) {
-        final content = await runnerCmakeFile.readAsString();
-
-        final binaryNameMatch = RegExp(r'set\s*\(\s*BINARY_NAME\s+"([^"]+)"\s*\)', caseSensitive: false).firstMatch(content);
-        if (binaryNameMatch != null) {
-          return '${binaryNameMatch.group(1)}.exe';
         }
       }
     } catch (e) {
