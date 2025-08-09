@@ -307,6 +307,11 @@ class Configuration {
     }
 
     executableFileName = await _getExecutableFileName();
+    if (executableFileName == null) {
+      _logger.stderr('No executable file found in $buildFilesFolder, first run "flutter build windows" then try again');
+      exit(-1);
+    }
+    _logger.trace('executable file name: $executableFileName');
   }
 
   /// Declare and parse the cli arguments
@@ -439,12 +444,14 @@ class Configuration {
   Iterable<String> _getProtocolsActivation(dynamic config) => ((_args['protocol-activation'] ?? config['protocol_activation']) as String?)?.split(',').map((protocol) => protocol.trim().toLowerCase().replaceAll('://', '').replaceAll(':/', '').replaceAll(':', '')).where((protocol) => protocol.isNotEmpty) ?? [];
 
   Future<String> _getExecutableFileName() async {
+    _logger.progress('Searching for executable file name...');
     //Try to obtain executable name from CMake
     String? executableName = await _getExecutableFromCMake();
     if (executableName != null) {
       _logger.trace('executable name found from CMake: $executableName');
       return executableName;
     }
+    _logger.trace('executable name not found from CMake, trying pubspec.yaml');
 
     //Try to obtain executable name from pubspec.yaml (app name)
     executableName = await _getExecutableFromPubspec();
@@ -452,7 +459,7 @@ class Configuration {
       _logger.trace('executable name found from pubspec: $executableName');
       return executableName;
     }
-
+    _logger.trace('executable name not found from pubspec, trying fallback method');
     // Fallback to searching the build files folder
     _logger.trace('using fallback method to find executable');
     return await Directory(buildFilesFolder).list().firstWhere((file) => file.path.endsWith('.exe') && !file.path.contains('PSFLauncher64.exe')).then((file) => p.basename(file.path));
