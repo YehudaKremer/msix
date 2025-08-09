@@ -1,13 +1,15 @@
 import 'dart:io';
-import 'package:msix/src/context_menu_configuration.dart';
-import 'package:path/path.dart' as p;
+
 import 'package:args/args.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:get_it/get_it.dart';
+import 'package:msix/src/context_menu_configuration.dart';
 import 'package:package_config/package_config.dart';
+import 'package:path/path.dart' as p;
 import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
+
 import 'command_line_converter.dart';
 import 'method_extensions.dart';
 import 'sign_tool.dart';
@@ -365,12 +367,12 @@ class Configuration {
       throw 'Build files not found at $buildFilesFolder, first run "flutter build windows" then try again';
     }
 
-    executableFileName = await Directory(buildFilesFolder)
-        .list()
-        .firstWhere((file) =>
-            file.path.endsWith('.exe') &&
-            !file.path.contains('PSFLauncher64.exe'))
-        .then((file) => basename(file.path));
+    executableFileName = await _getExecutableFileName();
+    if (executableFileName == null) {
+      _logger.stderr(
+          'No executable file found in $buildFilesFolder, first run "flutter build windows" then try again');
+      exit(-1);
+    }
   }
 
   /// Declare and parse the cli arguments
@@ -507,8 +509,7 @@ class Configuration {
       ].join('.');
     } on FormatException {
       _logger.stderr(
-        'Warning: Could not parse Pubspec version. No version provided.',
-      );
+          'Warning: Could not parse Pubspec version. No version provided.');
       return null;
     }
   }
@@ -541,6 +542,117 @@ class Configuration {
               .replaceAll(':', ''))
           .where((protocol) => protocol.isNotEmpty) ??
       [];
+
+  Future<String> _getExecutableFileName() async {
+    _logger.progress('Searching for executable file name...');
+    //Try to obtain executable name from CMake
+    String? executableName = await _getExecutableFromCMake();
+    if (executableName != null) {
+      _logger.progress('executable name found from CMake: $executableName');
+      return executableName;
+    }
+    _logger
+        .progress('executable name not found from CMake, trying pubspec.yaml');
+
+    //Try to obtain executable name from pubspec.yaml (app name)
+    executableName = await _getExecutableFromPubspec();
+    if (executableName != null) {
+      _logger.progress('executable name found from pubspec: $executableName');
+      return executableName;
+    }
+    _logger.progress(
+        'executable name not found from pubspec, trying fallback method');
+    // Fallback to searching the build files folder
+    _logger.progress('using fallback method to find executable');
+    // Use the new helper method to find the executable, excluding unwanted exe names
+    executableName = await _findExecutableFileName(
+        exclude: ['PSFLauncher64.exe', 'crashpad_handler.exe']);
+    _logger.progress(
+        'executable name found from fallback method: $executableName');
+    if (executableName == null) {
+      _logger.stderr(
+          'No executable file found in $buildFilesFolder, first run "flutter build windows" then try again');
+      exit(-1);
+    } else {
+      _logger.progress('executable name: $executableName');
+      return executableName;
+    }
+  }
+
+  Future<String?> _getExecutableFromCMake() async {
+    try {
+      final windowsPath = p.join(Directory.current.path, 'windows');
+      final cmakeFile = File(p.join(windowsPath, 'CMakeLists.txt'));
+
+      if (await cmakeFile.exists()) {
+        final content = await cmakeFile.readAsString();
+        final binaryNameMatch = RegExp(
+                r'set\s*\(\s*BINARY_NAME\s+"([^"]+)"\s*\)',
+                caseSensitive: false)
+            .firstMatch(content);
+        if (binaryNameMatch != null) {
+          return '${binaryNameMatch.group(1)}.exe';
+        }
+
+        final projectMatch =
+            RegExp(r'project\s*\(\s*([^\s\)]+)', caseSensitive: false)
+                .firstMatch(content);
+        if (projectMatch != null) {
+          String projectName = projectMatch.group(1)!.replaceAll('"', '');
+          final expectedExe = '$projectName.exe';
+          if (await File(p.join(buildFilesFolder, expectedExe)).exists()) {
+            return expectedExe;
+          }
+        }
+      }
+    } catch (e) {
+      _logger.trace('Error reading CMake files: $e');
+    }
+    return null;
+  }
+
+  Future<String?> _getExecutableFromPubspec() async {
+    try {
+      if (appName != null && appName!.isNotEmpty) {
+        final expectedExe = '$appName.exe';
+        if (await File(p.join(buildFilesFolder, expectedExe)).exists()) {
+          return expectedExe;
+        }
+
+        final cleanAppName = appName!.replaceAll('_', '');
+        final expectedCleanExe = '$cleanAppName.exe';
+        if (await File(p.join(buildFilesFolder, expectedCleanExe)).exists()) {
+          return expectedCleanExe;
+        }
+
+        final lowercaseExe = '${appName!.toLowerCase()}.exe';
+        if (await File(p.join(buildFilesFolder, lowercaseExe)).exists()) {
+          return lowercaseExe;
+        }
+      }
+    } catch (e) {
+      _logger.trace('Error checking executable from pubspec: $e');
+    }
+    return null;
+  }
+
+  Future<String?> _findExecutableFileName(
+      {required List<String> exclude}) async {
+    try {
+      final files = await Directory(buildFilesFolder).list().toList();
+      for (var file in files) {
+        if (file is File && p.extension(file.path).toLowerCase() == '.exe') {
+          final fileName = p.basename(file.path);
+          if (!exclude.contains(fileName)) {
+            return fileName;
+          }
+        }
+      }
+    } catch (e) {
+      _logger.trace('Error finding executable file: $e');
+    }
+    return null;
+  }
 }
 
 /// A more advanced version of 'enable_at_startup'.
@@ -555,17 +667,13 @@ class StartupTask {
   /// This is useful to detect if the app was started automatically.
   final String? parameters;
 
-  StartupTask({
-    required this.taskId,
-    required this.enabled,
-    required this.parameters,
-  });
+  StartupTask(
+      {required this.taskId, required this.enabled, required this.parameters});
 
   factory StartupTask.fromMap(Map map, String appName) {
     return StartupTask(
-      taskId: map['task_id'] ?? appName.replaceAll('_', ''),
-      enabled: map['enabled'] ?? true,
-      parameters: map['parameters'],
-    );
+        taskId: map['task_id'] ?? appName.replaceAll('_', ''),
+        enabled: map['enabled'] ?? true,
+        parameters: map['parameters']);
   }
 }
