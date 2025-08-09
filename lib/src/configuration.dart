@@ -311,7 +311,7 @@ class Configuration {
       _logger.stderr('No executable file found in $buildFilesFolder, first run "flutter build windows" then try again');
       exit(-1);
     }
-    _logger.trace('executable file name: $executableFileName');
+    _logger.progress('executable file name: $executableFileName');
   }
 
   /// Declare and parse the cli arguments
