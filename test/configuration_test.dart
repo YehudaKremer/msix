@@ -268,4 +268,62 @@ msix_config:
           ]));
     });
   });
+
+  group('windows_build_tool:', () {
+    test('defaults to flutter when not set', () async {
+      await File(yamlTestPath).writeAsString(yamlContent);
+      await config.getConfigValues();
+      expect(config.windowsBuildTool?.toLowerCase(), 'flutter');
+    });
+
+    test('parses from YAML (shorebird)', () async {
+      await File(yamlTestPath)
+          .writeAsString('${yamlContent}windows_build_tool: shorebird');
+      await config.getConfigValues();
+      expect(config.windowsBuildTool?.toLowerCase(), 'shorebird');
+    });
+
+    test('parses from CLI (shorebird)', () async {
+      await File(yamlTestPath).writeAsString(yamlContent);
+      final custom = Configuration(['--windows-build-tool', 'shorebird'])
+        ..pubspecYamlPath = yamlTestPath
+        ..buildFilesFolder = tempFolderPath;
+      await custom.getConfigValues();
+      expect(custom.windowsBuildTool?.toLowerCase(), 'shorebird');
+    });
+
+    test('invalid tool is rejected in validation', () async {
+      await File(yamlTestPath)
+          .writeAsString('${yamlContent}windows_build_tool: invalidtool');
+      await config.getConfigValues();
+      await expectLater(
+        config.validateConfigValues,
+        throwsA(
+          predicate((String err) =>
+              err.toLowerCase().contains('windows_build_tool') &&
+              err.toLowerCase().contains('flutter') &&
+              err.toLowerCase().contains('shorebird')),
+        ),
+      );
+    });
+  });
+
+  group('shorebird_args:', () {
+    test('parses from YAML string', () async {
+      await File(yamlTestPath).writeAsString(
+          '${yamlContent}shorebird_args: --verbose --flag=value');
+      await config.getConfigValues();
+      expect(config.shorebirdArgs, ['--verbose', '--flag=value']);
+    });
+
+    test('parses from CLI', () async {
+      await File(yamlTestPath).writeAsString(yamlContent);
+      final custom =
+          Configuration(['--shorebird-args', '--verbose --flag="some value"'])
+            ..pubspecYamlPath = yamlTestPath
+            ..buildFilesFolder = tempFolderPath;
+      await custom.getConfigValues();
+      expect(custom.shorebirdArgs, ['--verbose', '--flag=some value']);
+    });
+  });
 }

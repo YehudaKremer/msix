@@ -1,3 +1,10 @@
+## Unreleased
+
+- Add optional Shorebird build path:
+	- New config `windows_build_tool` (`flutter` default, supports `shorebird`)
+	- New config `shorebird_args` for `shorebird release windows` arguments
+	- CLI flags: `--windows-build-tool`, `--shorebird-args`
+
 # Changelog
 
 ## 3.16.12

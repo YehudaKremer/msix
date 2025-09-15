@@ -37,6 +37,9 @@ class Configuration {
   String? executableFileName;
   List<String>? signToolOptions;
   List<String>? windowsBuildArgs;
+  // Windows build tool selection and arguments
+  String? windowsBuildTool; // 'flutter' (default) or 'shorebird'
+  List<String>? shorebirdArgs;
   late Iterable<String> protocolActivation;
   String? executionAlias;
   String? fileExtension;
@@ -133,6 +136,19 @@ class Configuration {
     if (windowsBuildArgsConfig != null && windowsBuildArgsConfig.isNotEmpty) {
       CommandLineConverter commandLineConverter = CommandLineConverter();
       windowsBuildArgs = commandLineConverter.convert(windowsBuildArgsConfig);
+    }
+
+    // windows_build_tool (defaults to 'flutter')
+    windowsBuildTool =
+        (_args['windows-build-tool'] ?? yaml['windows_build_tool'] ?? 'flutter')
+            ?.toString();
+
+    // shorebird_args (parsed like windows_build_args)
+    final String? shorebirdArgsConfig =
+        (_args['shorebird-args'] ?? yaml['shorebird_args'])?.toString();
+    if (shorebirdArgsConfig != null && shorebirdArgsConfig.isNotEmpty) {
+      final CommandLineConverter commandLineConverter = CommandLineConverter();
+      shorebirdArgs = commandLineConverter.convert(shorebirdArgsConfig);
     }
 
     //CommandLineConverter
@@ -291,6 +307,12 @@ class Configuration {
       throw 'Architecture can be "x64" or "arm64", check "msix_config: architecture" at pubspec.yaml';
     }
 
+    // Validate windows_build_tool
+    final tool = (windowsBuildTool ?? 'flutter').toLowerCase().trim();
+    if (tool != 'flutter' && tool != 'shorebird') {
+      throw 'windows_build_tool must be either "flutter" or "shorebird". Got: "$windowsBuildTool"';
+    }
+
     if (contextMenuConfiguration != null) {
       if (!await File(contextMenuConfiguration!.dllPath).exists()) {
         throw 'The context menu dll file not found in: ${contextMenuConfiguration!.dllPath}, check "msix_config: context_menu: dll_path" at pubspec.yaml';
@@ -393,6 +415,8 @@ class Configuration {
       ..addOption('output-name', abbr: 'n')
       ..addOption('signtool-options')
       ..addOption('windows-build-args')
+      ..addOption('windows-build-tool')
+      ..addOption('shorebird-args')
       ..addOption('protocol-activation')
       ..addOption('execution-alias')
       ..addOption('file-extension', abbr: 'f')
