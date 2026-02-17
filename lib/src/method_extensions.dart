@@ -33,8 +33,24 @@ extension StringConversions on String? {
 }
 
 extension FileSystemEntityExtensions on FileSystemEntity {
-  Future<FileSystemEntity?> deleteIfExists({bool recursive = false}) async =>
-      await exists() ? delete(recursive: recursive) : Future.value();
+  Future<FileSystemEntity?> deleteIfExists({
+    bool recursive = false,
+    int retries = 5,
+    Duration delay = const Duration(milliseconds: 200),
+  }) async {
+    if (!await exists()) return null;
+
+    for (var attempt = 0; attempt <= retries; attempt++) {
+      try {
+        return await delete(recursive: recursive);
+      } on FileSystemException {
+        if (!await exists()) return null;
+        if (attempt == retries) rethrow;
+        await Future.delayed(delay * (attempt + 1));
+      }
+    }
+    return null;
+  }
 }
 
 /// Copy directory content asynchronously

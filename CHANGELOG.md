@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.16.13
+
+- Update `get_it` version [#320](https://github.com/YehudaKremer/msix/pull/320)
+
+## 3.16.12
+
+- add file/folder delete retry to avoid the exists() → delete() race
+
+## 3.16.11
+
+- discover the name of the exe without put wrong exe in AppxManifest.xml [#312](https://github.com/YehudaKremer/msix/pull/312)
+- Update `flutter_lints` version
+
+## 3.16.10
+
+- Update `get_it` version [#306]
+
 ## 3.16.9
 
 - Fix [#303](https://github.com/YehudaKremer/msix/pull/#303) "Error SignerSign() failed." (Thank you @jacksonb-cs)
