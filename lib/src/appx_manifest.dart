@@ -37,7 +37,8 @@ class AppxManifest {
           xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" 
           xmlns:com2="http://schemas.microsoft.com/appx/manifest/com/windows10/2" 
           xmlns:com3="http://schemas.microsoft.com/appx/manifest/com/windows10/3" 
-          IgnorableNamespaces="uap3 desktop">
+          xmlns:win32dependencies="http://schemas.microsoft.com/appx/manifest/externaldependencies" 
+          IgnorableNamespaces="uap3 desktop win32dependencies">
     <Identity Name="${_config.identityName}" Version="${_config.msixVersion}"
               Publisher="${_config.publisher!.replaceAll(' = ', '=').toHtmlEscape()}" ProcessorArchitecture="${_config.architecture}" />
     <Properties>
@@ -51,6 +52,7 @@ class AppxManifest {
     </Resources>
     <Dependencies>
       <TargetDeviceFamily Name="Windows.Desktop" MinVersion="${_config.osMinVersion}" MaxVersionTested="10.0.22621.2506" />
+      ${_config.addWebViewDependency ? '<win32dependencies:ExternalDependency Name="Microsoft.WebView2" MinVersion="1.1.1.1" Publisher="CN=Microsoft Windows, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Optional="false"/>' : ''}
     </Dependencies>
     <Capabilities>
       ${_getCapabilities()}
