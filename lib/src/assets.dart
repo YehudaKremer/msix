@@ -381,7 +381,7 @@ class Assets {
   }
 
   /// Clear the build folder from temporary files
-  Future<void> cleanTemporaryFiles({clearMsixFiles = false}) async {
+  Future<void> cleanTemporaryFiles({bool clearMsixFiles = false}) async {
     _logger.trace('cleaning temporary files');
 
     final buildPath = _config.buildFilesFolder;

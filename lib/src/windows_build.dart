@@ -10,8 +10,21 @@ class WindowsBuild {
   final Logger _logger = GetIt.I<Logger>();
   final Configuration _config = GetIt.I<Configuration>();
 
-  /// Run "flutter build windows" command
+  /// Run the configured Windows build command
   Future<void> build() async {
+    final tool = (_config.windowsBuildTool ?? 'flutter').toLowerCase().trim();
+    switch (tool) {
+      case 'shorebird':
+        await _buildWithShorebird();
+        return;
+      case 'flutter':
+      default:
+        await _buildWithFlutter();
+        return;
+    }
+  }
+
+  Future<void> _buildWithFlutter() async {
     final flutterBuildArgs = [
       'build',
       'windows',
@@ -24,11 +37,38 @@ class WindowsBuild {
     final Progress loggerProgress =
         _logger.progress('running "flutter ${flutterBuildArgs.join(' ')}"');
 
-    _logger.trace('build windows files with the command: '
-        '"$flutterPath ${flutterBuildArgs.join(' ')}"');
+    _logger.trace(
+      'build windows files with the command: '
+      '"$flutterPath ${flutterBuildArgs.join(' ')}"',
+    );
 
     ProcessResult buildProcess =
         await Process.run(flutterPath, flutterBuildArgs, runInShell: true);
+
+    buildProcess.exitOnError();
+
+    loggerProgress.finish(showTiming: true);
+  }
+
+  Future<void> _buildWithShorebird() async {
+    final shorebirdArgs = <String>[
+      'release',
+      'windows',
+      ...?_config.shorebirdArgs,
+    ];
+
+    var shorebirdPath = await _getShorebirdPath();
+
+    final Progress loggerProgress =
+        _logger.progress('running "shorebird ${shorebirdArgs.join(' ')}"');
+
+    _logger.trace(
+      'build windows files with the command: '
+      '"$shorebirdPath ${shorebirdArgs.join(' ')}"',
+    );
+
+    ProcessResult buildProcess =
+        await Process.run(shorebirdPath, shorebirdArgs, runInShell: true);
 
     buildProcess.exitOnError();
 
@@ -57,4 +97,30 @@ Future<String> _getFlutterPath() async {
   }
 
   return flutterPath;
+}
+
+Future<String> _getShorebirdPath() async {
+  // Respect explicit override first (if user wants a specific binary path)
+  final override = Platform.environment['SHOREBIRD_BIN'];
+  if (override != null && override.trim().isNotEmpty) {
+    return override.trim();
+  }
+
+  // default to 'shorebird' on PATH
+  var shorebirdPath = 'shorebird';
+
+  // Try to resolve using the Dart SDK path (similar to flutter discovery above)
+  final dartPath = p.split(Platform.executable);
+  if (dartPath.contains('dart-sdk') && dartPath.length > 4) {
+    final shorebirdRelativePath = p.joinAll([
+      ...dartPath.sublist(0, dartPath.length - 4),
+      'shorebird',
+    ]);
+
+    if (await File(shorebirdRelativePath).exists()) {
+      shorebirdPath = shorebirdRelativePath;
+    }
+  }
+
+  return shorebirdPath;
 }

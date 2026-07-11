@@ -94,6 +94,8 @@ See [Configurations Examples And Use Cases].
 | `architecture`       | `--architecture` `-h`          | Describes the architecture of the code in the package, `x64` or `arm64`, `x64` is default.                                       | `x64`                                               |
 | `build_windows`      | `--build-windows <true/false>` | If `false`, don't run the build command `flutter build windows`, default is `true`.                                              | `true`                                              |
 | `windows_build_args` | `--windows-build-args`         | Any arguments for the `flutter build windows` command.                                                                           | `--obfuscate --split-debug-info=C:\Users\me\folder` |
+| `windows_build_tool` | `--windows-build-tool`         | Select the tool used to build Windows: `flutter` (default) or `shorebird`.                                                       | `shorebird`                                         |
+| `shorebird_args`     | `--shorebird-args`             | Any arguments for the `shorebird release windows` command.                                                                       | `--verbose`                                         |
 
 </details>
 

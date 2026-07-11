@@ -252,7 +252,7 @@ class SignTool {
     return signToolOptions;
   }
 
-  static isCustomSignCommand(List<String>? signToolOptions) =>
+  static bool isCustomSignCommand(List<String>? signToolOptions) =>
       signToolOptions != null &&
       signToolOptions.isNotEmpty &&
       signToolOptions.containsArguments(['/sha1', '/n', '/r', '/i', '/f']);

@@ -79,7 +79,7 @@ class Msix {
   }
 
   /// Register [Logger] and [Configuration] as singleton services
-  _setupSingletonServices(List<String> args) {
+  void _setupSingletonServices(List<String> args) {
     GetIt.I.registerSingleton<Logger>(args.contains('-v')
         ? Logger.verbose()
         : Logger.standard(ansi: Ansi(true)));
