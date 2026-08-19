@@ -19,6 +19,14 @@ class AppInstaller {
       p.join(_config.publishFolderPath!, 'versions');
   String get _msixVersionPath => p.join(
       _versionsFolderPath, '${_config.appName}_${_config.msixVersion}.msix');
+  String get _versionsWebPath => Uri.parse(_config.appInstallerWebSitePath)
+      .resolve('versions/')
+      .toString();
+  String get _msixVersionWebPath => _config.remoteUrl == null
+      ? _msixVersionPath
+      : Uri.parse(_versionsWebPath)
+          .resolve('${_config.appName}_${_config.msixVersion}.msix')
+          .toString();
 
   /// Ask the user if he want to increment the version
   /// if the current publish version is the same or lower than the last published version.
@@ -76,10 +84,10 @@ class AppInstaller {
 
     String appInstallerContent = '''<?xml version="1.0" encoding="utf-8"?>
   <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2018"
-    Uri="${_config.appInstallerPath}" Version="${_config.msixVersion}">
+    Uri="${_config.appInstallerWebSitePath}" Version="${_config.msixVersion}">
     <MainPackage Name="${_config.identityName}" Version="${_config.msixVersion}"
       Publisher="${const HtmlEscape().convert(_config.publisher!.replaceAll(' = ', '='))}"
-      Uri="$_msixVersionPath"
+      Uri="$_msixVersionWebPath"
       ProcessorArchitecture="${_config.architecture}" />
     <UpdateSettings>
       <OnLaunch HoursBetweenUpdateChecks="${_config.hoursBetweenUpdateChecks}" 
@@ -102,6 +110,7 @@ class AppInstaller {
 
     webInstallerSite = webInstallerSite
         .replaceAll('PAGE_TITLE', _config.displayName ?? _config.appName!)
+        .replaceAll('REMOTE_URL', _config.remoteUrl ?? '/')
         .replaceAll(
             'PAGE_DESCRIPTION',
             _config.appDescription ??
@@ -109,7 +118,11 @@ class AppInstaller {
         .replaceAll('PAGE_TITLE', _config.displayName ?? _config.appName!)
         .replaceAll('APP_NAME', _config.displayName ?? _config.appName!)
         .replaceAll('APP_VERSION', _config.msixVersion!)
-        .replaceAll('APP_INSTALLER_LINK', basename(_config.appInstallerPath))
+        .replaceAll(
+            'APP_INSTALLER_LINK',
+            _config.remoteUrl == null
+                ? '/${basename(_config.appInstallerPath)}'
+                : basename(_config.appInstallerPath))
         .replaceAll('REQUIRED_OS_VERSION', _config.osMinVersion)
         .replaceAll('ARCHITECTURE', _config.architecture!)
         .replaceAll('PUBLISHER_NAME', _config.publisherName!);
@@ -149,6 +162,7 @@ String webInstallerSite = '''
     <link rel="icon" type="image/png" href="data:image/png;base64, FAVICON_BASE64" />
     <meta name="description" content="PAGE_DESCRIPTION">
     <title>PAGE_TITLE</title>
+    <base href="REMOTE_URL" />
 </head>
 
 <body>
@@ -188,7 +202,7 @@ String webInstallerSite = '''
     <script>
         function download() {
             var a = document.createElement("a");
-            a.href = '/APP_INSTALLER_LINK';
+            a.href = 'APP_INSTALLER_LINK';
             a.setAttribute("download", 'APP_INSTALLER_LINK');
             a.click();
         }
