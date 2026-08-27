@@ -58,10 +58,13 @@ class Configuration {
   bool trimLogo = true;
   bool createWithDebugBuildFiles = false;
   bool enableAtStartup = false;
+  bool useRunnerAssets = false;
   StartupTask? startupTask;
   Iterable<String>? appUriHandlerHosts;
   Iterable<String>? languages;
   String get defaultsIconsFolderPath => p.join(msixAssetsPath, 'icons');
+  String get runnerAssetsPath =>
+      p.join(Directory.current.path, 'windows', 'runner', 'Assets');
   String get msixToolkitPath =>
       p.join(msixAssetsPath, 'MSIX-Toolkit', 'Redist.x64');
   String get msixPath =>
@@ -72,6 +75,7 @@ class Configuration {
   String osMinVersion = '10.0.17763.0';
   bool isTestCertificate = false;
   ContextMenuConfiguration? contextMenuConfiguration;
+  dynamic _yamlConfig;
 
   Configuration(this._arguments);
 
@@ -111,6 +115,9 @@ class Configuration {
         yaml['store']?.toString().toLowerCase() == 'true';
     createWithDebugBuildFiles = _args.wasParsed('debug') ||
         yaml['debug']?.toString().toLowerCase() == 'true';
+
+    useRunnerAssets = _args.wasParsed('use-runner-assets') ||
+        yaml['use_runner_assets']?.toString().toLowerCase() == 'true';
 
     displayName = _args['display-name'] ?? yaml['display_name'];
     publisherName =
@@ -199,6 +206,9 @@ class Configuration {
             !skipContextMenu
         ? ContextMenuConfiguration.fromYaml(contextMenuYaml)
         : null;
+
+    // Store yaml for later validation
+    _yamlConfig = yaml;
   }
 
   /// Validate the configuration values and set default values
@@ -352,6 +362,19 @@ class Configuration {
         }
       }
     }
+
+    // Validate that use_runner_assets and logo_path are not both defined
+    if (useRunnerAssets && logoPath != null) {
+      throw 'Cannot use both "use_runner_assets" and "logo_path" at the same time. Please choose one method for providing assets.';
+    }
+
+    // Validate that use_runner_assets and trim_logo are not both explicitly set
+    if (useRunnerAssets && _args.wasParsed('trim-logo') ||
+        useRunnerAssets &&
+            _yamlConfig != null &&
+            _yamlConfig['trim_logo'] != null) {
+      throw 'Cannot use both "use_runner_assets" and "trim_logo" at the same time. The trim_logo option only applies to logo_path.';
+    }
   }
 
   /// Validate "flutter build windows" output files
@@ -417,7 +440,8 @@ class Configuration {
       ..addFlag('update-blocks-activation')
       ..addFlag('show-prompt')
       ..addFlag('force-update-from-any-version')
-      ..addFlag('skip-context-menu');
+      ..addFlag('skip-context-menu')
+      ..addFlag('use-runner-assets');
 
     // exclude -v (verbose) from the arguments
     _args = parser.parse(args.where((arg) => arg != '-v'));
