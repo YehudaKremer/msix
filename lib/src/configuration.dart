@@ -32,6 +32,7 @@ class Configuration {
   String? publisher;
   String? displayName;
   String? architecture;
+  String? flavor;
   String? capabilities;
   String? logoPath;
   String? executableFileName;
@@ -142,6 +143,7 @@ class Configuration {
       fileExtension = '.$fileExtension';
     }
     architecture = _args['architecture'] ?? yaml['architecture'];
+    flavor = _resolveFlavor(_args['flavor'] ?? yaml['flavor']?.toString());
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
     appUriHandlerHosts = _getAppUriHandlerHosts(yaml);
@@ -397,6 +399,7 @@ class Configuration {
       ..addOption('execution-alias')
       ..addOption('file-extension', abbr: 'f')
       ..addOption('architecture', abbr: 'h')
+      ..addOption('flavor')
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
       ..addOption('sign-msix')
@@ -423,18 +426,92 @@ class Configuration {
     _args = parser.parse(args.where((arg) => arg != '-v'));
   }
 
+  /// Resolves the Flutter flavor from the `flavor` setting (CLI or pubspec.yaml)
+  /// and from a `--flavor` argument inside `windows_build_args`.
+  /// The explicit `flavor` setting wins. Any `--flavor` is removed from
+  /// [windowsBuildArgs], so it is only passed to flutter once (by windows_build.dart).
+  String? _resolveFlavor(String? explicitFlavor) {
+    String? flavorFromBuildArgs;
+
+    if (windowsBuildArgs != null) {
+      final List<String> args = windowsBuildArgs!;
+      final List<String> remainingArgs = <String>[];
+
+      for (int i = 0; i < args.length; i++) {
+        final String arg = args[i];
+        if (arg == '--flavor') {
+          if (i + 1 < args.length) flavorFromBuildArgs = args[++i];
+        } else if (arg.startsWith('--flavor=')) {
+          flavorFromBuildArgs = arg.substring('--flavor='.length);
+        } else {
+          remainingArgs.add(arg);
+        }
+      }
+
+      windowsBuildArgs = remainingArgs;
+    }
+
+    final bool hasExplicitFlavor =
+        explicitFlavor != null && explicitFlavor.isNotEmpty;
+    final bool hasBuildArgsFlavor =
+        flavorFromBuildArgs != null && flavorFromBuildArgs.isNotEmpty;
+
+    if (hasExplicitFlavor) {
+      if (hasBuildArgsFlavor && flavorFromBuildArgs != explicitFlavor) {
+        _logger.stdout(
+            'warning: flavor "$explicitFlavor" is used, "--flavor $flavorFromBuildArgs" in windows_build_args is ignored');
+      }
+      return explicitFlavor;
+    }
+
+    return hasBuildArgsFlavor ? flavorFromBuildArgs : null;
+  }
+
+  /// Removes [folderName] when it is the last segment of [folder].
+  /// Used to undo the architecture and flavor folders added by a previous run.
+  String _removeLastFolder(String folder, String? folderName) {
+    if (folderName == null || folderName.isEmpty) return folder;
+
+    final String trimmed = folder.endsWith(p.separator)
+        ? folder.substring(0, folder.length - 1)
+        : folder;
+    if (p.basename(trimmed) == folderName) return p.dirname(trimmed);
+
+    return folder;
+  }
+
   Future<String> _updateBuildFilesFolder() async {
-    final String buildFilesFolderStart =
-        buildFilesFolder.substring(0, buildFilesFolder.lastIndexOf('runner'));
+    final int runnerIndex = buildFilesFolder.lastIndexOf('runner');
+    final String buildFilesFolderEnd = buildFilesFolder.substring(runnerIndex);
+
+    // This runs more than once (validateConfigValues and
+    // validateWindowsBuildFiles), so start from the base folder every time
+    // by removing the flavor and architecture folders added by a previous run.
+    String buildFilesFolderStart =
+        buildFilesFolder.substring(0, runnerIndex);
+    buildFilesFolderStart = _removeLastFolder(buildFilesFolderStart, flavor);
+    buildFilesFolderStart =
+        _removeLastFolder(buildFilesFolderStart, architecture);
+
     final String buildFilesFolderArchitecture =
         p.join(buildFilesFolderStart, architecture);
-    final String buildFilesFolderEnd =
-        buildFilesFolder.substring(buildFilesFolder.lastIndexOf('runner'));
 
     if (architecture == 'arm64' &&
         !(await Directory(buildFilesFolderArchitecture).exists())) {
       _logger.stderr(
           'cannot find arm64 build folder at: $buildFilesFolderArchitecture');
+      exit(-1);
+    }
+
+    if (flavor != null && flavor!.isNotEmpty) {
+      final String buildFilesFolderFlavor =
+          p.join(buildFilesFolderArchitecture, flavor);
+      if (await Directory(p.join(buildFilesFolderFlavor, 'runner')).exists()) {
+        return p.join(
+            buildFilesFolderStart, architecture, flavor, buildFilesFolderEnd);
+      }
+      _logger.stderr(
+          'cannot find flavor build folder at: ${p.join(buildFilesFolderFlavor, 'runner')}');
       exit(-1);
     }
 

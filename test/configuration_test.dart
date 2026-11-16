@@ -165,6 +165,98 @@ msix_config:
     });
   });
 
+  group('flavor:', () {
+    test('valid flavor in yaml', () async {
+      await File(yamlTestPath)
+          .writeAsString('${yamlContent}flavor: Production');
+      await config.getConfigValues();
+      expect(config.flavor, 'Production');
+    });
+
+    test('valid flavor in long argument', () async {
+      await File(yamlTestPath).writeAsString(yamlContent);
+      var customConfig = Configuration(['--flavor', 'Production'])
+        ..pubspecYamlPath = yamlTestPath
+        ..buildFilesFolder = tempFolderPath;
+      await customConfig.getConfigValues();
+      expect(customConfig.flavor, 'Production');
+    });
+
+    test('resolves build folder with architecture and flavor', () async {
+      final String flavoredRunner =
+          p.join(tempFolderPath, 'windows', 'x64', 'Production', 'runner');
+      await Directory(flavoredRunner).create(recursive: true);
+      await File(yamlTestPath)
+          .writeAsString('${yamlContent}flavor: Production');
+      config.buildFilesFolder =
+          p.join(tempFolderPath, 'windows', 'runner', 'Release');
+      await config.getConfigValues();
+      await config.validateConfigValues();
+      expect(
+          config.buildFilesFolder,
+          p.join(tempFolderPath, 'windows', 'x64', 'Production', 'runner',
+              'Release'));
+    });
+
+    test('flavor from --flavor in windows_build_args', () async {
+      await File(yamlTestPath).writeAsString(
+          '${yamlContent}windows_build_args: "--flavor Production --obfuscate"');
+      await config.getConfigValues();
+      expect(config.flavor, 'Production');
+      expect(config.windowsBuildArgs, ['--obfuscate']);
+    });
+
+    test('flavor from --flavor=value in windows_build_args', () async {
+      await File(yamlTestPath).writeAsString(
+          '${yamlContent}windows_build_args: "--flavor=Production"');
+      await config.getConfigValues();
+      expect(config.flavor, 'Production');
+      expect(config.windowsBuildArgs, isEmpty);
+    });
+
+    test('explicit flavor overrides --flavor in windows_build_args', () async {
+      await File(yamlTestPath).writeAsString('${yamlContent}flavor: Staging\n'
+          '  windows_build_args: "--flavor Production --obfuscate"');
+      await config.getConfigValues();
+      expect(config.flavor, 'Staging');
+      expect(config.windowsBuildArgs, ['--obfuscate']);
+    });
+
+    test('resolves build folder with flavor from windows_build_args', () async {
+      final String flavoredRunner =
+          p.join(tempFolderPath, 'windows', 'x64', 'Production', 'runner');
+      await Directory(flavoredRunner).create(recursive: true);
+      await File(yamlTestPath).writeAsString(
+          '${yamlContent}windows_build_args: "--flavor Production"');
+      config.buildFilesFolder =
+          p.join(tempFolderPath, 'windows', 'runner', 'Release');
+      await config.getConfigValues();
+      await config.validateConfigValues();
+      expect(
+          config.buildFilesFolder,
+          p.join(tempFolderPath, 'windows', 'x64', 'Production', 'runner',
+              'Release'));
+    });
+
+    test('build folder with flavor is the same when resolved again', () async {
+      final String flavoredRunner = p.join(
+          tempFolderPath, 'windows', 'x64', 'Production', 'runner', 'Release');
+      await Directory(flavoredRunner).create(recursive: true);
+      await File(p.join(flavoredRunner, 'testAppName.exe')).create();
+      await File(yamlTestPath)
+          .writeAsString('${yamlContent}flavor: Production');
+      config.buildFilesFolder =
+          p.join(tempFolderPath, 'windows', 'runner', 'Release');
+      await config.getConfigValues();
+      await config.validateConfigValues();
+      expect(config.buildFilesFolder, flavoredRunner);
+
+      // validateWindowsBuildFiles resolves the build folder a second time
+      await config.validateWindowsBuildFiles();
+      expect(config.buildFilesFolder, flavoredRunner);
+    });
+  });
+
   group('certificate:', () {
     test('exited certificate path with password', () async {
       var pfxTestPath = p.join(tempFolderPath, 'test.pfx');
