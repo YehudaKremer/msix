@@ -237,6 +237,24 @@ msix_config:
           p.join(tempFolderPath, 'windows', 'x64', 'Production', 'runner',
               'Release'));
     });
+
+    test('build folder with flavor is the same when resolved again', () async {
+      final String flavoredRunner = p.join(
+          tempFolderPath, 'windows', 'x64', 'Production', 'runner', 'Release');
+      await Directory(flavoredRunner).create(recursive: true);
+      await File(p.join(flavoredRunner, 'testAppName.exe')).create();
+      await File(yamlTestPath)
+          .writeAsString('${yamlContent}flavor: Production');
+      config.buildFilesFolder =
+          p.join(tempFolderPath, 'windows', 'runner', 'Release');
+      await config.getConfigValues();
+      await config.validateConfigValues();
+      expect(config.buildFilesFolder, flavoredRunner);
+
+      // validateWindowsBuildFiles resolves the build folder a second time
+      await config.validateWindowsBuildFiles();
+      expect(config.buildFilesFolder, flavoredRunner);
+    });
   });
 
   group('certificate:', () {

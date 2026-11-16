@@ -467,13 +467,34 @@ class Configuration {
     return hasBuildArgsFlavor ? flavorFromBuildArgs : null;
   }
 
+  /// Removes [folderName] when it is the last segment of [folder].
+  /// Used to undo the architecture and flavor folders added by a previous run.
+  String _removeLastFolder(String folder, String? folderName) {
+    if (folderName == null || folderName.isEmpty) return folder;
+
+    final String trimmed = folder.endsWith(p.separator)
+        ? folder.substring(0, folder.length - 1)
+        : folder;
+    if (p.basename(trimmed) == folderName) return p.dirname(trimmed);
+
+    return folder;
+  }
+
   Future<String> _updateBuildFilesFolder() async {
-    final String buildFilesFolderStart =
-        buildFilesFolder.substring(0, buildFilesFolder.lastIndexOf('runner'));
+    final int runnerIndex = buildFilesFolder.lastIndexOf('runner');
+    final String buildFilesFolderEnd = buildFilesFolder.substring(runnerIndex);
+
+    // This runs more than once (validateConfigValues and
+    // validateWindowsBuildFiles), so start from the base folder every time
+    // by removing the flavor and architecture folders added by a previous run.
+    String buildFilesFolderStart =
+        buildFilesFolder.substring(0, runnerIndex);
+    buildFilesFolderStart = _removeLastFolder(buildFilesFolderStart, flavor);
+    buildFilesFolderStart =
+        _removeLastFolder(buildFilesFolderStart, architecture);
+
     final String buildFilesFolderArchitecture =
         p.join(buildFilesFolderStart, architecture);
-    final String buildFilesFolderEnd =
-        buildFilesFolder.substring(buildFilesFolder.lastIndexOf('runner'));
 
     if (architecture == 'arm64' &&
         !(await Directory(buildFilesFolderArchitecture).exists())) {
