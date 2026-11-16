@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add Windows `flavor` support. Resolve build files from `build/windows/<arch>/<flavor>/runner`, including `--flavor` inside `windows_build_args`.
+
 ## 3.18.0
 
 - Source the version-matched Visual C++ runtime from the VS redistributable [#326](https://github.com/YehudaKremer/msix/pull/326)
