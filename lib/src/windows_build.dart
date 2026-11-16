@@ -16,9 +16,10 @@ class WindowsBuild {
     final flutterBuildArgs = [
       'build',
       'windows',
-      // When --flavor / flavor is set, windows_build_args are ignored.
+      // flavor is added here; any --flavor in windows_build_args was already
+      // moved to _config.flavor by Configuration, so it is not duplicated.
       if (hasFlavor) ...['--flavor', _config.flavor!],
-      if (!hasFlavor) ...?_config.windowsBuildArgs,
+      ...?_config.windowsBuildArgs,
       if (_config.createWithDebugBuildFiles) '--debug',
     ];
 

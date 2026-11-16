@@ -143,7 +143,7 @@ class Configuration {
       fileExtension = '.$fileExtension';
     }
     architecture = _args['architecture'] ?? yaml['architecture'];
-    flavor = _args['flavor'] ?? yaml['flavor']?.toString();
+    flavor = _resolveFlavor(_args['flavor'] ?? yaml['flavor']?.toString());
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
     appUriHandlerHosts = _getAppUriHandlerHosts(yaml);
@@ -424,6 +424,47 @@ class Configuration {
 
     // exclude -v (verbose) from the arguments
     _args = parser.parse(args.where((arg) => arg != '-v'));
+  }
+
+  /// Resolves the Flutter flavor from the `flavor` setting (CLI or pubspec.yaml)
+  /// and from a `--flavor` argument inside `windows_build_args`.
+  /// The explicit `flavor` setting wins. Any `--flavor` is removed from
+  /// [windowsBuildArgs], so it is only passed to flutter once (by windows_build.dart).
+  String? _resolveFlavor(String? explicitFlavor) {
+    String? flavorFromBuildArgs;
+
+    if (windowsBuildArgs != null) {
+      final List<String> args = windowsBuildArgs!;
+      final List<String> remainingArgs = <String>[];
+
+      for (int i = 0; i < args.length; i++) {
+        final String arg = args[i];
+        if (arg == '--flavor') {
+          if (i + 1 < args.length) flavorFromBuildArgs = args[++i];
+        } else if (arg.startsWith('--flavor=')) {
+          flavorFromBuildArgs = arg.substring('--flavor='.length);
+        } else {
+          remainingArgs.add(arg);
+        }
+      }
+
+      windowsBuildArgs = remainingArgs;
+    }
+
+    final bool hasExplicitFlavor =
+        explicitFlavor != null && explicitFlavor.isNotEmpty;
+    final bool hasBuildArgsFlavor =
+        flavorFromBuildArgs != null && flavorFromBuildArgs.isNotEmpty;
+
+    if (hasExplicitFlavor) {
+      if (hasBuildArgsFlavor && flavorFromBuildArgs != explicitFlavor) {
+        _logger.stdout(
+            'warning: flavor "$explicitFlavor" is used, "--flavor $flavorFromBuildArgs" in windows_build_args is ignored');
+      }
+      return explicitFlavor;
+    }
+
+    return hasBuildArgsFlavor ? flavorFromBuildArgs : null;
   }
 
   Future<String> _updateBuildFilesFolder() async {

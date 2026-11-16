@@ -197,6 +197,46 @@ msix_config:
           p.join(tempFolderPath, 'windows', 'x64', 'Production', 'runner',
               'Release'));
     });
+
+    test('flavor from --flavor in windows_build_args', () async {
+      await File(yamlTestPath).writeAsString(
+          '${yamlContent}windows_build_args: "--flavor Production --obfuscate"');
+      await config.getConfigValues();
+      expect(config.flavor, 'Production');
+      expect(config.windowsBuildArgs, ['--obfuscate']);
+    });
+
+    test('flavor from --flavor=value in windows_build_args', () async {
+      await File(yamlTestPath).writeAsString(
+          '${yamlContent}windows_build_args: "--flavor=Production"');
+      await config.getConfigValues();
+      expect(config.flavor, 'Production');
+      expect(config.windowsBuildArgs, isEmpty);
+    });
+
+    test('explicit flavor overrides --flavor in windows_build_args', () async {
+      await File(yamlTestPath).writeAsString('${yamlContent}flavor: Staging\n'
+          '  windows_build_args: "--flavor Production --obfuscate"');
+      await config.getConfigValues();
+      expect(config.flavor, 'Staging');
+      expect(config.windowsBuildArgs, ['--obfuscate']);
+    });
+
+    test('resolves build folder with flavor from windows_build_args', () async {
+      final String flavoredRunner =
+          p.join(tempFolderPath, 'windows', 'x64', 'Production', 'runner');
+      await Directory(flavoredRunner).create(recursive: true);
+      await File(yamlTestPath).writeAsString(
+          '${yamlContent}windows_build_args: "--flavor Production"');
+      config.buildFilesFolder =
+          p.join(tempFolderPath, 'windows', 'runner', 'Release');
+      await config.getConfigValues();
+      await config.validateConfigValues();
+      expect(
+          config.buildFilesFolder,
+          p.join(tempFolderPath, 'windows', 'x64', 'Production', 'runner',
+              'Release'));
+    });
   });
 
   group('certificate:', () {
