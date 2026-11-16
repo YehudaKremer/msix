@@ -165,6 +165,40 @@ msix_config:
     });
   });
 
+  group('flavor:', () {
+    test('valid flavor in yaml', () async {
+      await File(yamlTestPath)
+          .writeAsString('${yamlContent}flavor: Production');
+      await config.getConfigValues();
+      expect(config.flavor, 'Production');
+    });
+
+    test('valid flavor in long argument', () async {
+      await File(yamlTestPath).writeAsString(yamlContent);
+      var customConfig = Configuration(['--flavor', 'Production'])
+        ..pubspecYamlPath = yamlTestPath
+        ..buildFilesFolder = tempFolderPath;
+      await customConfig.getConfigValues();
+      expect(customConfig.flavor, 'Production');
+    });
+
+    test('resolves build folder with architecture and flavor', () async {
+      final String flavoredRunner =
+          p.join(tempFolderPath, 'windows', 'x64', 'Production', 'runner');
+      await Directory(flavoredRunner).create(recursive: true);
+      await File(yamlTestPath)
+          .writeAsString('${yamlContent}flavor: Production');
+      config.buildFilesFolder =
+          p.join(tempFolderPath, 'windows', 'runner', 'Release');
+      await config.getConfigValues();
+      await config.validateConfigValues();
+      expect(
+          config.buildFilesFolder,
+          p.join(tempFolderPath, 'windows', 'x64', 'Production', 'runner',
+              'Release'));
+    });
+  });
+
   group('certificate:', () {
     test('exited certificate path with password', () async {
       var pfxTestPath = p.join(tempFolderPath, 'test.pfx');

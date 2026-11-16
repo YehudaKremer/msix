@@ -12,10 +12,13 @@ class WindowsBuild {
 
   /// Run "flutter build windows" command
   Future<void> build() async {
+    final bool hasFlavor = _config.flavor != null && _config.flavor!.isNotEmpty;
     final flutterBuildArgs = [
       'build',
       'windows',
-      ...?_config.windowsBuildArgs,
+      // When --flavor / flavor is set, windows_build_args are ignored.
+      if (hasFlavor) ...['--flavor', _config.flavor!],
+      if (!hasFlavor) ...?_config.windowsBuildArgs,
       if (_config.createWithDebugBuildFiles) '--debug',
     ];
 

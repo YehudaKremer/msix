@@ -32,6 +32,7 @@ class Configuration {
   String? publisher;
   String? displayName;
   String? architecture;
+  String? flavor;
   String? capabilities;
   String? logoPath;
   String? executableFileName;
@@ -142,6 +143,7 @@ class Configuration {
       fileExtension = '.$fileExtension';
     }
     architecture = _args['architecture'] ?? yaml['architecture'];
+    flavor = _args['flavor'] ?? yaml['flavor']?.toString();
     capabilities = _args['capabilities'] ?? yaml['capabilities'];
     languages = _getLanguages(yaml);
     appUriHandlerHosts = _getAppUriHandlerHosts(yaml);
@@ -397,6 +399,7 @@ class Configuration {
       ..addOption('execution-alias')
       ..addOption('file-extension', abbr: 'f')
       ..addOption('architecture', abbr: 'h')
+      ..addOption('flavor')
       ..addOption('capabilities', abbr: 'e')
       ..addOption('languages')
       ..addOption('sign-msix')
@@ -435,6 +438,18 @@ class Configuration {
         !(await Directory(buildFilesFolderArchitecture).exists())) {
       _logger.stderr(
           'cannot find arm64 build folder at: $buildFilesFolderArchitecture');
+      exit(-1);
+    }
+
+    if (flavor != null && flavor!.isNotEmpty) {
+      final String buildFilesFolderFlavor =
+          p.join(buildFilesFolderArchitecture, flavor);
+      if (await Directory(p.join(buildFilesFolderFlavor, 'runner')).exists()) {
+        return p.join(
+            buildFilesFolderStart, architecture, flavor, buildFilesFolderEnd);
+      }
+      _logger.stderr(
+          'cannot find flavor build folder at: ${p.join(buildFilesFolderFlavor, 'runner')}');
       exit(-1);
     }
 
